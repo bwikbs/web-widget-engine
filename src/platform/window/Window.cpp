@@ -2,6 +2,7 @@
 #include "Window.h"
 
 #include "dom/DocumentElement.h"
+#include "dom/builder/XMLDocumentBuilder.h"
 
 #include <Elementary.h>
 #include <Evas_Engine_Buffer.h>
@@ -128,6 +129,12 @@ void Window::setNeedsRendering()
 
         return ECORE_CALLBACK_CANCEL;
     }, this);
+}
+
+void Window::loadXMLDocument(String* filePath)
+{
+    XMLDocumentBuilder* builder = new XMLDocumentBuilder;
+    builder->build(m_document, filePath);
 }
 
 }

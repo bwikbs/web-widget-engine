@@ -16,6 +16,8 @@ public:
         return m_document;
     }
 
+    void loadXMLDocument(String* filePath);
+
 protected:
     Window();
     void rendering();

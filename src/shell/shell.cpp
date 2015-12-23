@@ -10,6 +10,7 @@ using namespace StarFish;
 int main()
 {
     StarFish::StarFish* sf = new StarFish::StarFish();
+    /*
     TextElement* txt = new TextElement(sf->window()->document());
     txt->setX(Length(Length::Fixed, 50));
     txt->setY(Length(Length::Fixed, 50));
@@ -21,9 +22,11 @@ int main()
     img->setY(Length(Length::Fixed, 150));
     img->setWidth(Length(Length::Fixed, 100));
     img->setHeight(Length(Length::Fixed, 100));
-    img->setSrc(String::createASCIIString("test.jpg"));
+    img->setSrc(String::createASCIIString("test/test.jpg"));
     sf->window()->document()->appendChild(txt);
     sf->window()->document()->appendChild(img);
+    */
+    sf->window()->loadXMLDocument(String::createASCIIString("test/test1.xml"));
     sf->run();
     return 0;
 }
