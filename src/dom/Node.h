@@ -8,17 +8,28 @@
 #include "platform/canvas/Canvas.h"
 #include "platform/canvas/font/Font.h"
 #include "platform/canvas/image/ImageData.h"
+#include "dom/binding/ScriptWrappable.h"
 
 namespace StarFish {
 
 class Element;
 
-class Node : public gc {
+class Node : public ScriptWrappable {
 protected:
+    Node(DocumentElement* documentElement, ScriptBindingInstance* instance)
+        : m_computedRect(0, 0, 0, 0)
+    {
+        m_documentElement = documentElement;
+        initScriptWrappable(this, instance);
+        m_nextSibling = nullptr;
+        m_parentElement = nullptr;
+    }
+
     Node(DocumentElement* documentElement)
         : m_computedRect(0, 0, 0, 0)
     {
         m_documentElement = documentElement;
+        initScriptWrappable(this);
         m_nextSibling = nullptr;
         m_parentElement = nullptr;
     }
@@ -62,6 +73,11 @@ public:
     {
         ASSERT(isElement());
         return (Element*)this;
+    }
+
+    DocumentElement* documentElement()
+    {
+        return m_documentElement;
     }
 
     void setX(const Length& l)

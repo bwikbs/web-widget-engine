@@ -3,6 +3,8 @@ HOST=linux
 
 BIN=StarFish
 
+LOCAL_PATH = $(shell pwd)
+
 #######################################################
 # Environments
 #######################################################
@@ -108,12 +110,34 @@ CXXFLAGS_RELEASE = -O2 -g3 -DNDEBUG -fomit-frame-pointer -fno-stack-protector -f
 #######################################################
 
 # bdwgc
-CXXFLAGS += -Ithird_party/bdwgc/include/
+#CXXFLAGS += -Ithird_party/bdwgc/include/
+#CXXFLAGS_DEBUG += -DGC_DEBUG
+
+#ifeq ($(OUTPUT), bin)
+#  GCLIBS=third_party/bdwgc/out/$(ARCH)/$(MODE)/.libs/libgc.a
+#else
+#  GCLIBS=third_party/bdwgc/out/$(ARCH)/$(MODE).shared/.libs/libgc.a
+#endif
+
+# escargot
+CXXFLAGS += -Ithird_party/escargot/third_party/bdwgc/include/
+CXXFLAGS += -Ithird_party/escargot/src
+CXXFLAGS += -Ithird_party/escargot/third_party/double_conversion/
+CXXFLAGS += -Ithird_party/escargot/third_party/rapidjson/include/
+CXXFLAGS += -Ithird_party/escargot/third_party/yarr/
+CXXFLAGS += -DESCARGOT_64=1
 CXXFLAGS_DEBUG += -DGC_DEBUG
-ifeq ($(OUTPUT), bin)
-  GCLIBS=third_party/bdwgc/out/$(ARCH)/$(MODE)/.libs/libgc.a
+
+LDFLAGS += -lescargot
+
+ifeq ($(MODE), debug)
+    LDFLAGS += -Lthird_party/escargot/out/x64/interpreter/debug
+    # TODO : use this option only for HOST=linux
+    LDFLAGS += -Wl,-rpath=$(LOCAL_PATH)/third_party/escargot/out/x64/interpreter/debug
 else
-  GCLIBS=third_party/bdwgc/out/$(ARCH)/$(MODE).shared/.libs/libgc.a
+    LDFLAGS += -Lthird_party/escargot/out/x64/interpreter/release
+    # TODO : use this option only for HOST=linux
+    LDFLAGS += -Wl,-rpath=$(LOCAL_PATH)/third_party/escargot/out/x64/interpreter/release
 endif
 
 # tinyxml

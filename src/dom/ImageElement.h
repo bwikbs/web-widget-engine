@@ -10,6 +10,7 @@ public:
     ImageElement(DocumentElement* documentElement)
         : Element(documentElement)
     {
+        initScriptWrappable(this);
         m_src = nullptr;
     }
 

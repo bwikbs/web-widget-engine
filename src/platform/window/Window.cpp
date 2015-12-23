@@ -14,6 +14,11 @@ namespace StarFish {
 
 class WindowImplEFL : public Window {
 public:
+    WindowImplEFL(StarFish* sf)
+        : Window(sf)
+    {
+
+    }
     uintptr_t m_handle;
     Evas_Object* m_window;
     Evas_Object* m_background;
@@ -29,10 +34,10 @@ void mainRenderingFunction(Evas_Object *o, Evas_Object_Box_Data *priv, void *use
     wnd->setNeedsRendering();
 }
 
-Window* Window::create(size_t w, size_t h)
+Window* Window::create(StarFish* sf, size_t w, size_t h)
 {
-    auto wnd = new WindowImplEFL();
-
+    auto wnd = new WindowImplEFL(sf);
+    wnd->m_starFish = sf;
     wnd->m_window = elm_win_add(NULL, "", ELM_WIN_BASIC);
 
     Evas* e = evas_object_evas_get(wnd->m_window);
@@ -57,9 +62,13 @@ Window* Window::create(size_t w, size_t h)
 }
 
 
-Window::Window()
+Window::Window(StarFish* starFish)
+    : m_starFish(starFish)
 {
-    m_document = new DocumentElement(this);
+    ASSERT(m_starFish->scriptBindingInstance());
+    m_document = new DocumentElement(this, m_starFish->scriptBindingInstance());
+    initScriptWrappableWindow(this);
+    m_document->initScriptWrappable(m_document);
     m_needsRendering = false;
     setNeedsRendering();
 }

@@ -3,6 +3,7 @@
 #include "tinyxml2.h"
 
 #include "dom/DOM.h"
+#include "dom/binding/ScriptBindingInstance.h"
 
 namespace StarFish {
 
@@ -42,13 +43,16 @@ void XMLDocumentBuilder::build(DocumentElement* documentElement, String* filePat
             parseElementAttribute(textElement, xmlElement);
             textElement->setText(String::createASCIIString(xmlElement->Attribute("text")));
             currentElement = textElement;
+        } else if (strcmp(xmlElement->Name(), "Script") == 0) {
+            documentElement->window()->starFish()->scriptBindingInstance()->evaluate(String::createASCIIString(xmlElement->GetText()));
+            return ;
         }
 
         parentElement->appendChild(currentElement);
 
         tinyxml2::XMLElement* child = xmlElement->FirstChildElement();
         while(child) {
-            fn(parentElement, child);
+            fn(currentElement, child);
             child = child->NextSiblingElement();
         }
     };

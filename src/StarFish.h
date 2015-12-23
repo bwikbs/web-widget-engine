@@ -5,6 +5,7 @@ namespace StarFish {
 
 class MessageLoop;
 class Window;
+class ScriptBindingInstance;
 
 class StarFish : public gc {
 public:
@@ -16,8 +17,14 @@ public:
         return m_window;
     }
 
+    ScriptBindingInstance* scriptBindingInstance()
+    {
+        return m_scriptBindingInstance;
+    }
+
 protected:
     MessageLoop* m_messageLoop;
+    ScriptBindingInstance* m_scriptBindingInstance;
     Window* m_window;
 };
 

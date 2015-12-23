@@ -7,9 +7,16 @@ namespace StarFish {
 
 class Element : public Node {
 public:
+    Element(DocumentElement* documentElement, ScriptBindingInstance* instance)
+        : Node(documentElement, instance)
+    {
+        initScriptWrappable(this, instance);
+        m_firstChild = nullptr;
+    }
     Element(DocumentElement* documentElement)
         : Node(documentElement)
     {
+        initScriptWrappable(this);
         m_firstChild = nullptr;
     }
 

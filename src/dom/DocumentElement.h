@@ -6,12 +6,14 @@
 namespace StarFish {
 
 class Window;
+
 class DocumentElement : public Element {
 public:
-    DocumentElement(Window* window)
-        : Element(this)
+    DocumentElement(Window* window, ScriptBindingInstance* scriptBindingInstance)
+        : Element(this, scriptBindingInstance)
     {
         m_window = window;
+        m_scriptBindingInstance = scriptBindingInstance;
     }
 
     virtual bool isDocumentElement()
@@ -24,8 +26,14 @@ public:
         return m_window;
     }
 
+    ScriptBindingInstance* scriptBindingInstance()
+    {
+        return m_scriptBindingInstance;
+    }
+
 protected:
     Window* m_window;
+    ScriptBindingInstance* m_scriptBindingInstance;
 };
 
 void Node::setNeedsRendering()

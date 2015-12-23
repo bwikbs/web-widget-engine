@@ -1,0 +1,3 @@
+[submodule "third_party/escargot"]
+	path = third_party/escargot
+	url = http://10.113.64.195:9090/scm/escar/escargot.git

@@ -12,6 +12,7 @@ public:
     TextElement(DocumentElement* documentElement)
         : Element(documentElement)
     {
+        initScriptWrappable(this);
         m_text = nullptr;
         m_font = FontSelector::loadFont(String::createASCIIString(""), 10);
     }
