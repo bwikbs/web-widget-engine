@@ -18,6 +18,14 @@ public:
     }
 
     const char* utf8Data();
+
+    bool equals(String* str)
+    {
+        if (*asASCIIString() == *str->asASCIIString()) {
+            return true;
+        }
+        return false;
+    }
 protected:
     String()
     {

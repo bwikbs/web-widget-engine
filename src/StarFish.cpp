@@ -15,7 +15,7 @@ StarFish::StarFish()
     m_messageLoop = new MessageLoop();
     m_scriptBindingInstance = new ScriptBindingInstance();
     m_scriptBindingInstance->initBinding(this);
-    m_window = Window::create(this, 300,300);
+    m_window = Window::create(this, 360, 360);
 }
 
 void StarFish::run()

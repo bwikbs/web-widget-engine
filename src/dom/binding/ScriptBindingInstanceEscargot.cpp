@@ -64,6 +64,23 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Element"), false, false, false, elementFunction);
     fetchData(this)->m_element = elementFunction;
 
+    escargot::ESFunctionObject* getElementByIdFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
+        if (v.isObject()) {
+            if (v.asESPointer()->asESObject()->extraData() == ScriptWrappable::NodeObject) {
+                Node* nd = (Node*)v.asESPointer()->asESObject();
+                if (nd->isElement()) {
+                    Element* ret = nd->asElement()->getElementById(String::createASCIIString(instance->currentExecutionContext()->readArgument(0).toString()->utf8Data()));
+                    if (ret) {
+                        return (escargot::ESObject*)ret;
+                    }
+                }
+            }
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("getElementById"), 1, false);
+    elementFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("getElementById"), false, false, false, getElementByIdFunction);
+
     escargot::ESFunctionObject* documentElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
         {
             return escargot::ESValue();

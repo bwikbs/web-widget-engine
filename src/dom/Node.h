@@ -23,6 +23,10 @@ protected:
         initScriptWrappable(this, instance);
         m_nextSibling = nullptr;
         m_parentElement = nullptr;
+        m_id = nullptr;
+
+        m_angle = 0;
+        m_scale = 1;
     }
 
     Node(DocumentElement* documentElement)
@@ -32,6 +36,10 @@ protected:
         initScriptWrappable(this);
         m_nextSibling = nullptr;
         m_parentElement = nullptr;
+        m_id = nullptr;
+
+        m_angle = 0;
+        m_scale = 1;
     }
 public:
     virtual ~Node()
@@ -78,6 +86,17 @@ public:
     DocumentElement* documentElement()
     {
         return m_documentElement;
+    }
+
+    void setId(String* id)
+    {
+        m_id = id;
+        // TODO needs re-rendering?
+    }
+
+    String* id()
+    {
+        return m_id;
     }
 
     void setX(const Length& l)
@@ -164,15 +183,26 @@ public:
 
     virtual void paint(Canvas* canvas)
     {
-
+        // temp
+        canvas->scale(m_scale, m_scale, m_computedRect.width()/2, m_computedRect.height()/2);
+        canvas->rotate(m_angle, m_computedRect.width()/2, m_computedRect.height()/2);
     }
+
+    // temp for demo
+    float m_angle;
+    float m_scale;
+
+
 protected:
     Node* m_nextSibling;
     Element* m_parentElement;
     DocumentElement* m_documentElement;
 
+    String* m_id;
+
     // inline style
     Length m_x, m_y, m_width, m_height;
+
 
     //computed style
     Length m_computedX, m_computedY, m_computedWidth, m_computedHeight;

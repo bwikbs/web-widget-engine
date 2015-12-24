@@ -16,6 +16,12 @@ class ScriptBindingInstance;
 
 class ScriptWrappable : public escargot::ESObject {
 public:
+    enum Type {
+        None,
+        WindowObject,
+        NodeObject
+    };
+
     ScriptWrappable()
         : escargot::ESObject(escargot::ESPointer::Type::ESObject, escargot::ESValue())
     {

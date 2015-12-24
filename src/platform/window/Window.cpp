@@ -69,6 +69,7 @@ Window::Window(StarFish* starFish)
     m_document = new DocumentElement(this, m_starFish->scriptBindingInstance());
     initScriptWrappableWindow(this);
     m_document->initScriptWrappable(m_document);
+    m_timeoutCounter = 0;
     m_needsRendering = false;
     setNeedsRendering();
 }
@@ -113,8 +114,8 @@ void Window::rendering()
     Canvas* canvas = Canvas::createDirect(d);
     delete d;
 
-    canvas->setColor(Color(0,0,0,255));
-    canvas->clearColor(Color(255,255,255,255));
+    canvas->setColor(Color(255,255,255,255));
+    canvas->clearColor(Color(0,0,0,255));
 
     m_document->paint(canvas);
     m_needsRendering = false;
@@ -144,6 +145,35 @@ void Window::loadXMLDocument(String* filePath)
 {
     XMLDocumentBuilder* builder = new XMLDocumentBuilder;
     builder->build(m_document, filePath);
+}
+
+struct TimeoutData {
+    Window* m_window;
+    uint32_t m_id;
+};
+
+uint32_t Window::setTimeout(WindowSetTimeoutHandler handler, uint32_t delay, void* data)
+{
+    TimeoutData* td = new TimeoutData;
+    td->m_window = this;
+    uint32_t id = m_timeoutCounter++;
+    td->m_id = id;
+    m_timeoutHandler.insert(std::make_pair(id, std::make_pair(handler, data)));
+
+    // FIXME
+    // instance of window is not rooted.
+    // because timeoutdata is stored in memory area in ecore.
+    // this implemention is very unsafe
+    ecore_timer_add(delay/1000.0,[](void *data) -> Eina_Bool {
+        TimeoutData* td = (TimeoutData*)data;
+        auto a = td->m_window->m_timeoutHandler[td->m_id];
+        a.first(td->m_window, a.second);
+        td->m_window->m_timeoutHandler.erase(td->m_window->m_timeoutHandler.find(td->m_id));
+        delete td;
+        return ECORE_CALLBACK_DONE;
+    }, td);
+
+    return id;
 }
 
 }

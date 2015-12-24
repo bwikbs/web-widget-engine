@@ -7,6 +7,9 @@ namespace StarFish {
 
 class StarFish;
 class DocumentElement;
+class Window;
+
+typedef void (*WindowSetTimeoutHandler)(Window* window, void* data);
 
 class Window : public ScriptWrappable {
 public:
@@ -24,6 +27,8 @@ public:
     }
 
     void loadXMLDocument(String* filePath);
+    uint32_t setTimeout(WindowSetTimeoutHandler handler, uint32_t delay, void* data);
+
 
 protected:
     Window(StarFish* starFish);
@@ -33,6 +38,9 @@ protected:
     DocumentElement* m_document;
 
     StarFish* m_starFish;
+
+    uint32_t m_timeoutCounter;
+    std::unordered_map<uint32_t, std::pair<WindowSetTimeoutHandler, void*> > m_timeoutHandler;
 };
 
 }

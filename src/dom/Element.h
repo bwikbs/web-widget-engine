@@ -70,6 +70,27 @@ public:
         setNeedsRendering();
     }
 
+    Element* getElementById(String* id)
+    {
+        if (!id)
+            return nullptr;
+
+        Node* node = m_firstChild;
+        while (node) {
+            if (node->isElement()) {
+                if (node->asElement()->id() && node->asElement()->id()->equals(id)) {
+                    return node->asElement();
+                }
+                Element* ret = node->asElement()->getElementById(id);
+                if (ret)
+                    return ret;
+            }
+            node = node->nextSibling();
+        }
+
+        return nullptr;
+    }
+
     virtual void computeStyle()
     {
         Node::computeStyle();
@@ -100,6 +121,7 @@ public:
 
     virtual void paint(Canvas* canvas)
     {
+        Node::paint(canvas);
         Node* node = m_firstChild;
         while (node) {
             canvas->save();
@@ -109,7 +131,6 @@ public:
             canvas->restore();
             node = node->nextSibling();
         }
-
     }
 
 protected:

@@ -4,44 +4,111 @@
         -> implement container(Element-> Container? Layout? some thing
 -->
 <Document>
-    <Element
-        x="50"
-        y="50"
-        width="100"
-        height="100"
-    >
-        <Text
-            text="test1"
-            x="0"
-            y="0"
-            width="100"
-            height="50"
-        />
-        <Image
-            x="100"
-            y="25"
-            width="100"
-            height="25"
-            src="test/test.jpg"
-        />
-    </Element>
+    <Text
+        id = "hour1"
+        textSize = "48"
+        x = "60"
+        y = "30"
+        text = "0"
+    />
+    <Text
+        id = "hour2"
+        textSize = "48"
+        x = "90"
+        y = "30"
+        text = "0"
+    />
+    <Text
+        textSize = "48"
+        x = "120"
+        y = "30"
+        text = ":"
+    />
+    <Text
+        id = "min1"
+        textSize = "48"
+        x = "140"
+        y = "30"
+        text = "0"
+    />
+    <Text
+        id = "min2"
+        textSize = "48"
+        x = "170"
+        y = "30"
+        text = "0"
+    />
+    <Text
+        textSize = "48"
+        x = "200"
+        y = "30"
+        text = ":"
+    />
+    <Text
+        id = "sec1"
+        textSize = "48"
+        x = "220"
+        y = "30"
+        text = "0"
+    />
+    <Text
+        id = "sec2"
+        textSize = "48"
+        x = "250"
+        y = "30"
+        text = "0"
+    />
     <Image
-        x="0"
-        y="100"
-        width="300"
-        height="200"
-        src="test/test_.jpg"
+        id="sun"
+        src = "test/sun.png"
+        x = "55"
+        y = "110"
+        width = "240"
+        height = "205"
     />
     <Script>
         <![CDATA[
-        print(Window)
-        print(window)
-        print(window.document)
-        print(document)
-        print(document.firstChild)
-        print(document.firstChild.nextSibling.src)
-        document.firstChild.nextSibling.src = "test/test.jpg"
-        print(document.firstChild.nextSibling.src)
+        
+        function textSetter(a1, a2, time) {
+            a1.text = parseInt(time / 10);
+            a2.text = time % 10;
+        }
+        function timeoutHander() {
+            // print("timeout")
+            
+            var d = new Date();
+            textSetter(document.getElementById("hour1"), document.getElementById("hour2"), d.getHours());
+            textSetter(document.getElementById("min1"), document.getElementById("min2"), d.getMinutes());
+            textSetter(document.getElementById("sec1"), document.getElementById("sec2"), d.getSeconds());
+            
+            window.setTimeout(timeoutHander, 500);
+        }
+        
+        timeoutHander();
+        
+        function ani() {
+            var t = new Date();
+            t = t.valueOf()
+            t = t % 1000000
+            // t = t % 3600
+            // print(t)
+            document.getElementById("sun").angle = t/80;
+            
+            var now = Date.now();
+            var c = 500;
+            if (now - startTime > c) {
+                document.getElementById("sun").scale = 1;
+            } else 
+                document.getElementById("sun").scale = 1 + Math.sin( ((now - startTime) / c * 180) * Math.PI / 180) * 0.25;
+            window.setTimeout(ani, 13);
+        }
+        
+        var startTime = Date.now()
+        window.onTouch = function() {
+            startTime = Date.now();
+        }
+        
+        ani()
         ]]>
     </Script>
 </Document>

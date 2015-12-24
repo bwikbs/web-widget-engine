@@ -22,13 +22,26 @@ public:
         m_text = text;
         setNeedsRendering();
     }
+
     String* text()
     {
         return m_text;
     }
 
+    void setTextSize(float siz)
+    {
+        m_font = FontSelector::loadFont(String::createASCIIString(""), siz);
+        setNeedsRendering();
+    }
+
+    float textSize()
+    {
+        return m_font->size();
+    }
+
     virtual void paint(Canvas* canvas)
     {
+        Element::paint(canvas);
         canvas->save();
         canvas->setFont(m_font);
         canvas->drawText(0, 0, m_text);

@@ -25,6 +25,10 @@ void XMLDocumentBuilder::build(DocumentElement* documentElement, String* filePat
         element->setY(Length(Length::Fixed, xmlElement->IntAttribute("y")));
         element->setWidth(Length(Length::Fixed, xmlElement->IntAttribute("width")));
         element->setHeight(Length(Length::Fixed, xmlElement->IntAttribute("height")));
+
+        if (xmlElement->Attribute("id")) {
+            element->setId(String::createASCIIString(xmlElement->Attribute("id")));
+        }
     };
     std::function<void (Element* parentElement, tinyxml2::XMLElement* xmlElement)> fn = [&fn, &parseElementAttribute, &documentElement](Element* parentElement, tinyxml2::XMLElement* xmlElement)
     {
@@ -42,6 +46,9 @@ void XMLDocumentBuilder::build(DocumentElement* documentElement, String* filePat
             TextElement* textElement = new TextElement(documentElement);
             parseElementAttribute(textElement, xmlElement);
             textElement->setText(String::createASCIIString(xmlElement->Attribute("text")));
+            if (xmlElement->Attribute("textSize")) {
+                textElement->setTextSize(xmlElement->FloatAttribute("textSize"));
+            }
             currentElement = textElement;
         } else if (strcmp(xmlElement->Name(), "Script") == 0) {
             documentElement->window()->starFish()->scriptBindingInstance()->evaluate(String::createASCIIString(xmlElement->GetText()));

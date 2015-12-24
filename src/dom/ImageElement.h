@@ -27,6 +27,7 @@ public:
 
     virtual void paint(Canvas* canvas)
     {
+        Element::paint(canvas);
         canvas->save();
         ImageData* data = ImageData::create(m_src);
         canvas->drawImage(data, Rect(0,0,m_computedRect.width(), m_computedRect.height()));
