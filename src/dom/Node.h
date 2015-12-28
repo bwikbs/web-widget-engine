@@ -181,6 +181,15 @@ public:
         canvas->rotate(m_angle, m_computedRect.width()/2, m_computedRect.height()/2);
     }
 
+    virtual Node* hitTest(float x, float y)
+    {
+        if (x > 0 && y > 0 && x < m_computedRect.width() && y < m_computedRect.height())
+            return this;
+        return NULL;
+    }
+
+    virtual bool onTouchEvent(Window::TouchEventKind kind, float x, float y);
+
     float scale()
     {
         return m_scale;

@@ -54,17 +54,6 @@ void ScriptWrappable::initScriptWrappableWindow(Window* window)
     }, escargot::ESString::create("setTimeout"), 2, false);
     ((escargot::ESObject *)this)->defineDataProperty(escargot::ESString::create("setTimeout"), false, false, false, setTimeoutFunction);
 
-
-    // temp
-    ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,[](void *data, int type, void *event) -> Eina_Bool {
-        Window* wnd = (Window*)data;
-        escargot::ESObject* obj = (escargot::ESObject*)wnd;
-        escargot::ESValue fn = obj->get(escargot::ESString::create("onTouch"));
-        if (fn.isESPointer() && fn.asESPointer()->isESFunctionObject())
-            escargot::ESFunctionObject::call(escargot::ESVMInstance::currentInstance(), fn, obj, NULL, 0, false);
-        return EINA_TRUE;
-    } ,this);
-
 }
 
 void ScriptWrappable::initScriptWrappable(Node* ptr)
@@ -168,5 +157,31 @@ void ScriptWrappable::initScriptWrappable(TextElement*)
         TextElement* nd = ((TextElement *)originalObj);
         nd->setText(String::createASCIIString(value.toString()->utf8Data()));
     }, true, false, false);
+
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("textColor"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+        TextElement* nd = ((TextElement *)originalObj);
+        return escargot::ESString::create(nd->textColor().toString()->utf8Data());
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
+        TextElement* nd = ((TextElement *)originalObj);
+        nd->setTextColor(Color::fromString(String::createASCIIString(value.toString()->utf8Data())));
+    }, true, false, false);
 }
+
+void ScriptWrappable::callFunction(String* name)
+{
+    escargot::ESObject* obj = (escargot::ESObject*)this;
+    escargot::ESValue fn = obj->get(escargot::ESString::create(name->utf8Data()));
+    escargot::ESVMInstance* instance = escargot::ESVMInstance::currentInstance();
+
+    std::jmp_buf tryPosition;
+    if (setjmp(instance->registerTryPos(&tryPosition)) == 0) {
+        escargot::ESFunctionObject::call(instance, fn, obj, NULL, 0, false);
+        instance->unregisterTryPos(&tryPosition);
+    } else {
+        escargot::ESValue err = instance->getCatchedError();
+        printf("Uncaught %s\n", err.toString()->utf8Data());
+    }
+}
+
 }

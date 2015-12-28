@@ -133,6 +133,26 @@ public:
         }
     }
 
+    virtual Node* hitTest(float x, float y)
+    {
+        Node* node = m_firstChild;
+        Node* result = nullptr;
+        while (node) {
+            float nx = x - node->computedRect().x();
+            float ny = y - node->computedRect().y();
+            Node* r = node->hitTest(nx, ny);
+            if (r) {
+                result = r;
+            }
+            node = node->nextSibling();
+        }
+
+        if (!result) {
+            result = Node::hitTest(x, y);
+        }
+        return result;
+    }
+
 protected:
     Node* m_firstChild;
 };

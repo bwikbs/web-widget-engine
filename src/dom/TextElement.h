@@ -15,6 +15,7 @@ public:
         initScriptWrappable(this);
         m_text = nullptr;
         m_font = FontSelector::loadFont(String::createASCIIString(""), 10);
+        m_textColor = Color(255, 255, 255, 255);
     }
 
     void setText(String* text)
@@ -39,17 +40,33 @@ public:
         return m_font->size();
     }
 
+    void setTextColor(Color color)
+    {
+        m_textColor = color;
+        setNeedsRendering();
+    }
+
+    Color textColor()
+    {
+        return m_textColor;
+    }
+
     virtual void paint(Canvas* canvas)
     {
         Element::paint(canvas);
         canvas->save();
+        canvas->setColor(m_textColor);
         canvas->setFont(m_font);
-        canvas->drawText(0, 0, m_text);
+        Size siz = m_font->measureText(m_text);
+        float v = (m_computedRect.height() - siz.height()) / 2;
+        canvas->drawText(0, v, m_text);
+
         canvas->restore();
     }
 
 protected:
     String* m_text;
+    Color m_textColor;
     Font* m_font;
 };
 

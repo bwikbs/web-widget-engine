@@ -71,12 +71,14 @@ Window::Window(StarFish* starFish)
     m_document->initScriptWrappable(m_document);
     m_timeoutCounter = 0;
     m_needsRendering = false;
+    m_activeNodeWithTouchDown = nullptr;
     setNeedsRendering();
 }
 
 void Window::rendering()
 {
-    ASSERT(m_needsRendering);
+    if (!m_needsRendering)
+        return;
 
     m_document->computeStyle();
 
@@ -90,8 +92,6 @@ void Window::rendering()
     m_document->computeLayout();
 
     Evas* evas = evas_object_evas_get(eflWindow->m_window);
-
-
     struct dummy {
         void* a;
         void* b;
@@ -136,12 +136,20 @@ void Window::setNeedsRendering()
         // we pass window data as idler.
         // but, bdwgc is cannot see ecore's memory
         // we should add window as root set
-        // or pointer leave check
+        // or pointer live check
         Window* wnd = (Window*) data;
         wnd->rendering();
 
         return ECORE_CALLBACK_CANCEL;
     }, this);
+}
+
+void Window::renderingIfNeeds()
+{
+    if (m_needsRendering) {
+        rendering();
+        m_needsRendering = false;
+    }
 }
 
 void Window::loadXMLDocument(String* filePath)
@@ -177,6 +185,31 @@ uint32_t Window::setTimeout(WindowSetTimeoutHandler handler, uint32_t delay, voi
     }, td);
 
     return id;
+}
+
+Node* Window::hitTest(float x, float y)
+{
+    renderingIfNeeds();
+
+    Node* node = m_document->hitTest(x, y);
+    return node;
+}
+
+void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)
+{
+    Node* node = hitTest(x, y);
+    if (kind == Down) {
+        m_activeNodeWithTouchDown = node;
+    }
+    while (node) {
+        // TODO
+        // translate x, y
+        if (node->onTouchEvent(kind, x, y))
+            break;
+        node = node->parentElement();
+    }
+    if (kind == Up)
+        m_activeNodeWithTouchDown = nullptr;
 }
 
 }

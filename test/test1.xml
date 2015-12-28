@@ -8,54 +8,70 @@
         id = "hour1"
         textSize = "48"
         x = "60"
-        y = "30"
+        y = "45"
+        width="30"
+        height="40"
         text = "0"
     />
     <Text
         id = "hour2"
         textSize = "48"
         x = "90"
-        y = "30"
+        y = "45"
+        width="30"
+        height="40"
         text = "0"
     />
     <Text
         textSize = "48"
         x = "120"
-        y = "30"
+        y = "45"
+        width="20"
+        height="40"
         text = ":"
     />
     <Text
         id = "min1"
         textSize = "48"
         x = "140"
-        y = "30"
+        y = "45"
+        width="30"
+        height="40"
         text = "0"
     />
     <Text
         id = "min2"
         textSize = "48"
         x = "170"
-        y = "30"
+        y = "45"
+        width="30"
+        height="40"
         text = "0"
     />
     <Text
         textSize = "48"
         x = "200"
-        y = "30"
+        y = "45"
+        width="20"
+        height="40"
         text = ":"
     />
     <Text
         id = "sec1"
         textSize = "48"
         x = "220"
-        y = "30"
+        y = "45"
+        width="30"
+        height="40"
         text = "0"
     />
     <Text
         id = "sec2"
         textSize = "48"
         x = "250"
-        y = "30"
+        y = "45"
+        width="30"
+        height="40"
         text = "0"
     />
     <Image
@@ -104,11 +120,17 @@
         }
         
         var startTime = Date.now()
-        window.onTouch = function() {
+        
+        document.getElementById("sun").onClick = function() {
             startTime = Date.now();
         }
         
         ani()
+        
+        document.getElementById("hour1").onClick = function() {
+            print(this.textColor)
+            this.textColor = "rgba(255,0,0,255)";
+        }
         ]]>
     </Script>
 </Document>

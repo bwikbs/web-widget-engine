@@ -15,6 +15,7 @@ class Window : public ScriptWrappable {
 public:
     static Window* create(StarFish* sf, size_t w = SIZE_MAX, size_t h = SIZE_MAX);
     void setNeedsRendering();
+    void renderingIfNeeds();
 
     DocumentElement* document()
     {
@@ -29,6 +30,18 @@ public:
     void loadXMLDocument(String* filePath);
     uint32_t setTimeout(WindowSetTimeoutHandler handler, uint32_t delay, void* data);
 
+    enum TouchEventKind {
+        Down,
+        Move,
+        Up
+    };
+    void dispatchTouchEvent(float x, float y, TouchEventKind kind);
+
+    Node* hitTest(float x, float y);
+    Node* activeNodeWithTouchDown()
+    {
+        return m_activeNodeWithTouchDown;
+    }
 
 protected:
     Window(StarFish* starFish);
@@ -36,6 +49,7 @@ protected:
 
     bool m_needsRendering;
     DocumentElement* m_document;
+    Node* m_activeNodeWithTouchDown;
 
     StarFish* m_starFish;
 

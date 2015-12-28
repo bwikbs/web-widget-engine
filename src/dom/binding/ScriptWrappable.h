@@ -37,6 +37,8 @@ public:
     void initScriptWrappable(ImageElement* ptr);
     void initScriptWrappable(TextElement* ptr);
 
+    void callFunction(String* name);
+
 protected:
 };
 

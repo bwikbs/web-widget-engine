@@ -84,6 +84,11 @@ public:
     void setY(float y) { m_location.setY(y); }
     void setWidth(float width) { m_size.setWidth(width); }
     void setHeight(float height) { m_size.setHeight(height); }
+
+    bool contains(float px, float py) const
+    {
+        return px >= x() && px < (x() + width()) && py >= y() && py < (y() + height());
+    }
 private:
     Location m_location;
     Size m_size;
@@ -106,6 +111,21 @@ public:
         , m_a(a)
     {
 
+    }
+
+    static Color fromString(String* string)
+    {
+        const char* str = string->utf8Data();
+        float r, g, b, a;
+        sscanf(str, "rgba(%f,%f,%f,%f)", &r, &g, &b, &a);
+        return Color(r, g, b, a);
+    }
+
+    String* toString()
+    {
+        char buf[256];
+        sprintf(buf, "rgba(%d,%d,%d,%d)", (int)m_r, (int)m_g, (int)m_b, (int)m_a);
+        return String::createASCIIString(buf);
     }
 
     bool operator==(const Color& c) {
