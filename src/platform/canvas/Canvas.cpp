@@ -169,7 +169,7 @@ public:
             void* b;
             int w;
             int h;
-            std::list<Evas_Object*>* objList;
+            std::vector<Evas_Object*>* objList;
         };
         dummy* d = (dummy*)data;
         m_canvas = (Evas *)d->a;
@@ -603,7 +603,7 @@ protected:
     void* m_buffer;
     unsigned m_width;
     unsigned m_height;
-    std::list<Evas_Object*>* m_objList;
+    std::vector<Evas_Object*>* m_objList;
     std::unordered_map<ImageData*, std::vector<std::pair<Evas_Object*, bool>>>* m_prevDrawnImageMap;
 };
 

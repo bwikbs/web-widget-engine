@@ -89,17 +89,17 @@ void ScriptWrappable::initScriptWrappable(Node* ptr, ScriptBindingInstance* inst
 
     ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("angle"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESValue(((Node *)originalObj)->m_angle);
+        return escargot::ESValue(((Node *)originalObj)->angle());
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->m_angle = value.toNumber();
+        ((Node *)originalObj)->setAngle(value.toNumber());
         ((Node *)originalObj)->setNeedsRendering();
     }, true, false, false);
 
     ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("scale"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESValue(((Node *)originalObj)->m_scale);
+        return escargot::ESValue(((Node *)originalObj)->scale());
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->m_scale = value.toNumber();
+        ((Node *)originalObj)->setScale(value.toNumber());
         ((Node *)originalObj)->setNeedsRendering();
     }, true, false, false);
 

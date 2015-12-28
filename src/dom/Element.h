@@ -107,10 +107,10 @@ public:
         Node::computeLayout();
         Node* node = m_firstChild;
         while (node) {
-            auto w = node->computedWidth();
-            auto h = node->computedHeight();
-            auto x = node->computedX();
-            auto y = node->computedY();
+            auto w = node->width();
+            auto h = node->height();
+            auto x = node->x();
+            auto y = node->y();
 
             node->setComputedRect(Rect(x.fixed(), y.fixed(), w.fixed(), h.fixed()));
             node->computeLayout();

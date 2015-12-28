@@ -123,34 +123,28 @@ public:
         setNeedsRendering();
     }
 
-
-    const Length& computedX() const
+    const Length& x() const
     {
-        return m_computedX;
+        return m_x;
     }
 
-    const Length& computedY() const
+    const Length& y() const
     {
-        return m_computedY;
+        return m_y;
     }
 
-    const Length& computedWidth() const
+    const Length& width() const
     {
-        return m_computedWidth;
+        return m_width;
     }
 
-    const Length& computedHeight() const
+    const Length& height() const
     {
-        return m_computedHeight;
+        return m_height;
     }
 
     virtual void computeStyle()
     {
-        // self
-        m_computedX = m_x;
-        m_computedY = m_y;
-        m_computedHeight = m_height;
-        m_computedWidth = m_width;
     }
 
     virtual void computeLayout()
@@ -183,14 +177,29 @@ public:
 
     virtual void paint(Canvas* canvas)
     {
-        // temp
         canvas->scale(m_scale, m_scale, m_computedRect.width()/2, m_computedRect.height()/2);
         canvas->rotate(m_angle, m_computedRect.width()/2, m_computedRect.height()/2);
     }
 
-    // temp for demo
-    float m_angle;
-    float m_scale;
+    float scale()
+    {
+        return m_scale;
+    }
+
+    void setScale(float f)
+    {
+        m_scale = f;
+    }
+
+    float angle()
+    {
+        return m_angle;
+    }
+
+    void setAngle(float f)
+    {
+        m_angle = f;
+    }
 
 
 protected:
@@ -203,9 +212,11 @@ protected:
     // inline style
     Length m_x, m_y, m_width, m_height;
 
+    // transform
+    float m_angle;
+    float m_scale;
 
-    //computed style
-    Length m_computedX, m_computedY, m_computedWidth, m_computedHeight;
+    //computed layout
     Rect m_computedRect;
 };
 

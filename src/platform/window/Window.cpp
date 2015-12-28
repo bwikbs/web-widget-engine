@@ -23,7 +23,7 @@ public:
     Evas_Object* m_window;
     Evas_Object* m_background;
     Evas_Object* m_canvasAdpater;
-    std::list<Evas_Object*> m_objectList;
+    std::vector<Evas_Object*> m_objectList;
     std::unordered_map<ImageData*, std::vector<std::pair<Evas_Object*, bool>>> m_drawnImageList;
     Evas_Object* m_dummyBox;
 };
@@ -97,7 +97,7 @@ void Window::rendering()
         void* b;
         int w;
         int h;
-        std::list<Evas_Object*>* objList;
+        std::vector<Evas_Object*>* objList;
     };
     dummy* d = new dummy;
     d->a = evas;
@@ -111,6 +111,7 @@ void Window::rendering()
         iter++;
     }
     eflWindow->m_objectList.clear();
+    eflWindow->m_objectList.shrink_to_fit();
     Canvas* canvas = Canvas::createDirect(d);
     delete d;
 
@@ -118,6 +119,8 @@ void Window::rendering()
     canvas->clearColor(Color(0,0,0,255));
 
     m_document->paint(canvas);
+
+    delete canvas;
     m_needsRendering = false;
 }
 

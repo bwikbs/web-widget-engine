@@ -7,7 +7,7 @@
 
 using namespace StarFish;
 
-int main()
+int main(int argc, char *argv[])
 {
     StarFish::StarFish* sf = new StarFish::StarFish();
     /*
@@ -26,7 +26,11 @@ int main()
     sf->window()->document()->appendChild(txt);
     sf->window()->document()->appendChild(img);
     */
-    sf->window()->loadXMLDocument(String::createASCIIString("test/test1.xml"));
+    if (argc == 1) {
+        puts("please specify xml path");
+        return -1;
+    }
+    sf->window()->loadXMLDocument(String::createASCIIString(argv[1]));
     sf->run();
     return 0;
 }

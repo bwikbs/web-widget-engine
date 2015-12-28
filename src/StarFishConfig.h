@@ -63,7 +63,7 @@
 /* ALWAYS_INLINE */
 #ifndef ALWAYS_INLINE
 #if COMPILER(GCC) && defined(NDEBUG) && !COMPILER(MINGW)
-#define ALWAYS_INLINE inline __attribute__((__always_inline__))
+#define ALWAYS_INLINE inline
 #elif COMPILER(MSVC) && defined(NDEBUG)
 #define ALWAYS_INLINE __forceinline
 #else
