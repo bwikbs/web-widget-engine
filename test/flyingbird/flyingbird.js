@@ -62,10 +62,11 @@
     </Element>
     <Text
         id = "gameOver"
-        x = "55"
-        y = "150"
+        x = "40"
+        y = "135"
         width = "0"
         height = "0"
+        background = "rgba(0,150,220,255)"
         textAlign = "center"
         textSize = "42"
         text = ""
@@ -112,12 +113,13 @@
                 }
 
             } else{
-                bird_current_height += 2;
+                bird_current_height += 1;
                 if(bird_current_height >= 260){
                     bird_current_height = 260;
                     gameOverEvent();
+                } else {
+                    document.getElementById("bird").y = "" + bird_current_height;
                 }
-                document.getElementById("bird").y = "" + bird_current_height;
             }
             window.setTimeout(function(){ drawBird(redrawTime) }, redrawTime * 1000);
         }
@@ -127,11 +129,9 @@
 
         function gameOverEvent(){
             playingflag = 0;
-            gobtn.text = "Game Over!!!";
-            gobtn.width = "250";
-            gobtn.height = "100";
-
-
+            gobtn.text = "Game Over";
+            gobtn.width = "280";
+            gobtn.height = "90";
 
         }
         function rotary_callback(direction){
@@ -141,30 +141,27 @@
                     correctquiz++;
                     document.getElementById("knot" + correctquiz).width = 25;
                     document.getElementById("knot" + correctquiz).height = 25;
-                    print(correctquiz);
                 }
                 else{
-                    bird_current_height += 32;
+                    bird_current_height += 16;
                 }
             } else if(direction == "ccwise"){
                 if(thisknot == knotEnum.counter_clockwise_down || thisknot == knotEnum.counter_clockwise_up){
                     correctquiz++;
                     document.getElementById("knot" + correctquiz).width = 25;
                     document.getElementById("knot" + correctquiz).height = 25;
-                    print(correctquiz);
                 }
                 else{
-                    bird_current_height += 32;
+                    bird_current_height += 16;
                 }
             } else if(direction == "star"){
                 if(thisknot == knotEnum.touch){
                     correctquiz++;
                     document.getElementById("knot" + correctquiz).width = 25;
                     document.getElementById("knot" + correctquiz).height = 25;
-                   print(correctquiz);
                 }
                 else{
-                    bird_current_height += 32;
+                    bird_current_height += 16;
                 }
             }
 
@@ -176,7 +173,6 @@
 
         function knots_all_clear(){
             correctquiz = 0;
-print(time_spent);            
             setBirdHeight((bird_current_height - 500 / time_spent < 0) ? 0 : ((bird_current_height - 500 / time_spent) | 0));
             window.setTimeout(generate_random_knots, 3 * 1000);
         }
@@ -191,13 +187,17 @@ print(time_spent);
             gobtn.height = "0";
             
 
+            // show elements
+            document.getElementById("record").text = "0.0";
+
             bird_current_height = 130;
             bird_goal_height = 500;
             window.setTimeout(count_time_spent, 100);
+            window.setTimeout(recordscore, 100);
 
             generate_random_knots();
 
-            drawBird(0.1);
+            drawBird(0.03);
         }
         function generate_random_knots() {
             var i;
@@ -223,6 +223,13 @@ print(time_spent);
             }
         }
 
+        function recordscore(){
+            if(playingflag){
+                record += 0.1;
+                document.getElementById("record").text = "" + record.toFixed(1);
+                window.setTimeout(recordscore, 100); // 0.1 * 1000
+            }
+        }
 
 
 // start button
@@ -240,11 +247,6 @@ print(time_spent);
                     rotary_callback("star");                
                 }
             }
-
-            // make and start timers
-
-            // draw bird
-
 
             var gobtn = document.getElementById("gameOver");
             gobtn.onClick = function(){
