@@ -30,8 +30,6 @@
         y = "90"
         width="50"
         height="50"
-        background="url(test/sun.png)"
-        backgroundWhenActive="rgba(0,0,0,0)"
     >
         <Text
         x = "0"
@@ -190,6 +188,12 @@
 		print("up")
 		print(e);
 	}
+	
+	print(document.getElementById("backgroundTest2").background)
+	document.getElementById("backgroundTest2").background = "rgba(0,0,255,255)"
+	print(document.getElementById("backgroundTest2").background)
+	document.getElementById("backgroundTest2").backgroundWhenActive = "url(test/sun.png)"
+	print(document.getElementById("backgroundTest2").backgroundWhenActive)
         ]]>
     </Script>
 </Document>

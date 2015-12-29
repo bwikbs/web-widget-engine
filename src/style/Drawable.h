@@ -19,6 +19,7 @@ public:
     {
         m_type = None;
         m_image = nullptr;
+        m_imageSrc = nullptr;
     }
 
     static Drawable fromString(String* str)
@@ -39,10 +40,23 @@ public:
                 buf[len - 1] = 0;
             }
             d.m_image = ImageData::create(String::createASCIIString(buf));
+            d.m_imageSrc = str;
         } else {
             RELEASE_ASSERT_NOT_REACHED();
         }
         return d;
+    }
+
+    String* toString() const
+    {
+        if (m_type == None) {
+            return String::createASCIIString("");
+        } else if (m_type == SolidColor) {
+            return m_color.toString();
+        } else {
+            ASSERT(m_type == Image);
+            return m_imageSrc;
+        }
     }
 
     DrawableType type()
@@ -66,6 +80,7 @@ protected:
     DrawableType m_type;
     Color m_color;
     ImageData* m_image;
+    String* m_imageSrc;
 };
 
 }

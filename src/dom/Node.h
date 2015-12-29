@@ -124,9 +124,19 @@ public:
         m_background = d;
     }
 
+    const Drawable& background()
+    {
+        return m_background;
+    }
+
     void setBackgroundWhenActive(const Drawable& d)
     {
         m_backgroundWhenActive = d;
+    }
+
+    const Drawable& backgroundWhenActive()
+    {
+        return m_backgroundWhenActive;
     }
 
     void setX(const Length& l)
@@ -241,6 +251,7 @@ public:
     void setScale(float f)
     {
         m_scale = f;
+        setNeedsRendering();
     }
 
     float angle()
@@ -251,6 +262,7 @@ public:
     void setAngle(float f)
     {
         m_angle = f;
+        setNeedsRendering();
     }
 
 

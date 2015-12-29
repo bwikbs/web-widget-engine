@@ -121,7 +121,7 @@ public:
         return Color(r, g, b, a);
     }
 
-    String* toString()
+    String* toString() const
     {
         char buf[256];
         sprintf(buf, "rgba(%d,%d,%d,%d)", (int)m_r, (int)m_g, (int)m_b, (int)m_a);

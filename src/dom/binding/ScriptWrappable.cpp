@@ -81,7 +81,6 @@ void ScriptWrappable::initScriptWrappable(Node* ptr, ScriptBindingInstance* inst
         return escargot::ESValue(((Node *)originalObj)->angle());
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
         ((Node *)originalObj)->setAngle(value.toNumber());
-        ((Node *)originalObj)->setNeedsRendering();
     }, true, false, false);
 
     ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("scale"),
@@ -89,7 +88,20 @@ void ScriptWrappable::initScriptWrappable(Node* ptr, ScriptBindingInstance* inst
         return escargot::ESValue(((Node *)originalObj)->scale());
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
         ((Node *)originalObj)->setScale(value.toNumber());
-        ((Node *)originalObj)->setNeedsRendering();
+    }, true, false, false);
+
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("background"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+        return escargot::ESValue(escargot::ESString::create(((Node *)originalObj)->background().toString()->utf8Data()));
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
+        ((Node *)originalObj)->setBackground(Drawable::fromString(String::createASCIIString(value.toString()->utf8Data())));
+    }, true, false, false);
+
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("backgroundWhenActive"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+        return escargot::ESValue(escargot::ESString::create(((Node *)originalObj)->backgroundWhenActive().toString()->utf8Data()));
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
+        ((Node *)originalObj)->setBackgroundWhenActive(Drawable::fromString(String::createASCIIString(value.toString()->utf8Data())));
     }, true, false, false);
 
     ((escargot::ESObject *)this)->setExtraData(NodeObject);
