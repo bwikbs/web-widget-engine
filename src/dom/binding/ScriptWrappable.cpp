@@ -166,6 +166,22 @@ void ScriptWrappable::initScriptWrappable(TextElement*)
         TextElement* nd = ((TextElement *)originalObj);
         nd->setTextColor(Color::fromString(String::createASCIIString(value.toString()->utf8Data())));
     }, true, false, false);
+
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("textAlign"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+        TextElement* nd = ((TextElement *)originalObj);
+        if (nd->textAlign() == TextElement::TextAlignLeft) {
+            return escargot::ESString::create("left");
+        } else if (nd->textAlign() == TextElement::TextAlignRight) {
+            return escargot::ESString::create("right");
+        } else if (nd->textAlign() == TextElement::TextAlignCenter) {
+            return escargot::ESString::create("center");
+        }
+        return escargot::ESString::create("");
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
+        TextElement* nd = ((TextElement *)originalObj);
+        nd->setTextAlign(String::createASCIIString(value.toString()->utf8Data()));
+    }, true, false, false);
 }
 
 void ScriptWrappable::callFunction(String* name)

@@ -49,9 +49,20 @@ void XMLDocumentBuilder::build(DocumentElement* documentElement, String* filePat
             if (xmlElement->Attribute("textSize")) {
                 textElement->setTextSize(xmlElement->FloatAttribute("textSize"));
             }
+            if (xmlElement->Attribute("textAlign")) {
+                textElement->setTextAlign(String::createASCIIString(xmlElement->Attribute("textAlign")));
+            }
             currentElement = textElement;
         } else if (strcmp(xmlElement->Name(), "Script") == 0) {
-            documentElement->window()->starFish()->scriptBindingInstance()->evaluate(String::createASCIIString(xmlElement->GetText()));
+            escargot::ESVMInstance* instance = escargot::ESVMInstance::currentInstance();
+            std::jmp_buf tryPosition;
+            if (setjmp(instance->registerTryPos(&tryPosition)) == 0) {
+                documentElement->window()->starFish()->scriptBindingInstance()->evaluate(String::createASCIIString(xmlElement->GetText()));
+                instance->unregisterTryPos(&tryPosition);
+            } else {
+                escargot::ESValue err = instance->getCatchedError();
+                printf("Uncaught %s\n", err.toString()->utf8Data());
+            }
             return ;
         }
 

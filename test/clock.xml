@@ -5,17 +5,6 @@
 -->
 <Document>
     <Text
-        id = "taTest"
-        textSize = "24"
-        x = "0"
-        y = "0"
-        width="360"
-        height="40"
-        text = "left"
-        textAlign = "left"
-    />
-
-    <Text
         id = "hour1"
         textSize = "48"
         x = "60"
@@ -95,7 +84,6 @@
     />
     <Script>
         <![CDATA[
-        
         function textSetter(a1, a2, time) {
             a1.text = parseInt(time / 10);
             a2.text = time % 10;
@@ -137,31 +125,6 @@
         }
         
         ani()
-        
-        document.getElementById("hour1").onClick = function() {
-            print(this.textColor)
-            this.textColor = "rgba(255,0,0,255)";
-        }
-        
-        document.getElementById("taTest").onClick = function() {
-            print(this.textAlign);
-            if (this.textAlign == "left") {
-                this.text = this.textAlign = "center"
-            } else if (this.textAlign == "center") {
-                this.text = this.textAlign = "right"
-            } else if (this.textAlign == "right") {
-                this.text = this.textAlign = "left"
-            }
-        }
-
-	window.onKeyDown = function(e) {
-		print("down")
-		print(e);
-	}
-	window.onKeyUp = function(e) {
-		print("up")
-		print(e);
-	}
         ]]>
     </Script>
 </Document>

@@ -26,6 +26,15 @@ public:
         }
         return false;
     }
+
+    bool equals(const char* str)
+    {
+        if (*asASCIIString() == str) {
+            return true;
+        }
+        return false;
+    }
+
 protected:
     String()
     {
