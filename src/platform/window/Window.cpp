@@ -293,6 +293,11 @@ void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)
     Node* node = hitTest(x, y);
     if (kind == TouchEventDown) {
         m_activeNodeWithTouchDown = node;
+        Node* t = node;
+        while (t) {
+            t->setState(Node::NodeStateActive);
+            t = t->parentElement();
+        }
     }
     while (node) {
         // TODO
@@ -301,8 +306,14 @@ void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)
             break;
         node = node->parentElement();
     }
-    if (kind == TouchEventUp)
+    if (kind == TouchEventUp) {
+        Node* t = m_activeNodeWithTouchDown;
+        while (t) {
+            t->setState(Node::NodeStateNormal);
+            t = t->parentElement();
+        }
         m_activeNodeWithTouchDown = nullptr;
+    }
 }
 
 void Window::dispatchKeyEvent(String* key, KeyEventKind kind)

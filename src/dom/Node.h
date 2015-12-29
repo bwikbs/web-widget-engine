@@ -4,6 +4,7 @@
 #include "util/String.h"
 #include "util/Unit.h"
 #include "style/Length.h"
+#include "style/Drawable.h"
 #include "platform/window/Window.h"
 #include "platform/canvas/Canvas.h"
 #include "platform/canvas/font/Font.h"
@@ -27,6 +28,8 @@ protected:
 
         m_angle = 0;
         m_scale = 1;
+
+        m_state = NodeStateNormal;
     }
 
     Node(DocumentElement* documentElement)
@@ -40,8 +43,15 @@ protected:
 
         m_angle = 0;
         m_scale = 1;
+
+        m_state = NodeStateNormal;
     }
 public:
+    enum NodeState {
+        NodeStateNormal,
+        NodeStateActive,
+    };
+
     virtual ~Node()
     {
 
@@ -97,6 +107,26 @@ public:
     String* id()
     {
         return m_id;
+    }
+
+    void setState(NodeState state)
+    {
+        m_state = state;
+    }
+
+    NodeState state()
+    {
+        return m_state;
+    }
+
+    void setBackground(const Drawable& d)
+    {
+        m_background = d;
+    }
+
+    void setBackgroundWhenActive(const Drawable& d)
+    {
+        m_backgroundWhenActive = d;
     }
 
     void setX(const Length& l)
@@ -179,6 +209,19 @@ public:
     {
         canvas->scale(m_scale, m_scale, m_computedRect.width()/2, m_computedRect.height()/2);
         canvas->rotate(m_angle, m_computedRect.width()/2, m_computedRect.height()/2);
+
+        Drawable* target = &m_background;
+        if ((m_state == NodeStateActive && m_backgroundWhenActive.type() != Drawable::None)) {
+            target = &m_backgroundWhenActive;
+        }
+        if (target->type() == Drawable::SolidColor) {
+            canvas->save();
+            canvas->setColor(target->color());
+            canvas->drawRect(Rect(0, 0, m_computedRect.width(), m_computedRect.height()));
+            canvas->restore();
+        } else if (target->type() == Drawable::Image) {
+            canvas->drawImage(target->image(), Rect(0, 0, m_computedRect.width(), m_computedRect.height()));
+        }
     }
 
     virtual Node* hitTest(float x, float y)
@@ -227,6 +270,10 @@ protected:
 
     //computed layout
     Rect m_computedRect;
+
+    NodeState m_state;
+    Drawable m_background;
+    Drawable m_backgroundWhenActive;
 };
 
 }

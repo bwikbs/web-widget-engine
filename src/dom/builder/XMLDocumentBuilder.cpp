@@ -29,6 +29,14 @@ void XMLDocumentBuilder::build(DocumentElement* documentElement, String* filePat
         if (xmlElement->Attribute("id")) {
             element->setId(String::createASCIIString(xmlElement->Attribute("id")));
         }
+
+        if (xmlElement->Attribute("background")) {
+            element->setBackground(Drawable::fromString(String::createASCIIString(xmlElement->Attribute("background"))));
+        }
+
+        if (xmlElement->Attribute("backgroundWhenActive")) {
+            element->setBackgroundWhenActive(Drawable::fromString(String::createASCIIString(xmlElement->Attribute("backgroundWhenActive"))));
+        }
     };
     std::function<void (Element* parentElement, tinyxml2::XMLElement* xmlElement)> fn = [&fn, &parseElementAttribute, &documentElement](Element* parentElement, tinyxml2::XMLElement* xmlElement)
     {
@@ -51,6 +59,9 @@ void XMLDocumentBuilder::build(DocumentElement* documentElement, String* filePat
             }
             if (xmlElement->Attribute("textAlign")) {
                 textElement->setTextAlign(String::createASCIIString(xmlElement->Attribute("textAlign")));
+            }
+            if (xmlElement->Attribute("textColor")) {
+                textElement->setTextColor(Color::fromString(String::createASCIIString(xmlElement->Attribute("textColor"))));
             }
             currentElement = textElement;
         } else if (strcmp(xmlElement->Name(), "Script") == 0) {

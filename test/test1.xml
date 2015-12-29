@@ -14,6 +14,34 @@
         text = "left"
         textAlign = "left"
     />
+    <Element
+        id="backgroundTest"
+        x = "0"
+        y = "40"
+        width="50"
+        height="50"
+        background="rgba(255,255,255,255)"
+        backgroundWhenActive="url(test/sun.png)"
+    />
+    
+    <Element
+        id="backgroundTest2"
+        x = "0"
+        y = "90"
+        width="50"
+        height="50"
+        background="url(test/sun.png)"
+        backgroundWhenActive="rgba(0,0,0,0)"
+    >
+        <Text
+        x = "0"
+        y = "0"
+        width = "50"
+        height = "50"
+        text = "test"
+        textColor = "rgba(255,0,0,255)"
+        />
+    </Element>
 
     <Text
         id = "hour1"
