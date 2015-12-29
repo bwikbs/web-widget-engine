@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document>
+    <Text
+        id = "city"
+        textSize = "42"
+        width = "150"
+        height = "50"
+        x = "115"
+        y = "30"
+        text = "Seoul"
+    />
+    <Text
+        id = "time"
+        textSize = "64"
+        x = "35"
+        y = "140"
+        text = "10"
+    />
+    <Text
+        id = "date"
+        textSize = "32"
+        x = "100"
+        y = "290"
+        text = "Tue"
+    />
+    <Script>
+        <![CDATA[
+
+        var cities = [];
+        var curCity = 0;
+
+        function init() {
+            initCities();
+            setDefaultEvents();
+            showTime(curCity);
+        }
+
+        function initCities() {
+            cities.push({city: "Seoul", gmt: 9});
+            cities.push({city: "San Francisco", gmt: -8});
+            cities.push({city: "London", gmt: 0});
+        }
+
+/*        function setDefaultEvents() {
+            document.addEventListener("rotarydetent", function(ev) {
+                var dir = ev.detail.direction;
+                if(dir == "CW") {
+                    curCity = (curCity+1)%cities.length;
+                } else if(dir == "CCW") {
+                    curCity = (curCity-1+cities.length)%cities.length;
+                }
+                showTime(curCity);
+        });
+*/
+        function setDefaultEvents() {
+            window.onKeyUp = function(e){
+                if(e == "Down"){
+                    curCity = (curCity+1)%cities.length;
+                }
+                if(e == "Up"){
+                    curCity = (curCity-1+cities.length)%cities.length;
+                }
+                showTime(curCity);
+                print(e);
+            };
+        }
+        
+        function showTime(index) {
+            var objCity = document.getElementById('city');
+            objCity.text = "" + cities[index].city;
+
+            var dateNow = new Date();
+            var UTCDate = new Date();
+            UTCDate.setTime(dateNow.getTime()+dateNow.getTimezoneOffset()*60*1000);
+
+            dateNow.setTime(UTCDate.getTime()+3600000*cities[index].gmt);
+
+            var ampm = "";
+            var timeVal = "";
+            if(dateNow.getHours() < 13) {
+                timeVal = dateNow.getHours();
+                ampm = "AM";
+            } else {
+                timeVal = dateNow.getHours() - 12;
+                ampm = "PM";
+            }
+
+            timeVal += ":"
+            timeVal += dateNow.getMinutes() < 10? "0"+dateNow.getMinutes(): dateNow.getMinutes();
+            timeVal += ampm;
+
+            function getMonth(i) {
+                var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                return months[i];
+            }
+
+            function getDay(i) {
+                var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+                return days[i];
+            }
+
+            var dateVal = getDay(dateNow.getDay()) +", "+ getMonth(dateNow.getMonth()) + " " + dateNow.getDate();    
+
+            var objTime = document.getElementById('time');
+            objTime.text = "" + timeVal;
+            var objDate = document.getElementById('date');
+            objDate.text = "" + dateVal;    
+        }
+
+        init();
+
+        ]]>
+    </Script>
+</Document>
