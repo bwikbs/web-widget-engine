@@ -10,22 +10,6 @@ using namespace StarFish;
 int main(int argc, char *argv[])
 {
     StarFish::StarFish* sf = new StarFish::StarFish();
-    /*
-    TextElement* txt = new TextElement(sf->window()->document());
-    txt->setX(Length(Length::Fixed, 50));
-    txt->setY(Length(Length::Fixed, 50));
-    txt->setWidth(Length(Length::Fixed, 100));
-    txt->setHeight(Length(Length::Fixed, 100));
-    txt->setText(String::createASCIIString("test string"));
-    ImageElement* img = new ImageElement(sf->window()->document());
-    img->setX(Length(Length::Fixed, 150));
-    img->setY(Length(Length::Fixed, 150));
-    img->setWidth(Length(Length::Fixed, 100));
-    img->setHeight(Length(Length::Fixed, 100));
-    img->setSrc(String::createASCIIString("test/test.jpg"));
-    sf->window()->document()->appendChild(txt);
-    sf->window()->document()->appendChild(img);
-    */
     if (argc == 1) {
         puts("please specify xml path");
         return -1;
@@ -34,3 +18,24 @@ int main(int argc, char *argv[])
     sf->run();
     return 0;
 }
+
+/*
+#include <Elementary.h>
+
+int main()
+{
+    elm_init(0,0);
+    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+    Evas_Object* wnd = elm_win_add(NULL, "", ELM_WIN_BASIC);
+
+    elm_win_autodel_set(wnd, EINA_TRUE);
+    Evas_Object* box = elm_box_add(wnd);
+    evas_object_size_hint_weight_set (box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(wnd, box);
+    evas_object_show(box);
+
+    evas_object_show(wnd);
+    elm_run();
+    return 0;
+}
+*/

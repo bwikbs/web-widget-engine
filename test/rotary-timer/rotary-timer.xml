@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document>
+    <Element
+        id = "firstFrame"
+        x = "0"
+        y = "0"
+        width = "360"
+        height = "360"
+        background = "url(test/rotary-timer/time_picker_bg.png)"
+    >
+        <Image
+            id = "start1"
+            x = "160"
+            y = "50"
+            width = "45"
+            height = "45"
+            src = "test/rotary-timer/play.png"
+        />
+        <Text
+            id = "start2"
+            x = "0"
+            y = "100"
+            width = "360"
+            height = "30"
+            textSize = "20"
+            textAlign = "center"
+            text = "START"
+        />
+        <Element
+            x = "70"
+            y = "190"
+            width = "70"
+            height = "70"
+            textSize = "20"
+            id = "hrs"
+        >
+            <Text
+                x = "0"
+                y = "0"
+                width = "70"
+                height = "35"
+                text = "Hrs"
+                textSize = "16"
+                textAlign = "center"
+            />
+            <Text
+                x = "0"
+                y = "30"
+                width = "70"
+                height = "35"
+                text = "00"
+                textSize = "20"
+                textAlign = "center"
+            />
+        </Element>
+        <Element
+            x = "150"
+            y = "190"
+            width = "70"
+            height = "70"
+            textSize = "20"
+            id = "min"
+        >
+            <Text
+                x = "0"
+                y = "0"
+                width = "70"
+                height = "35"
+                text = "Min"
+                textSize = "16"
+                textAlign = "center"
+            />
+            <Text
+                x = "0"
+                y = "30"
+                width = "70"
+                height = "35"
+                text = "00"
+                textSize = "20"
+                textAlign = "center"
+            />
+        </Element>
+        <Element
+            x = "230"
+            y = "190"
+            width = "70"
+            height = "70"
+            text = "Hrs"
+            textSize = "20"
+            id = "sec"
+        >
+            <Text
+                x = "0"
+                y = "0"
+                width = "70"
+                height = "35"
+                text = "Sec"
+                textSize = "16"
+                textAlign = "center"
+            />
+            <Text
+                x = "0"
+                y = "30"
+                width = "70"
+                height = "35"
+                text = "00"
+                textSize = "20"
+                textAlign = "center"
+            />
+        </Element>
+    </Element>
+    <Element
+        id = "secondFrame"
+        x = "0"
+        y = "360"
+        width = "360"
+        height = "360"
+        background = "rgba(0,87,102,255)"
+    >
+        <Image
+            x = "0"
+            y = "0"
+            width = "360"
+            height = "257"
+            src = "test/rotary-timer/timer_progress_bg.png"
+        />
+        <Image
+            x = "0"
+            y = "0"
+            width = "360"
+            height = "257"
+            id = "remain"
+            src = ""
+        />
+        
+        <Image
+            id = "reset1"
+            x = "160"
+            y = "50"
+            width = "45"
+            height = "45"
+            src = "test/rotary-timer/timer_btn_reset.png"
+        />
+        <Text
+            id = "reset2"
+            x = "0"
+            y = "100"
+            width = "360"
+            height = "30"
+            textSize = "20"
+            textAlign = "center"
+            text = "RESET"
+        />
+        
+        <Element
+            x = "70"
+            y = "190"
+            width = "70"
+            height = "70"
+            textSize = "20"
+            id = "hrs2"
+        >
+            <Text
+                x = "0"
+                y = "0"
+                width = "70"
+                height = "35"
+                text = "Hrs"
+                textSize = "16"
+                textAlign = "center"
+            />
+            <Text
+                x = "0"
+                y = "30"
+                width = "70"
+                height = "35"
+                text = "00"
+                textSize = "20"
+                textAlign = "center"
+            />
+        </Element>
+        <Element
+            x = "150"
+            y = "190"
+            width = "70"
+            height = "70"
+            textSize = "20"
+            id = "min2"
+        >
+            <Text
+                x = "0"
+                y = "0"
+                width = "70"
+                height = "35"
+                text = "Min"
+                textSize = "16"
+                textAlign = "center"
+            />
+            <Text
+                x = "0"
+                y = "30"
+                width = "70"
+                height = "35"
+                text = "00"
+                textSize = "20"
+                textAlign = "center"
+            />
+        </Element>
+        <Element
+            x = "230"
+            y = "190"
+            width = "70"
+            height = "70"
+            text = "Hrs"
+            textSize = "20"
+            id = "sec2"
+        >
+            <Text
+                x = "0"
+                y = "0"
+                width = "70"
+                height = "35"
+                text = "Sec"
+                textSize = "16"
+                textAlign = "center"
+            />
+            <Text
+                x = "0"
+                y = "30"
+                width = "70"
+                height = "35"
+                text = "00"
+                textSize = "20"
+                textAlign = "center"
+            />
+        </Element>
+    </Element>
+    <Script>
+        <![CDATA[
+            var hrs = 0;
+            var min = 0;
+            var sec = 0;
+            
+            var target = -1
+            
+            function reset() {
+                document.getElementById("hrs").firstChild.textSize = "16"
+                document.getElementById("hrs").firstChild.nextSibling.textSize = "20"
+                document.getElementById("min").firstChild.textSize = "16"
+                document.getElementById("min").firstChild.nextSibling.textSize = "20"
+                document.getElementById("sec").firstChild.textSize = "16"
+                document.getElementById("sec").firstChild.nextSibling.textSize = "20"
+            }
+            
+            
+            document.getElementById("hrs").onClick = function() {
+                reset();
+                target = 0;
+                document.getElementById("hrs").firstChild.textSize = "20"
+                document.getElementById("hrs").firstChild.nextSibling.textSize = "24"
+                
+            }
+            
+            document.getElementById("min").onClick = function() {
+                reset();
+                target = 1;
+                document.getElementById("min").firstChild.textSize = "20"
+                document.getElementById("min").firstChild.nextSibling.textSize = "24"
+            }
+            
+            document.getElementById("sec").onClick = function() {
+                reset();
+                target = 2;
+                document.getElementById("sec").firstChild.textSize = "20"
+                document.getElementById("sec").firstChild.nextSibling.textSize = "24"
+            }
+            
+            window.onKeyDown = function(e) {
+                if(e == "Down" || e == "rotaryClockWise"){
+                    if (target == 0) {
+                        hrs++;
+                        if (hrs>=24)
+                            hrs = 0;
+                    } else if (target == 1) {
+                        min++;
+                        if (min>=60)
+                            min = 0;
+                    } else if(target == 2) {
+                        sec++;
+                        if (sec>=60)
+                            sec = 0;
+                    }
+                }
+                if(e == "Up" || e == "rotaryCounterClockWise"){
+                    if (target == 0) {
+                        hrs--;
+                        if (hrs<0)
+                            hrs = 0;
+                    } else if (target == 1) {
+                        min--;
+                        if (hrs<60)
+                            min = 0;
+                    } else if(target == 2) {
+                        sec--;
+                        if (hrs<60)
+                            sec = 0;
+                    }
+                }
+                
+                var h = hrs+""
+                if (h.length == 1) {
+                    h = "0" + hrs
+                }
+                document.getElementById("hrs").firstChild.nextSibling.text = h
+                h = min+""
+                if (h.length == 1) {
+                    h = "0" + min
+                }
+                document.getElementById("min").firstChild.nextSibling.text = h
+                h = sec+""
+                if (h.length == 1) {
+                    h = "0" + sec
+                }
+                document.getElementById("sec").firstChild.nextSibling.text = h
+            }
+
+            document.getElementById("start1").onClick = start;
+            document.getElementById("start2").onClick = start;
+            var wait = 0;
+            var lastTime;
+            var total;
+            function tick() {
+                wait = wait - (new Date() - lastTime)
+                lastTime = new Date();
+                print(wait)
+                
+                var per60 = wait/total * 60;
+                per60 = parseInt(per60);
+                print(wait)
+                document.getElementById("remain").src = "test/rotary-timer/timer_progress_"+per60+".png"
+                
+                if ( wait > 0)
+                    window.setTimeout(tick, 300);
+                else {
+                    document.getElementById("firstFrame").y = 0
+                    document.getElementById("secondFrame").y = 360
+                }
+                
+                var hrs,min,sec;
+                var ss = wait / 1000;
+                hrs = ss / (60 * 60)
+                ss = ss % (60 * 60)
+                min = ss / 60;
+                ss = ss % 60;
+                sec = ss;
+                hrs = parseInt(hrs)
+                min = parseInt(min)
+                sec = parseInt(sec)
+                print(hrs + ":" + min + ":" + sec)
+                h = hrs+""
+                if (h.length == 1) {
+                    h = "0" + hrs
+                }
+                document.getElementById("hrs2").firstChild.nextSibling.text = h
+                h = min+""
+                if (h.length == 1) {
+                    h = "0" + min
+                }
+                document.getElementById("min2").firstChild.nextSibling.text = h
+                h = sec+""
+                if (h.length == 1) {
+                    h = "0" + sec
+                }
+                document.getElementById("sec2").firstChild.nextSibling.text = h
+            }
+            function start() {
+                print("Start");
+                document.getElementById("firstFrame").y = 360
+                document.getElementById("secondFrame").y = 0
+                total = wait = hrs * 1000 * 60 * 60 + min * 1000 * 60 + sec * 1000
+                lastTime = new Date();
+                tick();
+                document.getElementById("firstFrame").y = "360"
+            }
+            
+            document.getElementById("reset1").onClick = function() {
+                wait = total;
+            }
+            
+            document.getElementById("reset2").onClick = function() {
+                wait = total;
+            }
+        ]]>
+    </Script>
+</Document>
+ 

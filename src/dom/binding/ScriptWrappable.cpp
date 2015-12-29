@@ -79,28 +79,28 @@ void ScriptWrappable::initScriptWrappable(Node* ptr, ScriptBindingInstance* inst
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
         return escargot::ESValue(((Node *)originalObj)->x().fixed());
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setX(Length(Length::Fixed, value.toUint32()));
+        ((Node *)originalObj)->setX(Length(Length::Fixed, value.toNumber()));
     }, true, false, false);
 
     ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("y"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
         return escargot::ESValue(((Node *)originalObj)->y().fixed());
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setY(Length(Length::Fixed, value.toUint32()));
+        ((Node *)originalObj)->setY(Length(Length::Fixed, value.toNumber()));
     }, true, false, false);
 
     ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("width"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
         return escargot::ESValue(((Node *)originalObj)->width().fixed());
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setWidth(Length(Length::Fixed, value.toUint32()));
+        ((Node *)originalObj)->setWidth(Length(Length::Fixed, value.toNumber()));
     }, true, false, false);
 
     ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("height"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
         return escargot::ESValue(((Node *)originalObj)->height().fixed());
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setHeight(Length(Length::Fixed, value.toUint32()));
+        ((Node *)originalObj)->setHeight(Length(Length::Fixed, value.toNumber()));
     }, true, false, false);
 
 
@@ -196,6 +196,15 @@ void ScriptWrappable::initScriptWrappable(TextElement*)
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
         TextElement* nd = ((TextElement *)originalObj);
         nd->setText(String::createASCIIString(value.toString()->utf8Data()));
+    }, true, false, false);
+
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("textSize"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+        TextElement* nd = ((TextElement *)originalObj);
+        return escargot::ESValue(nd->textSize());
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
+        TextElement* nd = ((TextElement *)originalObj);
+        nd->setTextSize(value.toNumber());
     }, true, false, false);
 
     ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("textColor"),
