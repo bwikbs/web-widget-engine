@@ -176,6 +176,8 @@ void Window::rendering()
 
     delete canvas;
     m_needsRendering = false;
+
+    evas_render_async(evas);
 }
 
 void Window::setNeedsRendering()
