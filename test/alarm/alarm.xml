@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document>
+    <Text
+        id = "timeBox"
+        textSize = "63"
+        x = "0"
+        y = "150"
+        width = "360"
+        textAlign = "center"
+        text = "10 : 17"
+    />
+    <Element
+        id = "weekBox"
+        x = "0"
+        y = "210"
+        width = "360"
+    >
+        <Text
+            id = "sun"
+            textSize = "28"
+            x = "75"
+            width = "30"
+            height = "30"
+            textAlign = "center"
+            text = "S"
+        />
+
+        <Text
+            id = "mon"
+            textSize = "28"
+            x = "105"
+            width = "30"
+            height = "30"
+            textAlign = "center"
+            text = "M"
+        />
+ 
+        <Text
+            id = "tue"
+            textSize = "28"
+            x = "135"
+            width = "30"
+            height = "30"
+            textAlign = "center"
+            text = "T"
+        />
+        <Text
+            id = "wed"
+            textSize = "28"
+            x = "165"
+            width = "30"
+            height = "30"
+            textAlign = "center"
+            text = "W"
+        />
+        <Text
+            id = "thu"
+            textSize = "28"
+            x = "195"
+            width = "30"
+            height = "30"
+            textAlign = "center"
+            text = "T"
+        />
+        <Text
+            id = "fri"
+            textSize = "28"
+            x = "225"
+            width = "30"
+            height = "30"
+            textAlign = "center"
+            text = "F"
+        />
+        <Text
+            id = "sat"
+            textSize = "28"
+            x = "255"
+            width = "30"
+            height = "30"
+            textAlign = "center"
+            text = "S"
+        />
+    </Element>
+  
+    <Image
+        id = "timerImg"
+        src = "test/alarm/Alarm_icon.png"
+        x = "142"
+        y = "260"
+        width = "75"
+        height = "75"
+    />
+<Script>
+        <![CDATA[
+        
+        var alarms = [];
+        var curAlarm = 0;
+
+        function init() {
+            initAlarms();
+            setDefaultEvents();
+            updateActiveUI();
+        }
+
+        function initAlarms() {
+            alarms.push({date: new Date(2015, 11, 23, 11, 15)});
+            alarms.push({date: new Date(2015, 11, 25, 12, 22)});
+            alarms.push({date: new Date(2015, 11, 27, 15, 21)});
+            for(var i = 0; i < alarms.length; i++){
+                changeWeekColor(alarms[i].date.getDay(), false);
+            }
+        }
+
+        function setDefaultEvents() {
+            window.onKeyUp = function(e){
+                if(e == "Right"){
+                    curAlarm = (curAlarm+1)%alarms.length;
+                    updateActiveUI();
+                }
+            };
+        }
+
+        function updateActiveUI(){
+            var previousIdx = curAlarm % alarms.length;
+            curAlarm = (curAlarm + 1) % alarms.length;
+            var activeIdx = curAlarm;
+            changeTimeText(alarms[activeIdx].date.getHours()+" : "+alarms[activeIdx].date.getMinutes());
+            changeWeekColor(alarms[activeIdx].date.getDay(), true);
+            changeWeekColor(alarms[previousIdx].date.getDay(), false);
+        }
+        function changeWeekColor(day,activeFlag){
+            var weekbox;
+            switch(day) {
+                case 0:
+                    weekbox = document.getElementById("sun");
+                    break;
+                case 1:
+                    weekbox = document.getElementById("mon");
+                    break;
+                case 2:
+                    weekbox = document.getElementById("tue");
+                    break;
+                case 3:
+                    weekbox = document.getElementById("wed");
+                    break;
+                case 4:
+                    weekbox = document.getElementById("thr");
+                    break;
+                case 5:
+                    weekbox = document.getElementById("fri");
+                    break;
+                case 6:
+                    weekbox = document.getElementById("sat");
+                    break;
+
+            }
+            if(activeFlag){
+                weekbox.textColor = "rgba(255,0,0,255)";
+            }else{
+                weekbox.textColor = "rgba(0,0,255,255)";
+            }
+        }
+        
+        function changeTimeText(time){
+            var timebox = document.getElementById("timeBox");
+            timebox.text = time;
+        }
+
+        init();
+       
+        ]]>
+    </Script>
+</Document>
