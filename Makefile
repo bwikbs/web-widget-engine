@@ -87,10 +87,10 @@ else ifeq ($(HOST), tizen_wearable_arm)
 			ecore-input-1 edje-1 eo-1 emotion-1 ecore-imf-1 ecore-con-1 eio-1 eldbus-1 efl-extension \
 			efreet-1 ecore-input-evas-1 ecore-audio-1 embryo-1 ecore-imf-evas-1 ethumb-1 eeze-1 eeze-1 e_dbus-1 e_dbus-1 dbus-1.0
 
-	TIZEN_LIB = m elementary eina eet ecore ecore_file ecore_input edje  ecore_imf ecore_con efreet efreet_mime \
-		    efreet_trash eio  evas ecore_evas ecore_x ecore_imf_evas rt efl-extension
+	TIZEN_LIB = elementary ecore ecore_input \
+		    evas ecore_evas rt efl-extension
 	
-	DEPENDENCY_INCLUDE = zlib png
+	DEPENDENCY_INCLUDE =
 				
 	CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE
 	CXXFLAGS += --sysroot=$(TIZEN_SYSROOT) -std=c++11
@@ -270,7 +270,7 @@ else ifeq ($(HOST), tizen_wearable_arm)
   LD    = $(TIZEN_TOOLCHAIN)/bin/arm-linux-gnueabi-ld
   AR    = $(TIZEN_TOOLCHAIN)/bin/arm-linux-gnueabi-ar
   STRIP = $(TIZEN_TOOLCHAIN)/bin/arm-linux-gnueabi-strip
-  CXXFLAGS += -Os -g0
+  CXXFLAGS += -Os -g0 -finline-limit=64 -s
 endif
 
 

@@ -94,6 +94,7 @@ Window* Window::create(StarFish* sf, size_t w, size_t h)
     evas_event_callback_add(e, EVAS_CALLBACK_RENDER_FLUSH_POST, [](void *data, Evas *e, void *event_info) {
         WindowImplEFL* eflWindow = (WindowImplEFL*)data;
         eflWindow->m_lastRenderTime  = getTickCount();
+        printf("GC heapSize...%f MB\n", GC_get_heap_size()/1024.f/1024.f);
     }, wnd);
 
     return wnd;

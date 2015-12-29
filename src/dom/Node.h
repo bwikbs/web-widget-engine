@@ -112,6 +112,7 @@ public:
     void setState(NodeState state)
     {
         m_state = state;
+        setNeedsRendering();
     }
 
     NodeState state()

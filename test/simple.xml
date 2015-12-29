@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+// TODO -> implement units(color, length(px, dp, %...))
+        -> implement container(Element-> Container? Layout? some thing
+-->
+<Document>
+    <Text
+        x = "0"
+        y = "0"
+        width = "330"
+        height = "330"
+        textAlign = "center"
+        text = "simple"
+    />
+    <Script>
+        <![CDATA[
+		print("simple")
+        ]]>
+    </Script>
+</Document>
