@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Document>
+    <Image
+        id = "bg"
+        src = "test/world-clock/bg.png"
+        x = "0"
+        y = "0"
+        width = "360"
+        height = "360"
+    />
     <Text
         id = "city"
-        textSize = "42"
-        width = "150"
-        height = "50"
-        x = "115"
-        y = "30"
+        textSize = "35"
+        width = "360"
+        x = "0"
+        y = "55"
+        textAlign = "center"
         text = "Seoul"
     />
     <Text
         id = "time"
-        textSize = "64"
-        x = "35"
-        y = "140"
-        text = "10"
+        textSize = "63"
+        width = "360"
+        x = "0"
+        y = "170"
+        textAlign = "center"
+        text = "10:17 PM"
     />
     <Text
         id = "date"
-        textSize = "32"
-        x = "100"
-        y = "290"
-        text = "Tue"
+        textSize = "28"
+        width = "360"
+        x = "0"
+        y = "285"
+        textAlign = "center"
+        text = "Tue, Jan 1"
     />
     <Script>
         <![CDATA[
@@ -54,10 +66,10 @@
 */
         function setDefaultEvents() {
             window.onKeyUp = function(e){
-                if(e == "Down"){
+                if(e == "Down" || e == "rotaryClockWise"){
                     curCity = (curCity+1)%cities.length;
                 }
-                if(e == "Up"){
+                if(e == "Up" || e == "rotaryCounterClockWise"){
                     curCity = (curCity-1+cities.length)%cities.length;
                 }
                 showTime(curCity);
