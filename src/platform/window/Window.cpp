@@ -13,14 +13,43 @@
 #include <efl_extension.h>
 #endif
 
+#ifdef STARFISH_TIZEN_WEARABLE
+EAPI Eina_Bool evas_render_async(Evas* obj);
+#endif
+
 namespace StarFish {
+
+namespace
+{
+    class __GET_TICK_COUNT
+    {
+    public:
+        __GET_TICK_COUNT()
+        {
+        if (gettimeofday(&tv_, NULL) != 0)
+            throw 0;
+        }
+        timeval tv_;
+    };
+    __GET_TICK_COUNT timeStart;
+}
+
+static unsigned long getTickCount()
+{
+    static time_t   secStart    = timeStart.tv_.tv_sec;
+    static time_t   usecStart   = timeStart.tv_.tv_usec;
+                    timeval tv;
+    gettimeofday(&tv, NULL);
+    return (tv.tv_sec - secStart) * 1000 + (tv.tv_usec - usecStart) / 1000;
+}
+
 
 class WindowImplEFL : public Window {
 public:
     WindowImplEFL(StarFish* sf)
         : Window(sf)
     {
-
+        m_lastRenderTime = 0;
     }
     uintptr_t m_handle;
     Evas_Object* m_window;
@@ -29,6 +58,7 @@ public:
     std::vector<Evas_Object*> m_objectList;
     std::unordered_map<ImageData*, std::vector<std::pair<Evas_Object*, bool>>> m_drawnImageList;
     Evas_Object* m_dummyBox;
+    unsigned long m_lastRenderTime;
 };
 
 void mainRenderingFunction(Evas_Object *o, Evas_Object_Box_Data *priv, void *user_data)
@@ -61,6 +91,11 @@ Window* Window::create(StarFish* sf, size_t w, size_t h)
         evas_object_resize(wnd->m_window, (int)w, (int)h);
     evas_object_show(wnd->m_window);
 
+    evas_event_callback_add(e, EVAS_CALLBACK_RENDER_FLUSH_POST, [](void *data, Evas *e, void *event_info) {
+        WindowImplEFL* eflWindow = (WindowImplEFL*)data;
+        eflWindow->m_lastRenderTime  = getTickCount();
+    }, wnd);
+
     return wnd;
 }
 
@@ -76,7 +111,6 @@ Window::Window(StarFish* starFish)
     m_needsRendering = false;
     m_activeNodeWithTouchDown = nullptr;
     setNeedsRendering();
-
 
     ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,[](void *data, int type, void *event) -> Eina_Bool {
         Window* sf = (Window*)data;
@@ -114,7 +148,6 @@ Window::Window(StarFish* starFish)
     } ,this);
 
 #ifdef STARFISH_TIZEN_WEARABLE
-    WindowImplEFL* eflWindow = (WindowImplEFL*)this;
     eext_rotary_event_handler_add([](void *data, Eext_Rotary_Event_Info *info) -> Eina_Bool {
         Window* sf = (Window*)data;
         if (info->direction == EEXT_ROTARY_DIRECTION_CLOCKWISE) {
@@ -128,6 +161,7 @@ Window::Window(StarFish* starFish)
     }, this);
 #endif
 }
+
 
 void Window::rendering()
 {
@@ -177,7 +211,10 @@ void Window::rendering()
     delete canvas;
     m_needsRendering = false;
 
-    evas_render_async(evas);
+    auto t = getTickCount();
+    if (t - eflWindow->m_lastRenderTime > 33) {
+        evas_render(evas);
+    }
 }
 
 void Window::setNeedsRendering()
