@@ -9,6 +9,7 @@
 #include <Ecore_X.h>
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
+#include <efl_extension.h>
 
 namespace StarFish {
 
@@ -73,6 +74,57 @@ Window::Window(StarFish* starFish)
     m_needsRendering = false;
     m_activeNodeWithTouchDown = nullptr;
     setNeedsRendering();
+
+
+    ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,[](void *data, int type, void *event) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        Ecore_Event_Mouse_Button* d = (Ecore_Event_Mouse_Button*)event;
+        sf->dispatchTouchEvent(d->x, d->y, Window::TouchEventDown);
+        return EINA_TRUE;
+    }, this);
+
+    ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,[](void *data, int type, void *event) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        Ecore_Event_Mouse_Button* d = (Ecore_Event_Mouse_Button*)event;
+        sf->dispatchTouchEvent(d->x, d->y, Window::TouchEventUp);
+        return EINA_TRUE;
+    }, this);
+
+    ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,[](void *data, int type, void *event) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        Ecore_Event_Mouse_Move* d = (Ecore_Event_Mouse_Move*)event;
+        sf->dispatchTouchEvent(d->x, d->y, Window::TouchEventMove);
+        return EINA_TRUE;
+    } ,this);
+
+    ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,[](void *data, int type, void *event) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        Ecore_Event_Key* d = (Ecore_Event_Key*)event;
+        sf->dispatchKeyEvent(String::createASCIIString(d->keyname), Window::KeyEventDown);
+        return EINA_TRUE;
+    } ,this);
+
+    ecore_event_handler_add(ECORE_EVENT_KEY_UP,[](void *data, int type, void *event) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        Ecore_Event_Key* d = (Ecore_Event_Key*)event;
+        sf->dispatchKeyEvent(String::createASCIIString(d->keyname), Window::KeyEventUp);
+        return EINA_TRUE;
+    } ,this);
+
+#ifdef STARFISH_TIZEN_WEARABLE
+    WindowImplEFL* eflWindow = (WindowImplEFL*)this;
+    eext_rotary_event_handler_add([](void *data, Eext_Rotary_Event_Info *info) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        if (info->direction == EEXT_ROTARY_DIRECTION_CLOCKWISE) {
+            sf->dispatchKeyEvent(String::createASCIIString("rotaryClockWise"), Window::KeyEventDown);
+            sf->dispatchKeyEvent(String::createASCIIString("rotaryClockWise"), Window::KeyEventUp);
+        } else {
+            sf->dispatchKeyEvent(String::createASCIIString("rotaryCounterClockWise"), Window::KeyEventDown);
+            sf->dispatchKeyEvent(String::createASCIIString("rotaryCounterClockWise"), Window::KeyEventUp);
+        }
+        return EINA_TRUE;
+    }, this);
+#endif
 }
 
 void Window::rendering()
@@ -198,7 +250,7 @@ Node* Window::hitTest(float x, float y)
 void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)
 {
     Node* node = hitTest(x, y);
-    if (kind == Down) {
+    if (kind == TouchEventDown) {
         m_activeNodeWithTouchDown = node;
     }
     while (node) {
@@ -208,8 +260,18 @@ void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)
             break;
         node = node->parentElement();
     }
-    if (kind == Up)
+    if (kind == TouchEventUp)
         m_activeNodeWithTouchDown = nullptr;
+}
+
+void Window::dispatchKeyEvent(String* key, KeyEventKind kind)
+{
+    if (kind == KeyEventDown) {
+        callFunction(String::createASCIIString("onKeyDown"), key);
+    } else if (kind == KeyEventUp) {
+        callFunction(String::createASCIIString("onKeyUp"), key);
+    }
+
 }
 
 }

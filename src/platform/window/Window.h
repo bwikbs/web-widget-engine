@@ -31,11 +31,17 @@ public:
     uint32_t setTimeout(WindowSetTimeoutHandler handler, uint32_t delay, void* data);
 
     enum TouchEventKind {
-        Down,
-        Move,
-        Up
+        TouchEventDown,
+        TouchEventMove,
+        TouchEventUp
     };
     void dispatchTouchEvent(float x, float y, TouchEventKind kind);
+
+    enum KeyEventKind {
+        KeyEventDown,
+        KeyEventUp
+    };
+    void dispatchKeyEvent(String* key, KeyEventKind kind);
 
     Node* hitTest(float x, float y);
     Node* activeNodeWithTouchDown()

@@ -6,7 +6,7 @@ namespace StarFish {
 
 bool Node::onTouchEvent(Window::TouchEventKind kind, float x, float y)
 {
-    if (kind == Window::Up) {
+    if (kind == Window::TouchEventUp) {
         if (documentElement()->window()->activeNodeWithTouchDown() == this) {
             callFunction(String::createASCIIString("onClick"));
         }

@@ -17,26 +17,6 @@ StarFish::StarFish()
     m_scriptBindingInstance->initBinding(this);
     m_window = Window::create(this, 360, 360);
 
-    ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,[](void *data, int type, void *event) -> Eina_Bool {
-        StarFish* sf = (StarFish*)data;
-        Ecore_Event_Mouse_Button* d = (Ecore_Event_Mouse_Button*)event;
-        sf->m_window->dispatchTouchEvent(d->x, d->y, Window::Down);
-        return EINA_TRUE;
-    }, this);
-
-    ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,[](void *data, int type, void *event) -> Eina_Bool {
-        StarFish* sf = (StarFish*)data;
-        Ecore_Event_Mouse_Button* d = (Ecore_Event_Mouse_Button*)event;
-        sf->m_window->dispatchTouchEvent(d->x, d->y, Window::Up);
-        return EINA_TRUE;
-    }, this);
-
-    ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,[](void *data, int type, void *event) -> Eina_Bool {
-        StarFish* sf = (StarFish*)data;
-        Ecore_Event_Mouse_Move* d = (Ecore_Event_Mouse_Move*)event;
-        sf->m_window->dispatchTouchEvent(d->x, d->y, Window::Move);
-        return EINA_TRUE;
-    } ,this);
 }
 
 void StarFish::run()

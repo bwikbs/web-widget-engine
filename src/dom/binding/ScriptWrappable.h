@@ -38,6 +38,8 @@ public:
     void initScriptWrappable(TextElement* ptr);
 
     void callFunction(String* name);
+    void callFunction(String* name, String* parameter0);
+    void callFunction(String* name, int parameter0);
 
 protected:
 };

@@ -84,15 +84,15 @@ else ifeq ($(HOST), tizen_arm)
 else ifeq ($(HOST), tizen_wearable_arm)
   OUTDIR=out/tizen_$(ARCH)/$(TYPE)/$(MODE)
   	TIZEN_INCLUDE = elementary-1 elocation-1 efl-1 ecore-x-1 eina-1 eina-1/eina eet-1 evas-1 ecore-1 ecore-evas-1 ecore-file-1 \
-			ecore-input-1 edje-1 eo-1 emotion-1 ecore-imf-1 ecore-con-1 eio-1 eldbus-1 \
+			ecore-input-1 edje-1 eo-1 emotion-1 ecore-imf-1 ecore-con-1 eio-1 eldbus-1 efl-extension \
 			efreet-1 ecore-input-evas-1 ecore-audio-1 embryo-1 ecore-imf-evas-1 ethumb-1 eeze-1 eeze-1 e_dbus-1 e_dbus-1 dbus-1.0
 
 	TIZEN_LIB = m elementary eina eet ecore ecore_file ecore_input edje  ecore_imf ecore_con efreet efreet_mime \
-		    efreet_trash eio  evas ecore_evas ecore_x ecore_imf_evas rt
+		    efreet_trash eio  evas ecore_evas ecore_x ecore_imf_evas rt efl-extension
 	
 	DEPENDENCY_INCLUDE = zlib png
 				
-	CXXFLAGS += -DEIRENE_TIZEN
+	CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE
 	CXXFLAGS += --sysroot=$(TIZEN_SYSROOT) -std=c++11
 	CXXFLAGS += -I$(EIRENE_ROOT_DIR) 
 	CXXFLAGS += -I$(WTF_ROOT_DIR)

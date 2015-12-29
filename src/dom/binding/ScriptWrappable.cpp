@@ -184,4 +184,38 @@ void ScriptWrappable::callFunction(String* name)
     }
 }
 
+void ScriptWrappable::callFunction(String* name, String* parameter0)
+{
+    escargot::ESObject* obj = (escargot::ESObject*)this;
+    escargot::ESValue fn = obj->get(escargot::ESString::create(name->utf8Data()));
+    escargot::ESVMInstance* instance = escargot::ESVMInstance::currentInstance();
+
+    std::jmp_buf tryPosition;
+    escargot::ESValue p(escargot::ESString::create(parameter0->utf8Data()));
+    if (setjmp(instance->registerTryPos(&tryPosition)) == 0) {
+        escargot::ESFunctionObject::call(instance, fn, obj, &p, 1, false);
+        instance->unregisterTryPos(&tryPosition);
+    } else {
+        escargot::ESValue err = instance->getCatchedError();
+        printf("Uncaught %s\n", err.toString()->utf8Data());
+    }
+}
+
+void ScriptWrappable::callFunction(String* name, int parameter0)
+{
+    escargot::ESObject* obj = (escargot::ESObject*)this;
+    escargot::ESValue fn = obj->get(escargot::ESString::create(name->utf8Data()));
+    escargot::ESVMInstance* instance = escargot::ESVMInstance::currentInstance();
+
+    std::jmp_buf tryPosition;
+    escargot::ESValue p(parameter0);
+    if (setjmp(instance->registerTryPos(&tryPosition)) == 0) {
+        escargot::ESFunctionObject::call(instance, fn, obj, &p, 1, false);
+        instance->unregisterTryPos(&tryPosition);
+    } else {
+        escargot::ESValue err = instance->getCatchedError();
+        printf("Uncaught %s\n", err.toString()->utf8Data());
+    }
+}
+
 }

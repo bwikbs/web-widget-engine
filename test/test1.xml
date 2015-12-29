@@ -131,6 +131,15 @@
             print(this.textColor)
             this.textColor = "rgba(255,0,0,255)";
         }
+
+	window.onKeyDown = function(e) {
+		print("down")
+		print(e);
+	}
+	window.onKeyUp = function(e) {
+		print("up")
+		print(e);
+	}
         ]]>
     </Script>
 </Document>
