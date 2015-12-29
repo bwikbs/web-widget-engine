@@ -75,6 +75,34 @@ void ScriptWrappable::initScriptWrappable(Node* ptr, ScriptBindingInstance* inst
         return escargot::ESValue((escargot::ESObject *)nd);
     }, NULL, false, false, false);
 
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("x"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+        return escargot::ESValue(((Node *)originalObj)->x().fixed());
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
+        ((Node *)originalObj)->setX(Length(Length::Fixed, value.toUint32()));
+    }, true, false, false);
+
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("y"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+        return escargot::ESValue(((Node *)originalObj)->y().fixed());
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
+        ((Node *)originalObj)->setY(Length(Length::Fixed, value.toUint32()));
+    }, true, false, false);
+
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("width"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+        return escargot::ESValue(((Node *)originalObj)->width().fixed());
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
+        ((Node *)originalObj)->setWidth(Length(Length::Fixed, value.toUint32()));
+    }, true, false, false);
+
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("height"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+        return escargot::ESValue(((Node *)originalObj)->height().fixed());
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
+        ((Node *)originalObj)->setHeight(Length(Length::Fixed, value.toUint32()));
+    }, true, false, false);
+
 
     ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("angle"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {

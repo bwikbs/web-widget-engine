@@ -189,11 +189,21 @@
 		print(e);
 	}
 	
+	
 	print(document.getElementById("backgroundTest2").background)
 	document.getElementById("backgroundTest2").background = "rgba(0,0,255,255)"
 	print(document.getElementById("backgroundTest2").background)
 	document.getElementById("backgroundTest2").backgroundWhenActive = "url(test/sun.png)"
 	print(document.getElementById("backgroundTest2").backgroundWhenActive)
+	print(document.getElementById("backgroundTest2").x)
+	print(document.getElementById("backgroundTest2").y)
+	print(document.getElementById("backgroundTest2").width)
+	print(document.getElementById("backgroundTest2").height)
+	document.getElementById("backgroundTest2").width = "200"
+	document.getElementById("backgroundTest2").height = "200"
+	document.getElementById("backgroundTest2").x = "200"
+    document.getElementById("backgroundTest2").y = "200"
+    
         ]]>
     </Script>
 </Document>
