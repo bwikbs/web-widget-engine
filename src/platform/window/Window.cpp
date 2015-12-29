@@ -9,7 +9,9 @@
 #include <Ecore_X.h>
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
+#ifdef STARFISH_TIZEN_WEARABLE
 #include <efl_extension.h>
+#endif
 
 namespace StarFish {
 
