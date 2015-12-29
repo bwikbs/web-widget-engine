@@ -60,13 +60,24 @@
         />
 
     </Element>
+    <Text
+        id = "gameOver"
+        x = "55"
+        y = "150"
+        width = "0"
+        height = "0"
+        textAlign = "center"
+        textSize = "42"
+        text = ""
+    />
+
   
 <Script>
         <![CDATA[
 
         var NUMQUIZ = 5;
-        var NUMQUIZTYPE = 4;
-//        var NUMQUIZTYPE = 5;
+//        var NUMQUIZTYPE = 4;
+        var NUMQUIZTYPE = 5;
 
         var quizBox = new Array(NUMQUIZ);
         var correctquiz;
@@ -97,7 +108,6 @@
                     if(bird_current_height < 0){
                         bird_current_height = 0;
                     }
-print("" + bird_current_height);                    
                     document.getElementById("bird").y = "" + bird_current_height;
                 }
 
@@ -105,7 +115,7 @@ print("" + bird_current_height);
                 bird_current_height += 2;
                 if(bird_current_height >= 260){
                     bird_current_height = 260;
-//                    gameOverEvent();
+                    gameOverEvent();
                 }
                 document.getElementById("bird").y = "" + bird_current_height;
             }
@@ -115,10 +125,17 @@ print("" + bird_current_height);
             bird_goal_height = yCoord;
         }
 
+        function gameOverEvent(){
+            playingflag = 0;
+            gobtn.text = "Game Over!!!";
+            gobtn.width = "250";
+            gobtn.height = "100";
+
+
+
+        }
         function rotary_callback(direction){
             var thisknot = quizarr[correctquiz];
-            print(thisknot);
-            print(direction);
             if(direction == "cwise"){
                 if(thisknot == knotEnum.clockwise_down || thisknot == knotEnum.clockwise_up){
                     correctquiz++;
@@ -159,7 +176,9 @@ print("" + bird_current_height);
 
         function knots_all_clear(){
             correctquiz = 0;
-            setBirdHeight((bird_current_height - 500 / time_spent < 0) ? 0 : (bird_current_height - 500 / time_spent));
+print(time_spent);            
+            setBirdHeight((bird_current_height - 500 / time_spent < 0) ? 0 : ((bird_current_height - 500 / time_spent) | 0));
+            window.setTimeout(generate_random_knots, 3 * 1000);
         }
 
         function init(){
@@ -167,9 +186,14 @@ print("" + bird_current_height);
             record = 0.0;
 
             // hide buttons
+            gobtn.text = "";
+            gobtn.width = "0";
+            gobtn.height = "0";
+            
 
             bird_current_height = 130;
             bird_goal_height = 500;
+            window.setTimeout(count_time_spent, 100);
 
             generate_random_knots();
 
@@ -186,10 +210,21 @@ print("" + bird_current_height);
 
             for(i = 0; i < NUMQUIZ; i++){
                 quizBox[i] = document.getElementById("knot" + (i+1));
-       print(quizBox[i]);
+                quizBox[i].width = "50";
+                quizBox[i].height = "50";
                 quizBox[i].src = "test/flyingbird/" + quizarr[i] + ".png";
             }
         }
+
+        function count_time_spent(){
+            time_spent += 0.1;
+            if(playingflag){
+                window.setTimeout(count_time_spent, 100); // 0.1 * 1000
+            }
+        }
+
+
+
 // start button
 
             // binding rotary event
@@ -209,7 +244,12 @@ print("" + bird_current_height);
             // make and start timers
 
             // draw bird
-            // gameover button
+
+
+            var gobtn = document.getElementById("gameOver");
+            gobtn.onClick = function(){
+                init();
+            }
 
         init();
        
