@@ -13,7 +13,7 @@
         textSize = "28"
         x = "0"
         y = "50"
-        width = "330"
+        width = "270"
         textAlign = "right"
         text = "0.0"
     />
@@ -154,7 +154,7 @@
                 else{
                     bird_current_height += 16;
                 }
-            } else if(direction == "star"){
+            } /*else if(direction == "star"){
                 if(thisknot == knotEnum.touch){
                     correctquiz++;
                     document.getElementById("knot" + correctquiz).width = 25;
@@ -163,7 +163,7 @@
                 else{
                     bird_current_height += 16;
                 }
-            }
+            }*/
 
             if(correctquiz >= 5){
                 knots_all_clear();
@@ -213,7 +213,23 @@
                 quizBox[i].width = "50";
                 quizBox[i].height = "50";
                 quizBox[i].src = "test/flyingbird/" + quizarr[i] + ".png";
+            
+                if(quizarr[i] == knotEnum.touch){
+                    quizBox[i].onClick = function(){
+                        if(quizarr[correctquiz] == knotEnum.touch){
+                            correctquiz++;
+                            document.getElementById("knot" + correctquiz).width = 25;
+                            document.getElementById("knot" + correctquiz).height = 25;
+                        }
+                        if(correctquiz >= 5){
+                            knots_all_clear();
+                        }
+                    };
+                } else{
+                    quizBox[i].onClick = function(){};
+                }
             }
+                
         }
 
         function count_time_spent(){
@@ -243,9 +259,9 @@
                     rotary_callback("ccwise");
                 }
                 //TODO: Down -> screen ontouch event
-                else if(e == "Down"){
-                    rotary_callback("star");                
-                }
+//                else if(e == "Down"){
+//                    rotary_callback("star");                
+//                }
             }
 
             var gobtn = document.getElementById("gameOver");
