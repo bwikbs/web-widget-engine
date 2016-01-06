@@ -7,7 +7,9 @@ namespace StarFish {
 
 void MessageLoop::run()
 {
+#ifndef STARFISH_TIZEN_WEARABLE
     elm_run();
+#endif
 }
 
 }

@@ -9,7 +9,11 @@ class ScriptBindingInstance;
 
 class StarFish : public gc {
 public:
+#ifndef STARFISH_TIZEN_WEARABLE
     StarFish();
+#else
+    StarFish(void* win);
+#endif
     void run();
 
     Window* window()
@@ -21,6 +25,8 @@ public:
     {
         return m_scriptBindingInstance;
     }
+
+    void loadXMLDocument(String* filePath);
 
 protected:
     MessageLoop* m_messageLoop;

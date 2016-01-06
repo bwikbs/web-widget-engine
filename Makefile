@@ -2,6 +2,7 @@ BUILDDIR=./build
 HOST=linux
 
 BIN=StarFish
+LIB=libStarFish.so
 
 LOCAL_PATH = $(shell pwd)
 
@@ -45,14 +46,14 @@ ifneq (,$(findstring exe,$(MAKECMDGOALS)))
   TYPE=exe
 endif
 
+ifneq (,$(findstring lib,$(MAKECMDGOALS)))
+  TYPE=lib
+endif
+
 ifneq (,$(findstring debug,$(MAKECMDGOALS)))
   MODE=debug
 else ifneq (,$(findstring release,$(MAKECMDGOALS)))
   MODE=release
-endif
-
-ifneq (,$(findstring shared,$(MAKECMDGOALS)))
-	OUTPUT=lib
 endif
 
 ifeq ($(HOST), linux)
@@ -214,7 +215,10 @@ SRC += $(foreach dir, src/platform/window , $(wildcard $(dir)/*.cpp))
 SRC += $(foreach dir, src/platform/canvas , $(wildcard $(dir)/*.cpp))
 SRC += $(foreach dir, src/platform/canvas/image , $(wildcard $(dir)/*.cpp))
 SRC += $(foreach dir, src/platform/canvas/font , $(wildcard $(dir)/*.cpp))
-SRC += $(foreach dir, src/shell , $(wildcard $(dir)/*.cpp))
+ifeq ($(TYPE), lib)
+else
+  SRC += $(foreach dir, src/shell , $(wildcard $(dir)/*.cpp))
+endif
 
 # tinyxml
 SRC += third_party/tinyxml2/tinyxml2.cpp
@@ -245,7 +249,7 @@ else ifeq ($(HOST), tizen_arm)
     $(error TIZEN_SDK_HOME must be set)
   endif
   TIZEN_ROOT=$(TIZEN_SDK_HOME)
-  TIZEN_TOOLCHAIN=$(TIZEN_ROOT)/tools/arm-linux-gnueabi-gcc-4.8
+  TIZEN_TOOLCHAIN=$(TIZEN_ROOT)/tools/arm-linux-gnueabi-gcc-4.9
   TIZEN_SYSROOT=$(TIZEN_ROOT)/platforms/tizen-2.4/mobile/rootstraps/mobile-2.4-device.core
   # Setting For Tizen 2.3 SDK
   # TIZEN_TOOLCHAIN=$(TIZEN_ROOT)/tools/arm-linux-gnueabi-gcc-4.6
@@ -262,8 +266,8 @@ else ifeq ($(HOST), tizen_wearable_arm)
     $(error TIZEN_SDK_HOME must be set)
   endif
   TIZEN_ROOT=$(TIZEN_SDK_HOME)
-  TIZEN_TOOLCHAIN=/home/ksh8281/tizen-sdk-2.4/tools/arm-linux-gnueabi-gcc-4.8
-  TIZEN_SYSROOT=$(TIZEN_ROOT)/platforms/wearable-2.3.1/rootstraps/wearable-2.3.1-device.core
+  TIZEN_TOOLCHAIN=$(TIZEN_ROOT)/tools/arm-linux-gnueabi-gcc-4.9
+  TIZEN_SYSROOT=$(TIZEN_ROOT)/platforms/tizen-2.3.1/wearable/rootstraps/wearable-2.3.1-device.core
   CC    = $(TIZEN_TOOLCHAIN)/bin/arm-linux-gnueabi-gcc
   CXX   = $(TIZEN_TOOLCHAIN)/bin/arm-linux-gnueabi-g++
   LINK  = $(TIZEN_TOOLCHAIN)/bin/arm-linux-gnueabi-g++
@@ -271,6 +275,11 @@ else ifeq ($(HOST), tizen_wearable_arm)
   AR    = $(TIZEN_TOOLCHAIN)/bin/arm-linux-gnueabi-ar
   STRIP = $(TIZEN_TOOLCHAIN)/bin/arm-linux-gnueabi-strip
   CXXFLAGS += -Os -g0 -finline-limit=64 -s
+endif
+
+ifeq ($(TYPE), lib)
+  CXXFLAGS += -fPIC
+  CFLAGS += -fPIC
 endif
 
 
@@ -287,6 +296,10 @@ x64.exe.debug: $(OUTDIR)/$(BIN)
 	cp -f $< .
 x64.exe.release: $(OUTDIR)/$(BIN)
 	cp -f $< .
+x64.lib.debug: $(OUTDIR)/$(LIB)
+	cp -f $< .
+x64.lib.release: $(OUTDIR)/$(LIB)
+	cp -f $< .
 	
 tizen_arm.exe.debug: $(OUTDIR)/$(BIN)
 	cp -f $< .
@@ -295,6 +308,10 @@ tizen_arm.exe.release: $(OUTDIR)/$(BIN)
 tizen_wearable_arm.exe.debug: $(OUTDIR)/$(BIN)
 	cp -f $< .
 tizen_wearable_arm.exe.release: $(OUTDIR)/$(BIN)
+	cp -f $< .
+tizen_wearable_arm.lib.debug: $(OUTDIR)/$(LIB)
+	cp -f $< .
+tizen_wearable_arm.lib.release: $(OUTDIR)/$(LIB)
 	cp -f $< .
 
 $(OUTDIR)/$(BIN): $(OBJS) $(THIRD_PARTY_LIBS)

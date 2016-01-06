@@ -13,7 +13,11 @@ typedef void (*WindowSetTimeoutHandler)(Window* window, void* data);
 
 class Window : public ScriptWrappable {
 public:
+#ifndef STARFISH_TIZEN_WEARABLE
     static Window* create(StarFish* sf, size_t w = SIZE_MAX, size_t h = SIZE_MAX);
+#else
+    static Window* create(StarFish* sf, size_t w = SIZE_MAX, size_t h = SIZE_MAX, void* win = nullptr);
+#endif
     void setNeedsRendering();
     void renderingIfNeeds();
 

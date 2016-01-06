@@ -11,6 +11,7 @@
 #include <Ecore_Input_Evas.h>
 #ifdef STARFISH_TIZEN_WEARABLE
 #include <efl_extension.h>
+#include <tizen.h>
 #endif
 
 #ifdef STARFISH_TIZEN_WEARABLE
@@ -67,6 +68,7 @@ void mainRenderingFunction(Evas_Object *o, Evas_Object_Box_Data *priv, void *use
     wnd->setNeedsRendering();
 }
 
+#ifndef STARFISH_TIZEN_WEARABLE
 Window* Window::create(StarFish* sf, size_t w, size_t h)
 {
     auto wnd = new WindowImplEFL(sf);
@@ -99,6 +101,32 @@ Window* Window::create(StarFish* sf, size_t w, size_t h)
 
     return wnd;
 }
+#else
+Window* Window::create(StarFish* sf, size_t w, size_t h, void* win)
+{
+    auto wnd = new WindowImplEFL(sf);
+    wnd->m_starFish = sf;
+    wnd->m_window = (Evas_Object*)win;
+
+    Evas* e = evas_object_evas_get(wnd->m_window);
+
+    wnd->m_dummyBox = elm_box_add(wnd->m_window);
+    evas_object_size_hint_weight_set (wnd->m_dummyBox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(wnd->m_window, wnd->m_dummyBox);
+    elm_box_layout_set(wnd->m_dummyBox,mainRenderingFunction,wnd,NULL);
+    evas_object_show(wnd->m_dummyBox);
+
+    evas_object_show(wnd->m_window);
+
+    evas_event_callback_add(e, EVAS_CALLBACK_RENDER_FLUSH_POST, [](void *data, Evas *e, void *event_info) {
+        WindowImplEFL* eflWindow = (WindowImplEFL*)data;
+        eflWindow->m_lastRenderTime  = getTickCount();
+        printf("GC heapSize...%f MB\n", GC_get_heap_size()/1024.f/1024.f);
+    }, wnd);
+
+    return wnd;
+}
+#endif
 
 
 Window::Window(StarFish* starFish)
