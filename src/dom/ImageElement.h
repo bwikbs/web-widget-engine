@@ -15,13 +15,7 @@ public:
         m_imageData = nullptr;
     }
 
-    void setSrc(String* src)
-    {
-        m_src = src;
-        m_imageData = ImageData::create(m_src);
-        setNeedsRendering();
-    }
-
+    void setSrc(String* src);
     String* src()
     {
         return m_src;

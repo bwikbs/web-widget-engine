@@ -31,11 +31,11 @@ void XMLDocumentBuilder::build(DocumentElement* documentElement, String* filePat
         }
 
         if (xmlElement->Attribute("background")) {
-            element->setBackground(Drawable::fromString(String::createASCIIString(xmlElement->Attribute("background"))));
+            element->setBackground(Drawable::fromString(element->documentElement()->window()->starFish(), String::createASCIIString(xmlElement->Attribute("background"))));
         }
 
         if (xmlElement->Attribute("backgroundWhenActive")) {
-            element->setBackgroundWhenActive(Drawable::fromString(String::createASCIIString(xmlElement->Attribute("backgroundWhenActive"))));
+            element->setBackgroundWhenActive(Drawable::fromString(element->documentElement()->window()->starFish(), String::createASCIIString(xmlElement->Attribute("backgroundWhenActive"))));
         }
     };
     std::function<void (Element* parentElement, tinyxml2::XMLElement* xmlElement)> fn = [&fn, &parseElementAttribute, &documentElement](Element* parentElement, tinyxml2::XMLElement* xmlElement)
