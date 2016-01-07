@@ -110,13 +110,32 @@ Window* Window::create(StarFish* sf, size_t w, size_t h, void* win)
 
     Evas* e = evas_object_evas_get(wnd->m_window);
 
-    wnd->m_dummyBox = elm_box_add(wnd->m_window);
-    evas_object_size_hint_weight_set (wnd->m_dummyBox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-    elm_win_resize_object_add(wnd->m_window, wnd->m_dummyBox);
-    elm_box_layout_set(wnd->m_dummyBox,mainRenderingFunction,wnd,NULL);
-    evas_object_show(wnd->m_dummyBox);
+    Evas_Object* mainBox= elm_box_add(wnd->m_window);
+    evas_object_size_hint_weight_set (mainBox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+    elm_win_resize_object_add(wnd->m_window, mainBox);
+    elm_box_layout_set(mainBox,mainRenderingFunction,wnd,NULL);
+    evas_object_show(mainBox);
+
+    wnd->m_dummyBox =  evas_object_rectangle_add(e);
+    evas_object_color_set(wnd->m_dummyBox, 0, 0, 0, 0); // opaque background
+    evas_object_resize(wnd->m_dummyBox ,w,h);
+    evas_object_show(wnd->m_dummyBox );
 
     evas_object_show(wnd->m_window);
+
+    evas_object_event_callback_add(wnd->m_dummyBox , EVAS_CALLBACK_MOUSE_DOWN, [](void *data, Evas *evas, Evas_Object *obj, void *event_info) -> void {
+        Window* sf = (Window*)data;
+        Evas_Event_Mouse_Down *ev = (Evas_Event_Mouse_Down *)event_info;
+        sf->dispatchTouchEvent(ev->canvas.x, ev->canvas.y, Window::TouchEventDown);
+        return ;
+    }, wnd);
+
+    evas_object_event_callback_add(wnd->m_dummyBox , EVAS_CALLBACK_MOUSE_UP, [](void *data, Evas *evas, Evas_Object *obj, void *event_info) -> void {
+        Window* sf = (Window*)data;
+        Evas_Event_Mouse_Up *ev = (Evas_Event_Mouse_Up *)event_info;
+        sf->dispatchTouchEvent(ev->canvas.x, ev->canvas.y, Window::TouchEventUp);
+        return ;
+    }, wnd);
 
     evas_event_callback_add(e, EVAS_CALLBACK_RENDER_FLUSH_POST, [](void *data, Evas *e, void *event_info) {
         WindowImplEFL* eflWindow = (WindowImplEFL*)data;
@@ -244,6 +263,10 @@ void Window::rendering()
     if (t - eflWindow->m_lastRenderTime > 33) {
         evas_render(evas);
     }
+#ifdef STARFISH_TIZEN_WEARABLE
+    evas_object_raise(eflWindow->m_dummyBox);
+#endif
+
 }
 
 void Window::setNeedsRendering()
