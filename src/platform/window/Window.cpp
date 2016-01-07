@@ -401,6 +401,13 @@ void Window::resume()
     m_isRunning = true;
     setNeedsRendering();
     WindowImplEFL* eflWindow = (WindowImplEFL*)this;
+
+    auto a = eflWindow->m_drawnImageList.begin();
+    while(a != eflWindow->m_drawnImageList.end()) {
+        evas_object_unref((Evas_Object*)a->first->unwrap());
+        a++;
+    }
+    eflWindow->m_drawnImageList.clear();
     eflWindow->m_lastRenderTime = 0;
     rendering();
 }
