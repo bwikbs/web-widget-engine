@@ -40,6 +40,9 @@ public:
 
     void loadXMLDocument(String* filePath);
 
+    void resume();
+    void pause();
+
 protected:
     MessageLoop* m_messageLoop;
     ScriptBindingInstance* m_scriptBindingInstance;

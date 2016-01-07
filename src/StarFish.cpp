@@ -40,4 +40,14 @@ void StarFish::loadXMLDocument(String* filePath)
     m_window->loadXMLDocument(filePath);
 }
 
+void StarFish::resume()
+{
+
+}
+
+void StarFish::pause()
+{
+
+}
+
 }
