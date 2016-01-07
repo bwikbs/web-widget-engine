@@ -20,7 +20,7 @@ Drawable Drawable::fromString(StarFish* sf, String* str)
         if (buf[len - 1] == ')') {
             buf[len - 1] = 0;
         }
-        d.m_image = ImageData::create(sf->makeResourcePath(String::createASCIIString(buf)));
+        d.m_image = sf->fetchImage(sf->makeResourcePath(String::createASCIIString(buf)));
         d.m_imageSrc = str;
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();

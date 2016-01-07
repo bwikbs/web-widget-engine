@@ -6,6 +6,8 @@ namespace StarFish {
 class MessageLoop;
 class Window;
 class ScriptBindingInstance;
+class ImageData;
+
 
 class StarFish : public gc {
 public:
@@ -43,11 +45,15 @@ public:
     void resume();
     void pause();
 
+    ImageData* fetchImage(String* str);
+
 protected:
     MessageLoop* m_messageLoop;
     ScriptBindingInstance* m_scriptBindingInstance;
     Window* m_window;
     String* m_currentPath;
+    std::unordered_map<std::string, ImageData*, std::hash<std::string>, std::equal_to<std::string>,
+        gc_allocator<std::pair<std::string, ImageData*>>> m_imageCache;
 };
 
 }

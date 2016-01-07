@@ -14,7 +14,7 @@ void XMLDocumentBuilder::build(DocumentElement* documentElement, String* filePat
     doc.LoadFile(filePath->utf8Data());
 
     if(doc.Error()) {
-        RELEASE_ASSERT_NOT_REACHED();
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 
     tinyxml2::XMLElement* document = doc.FirstChildElement("Document");

@@ -2,6 +2,7 @@
 #include "StarFish.h"
 #include "platform/message_loop/MessageLoop.h"
 #include "platform/window/Window.h"
+#include "platform/canvas/image/ImageData.h"
 #include "dom/binding/ScriptBindingInstance.h"
 
 #include <Elementary.h>
@@ -48,6 +49,17 @@ void StarFish::resume()
 void StarFish::pause()
 {
     m_window->pause();
+}
+
+ImageData* StarFish::fetchImage(String* str)
+{
+    auto iter = m_imageCache.find(str->utf8Data());
+    if (iter == m_imageCache.end()) {
+        ImageData* id = ImageData::create(str);
+        m_imageCache.insert(std::make_pair(std::string(str->utf8Data()), id));
+        return id;
+    }
+    return iter->second;
 }
 
 }

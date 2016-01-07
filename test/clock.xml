@@ -84,6 +84,9 @@
     />
     <Script>
         <![CDATA[
+        
+        var running = true;
+        
         function textSetter(a1, a2, time) {
             a1.text = parseInt(time / 10);
             a2.text = time % 10;
@@ -95,9 +98,10 @@
             textSetter(document.getElementById("hour1"), document.getElementById("hour2"), d.getHours());
             textSetter(document.getElementById("min1"), document.getElementById("min2"), d.getMinutes());
             textSetter(document.getElementById("sec1"), document.getElementById("sec2"), d.getSeconds());
-            
-            if (running)
+            print(running+"asdf")
+            if (running) {
                 window.setTimeout(timeoutHander, 500);
+            }
         }
         
         timeoutHander();
@@ -128,7 +132,7 @@
         }
         
         ani()
-        var running = true;
+        
         window.onResume = function() {
             running = true;
             ani();

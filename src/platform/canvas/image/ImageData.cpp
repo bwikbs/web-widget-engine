@@ -20,10 +20,6 @@ public:
         m_width = w;
         m_height = h;
     }
-    virtual ~ImageDataEFL()
-    {
-        evas_object_unref(m_image);
-    }
 
     virtual void* unwrap()
     {

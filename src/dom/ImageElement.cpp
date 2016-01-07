@@ -8,7 +8,7 @@ namespace StarFish {
 void ImageElement::setSrc(String* src)
 {
     m_src = src;
-    m_imageData = ImageData::create(m_documentElement->window()->starFish()->makeResourcePath(src));
+    m_imageData = m_documentElement->window()->starFish()->fetchImage(m_documentElement->window()->starFish()->makeResourcePath(src));
     setNeedsRendering();
 }
 

@@ -18,6 +18,8 @@
 EAPI Eina_Bool evas_render_async(Evas* obj);
 #endif
 
+extern Evas* g_internalCanvas;
+
 namespace StarFish {
 
 namespace
@@ -76,6 +78,7 @@ Window* Window::create(StarFish* sf, size_t w, size_t h)
     wnd->m_window = elm_win_add(NULL, "", ELM_WIN_BASIC);
 
     Evas* e = evas_object_evas_get(wnd->m_window);
+    g_internalCanvas = e;
     Ecore_Evas* ee = ecore_evas_ecore_evas_get(e);
     Ecore_Window ew = ecore_evas_window_get(ee);
     RELEASE_ASSERT(ew);
@@ -109,7 +112,7 @@ Window* Window::create(StarFish* sf, size_t w, size_t h, void* win)
     wnd->m_window = (Evas_Object*)win;
 
     Evas* e = evas_object_evas_get(wnd->m_window);
-
+    g_internalCanvas = e;
     Evas_Object* mainBox = elm_box_add(wnd->m_window);
     evas_object_size_hint_weight_set (mainBox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
     elm_win_resize_object_add(wnd->m_window, mainBox);

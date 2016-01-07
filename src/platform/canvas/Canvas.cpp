@@ -10,12 +10,11 @@
 #include <vector>
 #include <SkMatrix.h>
 
-
-static Evas* g_internalCanvas;
-
+Evas* g_internalCanvas;
 
 namespace StarFish {
 
+/*
 static void initInternalCanvas()
 {
     if(!g_internalCanvas) {
@@ -69,10 +68,11 @@ static void initInternalCanvas()
         g_internalCanvas = canvas;
     }
 }
-
+*/
 Evas* internalCanvas()
 {
-    initInternalCanvas();
+    STARFISH_RELEASE_ASSERT(g_internalCanvas);
+    // initInternalCanvas();
     return g_internalCanvas;
 }
 
