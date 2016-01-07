@@ -201,6 +201,7 @@ Window::Window(StarFish* starFish)
     } ,this);
 
 #ifdef STARFISH_TIZEN_WEARABLE
+    /*
     eext_rotary_event_handler_add([](void *data, Eext_Rotary_Event_Info *info) -> Eina_Bool {
         Window* sf = (Window*)data;
         if (info->direction == EEXT_ROTARY_DIRECTION_CLOCKWISE) {
@@ -212,6 +213,7 @@ Window::Window(StarFish* starFish)
         }
         return EINA_TRUE;
     }, this);
+    */
 #endif
 }
 
