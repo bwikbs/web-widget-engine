@@ -258,7 +258,8 @@
                 target = 0;
                 document.getElementById("hrs").firstChild.textSize = "20"
                 document.getElementById("hrs").firstChild.nextSibling.textSize = "24"
-                
+
+               	window.onKeyDown("Down");
             }
             
             document.getElementById("min").onClick = function() {
@@ -266,6 +267,8 @@
                 target = 1;
                 document.getElementById("min").firstChild.textSize = "20"
                 document.getElementById("min").firstChild.nextSibling.textSize = "24"
+
+		window.onKeyDown("Down");
             }
             
             document.getElementById("sec").onClick = function() {
@@ -273,6 +276,8 @@
                 target = 2;
                 document.getElementById("sec").firstChild.textSize = "20"
                 document.getElementById("sec").firstChild.nextSibling.textSize = "24"
+
+		window.onKeyDown("Down");
             }
             
             window.onKeyDown = function(e) {
@@ -374,6 +379,8 @@
                 document.getElementById("sec2").firstChild.nextSibling.text = h
             }
             function start() {
+		if (hrs == 0 && sec == 0 && min == 0)
+			return;
                 print("Start");
                 document.getElementById("firstFrame").y = 360
                 document.getElementById("secondFrame").y = 0

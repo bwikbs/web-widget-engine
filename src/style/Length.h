@@ -26,13 +26,13 @@ public:
 
     float percent() const
     {
-        ASSERT(m_type == Percent);
+        STARFISH_ASSERT(m_type == Percent);
         //0~1
         return m_data;
     }
     float fixed() const
     {
-        ASSERT(m_type == Fixed);
+        STARFISH_ASSERT(m_type == Fixed);
         return m_data;
     }
 

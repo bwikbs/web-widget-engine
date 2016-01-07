@@ -29,13 +29,13 @@ static void initInternalCanvas()
         if(method <= 0)
         {
             fputs("ERROR: evas was not compiled with 'buffer' engine!\n", stderr);
-            RELEASE_ASSERT_NOT_REACHED();
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
         canvas = evas_new();
         if(!canvas)
         {
             fputs("ERROR: could not instantiate new evas canvas.\n", stderr);
-            RELEASE_ASSERT_NOT_REACHED();
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
         evas_output_method_set(canvas, method);
         evas_output_size_set(canvas, width, height);
@@ -46,7 +46,7 @@ static void initInternalCanvas()
         {
             fputs("ERROR: could not get evas engine info!\n", stderr);
             evas_free(canvas);
-            RELEASE_ASSERT_NOT_REACHED();
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
 
         // ARGB32 is sizeof(int), that is 4 bytes, per pixel
@@ -55,7 +55,7 @@ static void initInternalCanvas()
         {
             fputs("ERROR: could not allocate canvas pixels!\n", stderr);
             evas_free(canvas);
-            RELEASE_ASSERT_NOT_REACHED();
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
 
         einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
@@ -113,13 +113,13 @@ class CanvasEFL : public Canvas {
         if(method <= 0)
         {
             fputs("ERROR: evas was not compiled with 'buffer' engine!\n", stderr);
-            RELEASE_ASSERT_NOT_REACHED();
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
         canvas = evas_new();
         if(!canvas)
         {
             fputs("ERROR: could not instantiate new evas canvas.\n", stderr);
-            RELEASE_ASSERT_NOT_REACHED();
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
         evas_output_method_set(canvas, method);
 
@@ -139,7 +139,7 @@ class CanvasEFL : public Canvas {
         {
             fputs("ERROR: could not get evas engine info!\n", stderr);
             evas_free(canvas);
-            RELEASE_ASSERT_NOT_REACHED();
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
 
         einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
@@ -511,13 +511,13 @@ public:
 
     virtual void* unwrap()
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
         return NULL;
     }
 
     CanvasState& lastState()
     {
-        ASSERT(m_state.size());
+        STARFISH_ASSERT(m_state.size());
         return m_state[m_state.size()-1];
     }
 

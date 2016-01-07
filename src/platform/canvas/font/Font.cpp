@@ -36,7 +36,7 @@ public:
     }
     virtual void* unwrap()
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
         return m_text;
     }
 

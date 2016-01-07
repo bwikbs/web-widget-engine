@@ -31,7 +31,7 @@ public:
         } else if (m_type == SolidColor) {
             return m_color.toString();
         } else {
-            ASSERT(m_type == Image);
+            STARFISH_ASSERT(m_type == Image);
             return m_imageSrc;
         }
     }
@@ -43,13 +43,13 @@ public:
 
     Color color()
     {
-        ASSERT(m_type == SolidColor);
+        STARFISH_ASSERT(m_type == SolidColor);
         return m_color;
     }
 
     ImageData* image()
     {
-        ASSERT(m_type == Image);
+        STARFISH_ASSERT(m_type == Image);
         return m_image;
     }
 

@@ -13,7 +13,7 @@ public:
 
     ASCIIString* asASCIIString()
     {
-        ASSERT(m_isASCIIString);
+        STARFISH_ASSERT(m_isASCIIString);
         return (ASCIIString*)((size_t)this + sizeof(size_t));
     }
 
@@ -60,7 +60,7 @@ inline String* String::createASCIIString(const char* str)
 
 inline const char* String::utf8Data()
 {
-    ASSERT(m_isASCIIString);
+    STARFISH_ASSERT(m_isASCIIString);
     return asASCIIString()->data();
 }
 

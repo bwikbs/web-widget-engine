@@ -53,18 +53,23 @@ public:
         return m_activeNodeWithTouchDown;
     }
 
+    void pause();
+    void resume();
+
 protected:
     Window(StarFish* starFish);
     void rendering();
 
     bool m_needsRendering;
+    bool m_isRunning;
     DocumentElement* m_document;
     Node* m_activeNodeWithTouchDown;
 
     StarFish* m_starFish;
 
     uint32_t m_timeoutCounter;
-    std::unordered_map<uint32_t, std::pair<WindowSetTimeoutHandler, void*> > m_timeoutHandler;
+    std::unordered_map<uint32_t, std::pair<WindowSetTimeoutHandler, void*>, std::hash<uint32_t>, std::equal_to<uint32_t>,
+        gc_allocator<std::pair<uint32_t, std::pair<WindowSetTimeoutHandler, void*> > > > m_timeoutHandler;
 };
 
 }

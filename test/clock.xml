@@ -96,7 +96,8 @@
             textSetter(document.getElementById("min1"), document.getElementById("min2"), d.getMinutes());
             textSetter(document.getElementById("sec1"), document.getElementById("sec2"), d.getSeconds());
             
-            window.setTimeout(timeoutHander, 500);
+            if (running)
+                window.setTimeout(timeoutHander, 500);
         }
         
         timeoutHander();
@@ -115,7 +116,9 @@
                 document.getElementById("sun").scale = 1;
             } else 
                 document.getElementById("sun").scale = 1 + Math.sin( ((now - startTime) / c * 180) * Math.PI / 180) * 0.25;
-            window.setTimeout(ani, 13);
+            
+            if (running)
+                window.setTimeout(ani, 13);
         }
         
         var startTime = Date.now()
@@ -125,6 +128,17 @@
         }
         
         ani()
+        var running = true;
+        window.onResume = function() {
+            running = true;
+            ani();
+            timeoutHander();
+        }
+        
+        window.onPause = function() {
+            running = false;
+        }
+        
         ]]>
     </Script>
 </Document>

@@ -77,6 +77,11 @@
             };
         }
         
+	document.getElementById("bg").onClick = function() {
+print(window.onKeyUp);
+		window.onKeyUp("Down");
+	}
+
         function showTime(index) {
             var objCity = document.getElementById('city');
             objCity.text = "" + cities[index].city;

@@ -42,12 +42,12 @@ void StarFish::loadXMLDocument(String* filePath)
 
 void StarFish::resume()
 {
-
+    m_window->resume();
 }
 
 void StarFish::pause()
 {
-
+    m_window->pause();
 }
 
 }
