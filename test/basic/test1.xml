@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+    <node nodeType="9" name="document">
+        <node nodeType="10" name="documentType">
+        </node>
+        <node nodeType="1" name="html">
+            <node nodeType="1" name="head">
+            </node>
+            <node nodeType="3" name="text">
+                <text><![CDATA[
+    ]]></text>
+            </node>
+            <node nodeType="1" name="body">
+                <node nodeType="3" name="text">
+                    <text><![CDATA[
+
+            ]]></text>
+                </node>
+            </node>
+        </node>
+    </node>
+</HTMLDocument>

@@ -14,8 +14,6 @@
 
 namespace StarFish {
 
-STARFISH_COMPILE_ASSERT(sizeof(ScriptWrappable) == sizeof(escargot::ESObject), "");
-
 static ScriptBindingInstanceDataEscargot* fetchData(ScriptBindingInstance* instance)
 {
     return (ScriptBindingInstanceDataEscargot *)instance->data();
@@ -48,7 +46,6 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     windowFunction->protoType().asESPointer()->asESObject()->forceNonVectorHiddenClass(false);
     windowFunction->protoType().asESPointer()->asESObject()->set__proto__(eventTargetFunction->protoType());
     // Window
-    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Window"), false, false, false, windowFunction);
     fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Window"), false, false, false, fetchData(this)->m_instance->globalObject());
 
     fetchData(this)->m_instance->globalObject()->set__proto__(windowFunction->protoType());
@@ -83,6 +80,88 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Element"), false, false, false, elementFunction);
     fetchData(this)->m_element = elementFunction;
 
+    escargot::ESFunctionObject* documentTypeFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
+        {
+            return escargot::ESValue();
+        }, escargot::ESString::create("DocumentType"), 0, false);
+    documentTypeFunction->protoType().asESPointer()->asESObject()->set__proto__(nodeFunction->protoType());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("DocumentType"), false, false, false, documentTypeFunction);
+    fetchData(this)->m_documentType = documentTypeFunction;
+
+    escargot::ESFunctionObject* documentFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
+        {
+            return escargot::ESValue();
+        }, escargot::ESString::create("Document"), 0, false);
+    documentFunction->protoType().asESPointer()->asESObject()->set__proto__(nodeFunction->protoType());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Document"), false, false, false, documentFunction);
+    fetchData(this)->m_document = documentFunction;
+
+    escargot::ESFunctionObject* htmlDocumentFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
+        {
+            return escargot::ESValue();
+        }, escargot::ESString::create("HTMLDocument"), 0, false);
+    htmlDocumentFunction->protoType().asESPointer()->asESObject()->set__proto__(documentFunction->protoType());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("HTMLDocument"), false, false, false, htmlDocumentFunction);
+    fetchData(this)->m_htmlDocument = htmlDocumentFunction;
+
+    escargot::ESFunctionObject* characterDataFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
+        {
+            return escargot::ESValue();
+        }, escargot::ESString::create("CharacterData"), 0, false);
+    characterDataFunction->protoType().asESPointer()->asESObject()->set__proto__(nodeFunction->protoType());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("CharacterData"), false, false, false, characterDataFunction);
+    fetchData(this)->m_characterData = characterDataFunction;
+
+    escargot::ESFunctionObject* textFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
+        {
+            return escargot::ESValue();
+        }, escargot::ESString::create("Text"), 0, false);
+    textFunction->protoType().asESPointer()->asESObject()->set__proto__(characterDataFunction->protoType());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Text"), false, false, false, textFunction);
+    fetchData(this)->m_text = textFunction;
+
+    escargot::ESFunctionObject* htmlElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
+        {
+            return escargot::ESValue();
+        }, escargot::ESString::create("HTMLElement"), 0, false);
+    htmlElementFunction->protoType().asESPointer()->asESObject()->set__proto__(elementFunction->protoType());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("HTMLElement"), false, false, false, htmlElementFunction);
+    fetchData(this)->m_htmlElement = htmlElementFunction;
+
+    escargot::ESFunctionObject* htmlHtmlElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
+        {
+            return escargot::ESValue();
+        }, escargot::ESString::create("HTMLHtmlElement"), 0, false);
+    htmlHtmlElementFunction->protoType().asESPointer()->asESObject()->set__proto__(htmlElementFunction->protoType());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("HTMLHtmlElement"), false, false, false, htmlHtmlElementFunction);
+    fetchData(this)->m_htmlHtmlElement = htmlHtmlElementFunction;
+
+    escargot::ESFunctionObject* htmlHeadElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
+        {
+            return escargot::ESValue();
+        }, escargot::ESString::create("HTMLHeadElement"), 0, false);
+    htmlHeadElementFunction->protoType().asESPointer()->asESObject()->set__proto__(htmlElementFunction->protoType());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("HTMLHeadElement"), false, false, false, htmlHeadElementFunction);
+    fetchData(this)->m_htmlHeadElement = htmlHeadElementFunction;
+
+    escargot::ESFunctionObject* htmlBodyElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
+        {
+            return escargot::ESValue();
+        }, escargot::ESString::create("HTMLBodyElement"), 0, false);
+    htmlBodyElementFunction->protoType().asESPointer()->asESObject()->set__proto__(htmlElementFunction->protoType());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("HTMLBodyElement"), false, false, false, htmlBodyElementFunction);
+    fetchData(this)->m_htmlBodyElement = htmlBodyElementFunction;
+}
+
+void ScriptBindingInstance::evaluate(String* str)
+{
+    fetchData(this)->m_instance->evaluate(escargot::ESString::create(str->utf8Data()));
+}
+
+}
+
+
+/*
     escargot::ESFunctionObject* getElementByIdFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
         if (v.isObject()) {
@@ -99,36 +178,4 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         return escargot::ESValue(escargot::ESValue::ESNull);
     }, escargot::ESString::create("getElementById"), 1, false);
     elementFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("getElementById"), false, false, false, getElementByIdFunction);
-
-    escargot::ESFunctionObject* documentElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
-        {
-            return escargot::ESValue();
-        }, escargot::ESString::create("DocumentElement"), 0, false);
-    documentElementFunction->protoType().asESPointer()->asESObject()->set__proto__(elementFunction->protoType());
-    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("DocumentElement"), false, false, false, documentElementFunction);
-    fetchData(this)->m_documentElement = documentElementFunction;
-
-    escargot::ESFunctionObject* imageElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
-        {
-            return escargot::ESValue();
-        }, escargot::ESString::create("ImageElement"), 0, false);
-    imageElementFunction->protoType().asESPointer()->asESObject()->set__proto__(elementFunction->protoType());
-    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("ImageElement"), false, false, false, imageElementFunction);
-    fetchData(this)->m_imageElement = imageElementFunction;
-
-    escargot::ESFunctionObject* textElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
-        {
-            return escargot::ESValue();
-        }, escargot::ESString::create("TextElement"), 0, false);
-    textElementFunction->protoType().asESPointer()->asESObject()->forceNonVectorHiddenClass(false);
-    textElementFunction->protoType().asESPointer()->asESObject()->set__proto__(elementFunction->protoType());
-    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("TextElement"), false, false, false, textElementFunction);
-    fetchData(this)->m_textElement = textElementFunction;
-}
-
-void ScriptBindingInstance::evaluate(String* str)
-{
-    fetchData(this)->m_instance->evaluate(escargot::ESString::create(str->utf8Data()));
-}
-
-}
+*/

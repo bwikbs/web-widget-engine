@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="./xml2json.js"></script>		
+		<script src="./xml2json.js"></script>
+		<script src="./js2xmlparser.js"></script>				
 	</head>
 	<body>
 		<h1>input html code you want</h1>
@@ -33,7 +34,9 @@
 			<textarea rows="30" cols="80" id="result"></textarea>
 			
 		</form>
+		
 		<script type="text/javascript" >
+	
 			function onSubmit() {
 				var code = document.getElementById("code");
 
@@ -60,37 +63,39 @@
 						}
 					}
 					var result = {
-						"document" : {
+						"node" : {
 						}
 					}
 					function process(node, into) {
-						into.nodeType = node.nodeType;
-						
-						if (node.nodeType == 1) {
-							into.name = node.localName;
-						} else if (node.nodeType == 3) {
-							into.text = node.data;
+						into["@"] = {
+							"nodeType" : node.nodeType,
+							"name" : nameFromType(node.nodeType)
 						}
 						
-											
-						into.childNodes = [];
+						if (node.nodeType == 1) {
+							into["@"].name = node.localName;
+						} else if (node.nodeType == 3) {
+							into["text"] = {"#":node.data};
+						}
+						
+						into.node = [];
 						var c = node.firstChild;
 						while(c) {
 							var t = {};
 							process(c, t);
-							var tt = {};
-							tt[nameFromType(t.nodeType)] = t;
-							into.childNodes.push(tt);
+							Array.prototype.push.call(into.node, t);
 							
 							c = c.nextSibling;
 						}
 					}				
-					process(iframe.contentDocument,result.document)
+					process(iframe.contentDocument,result.node)
 					console.log(result);
 				
 					var output = document.getElementById("result")
-					var x2js = new X2JS(); 
-					output.value = x2js.json2xml_str(result);									
+					//var x2js = new X2JS(); 
+					//output.value = x2js.json2xml_str(result);
+					output.value = js2xmlparser("HTMLDocument", result, {useCDATA:true})
+									
 					document.body.removeChild(iframe);
 				}
 					

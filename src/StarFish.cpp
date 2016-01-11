@@ -13,6 +13,7 @@ namespace StarFish {
 StarFish::StarFish(String* currentPath)
 {
     m_currentPath = currentPath;
+    GC_add_roots(String::emptyString, String::emptyString + sizeof(String*));
     elm_init(0,0);
     elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
     m_messageLoop = new MessageLoop();
@@ -24,6 +25,7 @@ StarFish::StarFish(String* currentPath)
 StarFish::StarFish(String* currentPath, void* win)
 {
     m_currentPath = currentPath;
+    GC_add_roots(String::emptyString, String::emptyString + sizeof(String*));
     m_messageLoop = new MessageLoop();
     m_scriptBindingInstance = new ScriptBindingInstance();
     m_scriptBindingInstance->initBinding(this);

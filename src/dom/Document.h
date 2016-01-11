@@ -2,6 +2,7 @@
 #define __StarFishDocument__
 
 #include "dom/Node.h"
+#include "platform/window/Window.h"
 
 namespace StarFish {
 
@@ -17,7 +18,7 @@ protected:
     }
 public:
 
-    virtual bool isDocumentElement()
+    virtual bool isDocument()
     {
         return true;
     }

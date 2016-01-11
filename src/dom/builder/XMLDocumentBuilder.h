@@ -12,7 +12,7 @@ public:
     {
     }
 
-    virtual void build(DocumentElement* element, String* filePath);
+    virtual void build(Document* element, String* filePath);
 
 protected:
 };

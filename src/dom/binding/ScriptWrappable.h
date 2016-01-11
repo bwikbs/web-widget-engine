@@ -7,8 +7,15 @@ class EventTarget;
 class Window;
 class Node;
 class Element;
-class DocumentElement;
-class HTMLDocumentElement;
+class Document;
+class DocumentType;
+class HTMLDocument;
+class CharacterData;
+class Text;
+class HTMLElement;
+class HTMLHtmlElement;
+class HTMLHeadElement;
+class HTMLBodyElement;
 
 class ScriptBindingInstance;
 
@@ -28,10 +35,17 @@ public:
     void initScriptWrappable(EventTarget* ptr);
     void initScriptWrappable(Node* ptr);
     void initScriptWrappable(Node* ptr, ScriptBindingInstance*);
+    void initScriptWrappable(DocumentType* ptr);
     void initScriptWrappable(Element* ptr);
     void initScriptWrappable(Element* ptr, ScriptBindingInstance*);
-    void initScriptWrappable(DocumentElement* ptr);
-    void initScriptWrappable(HTMLDocumentElement* ptr);
+    void initScriptWrappable(Document* ptr);
+    void initScriptWrappable(HTMLDocument* ptr);
+    void initScriptWrappable(CharacterData* ptr);
+    void initScriptWrappable(Text* ptr);
+    void initScriptWrappable(HTMLElement* ptr);
+    void initScriptWrappable(HTMLHtmlElement* ptr);
+    void initScriptWrappable(HTMLHeadElement* ptr);
+    void initScriptWrappable(HTMLBodyElement* ptr);
 
     void callFunction(String* name);
 

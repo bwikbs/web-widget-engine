@@ -5,31 +5,34 @@
 #include "util/Unit.h"
 #include "style/Length.h"
 #include "style/Drawable.h"
+#include "platform/canvas/Canvas.h"
 #include "dom/EventTarget.h"
 
 namespace StarFish {
 
 class Element;
 
-class Node : public ScriptWrappable {
+class Node : public EventTarget {
 protected:
-    Node(Document* documentElement, ScriptBindingInstance* instance)
+    Node(Document* document, ScriptBindingInstance* instance)
     {
-        m_documentElement = documentElement;
+        m_document = document;
         initScriptWrappable(this, instance);
         m_nextSibling = nullptr;
-        m_parentElement = nullptr;
-        m_id = nullptr;
+        m_parentNode = nullptr;
+        m_firstChild = nullptr;
+        // m_id = nullptr;
         m_state = NodeStateNormal;
     }
 
-    Node(Document* documentElement)
+    Node(Document* document)
     {
-        m_documentElement = documentElement;
+        m_document = document;
         initScriptWrappable(this);
         m_nextSibling = nullptr;
-        m_parentElement = nullptr;
-        m_id = nullptr;
+        m_parentNode = nullptr;
+        m_firstChild = nullptr;
+        // m_id = nullptr;
         m_state = NodeStateNormal;
     }
 public:
@@ -53,10 +56,77 @@ public:
         return false;
     }
 
-    virtual bool isDocumentElement()
+    virtual bool isDocument()
     {
         return false;
     }
+
+    /*Element* getElementById(String* id)
+    {
+        if (!id)
+            return nullptr;
+
+        Node* node = m_firstChild;
+        while (node) {
+            if (node->isElement()) {
+                if (node->asElement()->id() && node->asElement()->id()->equals(id)) {
+                    return node->asElement();
+                }
+                Element* ret = node->asElement()->getElementById(id);
+                if (ret)
+                    return ret;
+            }
+            node = node->nextSibling();
+        }
+
+        return nullptr;
+    }*/
+
+    Node* firstChild()
+    {
+        return m_firstChild;
+    }
+
+    void setFirstChild(Node* s)
+    {
+        m_firstChild = s;
+    }
+
+    void appendChild(Node* child)
+    {
+        STARFISH_ASSERT(child->parentNode() == nullptr);
+        if (m_firstChild) {
+            Node* node = m_firstChild;
+            while (node->nextSibling() != nullptr) {
+                node = node->nextSibling();
+            }
+            STARFISH_ASSERT(node->nextSibling() == nullptr);
+            node->setNextSibling(child);
+        } else {
+            m_firstChild = child;
+        }
+        child->setParentNode(this);
+        setNeedsRendering();
+    }
+
+    void removeChild(Node* child)
+    {
+        STARFISH_ASSERT(child);
+        STARFISH_ASSERT(child->parentNode() == this);
+        Node* prevNode = nullptr;
+        Node* node = m_firstChild;
+        while (node != child) {
+            prevNode = node;
+            node = node->nextSibling();
+        }
+
+        STARFISH_ASSERT(node == child);
+        node->setParentNode(nullptr);
+        prevNode->setNextSibling(node->nextSibling());
+        node->setNextSibling(nullptr);
+        setNeedsRendering();
+    }
+
 
     Node* nextSibling()
     {
@@ -68,14 +138,14 @@ public:
         m_nextSibling = s;
     }
 
-    Element* parentElement()
+    Node* parentNode()
     {
-        return m_parentElement;
+        return m_parentNode;
     }
 
-    void setParentElement(Element* s)
+    void setParentNode(Node* s)
     {
-        m_parentElement = s;
+        m_parentNode = s;
     }
 
     Element* asElement()
@@ -84,11 +154,11 @@ public:
         return (Element*)this;
     }
 
-    DocumentElement* documentElement()
+    Document* document()
     {
-        return m_documentElement;
+        return m_document;
     }
-
+/*
     void setId(String* id)
     {
         m_id = id;
@@ -99,7 +169,7 @@ public:
     {
         return m_id;
     }
-
+*/
     void setState(NodeState state)
     {
         m_state = state;
@@ -131,16 +201,14 @@ public:
         return NULL;
     }
 
-    virtual bool onTouchEvent(Window::TouchEventKind kind, float x, float y);
-
 protected:
     Node* m_nextSibling;
     // Node* m_previousSibling;
-    // Node* m_firstChild;
+    Node* m_firstChild;
     // Node* m_lastChild;
     Node* m_parentNode;
-    DocumentElement* m_document;
-    String* m_id;
+    Document* m_document;
+    // String* m_id; -> htmlelement
     NodeState m_state;
 };
 

@@ -229,10 +229,6 @@ void Window::rendering()
     WindowImplEFL* eflWindow = (WindowImplEFL*)this;
     int width, height;
     evas_object_geometry_get(eflWindow->m_window, NULL, NULL, &width, &height);
-    m_document->mutableComputedRect().setX(0);
-    m_document->mutableComputedRect().setY(0);
-    m_document->mutableComputedRect().setWidth(width);
-    m_document->mutableComputedRect().setHeight(height);
     m_document->computeLayout();
 
     if (!m_isRunning) {
@@ -374,21 +370,21 @@ void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)
         Node* t = node;
         while (t) {
             t->setState(Node::NodeStateActive);
-            t = t->parentElement();
+            t = t->parentNode();
         }
     }
     while (node) {
         // TODO
         // translate x, y
-        if (node->onTouchEvent(kind, x, y))
-            break;
-        node = node->parentElement();
+        // if (node->onTouchEvent(kind, x, y))
+        //    break;
+        node = node->parentNode();
     }
     if (kind == TouchEventUp) {
         Node* t = m_activeNodeWithTouchDown;
         while (t) {
             t->setState(Node::NodeStateNormal);
-            t = t->parentElement();
+            t = t->parentNode();
         }
         m_activeNodeWithTouchDown = nullptr;
     }
@@ -397,9 +393,9 @@ void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)
 void Window::dispatchKeyEvent(String* key, KeyEventKind kind)
 {
     if (kind == KeyEventDown) {
-        callFunction(String::createASCIIString("onKeyDown"), key);
+        callFunction(String::createASCIIString("onKeyDown"));
     } else if (kind == KeyEventUp) {
-        callFunction(String::createASCIIString("onKeyUp"), key);
+        callFunction(String::createASCIIString("onKeyUp"));
     }
 }
 

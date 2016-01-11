@@ -1,9 +1,6 @@
-#include "../dom/Document.h"
 #include "StarFishConfig.h"
+#include "dom/Document.h"
 #include "StarFish.h"
-
-#include "dom/TextElement.h"
-#include "dom/ImageElement.h"
 
 using namespace StarFish;
 

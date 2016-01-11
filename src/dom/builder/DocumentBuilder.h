@@ -16,7 +16,7 @@ public:
 
     }
 
-    virtual void build(DocumentElement* element, String* filePath) = 0;
+    virtual void build(Document* element, String* filePath) = 0;
 };
 
 

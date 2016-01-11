@@ -6,7 +6,7 @@
 namespace StarFish {
 
 class StarFish;
-class DocumentElement;
+class Document;
 class Window;
 
 typedef void (*WindowSetTimeoutHandler)(Window* window, void* data);
@@ -27,7 +27,7 @@ public:
     void setNeedsRendering();
     void renderingIfNeeds();
 
-    DocumentElement* document()
+    Document* document()
     {
         return m_document;
     }
@@ -68,7 +68,7 @@ protected:
 
     bool m_needsRendering;
     bool m_isRunning;
-    DocumentElement* m_document;
+    Document* m_document;
     Node* m_activeNodeWithTouchDown;
 
     StarFish* m_starFish;

@@ -1,5 +1,5 @@
 
-#ifndef __StarFishHTMLDocumentHTMLDocument__
+#ifndef __StarFishHTMLDocument__
 #define __StarFishHTMLDocument__
 
 #include "Document.h"
@@ -8,10 +8,10 @@ namespace StarFish {
 
 class Window;
 
-class HTMLDocument : public DocumentElement {
+class HTMLDocument : public Document {
 public:
     HTMLDocument(Window* window, ScriptBindingInstance* scriptBindingInstance)
-        : DocumentElement(this, scriptBindingInstance)
+        : Document(window, scriptBindingInstance)
     {
         initScriptWrappable(this);
     }
