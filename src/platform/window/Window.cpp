@@ -393,23 +393,23 @@ void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)
 void Window::dispatchKeyEvent(String* key, KeyEventKind kind)
 {
     if (kind == KeyEventDown) {
-        callFunction(String::createASCIIString("onKeyDown"));
+        // callFunction(String::createASCIIString("onKeyDown"));
     } else if (kind == KeyEventUp) {
-        callFunction(String::createASCIIString("onKeyUp"));
+        // callFunction(String::createASCIIString("onKeyUp"));
     }
 }
 
 void Window::pause()
 {
     STARFISH_LOG_INFO("onPause");
-    callFunction(String::createASCIIString("onPause"));
+    // callFunction(String::createASCIIString("onPause"));
     m_isRunning = false;
 }
 
 void Window::resume()
 {
     STARFISH_LOG_INFO("onResume");
-    callFunction(String::createASCIIString("onResume"));
+    // callFunction(String::createASCIIString("onResume"));
     m_isRunning = true;
     setNeedsRendering();
     WindowImplEFL* eflWindow = (WindowImplEFL*)this;

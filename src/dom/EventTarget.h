@@ -8,11 +8,11 @@ namespace StarFish {
 class Window;
 class Node;
 
-class EventTarget : public ScriptWrappable {
+template<typename T = ScriptWrappable>
+class EventTarget : public T {
 protected:
     EventTarget()
     {
-        initScriptWrappable(this);
     }
 
     virtual ~EventTarget()

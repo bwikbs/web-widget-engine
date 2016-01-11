@@ -44,6 +44,7 @@ public:
 
     void resume();
     void pause();
+    void evaluate(String* s);
 
     ImageData* fetchImage(String* str);
 

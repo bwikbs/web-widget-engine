@@ -11,7 +11,7 @@ class Window;
 
 typedef void (*WindowSetTimeoutHandler)(Window* window, void* data);
 
-class Window : public EventTarget {
+class Window : public EventTarget<ScriptWrappableGlobalObject> {
 public:
 #ifndef STARFISH_TIZEN_WEARABLE
     static Window* create(StarFish* sf, size_t w = SIZE_MAX, size_t h = SIZE_MAX);

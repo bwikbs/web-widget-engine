@@ -4,7 +4,6 @@
 #include "platform/window/Window.h"
 #include "dom/DOM.h"
 
-#include "Escargot.h"
 #include "vm/ESVMInstance.h"
 
 #include "dom/binding/ScriptBindingInstance.h"
@@ -19,23 +18,30 @@ static ScriptBindingInstanceDataEscargot* fetchData(ScriptBindingInstance* insta
 }
 
 ScriptWrappable::ScriptWrappable()
-    : ScriptWrappable(escargot::ESObject::create())
+    : escargot::ESObject(escargot::ESPointer::Type::ESObject, escargot::ESValue())
 {
 
 }
 
-ScriptWrappable::ScriptWrappable(void* object = nullptr)
+ScriptWrappableGlobalObject::ScriptWrappableGlobalObject()
 {
-    m_object = object;
+}
+
+ScriptWrappableGlobalObject* ScriptWrappableGlobalObject::fetch()
+{
+    auto a = escargot::ESVMInstance::currentInstance()->globalObject()->get(escargot::ESString::create("__windowData"));
+    return (ScriptWrappableGlobalObject*)a.asESPointer();
 }
 
 
-void ScriptWrappable::initScriptWrappableWindow(Window* window)
+
+void ScriptWrappableGlobalObject::initScriptWrappableWindow(Window* window)
 {
+    m_object = escargot::ESVMInstance::currentInstance()->globalObject();
+    escargot::ESVMInstance::currentInstance()->globalObject()->defineDataProperty(escargot::ESString::create("__windowData"), false, false, false, escargot::ESValue((escargot::ESPointer*)this));
     auto data = fetchData(window->starFish()->scriptBindingInstance());
-    this->m_object = data->m_instance->globalObject();
     ((escargot::ESObject *)this->m_object)->set__proto__(data->m_window->protoType());
-    ((escargot::ESObject *)this->m_object)->setExtraData(WindowObject);
+    ((escargot::ESObject *)this->m_object)->setExtraData(ScriptWrappable::WindowObject);
 
     escargot::ESFunctionObject* setTimeoutFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
@@ -45,7 +51,7 @@ void ScriptWrappable::initScriptWrappableWindow(Window* window)
                         instance->currentExecutionContext()->readArgument(0).asESPointer() &&
                         instance->currentExecutionContext()->readArgument(0).asESPointer()->isESFunctionObject()) {
                     if (instance->currentExecutionContext()->readArgument(1).isNumber()) {
-                        Window* wnd = (Window*)v.asESPointer()->asESObject();
+                        Window* wnd = (Window*)ScriptWrappableGlobalObject::fetch();
                         wnd->setTimeout([](Window* wnd, void* data) {
                             escargot::ESFunctionObject* fn = (escargot::ESFunctionObject*)data;
                             escargot::ESFunctionObject::call(escargot::ESVMInstance::currentInstance(),
@@ -62,10 +68,6 @@ void ScriptWrappable::initScriptWrappableWindow(Window* window)
 
 }
 
-void ScriptWrappable::initScriptWrappable(EventTarget* ptr)
-{
-}
-
 void ScriptWrappable::initScriptWrappable(Node* ptr)
 {
     Node* node = (Node*)this;
@@ -75,9 +77,9 @@ void ScriptWrappable::initScriptWrappable(Node* ptr)
 void ScriptWrappable::initScriptWrappable(Node* ptr, ScriptBindingInstance* instance)
 {
     auto data = fetchData(instance);
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_node->protoType());
+    ((escargot::ESObject *)this)->set__proto__(data->m_node->protoType());
 
-    ((escargot::ESObject *)this->m_object)->defineAccessorProperty(escargot::ESString::create("nextSibling"),
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("nextSibling"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
         Node* nd = ((Node *)originalObj)->nextSibling();
         if (nd == nullptr)
@@ -85,7 +87,15 @@ void ScriptWrappable::initScriptWrappable(Node* ptr, ScriptBindingInstance* inst
         return escargot::ESValue((escargot::ESObject *)nd);
     }, NULL, false, false, false);
 
-    ((escargot::ESObject *)this->m_object)->setExtraData(NodeObject);
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("firstChild"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+        Node* nd = ((Node *)originalObj)->firstChild();
+        if (nd == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return escargot::ESValue((escargot::ESObject *)nd);
+    }, NULL, false, false, false);
+
+    ((escargot::ESObject *)this)->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(Element* element)
@@ -97,21 +107,13 @@ void ScriptWrappable::initScriptWrappable(Element* element)
 void ScriptWrappable::initScriptWrappable(DocumentType* element)
 {
     auto data = fetchData(element->document()->scriptBindingInstance());
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_documentType->protoType());
+    ((escargot::ESObject *)this)->set__proto__(data->m_documentType->protoType());
 }
 
 void ScriptWrappable::initScriptWrappable(Element* element, ScriptBindingInstance* instance)
 {
     auto data = fetchData(instance);
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_element->protoType());
-
-    ((escargot::ESObject *)this->m_object)->defineAccessorProperty(escargot::ESString::create("firstChild"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        Node* nd = ((Element *)originalObj)->firstChild();
-        if (nd == nullptr)
-            return escargot::ESValue(escargot::ESValue::ESNull);
-        return escargot::ESValue((escargot::ESObject *)nd);
-    }, NULL, false, false, false);
+    ((escargot::ESObject *)this)->set__proto__(data->m_element->protoType());
 
 }
 
@@ -119,56 +121,56 @@ void ScriptWrappable::initScriptWrappable(Document*)
 {
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_document->protoType());
+    ((escargot::ESObject *)this)->set__proto__(data->m_document->protoType());
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLDocument*)
 {
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_htmlDocument->protoType());
+    ((escargot::ESObject *)this)->set__proto__(data->m_htmlDocument->protoType());
 }
 
 void ScriptWrappable::initScriptWrappable(CharacterData* ptr)
 {
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_characterData->protoType());
+    ((escargot::ESObject *)this)->set__proto__(data->m_characterData->protoType());
 }
 
 void ScriptWrappable::initScriptWrappable(Text* ptr)
 {
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_text->protoType());
+    ((escargot::ESObject *)this)->set__proto__(data->m_text->protoType());
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLElement* ptr)
 {
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_htmlElement->protoType());
+    ((escargot::ESObject *)this)->set__proto__(data->m_htmlElement->protoType());
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLHtmlElement* ptr)
 {
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_htmlHtmlElement->protoType());
+    ((escargot::ESObject *)this)->set__proto__(data->m_htmlHtmlElement->protoType());
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLHeadElement* ptr)
 {
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_htmlHeadElement->protoType());
+    ((escargot::ESObject *)this)->set__proto__(data->m_htmlHeadElement->protoType());
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLBodyElement* ptr)
 {
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
-    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_htmlBodyElement->protoType());
+    ((escargot::ESObject *)this)->set__proto__(data->m_htmlBodyElement->protoType());
 }
 
 void ScriptWrappable::callFunction(String* name)

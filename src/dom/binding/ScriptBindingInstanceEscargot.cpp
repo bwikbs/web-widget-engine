@@ -46,7 +46,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     windowFunction->protoType().asESPointer()->asESObject()->forceNonVectorHiddenClass(false);
     windowFunction->protoType().asESPointer()->asESObject()->set__proto__(eventTargetFunction->protoType());
     // Window
-    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Window"), false, false, false, fetchData(this)->m_instance->globalObject());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("window"), false, false, false, fetchData(this)->m_instance->globalObject());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Window"), false, false, false, windowFunction);
 
     fetchData(this)->m_instance->globalObject()->set__proto__(windowFunction->protoType());
     fetchData(this)->m_window = windowFunction;
@@ -54,12 +55,12 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     windowFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("document"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
         ASSERT(escargot::ESValue((escargot::ESObject *)((Window *)originalObj)->document()).isObject());
-        return (escargot::ESObject *)((Window *)originalObj)->document();
+        return (escargot::ESObject *)((Window *)ScriptWrappableGlobalObject::fetch())->document();
     }, NULL, false, false, false);
 
     fetchData(this)->m_instance->globalObject()->defineAccessorProperty(escargot::ESString::create("document"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESVMInstance::currentInstance()->globalObject()->get(escargot::ESString::create("window")).asESPointer()->asESObject()->get(escargot::ESString::create("document"));
+        return (escargot::ESObject *)((Window *)ScriptWrappableGlobalObject::fetch())->document();
     }, NULL, false, false, false);
 
     // Node
@@ -155,7 +156,15 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
 void ScriptBindingInstance::evaluate(String* str)
 {
-    fetchData(this)->m_instance->evaluate(escargot::ESString::create(str->utf8Data()));
+    std::jmp_buf tryPosition;
+    if (setjmp(fetchData(this)->m_instance->registerTryPos(&tryPosition)) == 0) {
+        escargot::ESValue ret = fetchData(this)->m_instance->evaluate(escargot::ESString::create(str->utf8Data()));
+        fetchData(this)->m_instance->printValue(ret);
+        fetchData(this)->m_instance->unregisterTryPos(&tryPosition);
+    } else {
+        escargot::ESValue err = fetchData(this)->m_instance->getCatchedError();
+        printf("Uncaught %s\n", err.toString()->utf8Data());
+    }
 }
 
 }

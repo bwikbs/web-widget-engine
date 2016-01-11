@@ -53,6 +53,11 @@ void StarFish::pause()
     m_window->pause();
 }
 
+void StarFish::evaluate(String* s)
+{
+    m_scriptBindingInstance->evaluate(s);
+}
+
 ImageData* StarFish::fetchImage(String* str)
 {
     auto iter = m_imageCache.find(str->utf8Data());

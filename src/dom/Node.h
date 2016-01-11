@@ -12,7 +12,7 @@ namespace StarFish {
 
 class Element;
 
-class Node : public EventTarget {
+class Node : public EventTarget<ScriptWrappable> {
 protected:
     Node(Document* document, ScriptBindingInstance* instance)
     {
