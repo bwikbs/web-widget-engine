@@ -1,7 +1,6 @@
 #include "StarFishConfig.h"
 #include "Window.h"
 
-#include "dom/DocumentElement.h"
 #include "dom/builder/XMLDocumentBuilder.h"
 
 #include <Elementary.h>
@@ -9,6 +8,8 @@
 #include <Ecore_X.h>
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
+
+#include "../../dom/HTMLDocument.h"
 #ifdef STARFISH_TIZEN_WEARABLE
 #include <efl_extension.h>
 #include <tizen.h>
@@ -81,7 +82,7 @@ Window* Window::create(StarFish* sf, size_t w, size_t h)
     g_internalCanvas = e;
     Ecore_Evas* ee = ecore_evas_ecore_evas_get(e);
     Ecore_Window ew = ecore_evas_window_get(ee);
-    RELEASE_ASSERT(ew);
+    STARFISH_RELEASE_ASSERT(ew);
     wnd->m_handle = (uintptr_t)ew;
 
     elm_win_autodel_set(wnd->m_window, EINA_TRUE);
@@ -155,8 +156,8 @@ Window* Window::create(StarFish* sf, size_t w, size_t h, void* win)
 Window::Window(StarFish* starFish)
     : m_starFish(starFish)
 {
-    ASSERT(m_starFish->scriptBindingInstance());
-    m_document = new DocumentElement(this, m_starFish->scriptBindingInstance());
+    STARFISH_ASSERT(m_starFish->scriptBindingInstance());
+    m_document = new HTMLDocument(this, m_starFish->scriptBindingInstance());
     initScriptWrappableWindow(this);
     m_document->initScriptWrappable(m_document);
     m_timeoutCounter = 0;
@@ -267,6 +268,19 @@ void Window::rendering()
     canvas->clearColor(Color(0,0,0,255));
 
     m_document->paint(canvas);
+
+#ifdef STARFISH_TIZEN_WEARABLE
+    canvas->save();
+    canvas->setColor(Color(255,0,0,255));
+    canvas->drawRect(Rect(180-20, 20, 40, 20));
+    canvas->setColor(Color(255,255,255,255));
+    String* txt = String::createASCIIString("SWC");
+    Font* fnt = FontSelector::loadFont(String::createASCIIString(""), 12);
+    Size siz = fnt->measureText(txt);
+    canvas->setFont(fnt);
+    canvas->drawText(180 - siz.width()/2, 24, txt);
+    canvas->restore();
+#endif
 
     delete canvas;
     m_needsRendering = false;

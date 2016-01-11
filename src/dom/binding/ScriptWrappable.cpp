@@ -10,11 +10,6 @@
 #include "dom/binding/ScriptBindingInstance.h"
 #include "dom/binding/escargot/ScriptBindingInstanceDataEscargot.h"
 
-#include <Elementary.h>
-#include <Ecore_X.h>
-#include <Ecore_Input.h>
-#include <Ecore_Input_Evas.h>
-
 
 namespace StarFish {
 
@@ -23,13 +18,24 @@ static ScriptBindingInstanceDataEscargot* fetchData(ScriptBindingInstance* insta
     return (ScriptBindingInstanceDataEscargot *)instance->data();
 }
 
+ScriptWrappable::ScriptWrappable()
+    : ScriptWrappable(escargot::ESObject::create())
+{
+
+}
+
+ScriptWrappable::ScriptWrappable(void* object = nullptr)
+{
+    m_object = object;
+}
+
 
 void ScriptWrappable::initScriptWrappableWindow(Window* window)
 {
     auto data = fetchData(window->starFish()->scriptBindingInstance());
-    data->m_instance->globalObject()->set(escargot::ESString::create("window"), window);
-    ((escargot::ESObject *)this)->set__proto__(data->m_window->protoType());
-    ((escargot::ESObject *)this)->setExtraData(WindowObject);
+    this->m_object = data->m_instance->globalObject();
+    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_window->protoType());
+    ((escargot::ESObject *)this->m_object)->setExtraData(WindowObject);
 
     escargot::ESFunctionObject* setTimeoutFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
@@ -52,7 +58,7 @@ void ScriptWrappable::initScriptWrappableWindow(Window* window)
         }
         return escargot::ESValue();
     }, escargot::ESString::create("setTimeout"), 2, false);
-    ((escargot::ESObject *)this)->defineDataProperty(escargot::ESString::create("setTimeout"), false, false, false, setTimeoutFunction);
+    ((escargot::ESObject *)this->m_object)->defineDataProperty(escargot::ESString::create("setTimeout"), false, false, false, setTimeoutFunction);
 
 }
 
@@ -65,72 +71,15 @@ void ScriptWrappable::initScriptWrappable(Node* ptr)
 void ScriptWrappable::initScriptWrappable(Node* ptr, ScriptBindingInstance* instance)
 {
     auto data = fetchData(instance);
-    ((escargot::ESObject *)this)->set__proto__(data->m_node->protoType());
+    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_node->protoType());
 
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("nextSibling"),
+    ((escargot::ESObject *)this->m_object)->defineAccessorProperty(escargot::ESString::create("nextSibling"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
         Node* nd = ((Node *)originalObj)->nextSibling();
         if (nd == nullptr)
             return escargot::ESValue(escargot::ESValue::ESNull);
         return escargot::ESValue((escargot::ESObject *)nd);
     }, NULL, false, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("x"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESValue(((Node *)originalObj)->x().fixed());
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setX(Length(Length::Fixed, value.toNumber()));
-    }, true, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("y"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESValue(((Node *)originalObj)->y().fixed());
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setY(Length(Length::Fixed, value.toNumber()));
-    }, true, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("width"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESValue(((Node *)originalObj)->width().fixed());
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setWidth(Length(Length::Fixed, value.toNumber()));
-    }, true, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("height"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESValue(((Node *)originalObj)->height().fixed());
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setHeight(Length(Length::Fixed, value.toNumber()));
-    }, true, false, false);
-
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("angle"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESValue(((Node *)originalObj)->angle());
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setAngle(value.toNumber());
-    }, true, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("scale"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESValue(((Node *)originalObj)->scale());
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setScale(value.toNumber());
-    }, true, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("background"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESValue(escargot::ESString::create(((Node *)originalObj)->background().toString()->utf8Data()));
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setBackground( Drawable::fromString(((Node *)originalObj)->documentElement()->window()->starFish(), String::createASCIIString(value.toString()->utf8Data())));
-    }, true, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("backgroundWhenActive"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        return escargot::ESValue(escargot::ESString::create(((Node *)originalObj)->backgroundWhenActive().toString()->utf8Data()));
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ((Node *)originalObj)->setBackgroundWhenActive(Drawable::fromString(((Node *)originalObj)->documentElement()->window()->starFish(), String::createASCIIString(value.toString()->utf8Data())));
-    }, true, false, false);
 
     ((escargot::ESObject *)this)->setExtraData(NodeObject);
 }
@@ -144,9 +93,9 @@ void ScriptWrappable::initScriptWrappable(Element* element)
 void ScriptWrappable::initScriptWrappable(Element* element, ScriptBindingInstance* instance)
 {
     auto data = fetchData(instance);
-    ((escargot::ESObject *)this)->set__proto__(data->m_element->protoType());
+    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_element->protoType());
 
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("firstChild"),
+    ((escargot::ESObject *)this->m_object)->defineAccessorProperty(escargot::ESString::create("firstChild"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
         Node* nd = ((Element *)originalObj)->firstChild();
         if (nd == nullptr)
@@ -160,77 +109,14 @@ void ScriptWrappable::initScriptWrappable(DocumentElement*)
 {
     Node* node = (Node*)this;
     auto data = fetchData(node->documentElement()->scriptBindingInstance());
-    ((escargot::ESObject *)this)->set__proto__(data->m_documentElement->protoType());
+    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_documentElement->protoType());
 }
 
-void ScriptWrappable::initScriptWrappable(ImageElement*)
+void ScriptWrappable::initScriptWrappable(HTMLDocumentElement*)
 {
     Node* node = (Node*)this;
     auto data = fetchData(node->documentElement()->scriptBindingInstance());
-    ((escargot::ESObject *)this)->set__proto__(data->m_imageElement->protoType());
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("src"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        ImageElement* nd = ((ImageElement *)originalObj);
-        if (nd->src() == nullptr)
-            return escargot::ESVMInstance::currentInstance()->strings().emptyString.string();
-        return escargot::ESString::create(nd->src()->utf8Data());
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        ImageElement* nd = ((ImageElement *)originalObj);
-        nd->setSrc(String::createASCIIString(value.toString()->utf8Data()));
-    }, true, false, false);
-}
-
-void ScriptWrappable::initScriptWrappable(TextElement*)
-{
-    Node* node = (Node*)this;
-    auto data = fetchData(node->documentElement()->scriptBindingInstance());
-    ((escargot::ESObject *)this)->set__proto__(data->m_textElement->protoType());
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("text"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        TextElement* nd = ((TextElement *)originalObj);
-        if (nd->text() == nullptr)
-            return escargot::ESVMInstance::currentInstance()->strings().emptyString.string();
-        return escargot::ESString::create(nd->text()->utf8Data());
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        TextElement* nd = ((TextElement *)originalObj);
-        nd->setText(String::createASCIIString(value.toString()->utf8Data()));
-    }, true, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("textSize"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        TextElement* nd = ((TextElement *)originalObj);
-        return escargot::ESValue(nd->textSize());
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        TextElement* nd = ((TextElement *)originalObj);
-        nd->setTextSize(value.toNumber());
-    }, true, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("textColor"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        TextElement* nd = ((TextElement *)originalObj);
-        return escargot::ESString::create(nd->textColor().toString()->utf8Data());
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        TextElement* nd = ((TextElement *)originalObj);
-        nd->setTextColor(Color::fromString(String::createASCIIString(value.toString()->utf8Data())));
-    }, true, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("textAlign"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
-        TextElement* nd = ((TextElement *)originalObj);
-        if (nd->textAlign() == TextElement::TextAlignLeft) {
-            return escargot::ESString::create("left");
-        } else if (nd->textAlign() == TextElement::TextAlignRight) {
-            return escargot::ESString::create("right");
-        } else if (nd->textAlign() == TextElement::TextAlignCenter) {
-            return escargot::ESString::create("center");
-        }
-        return escargot::ESString::create("");
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, const escargot::ESValue& value) {
-        TextElement* nd = ((TextElement *)originalObj);
-        nd->setTextAlign(String::createASCIIString(value.toString()->utf8Data()));
-    }, true, false, false);
+    ((escargot::ESObject *)this->m_object)->set__proto__(data->m_htmlDocumentElement->protoType());
 }
 
 void ScriptWrappable::callFunction(String* name)
@@ -242,40 +128,6 @@ void ScriptWrappable::callFunction(String* name)
     std::jmp_buf tryPosition;
     if (setjmp(instance->registerTryPos(&tryPosition)) == 0) {
         escargot::ESFunctionObject::call(instance, fn, obj, NULL, 0, false);
-        instance->unregisterTryPos(&tryPosition);
-    } else {
-        escargot::ESValue err = instance->getCatchedError();
-        printf("Uncaught %s\n", err.toString()->utf8Data());
-    }
-}
-
-void ScriptWrappable::callFunction(String* name, String* parameter0)
-{
-    escargot::ESObject* obj = (escargot::ESObject*)this;
-    escargot::ESValue fn = obj->get(escargot::ESString::create(name->utf8Data()));
-    escargot::ESVMInstance* instance = escargot::ESVMInstance::currentInstance();
-
-    std::jmp_buf tryPosition;
-    escargot::ESValue p(escargot::ESString::create(parameter0->utf8Data()));
-    if (setjmp(instance->registerTryPos(&tryPosition)) == 0) {
-        escargot::ESFunctionObject::call(instance, fn, obj, &p, 1, false);
-        instance->unregisterTryPos(&tryPosition);
-    } else {
-        escargot::ESValue err = instance->getCatchedError();
-        printf("Uncaught %s\n", err.toString()->utf8Data());
-    }
-}
-
-void ScriptWrappable::callFunction(String* name, int parameter0)
-{
-    escargot::ESObject* obj = (escargot::ESObject*)this;
-    escargot::ESValue fn = obj->get(escargot::ESString::create(name->utf8Data()));
-    escargot::ESVMInstance* instance = escargot::ESVMInstance::currentInstance();
-
-    std::jmp_buf tryPosition;
-    escargot::ESValue p(parameter0);
-    if (setjmp(instance->registerTryPos(&tryPosition)) == 0) {
-        escargot::ESFunctionObject::call(instance, fn, obj, &p, 1, false);
         instance->unregisterTryPos(&tryPosition);
     } else {
         escargot::ESValue err = instance->getCatchedError();

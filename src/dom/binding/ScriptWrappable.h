@@ -1,20 +1,18 @@
 #ifndef __StarFishScriptWrappable__
 #define __StarFishScriptWrappable__
 
-#include "Escargot.h"
-
 namespace StarFish {
 
+class EventTarget;
 class Window;
 class Node;
 class Element;
 class DocumentElement;
-class ImageElement;
-class TextElement;
+class HTMLDocumentElement;
 
 class ScriptBindingInstance;
 
-class ScriptWrappable : public escargot::ESObject {
+class ScriptWrappable {
 public:
     enum Type {
         None,
@@ -22,26 +20,23 @@ public:
         NodeObject
     };
 
-    ScriptWrappable()
-        : escargot::ESObject(escargot::ESPointer::Type::ESObject, escargot::ESValue())
-    {
-    }
+    ScriptWrappable();
+    ScriptWrappable(void* object);
 
     void initScriptWrappableWindow(Window* window);
 
+    void initScriptWrappable(EventTarget* ptr);
     void initScriptWrappable(Node* ptr);
     void initScriptWrappable(Node* ptr, ScriptBindingInstance*);
     void initScriptWrappable(Element* ptr);
     void initScriptWrappable(Element* ptr, ScriptBindingInstance*);
     void initScriptWrappable(DocumentElement* ptr);
-    void initScriptWrappable(ImageElement* ptr);
-    void initScriptWrappable(TextElement* ptr);
+    void initScriptWrappable(HTMLDocumentElement* ptr);
 
     void callFunction(String* name);
-    void callFunction(String* name, String* parameter0);
-    void callFunction(String* name, int parameter0);
 
 protected:
+    void* m_object;
 };
 
 

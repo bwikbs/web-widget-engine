@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="./xml2json.js"></script>		
+	</head>
+	<body>
+		<h1>input html code you want</h1>
+		<h3> external links(.css, .js) are not supported.</h3>
+		<form onsubmit="onSubmit()" action="#">
+			<input type="submit">
+			<br>
+			<textarea rows="30" cols="80" id="code">
+<!DOCTYPE html>
+<html>
+	<head></head>
+	<body>
+	test
+		<div>
+			text2
+		</div>
+		<div>
+			tttttt
+		</div>
+	</body>
+	<script type="text/javascript">
+		function test() {
+			return 1<2;
+		}
+	</script>
+</html>
+			</textarea>
+			<h3>output</h3>
+			<textarea rows="30" cols="80" id="result"></textarea>
+			
+		</form>
+		<script type="text/javascript" >
+			function onSubmit() {
+				var code = document.getElementById("code");
+
+				var iframe = document.createElement("iframe");
+				iframe.srcdoc = code.value;
+				document.body.appendChild(iframe);		
+				
+				iframe.onload = function() {
+					function nameFromType(type) {
+						switch(type) {
+							case 1:
+								return "element"
+							case 9:
+								return "document"
+							case 10:
+								return "documentType"
+							case 8:
+								return "comment"
+							case 3:
+								return "text"
+							default:
+								console.log("nodetype warning!!" + type)
+								return "idontknow"
+						}
+					}
+					var result = {
+						"document" : {
+						}
+					}
+					function process(node, into) {
+						into.nodeType = node.nodeType;
+						
+						if (node.nodeType == 1) {
+							into.name = node.localName;
+						} else if (node.nodeType == 3) {
+							into.text = node.data;
+						}
+						
+											
+						into.childNodes = [];
+						var c = node.firstChild;
+						while(c) {
+							var t = {};
+							process(c, t);
+							var tt = {};
+							tt[nameFromType(t.nodeType)] = t;
+							into.childNodes.push(tt);
+							
+							c = c.nextSibling;
+						}
+					}				
+					process(iframe.contentDocument,result.document)
+					console.log(result);
+				
+					var output = document.getElementById("result")
+					var x2js = new X2JS(); 
+					output.value = x2js.json2xml_str(result);									
+					document.body.removeChild(iframe);
+				}
+					
+			}
+		</script>
+	</body>
+</html>

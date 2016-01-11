@@ -14,7 +14,7 @@
 
 namespace StarFish {
 
-COMPILE_ASSERT(sizeof(ScriptWrappable) == sizeof(escargot::ESObject), "");
+STARFISH_COMPILE_ASSERT(sizeof(ScriptWrappable) == sizeof(escargot::ESObject), "");
 
 static ScriptBindingInstanceDataEscargot* fetchData(ScriptBindingInstance* instance)
 {
@@ -28,14 +28,30 @@ ScriptBindingInstance::ScriptBindingInstance()
     fetchData(this)->m_instance->enter();
 }
 
+// TODO
+// every function have to check typeof this
+
 void ScriptBindingInstance::initBinding(StarFish* sf)
 {
+    // EventTarget
+    escargot::ESFunctionObject* eventTargetFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
+        {
+            return escargot::ESValue();
+        }, escargot::ESString::create("EventTarget"), 0, false);
+    eventTargetFunction->protoType().asESPointer()->asESObject()->forceNonVectorHiddenClass(false);
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("EventTarget"), false, false, false, eventTargetFunction);
+
     escargot::ESFunctionObject* windowFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
         {
             return escargot::ESValue();
         }, escargot::ESString::create("Window"), 0, false);
     windowFunction->protoType().asESPointer()->asESObject()->forceNonVectorHiddenClass(false);
+    windowFunction->protoType().asESPointer()->asESObject()->set__proto__(eventTargetFunction->protoType());
+    // Window
     fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Window"), false, false, false, windowFunction);
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Window"), false, false, false, fetchData(this)->m_instance->globalObject());
+
+    fetchData(this)->m_instance->globalObject()->set__proto__(windowFunction->protoType());
     fetchData(this)->m_window = windowFunction;
 
     windowFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("document"),
@@ -49,12 +65,15 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         return escargot::ESVMInstance::currentInstance()->globalObject()->get(escargot::ESString::create("window")).asESPointer()->asESObject()->get(escargot::ESString::create("document"));
     }, NULL, false, false, false);
 
+    // Node
     escargot::ESFunctionObject* nodeFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
         {
             return escargot::ESValue();
         }, escargot::ESString::create("Node"), 0, false);
     fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Node"), false, false, false, nodeFunction);
     fetchData(this)->m_node = nodeFunction;
+
+    nodeFunction->protoType().asESPointer()->asESObject()->set__proto__(eventTargetFunction->protoType());
 
     escargot::ESFunctionObject* elementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue
         {

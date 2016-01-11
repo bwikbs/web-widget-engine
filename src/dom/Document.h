@@ -1,20 +1,21 @@
-#ifndef __StarFishDocumentElement__
-#define __StarFishDocumentElement__
+#ifndef __StarFishDocument__
+#define __StarFishDocument__
 
-#include "dom/Element.h"
+#include "dom/Node.h"
 
 namespace StarFish {
 
 class Window;
 
-class DocumentElement : public Element {
-public:
-    DocumentElement(Window* window, ScriptBindingInstance* scriptBindingInstance)
-        : Element(this, scriptBindingInstance)
+class Document : public Node {
+protected:
+    Document(Window* window, ScriptBindingInstance* scriptBindingInstance)
+        : Node(this, scriptBindingInstance)
     {
         m_window = window;
         m_scriptBindingInstance = scriptBindingInstance;
     }
+public:
 
     virtual bool isDocumentElement()
     {
@@ -38,7 +39,7 @@ protected:
 
 void Node::setNeedsRendering()
 {
-    m_documentElement->window()->setNeedsRendering();
+    m_document->window()->setNeedsRendering();
 }
 
 }

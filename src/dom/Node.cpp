@@ -1,6 +1,7 @@
 #include "StarFishConfig.h"
 #include "Node.h"
-#include "DocumentElement.h"
+
+#include "Document.h"
 
 namespace StarFish {
 

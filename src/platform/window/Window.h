@@ -1,7 +1,7 @@
 #ifndef __StarFishWindow__
 #define __StarFishWindow__
 
-#include "dom/binding/ScriptWrappable.h"
+#include "dom/EventTarget.h"
 
 namespace StarFish {
 
@@ -11,13 +11,19 @@ class Window;
 
 typedef void (*WindowSetTimeoutHandler)(Window* window, void* data);
 
-class Window : public ScriptWrappable {
+class Window : public EventTarget {
 public:
 #ifndef STARFISH_TIZEN_WEARABLE
     static Window* create(StarFish* sf, size_t w = SIZE_MAX, size_t h = SIZE_MAX);
 #else
     static Window* create(StarFish* sf, size_t w = SIZE_MAX, size_t h = SIZE_MAX, void* win = nullptr);
 #endif
+
+    virtual bool isWindow()
+    {
+        return true;
+    }
+
     void setNeedsRendering();
     void renderingIfNeeds();
 

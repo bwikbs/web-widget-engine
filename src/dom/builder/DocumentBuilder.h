@@ -1,7 +1,7 @@
 #ifndef __StarFishDocumentBuilderElement__
 #define __StarFishDocumentBuilderElement__
 
-#include "dom/DocumentElement.h"
+#include "../Document.h"
 
 namespace StarFish {
 

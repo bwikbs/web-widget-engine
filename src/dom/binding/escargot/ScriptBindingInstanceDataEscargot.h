@@ -11,8 +11,7 @@ public:
     escargot::ESFunctionObject* m_node;
     escargot::ESFunctionObject* m_element;
     escargot::ESFunctionObject* m_documentElement;
-    escargot::ESFunctionObject* m_textElement;
-    escargot::ESFunctionObject* m_imageElement;
+    escargot::ESFunctionObject* m_htmlDocumentElement;
 };
 
 }

@@ -3,8 +3,7 @@
 
 #include "dom/Node.h"
 #include "dom/Element.h"
-#include "dom/DocumentElement.h"
-#include "dom/TextElement.h"
-#include "dom/ImageElement.h"
+#include "dom/HTMLDocument.h"
+#include "Document.h"
 
 #endif
