@@ -1,0 +1,27 @@
+#ifndef __StarFishHTMLScriptElement__
+#define __StarFishHTMLScriptElement__
+
+#include "dom/HTMLElement.h"
+
+namespace StarFish {
+
+class HTMLScriptElement : public HTMLElement {
+public:
+    HTMLScriptElement(Document* document)
+        : HTMLElement(document)
+    {
+        initScriptWrappable(this);
+    }
+
+    virtual bool isHTMLScriptElement()
+    {
+        return true;
+    }
+
+protected:
+    // String* m_text;
+};
+
+}
+
+#endif

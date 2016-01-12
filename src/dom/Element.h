@@ -5,6 +5,8 @@
 
 namespace StarFish {
 
+class HTMLElement;
+
 class Element : public Node {
 public:
     Element(Document* document, ScriptBindingInstance* instance)
@@ -60,6 +62,17 @@ public:
     virtual Node* hitTest(float x, float y)
     {
         return NULL;
+    }
+
+    virtual bool isHTMLElement()
+    {
+        return false;
+    }
+
+    HTMLElement* asHTMLElement()
+    {
+        STARFISH_ASSERT(isHTMLElement());
+        return (HTMLElement*)this;
     }
 
 protected:

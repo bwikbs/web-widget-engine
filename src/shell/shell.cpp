@@ -21,10 +21,9 @@ int main(int argc, char *argv[])
     pthread_attr_init(&attr);
     pthread_create(&t, &attr, [](void* data) -> void* {
         char buf[1024];
+        sleep(1);
         while(1) {
-            puts("StarFish shell>");
             fgets(buf, 1024, stdin);
-
             struct Pass {
                 StarFish::StarFish* sf;
                 char* buf;

@@ -14,6 +14,6 @@
 #include "dom/HTMLHtmlElement.h"
 #include "dom/HTMLHeadElement.h"
 #include "dom/HTMLBodyElement.h"
-
+#include "dom/HTMLScriptElement.h"
 
 #endif

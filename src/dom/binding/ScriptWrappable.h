@@ -19,6 +19,7 @@ class HTMLElement;
 class HTMLHtmlElement;
 class HTMLHeadElement;
 class HTMLBodyElement;
+class HTMLScriptElement;
 
 class ScriptBindingInstance;
 
@@ -44,6 +45,7 @@ public:
     void initScriptWrappable(HTMLHtmlElement* ptr);
     void initScriptWrappable(HTMLHeadElement* ptr);
     void initScriptWrappable(HTMLBodyElement* ptr);
+    void initScriptWrappable(HTMLScriptElement* ptr);
 
     void callFunction(String* name);
 protected:

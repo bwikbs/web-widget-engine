@@ -30,7 +30,7 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
         } else if (type == 10) {
             newNode = new DocumentType(document);
         } else if (type == 3) {
-            newNode = new Text(document, String::fromUTF8(xmlElement->FirstChildElement()->Value()));
+            newNode = new Text(document, String::fromUTF8(xmlElement->FirstChildElement()->FirstChild()->Value()));
             parentNode->appendChild(newNode);
             return;
         } else if (type == 1) {
@@ -39,10 +39,25 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                 newNode = new HTMLHtmlElement(document);
             } else if (strcmp(name, "head") == 0) {
                 newNode = new HTMLHeadElement(document);
+            } else if(strcmp(name, "script") == 0) {
+                newNode = new HTMLScriptElement(document);
+                if (parentNode) {
+                    parentNode->appendChild(newNode);
+                }
+
+                tinyxml2::XMLElement* child = xmlElement->FirstChildElement();
+                while(child) {
+                    fn(newNode, child);
+                    child = child->NextSiblingElement();
+                }
+
+                String* script = newNode->asElement()->firstChild()->asCharacterData()->asText()->data();
+                document->window()->starFish()->evaluate(script);
+                return;
             } else if (strcmp(name, "body") == 0) {
                 newNode = new HTMLBodyElement(document);
             } else {
-                STARFISH_ASSERT_NOT_REACHED();
+                STARFISH_RELEASE_ASSERT_NOT_REACHED();
             }
         }
 
@@ -57,6 +72,7 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
             fn(newNode, child);
             child = child->NextSiblingElement();
         }
+
     };
 
     fn(nullptr, doc.FirstChildElement()->FirstChildElement());

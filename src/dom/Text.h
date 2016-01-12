@@ -30,6 +30,11 @@ public:
         return NULL;
     }
 
+    virtual bool isText()
+    {
+        return true;
+    }
+
 protected:
 };
 

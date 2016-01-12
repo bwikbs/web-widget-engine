@@ -8,7 +8,7 @@ namespace StarFish {
 class Window;
 class Node;
 
-template<typename T = ScriptWrappable>
+template<typename T>
 class EventTarget : public T {
 protected:
     EventTarget()

@@ -173,6 +173,13 @@ void ScriptWrappable::initScriptWrappable(HTMLBodyElement* ptr)
     ((escargot::ESObject *)this)->set__proto__(data->m_htmlBodyElement->protoType());
 }
 
+void ScriptWrappable::initScriptWrappable(HTMLScriptElement* ptr)
+{
+    Node* node = (Node*)this;
+    auto data = fetchData(node->document()->scriptBindingInstance());
+    ((escargot::ESObject *)this)->set__proto__(data->m_htmlScriptElement->protoType());
+}
+
 void ScriptWrappable::callFunction(String* name)
 {
     escargot::ESObject* obj = (escargot::ESObject*)this;

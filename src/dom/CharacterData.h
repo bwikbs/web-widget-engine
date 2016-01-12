@@ -5,6 +5,8 @@
 
 namespace StarFish {
 
+class Text;
+
 class CharacterData : public Node {
 public:
     CharacterData(Document* document, String* data)
@@ -36,6 +38,21 @@ public:
         return m_data;
     }
 
+    virtual bool isCharacterData()
+    {
+        return true;
+    }
+
+    virtual bool isText()
+    {
+        return false;
+    }
+
+    Text* asText()
+    {
+        STARFISH_ASSERT(isText());
+        return (Text*)this;
+    }
 protected:
     String* m_data;
 };

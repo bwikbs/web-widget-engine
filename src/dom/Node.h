@@ -11,6 +11,7 @@
 namespace StarFish {
 
 class Element;
+class CharacterData;
 
 class Node : public EventTarget<ScriptWrappable> {
 protected:
@@ -59,6 +60,16 @@ public:
     virtual bool isDocument()
     {
         return false;
+    }
+
+    virtual bool isCharacterData()
+    {
+        return false;
+    }
+
+    CharacterData* asCharacterData()
+    {
+        return (CharacterData*)this;
     }
 
     /*Element* getElementById(String* id)
