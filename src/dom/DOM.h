@@ -13,7 +13,9 @@
 #include "dom/HTMLElement.h"
 #include "dom/HTMLHtmlElement.h"
 #include "dom/HTMLHeadElement.h"
-#include "dom/HTMLBodyElement.h"
 #include "dom/HTMLScriptElement.h"
+#include "dom/HTMLStyleElement.h"
+#include "dom/HTMLBodyElement.h"
+#include "dom/HTMLDivElement.h"
 
 #endif

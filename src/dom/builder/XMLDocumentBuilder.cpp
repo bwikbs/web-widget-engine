@@ -19,12 +19,14 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 
-
-    doc.FirstChild();
     std::function<void (Node* parentNode, tinyxml2::XMLElement* xmlElement)> fn = [&fn, &document](Node* parentNode, tinyxml2::XMLElement* xmlElement)
     {
         Node* newNode = nullptr;
         int type = xmlElement->IntAttribute("nodeType");
+        if (type == 0) {
+            // invaild node.
+            return ;
+        }
         if (type == 9) {
             newNode = document;
         } else if (type == 10) {
@@ -34,7 +36,7 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
             parentNode->appendChild(newNode);
             return;
         } else if (type == 1) {
-            const char* name = xmlElement->Attribute("name");
+            const char* name = xmlElement->Attribute("localName");
             if (strcmp(name, "html") == 0) {
                 newNode = new HTMLHtmlElement(document);
             } else if (strcmp(name, "head") == 0) {
@@ -54,11 +56,59 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                 String* script = newNode->asElement()->firstChild()->asCharacterData()->asText()->data();
                 document->window()->starFish()->evaluate(script);
                 return;
+            } else if (strcmp(name, "style") == 0) {
+                newNode = new HTMLStyleElement(document);
+
+                //resolve styles.
+
+                tinyxml2::XMLElement* e = xmlElement->FirstChildElement();
+                CSSStyleSheet* sheet = new CSSStyleSheet;
+                while (e) {
+                    if (strcmp(e->Value(),"style") == 0) {
+                        const char* selectorText = e->Attribute("selectorText");
+                        CSSStyleRule::Kind kind;
+                        String* st;
+                        if (selectorText[0] == '.') {
+                            kind = CSSStyleRule::Kind::ClassRule;
+                            st = String::fromUTF8(&selectorText[1]);
+                        } else if (selectorText[0] == '#') {
+                            kind = CSSStyleRule::Kind::IdRule;
+                            st = String::fromUTF8(&selectorText[1]);
+                        } else {
+                            kind = CSSStyleRule::Kind::TagRule;
+                            if (selectorText[0] == '*') {
+                                st = String::emptyString;
+                            } else {
+                                st = String::fromUTF8(selectorText);
+                            }
+                        }
+                        CSSStyleRule rule(kind, st);
+                        const tinyxml2::XMLAttribute* attr = e->FirstAttribute();
+                        while (attr) {
+                            if (strcmp(attr->Name(), "selectorText") != 0) {
+                                const char* n = attr->Name();
+                                const char* v = attr->Value();
+                                rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString(n, v));
+                            }
+                            attr = attr->Next();
+                        }
+                        sheet->addRule(rule);
+                    }
+                    e = e->NextSiblingElement();
+                }
+
+                document->window()->styleResolver()->addSheet(sheet);
             } else if (strcmp(name, "body") == 0) {
                 newNode = new HTMLBodyElement(document);
+            } else if (strcmp(name, "div") == 0) {
+                newNode = new HTMLDivElement(document);
             } else {
+                puts(name);
                 STARFISH_RELEASE_ASSERT_NOT_REACHED();
             }
+        } else {
+            printf("invalid node type %d\n", type);
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
 
         STARFISH_ASSERT(newNode);

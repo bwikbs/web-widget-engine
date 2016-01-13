@@ -1,6 +1,7 @@
 #ifndef __StarFishWindow__
 #define __StarFishWindow__
 
+#include "style/Style.h"
 #include "dom/EventTarget.h"
 
 namespace StarFish {
@@ -62,9 +63,16 @@ public:
     void pause();
     void resume();
 
+    StyleResolver* styleResolver()
+    {
+        return &m_styleResolver;
+    }
+
 protected:
     Window(StarFish* starFish);
     void rendering();
+
+    StyleResolver m_styleResolver;
 
     bool m_needsRendering;
     bool m_isRunning;

@@ -83,11 +83,17 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(HTMLHeadElement, HTMLElementFunction->protoType());
     fetchData(this)->m_htmlHeadElement = HTMLHeadElementFunction;
 
+    DEFINE_FUNCTION(HTMLScriptElement, HTMLElementFunction->protoType());
+    fetchData(this)->m_htmlScriptElement = HTMLScriptElementFunction;
+
+    DEFINE_FUNCTION(HTMLStyleElement, HTMLElementFunction->protoType());
+    fetchData(this)->m_htmlStyleElement = HTMLStyleElementFunction;
+
     DEFINE_FUNCTION(HTMLBodyElement, HTMLElementFunction->protoType());
     fetchData(this)->m_htmlBodyElement = HTMLBodyElementFunction;
 
-    DEFINE_FUNCTION(HTMLScriptElement, HTMLElementFunction->protoType());
-    fetchData(this)->m_htmlScriptElement = HTMLScriptElementFunction;
+    DEFINE_FUNCTION(HTMLDivElement, HTMLElementFunction->protoType());
+    fetchData(this)->m_htmlDivElement = HTMLDivElementFunction;
 }
 
 void ScriptBindingInstance::evaluate(String* str)

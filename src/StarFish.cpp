@@ -69,4 +69,16 @@ ImageData* StarFish::fetchImage(String* str)
     return iter->second;
 }
 
+StaticStrings::StaticStrings()
+{
+    m_documentLocalName = String::createASCIIString("#document");
+    m_textLocalName = String::createASCIIString("#text");
+    m_htmlLocalName = String::createASCIIString("html");
+    m_headLocalName = String::createASCIIString("head");
+    m_styleLocalName = String::createASCIIString("style");
+    m_scriptLocalName = String::createASCIIString("script");
+    m_bodyLocalName = String::createASCIIString("body");
+    m_divLocalName = String::createASCIIString("div");
+}
+
 }

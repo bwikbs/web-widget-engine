@@ -13,6 +13,11 @@ public:
         initScriptWrappable(this);
     }
 
+    virtual String* localName()
+    {
+        return document()->window()->starFish()->staticStrings()->m_bodyLocalName;
+    }
+
 protected:
 };
 

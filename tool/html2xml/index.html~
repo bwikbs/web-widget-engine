@@ -13,13 +13,27 @@
 			<textarea rows="30" cols="80" id="code">
 <!DOCTYPE html>
 <html>
-	<head></head>
+	<head>
+		<style type="text/css">
+			#idText {
+				font-size: 20px;				
+				color: red;
+			}
+			.classText {
+				font-size: 12px;
+				text-align: 16px;
+			}
+			div {
+				display: block;
+			}
+		</style>
+	</head>
 	<body>
 	test
-		<div>
+		<div id="idText">
 			text2
 		</div>
-		<div>
+		<div class="classText">
 			tttttt
 		</div>
 	</body>
@@ -69,11 +83,38 @@
 					function process(node, into) {
 						into["@"] = {
 							"nodeType" : node.nodeType,
-							"name" : nameFromType(node.nodeType)
+							"localName" : nameFromType(node.nodeType)
 						}
 						
 						if (node.nodeType == 1) {
-							into["@"].name = node.localName;
+							into["@"].localName = node.localName;
+							
+							if(node.localName == "style") {
+								// console.log(node)
+								into.style = []
+								var rules = node.sheet.cssRules;
+								for(var i = 0; i < rules.length; i ++) {
+									var selectorText = rules[i].selectorText;
+									// console.log(selectorText)
+									var st = {};
+									st["@"] = {}
+									st["@"].selectorText = selectorText
+									for (var j = 0; j < rules[i].style.length; j ++) {
+										// console.log(rules[i].style[j])
+										// console.log(rules[i].style[rules[i].style[j]])
+										d = rules[i]
+										
+										st["@"][rules[i].style[j]] = rules[i].style[rules[i].style[j]]
+									}
+									
+									into.style.push(st);																		
+								}
+							}
+							
+							var attrs = node.attributes;
+							for(var i = 0; i < attrs.length; i ++) {
+								into["@"][attrs[i].name] = attrs[i].value;
+							}
 						} else if (node.nodeType == 3) {
 							into["text"] = {"#":node.data};
 						}

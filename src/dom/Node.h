@@ -2,11 +2,13 @@
 #define __StarFishNode__
 
 #include "util/String.h"
-#include "util/Unit.h"
+#include "style/Unit.h"
 #include "style/Length.h"
 #include "style/Drawable.h"
+#include "style/ComputedStyle.h"
 #include "platform/canvas/Canvas.h"
 #include "dom/EventTarget.h"
+#include "layout/LayoutObject.h"
 
 namespace StarFish {
 
@@ -22,8 +24,9 @@ protected:
         m_nextSibling = nullptr;
         m_parentNode = nullptr;
         m_firstChild = nullptr;
-        // m_id = nullptr;
         m_state = NodeStateNormal;
+        m_needsStyleRecalc = true;
+        m_layoutObject = nullptr;
     }
 
     Node(Document* document)
@@ -33,8 +36,9 @@ protected:
         m_nextSibling = nullptr;
         m_parentNode = nullptr;
         m_firstChild = nullptr;
-        // m_id = nullptr;
         m_state = NodeStateNormal;
+        m_needsStyleRecalc = true;
+        m_layoutObject = nullptr;
     }
 public:
     enum NodeState {
@@ -92,6 +96,11 @@ public:
 
         return nullptr;
     }*/
+
+    virtual String* localName()
+    {
+        return String::emptyString;
+    }
 
     Node* firstChild()
     {
@@ -169,22 +178,11 @@ public:
     {
         return m_document;
     }
-/*
-    void setId(String* id)
-    {
-        m_id = id;
-        setNeedsRendering();
-    }
 
-    String* id()
-    {
-        return m_id;
-    }
-*/
     void setState(NodeState state)
     {
         m_state = state;
-        setNeedsRendering();
+        setNeedsStyleRecalc();
     }
 
     NodeState state()
@@ -196,31 +194,29 @@ public:
     {
     }
 
-    virtual void computeLayout()
-    {
 
+    inline void setNeedsStyleRecalc()
+    {
+        m_needsStyleRecalc = true;
+        setNeedsRendering();
     }
 
+private:
     inline void setNeedsRendering();
-
-    virtual void paint(Canvas* canvas)
-    {
-    }
-
-    virtual Node* hitTest(float x, float y)
-    {
-        return NULL;
-    }
-
 protected:
+
+
+    bool m_needsStyleRecalc;
+
     Node* m_nextSibling;
     // Node* m_previousSibling;
     Node* m_firstChild;
     // Node* m_lastChild;
     Node* m_parentNode;
     Document* m_document;
-    // String* m_id; -> htmlelement
     NodeState m_state;
+
+    LayoutObject* m_layoutObject;
 };
 
 }

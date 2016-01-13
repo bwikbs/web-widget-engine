@@ -8,6 +8,19 @@ class Window;
 class ScriptBindingInstance;
 class ImageData;
 
+class StaticStrings {
+public:
+    StaticStrings();
+
+    String* m_documentLocalName;
+    String* m_textLocalName;
+    String* m_htmlLocalName;
+    String* m_headLocalName;
+    String* m_styleLocalName;
+    String* m_scriptLocalName;
+    String* m_bodyLocalName;
+    String* m_divLocalName;
+};
 
 class StarFish : public gc {
 public:
@@ -48,6 +61,10 @@ public:
 
     ImageData* fetchImage(String* str);
 
+    StaticStrings* staticStrings()
+    {
+        return &m_staticStrings;
+    }
 protected:
     MessageLoop* m_messageLoop;
     ScriptBindingInstance* m_scriptBindingInstance;
@@ -55,6 +72,7 @@ protected:
     String* m_currentPath;
     std::unordered_map<std::string, ImageData*, std::hash<std::string>, std::equal_to<std::string>,
         gc_allocator<std::pair<std::string, ImageData*>>> m_imageCache;
+    StaticStrings m_staticStrings;
 };
 
 }

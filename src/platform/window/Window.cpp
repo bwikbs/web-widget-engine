@@ -100,8 +100,43 @@ Window* Window::create(StarFish* sf, size_t w, size_t h)
     evas_event_callback_add(e, EVAS_CALLBACK_RENDER_FLUSH_POST, [](void *data, Evas *e, void *event_info) {
         WindowImplEFL* eflWindow = (WindowImplEFL*)data;
         eflWindow->m_lastRenderTime  = getTickCount();
-        STARFISH_LOG_INFO("GC heapSize...%f MB\n", GC_get_heap_size()/1024.f/1024.f);
+        // STARFISH_LOG_INFO("GC heapSize...%f MB\n", GC_get_heap_size()/1024.f/1024.f);
     }, wnd);
+
+    ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,[](void *data, int type, void *event) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        Ecore_Event_Mouse_Button* d = (Ecore_Event_Mouse_Button*)event;
+        sf->dispatchTouchEvent(d->x, d->y, Window::TouchEventDown);
+        return EINA_TRUE;
+    }, wnd);
+
+    ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,[](void *data, int type, void *event) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        Ecore_Event_Mouse_Button* d = (Ecore_Event_Mouse_Button*)event;
+        sf->dispatchTouchEvent(d->x, d->y, Window::TouchEventUp);
+        return EINA_TRUE;
+    }, wnd);
+
+    ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,[](void *data, int type, void *event) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        Ecore_Event_Mouse_Move* d = (Ecore_Event_Mouse_Move*)event;
+        sf->dispatchTouchEvent(d->x, d->y, Window::TouchEventMove);
+        return EINA_TRUE;
+    } ,wnd);
+
+    ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,[](void *data, int type, void *event) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        Ecore_Event_Key* d = (Ecore_Event_Key*)event;
+        sf->dispatchKeyEvent(String::createASCIIString(d->keyname), Window::KeyEventDown);
+        return EINA_TRUE;
+    } ,wnd);
+
+    ecore_event_handler_add(ECORE_EVENT_KEY_UP,[](void *data, int type, void *event) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        Ecore_Event_Key* d = (Ecore_Event_Key*)event;
+        sf->dispatchKeyEvent(String::createASCIIString(d->keyname), Window::KeyEventUp);
+        return EINA_TRUE;
+    } ,wnd);
 
     return wnd;
 }
@@ -148,6 +183,20 @@ Window* Window::create(StarFish* sf, size_t w, size_t h, void* win)
         STARFISH_LOG_INFO("GC heapSize...%f MB\n", GC_get_heap_size()/1024.f/1024.f);
     }, wnd);
 
+    /*
+    eext_rotary_event_handler_add([](void *data, Eext_Rotary_Event_Info *info) -> Eina_Bool {
+        Window* sf = (Window*)data;
+        if (info->direction == EEXT_ROTARY_DIRECTION_CLOCKWISE) {
+            sf->dispatchKeyEvent(String::createASCIIString("rotaryClockWise"), Window::KeyEventDown);
+            sf->dispatchKeyEvent(String::createASCIIString("rotaryClockWise"), Window::KeyEventUp);
+        } else {
+            sf->dispatchKeyEvent(String::createASCIIString("rotaryCounterClockWise"), Window::KeyEventDown);
+            sf->dispatchKeyEvent(String::createASCIIString("rotaryCounterClockWise"), Window::KeyEventUp);
+        }
+        return EINA_TRUE;
+    }, this);
+    */
+
     return wnd;
 }
 #endif
@@ -166,56 +215,45 @@ Window::Window(StarFish* starFish)
     m_activeNodeWithTouchDown = nullptr;
     setNeedsRendering();
 
-    ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,[](void *data, int type, void *event) -> Eina_Bool {
-        Window* sf = (Window*)data;
-        Ecore_Event_Mouse_Button* d = (Ecore_Event_Mouse_Button*)event;
-        sf->dispatchTouchEvent(d->x, d->y, Window::TouchEventDown);
-        return EINA_TRUE;
-    }, this);
+    CSSStyleSheet* userAgentStyleSheet = new CSSStyleSheet;
 
-    ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,[](void *data, int type, void *event) -> Eina_Bool {
-        Window* sf = (Window*)data;
-        Ecore_Event_Mouse_Button* d = (Ecore_Event_Mouse_Button*)event;
-        sf->dispatchTouchEvent(d->x, d->y, Window::TouchEventUp);
-        return EINA_TRUE;
-    }, this);
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("html"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        userAgentStyleSheet->addRule(rule);
+    }
 
-    ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,[](void *data, int type, void *event) -> Eina_Bool {
-        Window* sf = (Window*)data;
-        Ecore_Event_Mouse_Move* d = (Ecore_Event_Mouse_Move*)event;
-        sf->dispatchTouchEvent(d->x, d->y, Window::TouchEventMove);
-        return EINA_TRUE;
-    } ,this);
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("head"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        userAgentStyleSheet->addRule(rule);
+    }
 
-    ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,[](void *data, int type, void *event) -> Eina_Bool {
-        Window* sf = (Window*)data;
-        Ecore_Event_Key* d = (Ecore_Event_Key*)event;
-        sf->dispatchKeyEvent(String::createASCIIString(d->keyname), Window::KeyEventDown);
-        return EINA_TRUE;
-    } ,this);
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("style"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        userAgentStyleSheet->addRule(rule);
+    }
 
-    ecore_event_handler_add(ECORE_EVENT_KEY_UP,[](void *data, int type, void *event) -> Eina_Bool {
-        Window* sf = (Window*)data;
-        Ecore_Event_Key* d = (Ecore_Event_Key*)event;
-        sf->dispatchKeyEvent(String::createASCIIString(d->keyname), Window::KeyEventUp);
-        return EINA_TRUE;
-    } ,this);
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("script"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        userAgentStyleSheet->addRule(rule);
+    }
 
-#ifdef STARFISH_TIZEN_WEARABLE
-    /*
-    eext_rotary_event_handler_add([](void *data, Eext_Rotary_Event_Info *info) -> Eina_Bool {
-        Window* sf = (Window*)data;
-        if (info->direction == EEXT_ROTARY_DIRECTION_CLOCKWISE) {
-            sf->dispatchKeyEvent(String::createASCIIString("rotaryClockWise"), Window::KeyEventDown);
-            sf->dispatchKeyEvent(String::createASCIIString("rotaryClockWise"), Window::KeyEventUp);
-        } else {
-            sf->dispatchKeyEvent(String::createASCIIString("rotaryCounterClockWise"), Window::KeyEventDown);
-            sf->dispatchKeyEvent(String::createASCIIString("rotaryCounterClockWise"), Window::KeyEventUp);
-        }
-        return EINA_TRUE;
-    }, this);
-    */
-#endif
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("body"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("div"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    m_styleResolver.addSheet(userAgentStyleSheet);
 }
 
 
@@ -224,12 +262,12 @@ void Window::rendering()
     if (!m_needsRendering)
         return;
 
-    m_document->computeStyle();
+    STARFISH_LOG_INFO("Window::rendering\n");
 
+    m_document->computeStyle();
     WindowImplEFL* eflWindow = (WindowImplEFL*)this;
     int width, height;
     evas_object_geometry_get(eflWindow->m_window, NULL, NULL, &width, &height);
-    m_document->computeLayout();
 
     if (!m_isRunning) {
         m_needsRendering = false;
@@ -262,8 +300,6 @@ void Window::rendering()
 
     canvas->setColor(Color(255,255,255,255));
     canvas->clearColor(Color(0,0,0,255));
-
-    m_document->paint(canvas);
 
 #ifdef STARFISH_TIZEN_WEARABLE
     canvas->save();
@@ -357,9 +393,7 @@ uint32_t Window::setTimeout(WindowSetTimeoutHandler handler, uint32_t delay, voi
 Node* Window::hitTest(float x, float y)
 {
     renderingIfNeeds();
-
-    Node* node = m_document->hitTest(x, y);
-    return node;
+    return NULL;
 }
 
 void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)

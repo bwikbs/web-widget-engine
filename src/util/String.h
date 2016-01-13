@@ -63,6 +63,16 @@ public:
         }
     }
 
+    size_t indexOf(char32_t ch)
+    {
+        for (size_t i = 0; i < length(); i ++) {
+            if (charAt(i) == ch) {
+                return i;
+            }
+        }
+        return SIZE_MAX;
+    }
+
 protected:
     String()
     {

@@ -35,6 +35,7 @@ public:
         return true;
     }
 
+    virtual String* localName();
 protected:
 };
 

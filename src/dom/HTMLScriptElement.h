@@ -18,6 +18,11 @@ public:
         return true;
     }
 
+    virtual String* localName()
+    {
+        return document()->window()->starFish()->staticStrings()->m_scriptLocalName;
+    }
+
 protected:
     // String* m_text;
 };

@@ -18,19 +18,6 @@ public:
         Node::computeStyle();
     }
 
-    virtual void computeLayout()
-    {
-        Node::computeLayout();
-    }
-
-    virtual void paint(Canvas* canvas)
-    {
-    }
-
-    virtual Node* hitTest(float x, float y)
-    {
-        return NULL;
-    }
 protected:
 };
 

@@ -2,6 +2,7 @@
 #define __StarFishElement__
 
 #include "dom/Node.h"
+#include "dom/Attribute.h"
 
 namespace StarFish {
 
@@ -13,11 +14,14 @@ public:
         : Node(document, instance)
     {
         initScriptWrappable(this, instance);
+        m_id = String::emptyString;
     }
+
     Element(Document* document)
         : Node(document)
     {
         initScriptWrappable(this);
+        m_id = String::emptyString;
     }
 
     virtual bool isElement()
@@ -36,34 +40,6 @@ public:
         }
     }
 
-    virtual void computeLayout()
-    {
-        Node::computeLayout();
-        Node* node = m_firstChild;
-        while (node) {
-            node->computeLayout();
-            node = node->nextSibling();
-        }
-    }
-
-    virtual void paint(Canvas* canvas)
-    {
-        Node::paint(canvas);
-        Node* node = m_firstChild;
-        while (node) {
-            canvas->save();
-            // canvas->translate(node->computedRect().x(), node->computedRect().y());
-            node->paint(canvas);
-            canvas->restore();
-            node = node->nextSibling();
-        }
-    }
-
-    virtual Node* hitTest(float x, float y)
-    {
-        return NULL;
-    }
-
     virtual bool isHTMLElement()
     {
         return false;
@@ -75,7 +51,18 @@ public:
         return (HTMLElement*)this;
     }
 
+    size_t hasAtttibute(String* name);
+    void setAttribute(String* name, String* value);
+    void removeAttribute(String* name);
+
+    virtual void didAttributeChanged(String* name, String* old, String* value);
+
 protected:
+    std::vector<Attribute, gc_allocator<Attribute>> m_attributes;
+
+    String* m_id;
+    std::vector<String*, gc_allocator<String*>> m_classNames;
+
 };
 
 

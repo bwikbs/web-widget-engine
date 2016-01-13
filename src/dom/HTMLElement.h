@@ -9,7 +9,9 @@ namespace StarFish {
         F(Html) \
         F(Head) \
         F(Script) \
-        F(Body)
+        F(Style) \
+        F(Body) \
+        F(Div)
 
 #define FORWRAD_DECLARE_NAME(kind) class HTML##kind##Element;
 
@@ -20,6 +22,8 @@ namespace StarFish {
         STARFISH_ASSERT(isHTML##kind()); \
         return (HTML##kind##Element*)this; \
     }
+
+FOR_EACH_HTML_ELEMENT_OP(FORWRAD_DECLARE_NAME)
 
 class HTMLElement : public Element {
 public:

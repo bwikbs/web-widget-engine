@@ -33,6 +33,7 @@ public:
         return m_scriptBindingInstance;
     }
 
+    virtual String* localName();
 protected:
     Window* m_window;
     ScriptBindingInstance* m_scriptBindingInstance;

@@ -6,22 +6,21 @@ namespace StarFish {
 class Length {
 public:
     enum Type {
-        Unspecified,
-        Fit,
-        Fill,
+        Auto,
         Percent,
         Fixed,
     };
 
-    Length(Type type = Unspecified, float data = 0.f)
+    Length(Type type = Auto, float data = 0.f)
         : m_type(type)
         , m_data(data)
     {
 
     }
 
-    bool isSpecified() { return m_type != Unspecified; }
+    bool isAuto() { return m_type == Auto; }
     bool isFixed() { return m_type == Fixed; }
+    bool isPercent() { return m_type == Percent; }
     Type type() const { return m_type; }
 
     float percent() const
@@ -30,6 +29,7 @@ public:
         //0~1
         return m_data;
     }
+
     float fixed() const
     {
         STARFISH_ASSERT(m_type == Fixed);
