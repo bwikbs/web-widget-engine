@@ -4,11 +4,11 @@
 #include "util/String.h"
 #include "style/Unit.h"
 #include "style/Length.h"
-#include "style/Drawable.h"
 #include "style/ComputedStyle.h"
 #include "platform/canvas/Canvas.h"
+#include "platform/canvas/image/ImageData.h"
 #include "dom/EventTarget.h"
-#include "layout/LayoutObject.h"
+#include "layout/Frame.h"
 
 namespace StarFish {
 
@@ -26,7 +26,7 @@ protected:
         m_firstChild = nullptr;
         m_state = NodeStateNormal;
         m_needsStyleRecalc = true;
-        m_layoutObject = nullptr;
+        m_frame = nullptr;
     }
 
     Node(Document* document)
@@ -38,7 +38,7 @@ protected:
         m_firstChild = nullptr;
         m_state = NodeStateNormal;
         m_needsStyleRecalc = true;
-        m_layoutObject = nullptr;
+        m_frame = nullptr;
     }
 public:
     enum NodeState {
@@ -75,27 +75,6 @@ public:
     {
         return (CharacterData*)this;
     }
-
-    /*Element* getElementById(String* id)
-    {
-        if (!id)
-            return nullptr;
-
-        Node* node = m_firstChild;
-        while (node) {
-            if (node->isElement()) {
-                if (node->asElement()->id() && node->asElement()->id()->equals(id)) {
-                    return node->asElement();
-                }
-                Element* ret = node->asElement()->getElementById(id);
-                if (ret)
-                    return ret;
-            }
-            node = node->nextSibling();
-        }
-
-        return nullptr;
-    }*/
 
     virtual String* localName()
     {
@@ -147,7 +126,6 @@ public:
         setNeedsRendering();
     }
 
-
     Node* nextSibling()
     {
         return m_nextSibling;
@@ -190,22 +168,26 @@ public:
         return m_state;
     }
 
-    virtual void computeStyle()
-    {
-    }
-
-
     inline void setNeedsStyleRecalc()
     {
         m_needsStyleRecalc = true;
         setNeedsRendering();
     }
 
+    void setFrame(Frame* frame)
+    {
+        m_frame = frame;
+    }
+
+    Frame* frame()
+    {
+        return m_frame;
+    }
+
 private:
     inline void setNeedsRendering();
+
 protected:
-
-
     bool m_needsStyleRecalc;
 
     Node* m_nextSibling;
@@ -216,7 +198,7 @@ protected:
     Document* m_document;
     NodeState m_state;
 
-    LayoutObject* m_layoutObject;
+    Frame* m_frame;
 };
 
 }

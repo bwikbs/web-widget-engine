@@ -13,23 +13,6 @@ public:
         initScriptWrappable(this);
     }
 
-    virtual void computeStyle()
-    {
-    }
-
-    virtual void computeLayout()
-    {
-    }
-
-    virtual void paint(Canvas* canvas)
-    {
-    }
-
-    virtual Node* hitTest(float x, float y)
-    {
-        return NULL;
-    }
-
     virtual bool isText()
     {
         return true;

@@ -13,11 +13,6 @@ public:
         initScriptWrappable(this);
     }
 
-    virtual void computeStyle()
-    {
-        Node::computeStyle();
-    }
-
 protected:
 };
 

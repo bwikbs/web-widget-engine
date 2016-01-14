@@ -10,12 +10,14 @@ class Window;
 
 class Document : public Node {
 protected:
-    Document(Window* window, ScriptBindingInstance* scriptBindingInstance)
+    Document(Window* window, ScriptBindingInstance* scriptBindingInstance, ComputedStyle* style)
         : Node(this, scriptBindingInstance)
     {
         m_window = window;
         m_scriptBindingInstance = scriptBindingInstance;
+        setDocumentStyle(style);
     }
+
 public:
 
     virtual bool isDocument()
@@ -33,10 +35,18 @@ public:
         return m_scriptBindingInstance;
     }
 
+    void setDocumentStyle(ComputedStyle* s);
+
+    ComputedStyle* documentStyle()
+    {
+        return m_documentStyle;
+    }
+
     virtual String* localName();
 protected:
     Window* m_window;
     ScriptBindingInstance* m_scriptBindingInstance;
+    ComputedStyle* m_documentStyle;
 };
 
 void Node::setNeedsRendering()

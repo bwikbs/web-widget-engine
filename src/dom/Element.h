@@ -29,17 +29,6 @@ public:
         return true;
     }
 
-    virtual void computeStyle()
-    {
-        Node::computeStyle();
-
-        Node* node = m_firstChild;
-        while (node) {
-            node->computeStyle();
-            node = node->nextSibling();
-        }
-    }
-
     virtual bool isHTMLElement()
     {
         return false;
@@ -49,6 +38,17 @@ public:
     {
         STARFISH_ASSERT(isHTMLElement());
         return (HTMLElement*)this;
+    }
+
+    String* id()
+    {
+        return m_id;
+    }
+
+    // DO NOT MODIFY THIS VECTOR
+    const std::vector<String*, gc_allocator<String*>>& classNames()
+    {
+        return m_classNames;
     }
 
     size_t hasAtttibute(String* name);

@@ -6,17 +6,19 @@
 namespace StarFish {
 
 class ComputedStyle : public gc {
+    friend class StyleResolver;
 public:
-    ComputedStyle() {
+    ComputedStyle()
+    {
         m_inheritedStyles.m_color = Color(0, 0, 0, 255);
         m_inheritedStyles.m_fontSize = 10;
 
         initNonInheritedStyles();
     }
 
-    ComputedStyle(const ComputedStyle& from)
+    ComputedStyle(ComputedStyle* from)
     {
-        m_inheritedStyles = from.m_inheritedStyles;
+        m_inheritedStyles = from->m_inheritedStyles;
         initNonInheritedStyles();
     }
 protected:

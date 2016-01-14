@@ -8,5 +8,11 @@ String* Document::localName()
     return window()->starFish()->staticStrings()->m_documentLocalName;
 }
 
+void Document::setDocumentStyle(ComputedStyle* s)
+{
+    m_documentStyle = s;
+    setFrame(new Frame(this, s));
+}
+
 
 }

@@ -9,7 +9,8 @@
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
 
-#include "../../dom/HTMLDocument.h"
+#include "dom/HTMLDocument.h"
+
 #ifdef STARFISH_TIZEN_WEARABLE
 #include <efl_extension.h>
 #include <tizen.h>
@@ -206,7 +207,48 @@ Window::Window(StarFish* starFish)
     : m_starFish(starFish)
 {
     STARFISH_ASSERT(m_starFish->scriptBindingInstance());
-    m_document = new HTMLDocument(this, m_starFish->scriptBindingInstance());
+
+    CSSStyleSheet* userAgentStyleSheet = new CSSStyleSheet;
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("html"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("head"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("style"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("script"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("body"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("div"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    m_styleResolver.addSheet(userAgentStyleSheet);
+
+    m_document = new HTMLDocument(this, m_starFish->scriptBindingInstance(), m_styleResolver.resolveDocumentStyle());
     initScriptWrappableWindow(this);
     m_document->initScriptWrappable(m_document);
     m_timeoutCounter = 0;
@@ -214,46 +256,6 @@ Window::Window(StarFish* starFish)
     m_isRunning = true;
     m_activeNodeWithTouchDown = nullptr;
     setNeedsRendering();
-
-    CSSStyleSheet* userAgentStyleSheet = new CSSStyleSheet;
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("html"));
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("head"));
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("style"));
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("script"));
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("body"));
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TagRule, String::createASCIIString("div"));
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    m_styleResolver.addSheet(userAgentStyleSheet);
 }
 
 
@@ -264,15 +266,22 @@ void Window::rendering()
 
     STARFISH_LOG_INFO("Window::rendering\n");
 
-    m_document->computeStyle();
+    // create frame tree
+    m_styleResolver.resolveDOMStyle(m_document);
+
+    // lay frame tree
+
+    // painting
     WindowImplEFL* eflWindow = (WindowImplEFL*)this;
     int width, height;
     evas_object_geometry_get(eflWindow->m_window, NULL, NULL, &width, &height);
 
+    /*
     if (!m_isRunning) {
         m_needsRendering = false;
         return;
     }
+    */
 
     Evas* evas = evas_object_evas_get(eflWindow->m_window);
     struct dummy {
@@ -298,8 +307,8 @@ void Window::rendering()
     Canvas* canvas = Canvas::createDirect(d);
     delete d;
 
-    canvas->setColor(Color(255,255,255,255));
-    canvas->clearColor(Color(0,0,0,255));
+    canvas->setColor(Color(0,0,0,255));
+    canvas->clearColor(Color(255,255,255,255));
 
 #ifdef STARFISH_TIZEN_WEARABLE
     canvas->save();

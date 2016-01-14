@@ -16,14 +16,6 @@ public:
         m_data = data;
     }
 
-    virtual void computeStyle()
-    {
-    }
-
-    virtual void computeLayout()
-    {
-    }
-
     virtual void paint(Canvas* canvas)
     {
     }

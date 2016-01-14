@@ -113,21 +113,6 @@ public:
 
     }
 
-    static Color fromString(String* string)
-    {
-        const char* str = string->utf8Data();
-        float r, g, b, a;
-        sscanf(str, "rgba(%f,%f,%f,%f)", &r, &g, &b, &a);
-        return Color(r, g, b, a);
-    }
-
-    String* toString() const
-    {
-        char buf[256];
-        sprintf(buf, "rgba(%d,%d,%d,%d)", (int)m_r, (int)m_g, (int)m_b, (int)m_a);
-        return String::createASCIIString(buf);
-    }
-
     bool operator==(const Color& c) {
         return m_r == c.m_r && m_g == c.m_g && m_b == c.m_b && m_a == c.m_a;
     }

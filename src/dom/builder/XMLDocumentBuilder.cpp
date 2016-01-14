@@ -69,13 +69,15 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                         CSSStyleRule::Kind kind;
                         String* st;
                         if (selectorText[0] == '.') {
-                            kind = CSSStyleRule::Kind::ClassRule;
+                            kind = CSSStyleRule::Kind::ClassSelector;
                             st = String::fromUTF8(&selectorText[1]);
                         } else if (selectorText[0] == '#') {
-                            kind = CSSStyleRule::Kind::IdRule;
+                            kind = CSSStyleRule::Kind::IdSelector;
                             st = String::fromUTF8(&selectorText[1]);
+                        } else if (selectorText[0] == '*') {
+                            kind = CSSStyleRule::Kind::UniversalSelector;
                         } else {
-                            kind = CSSStyleRule::Kind::TagRule;
+                            kind = CSSStyleRule::Kind::TypeSelector;
                             if (selectorText[0] == '*') {
                                 st = String::emptyString;
                             } else {

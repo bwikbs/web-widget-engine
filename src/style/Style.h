@@ -7,6 +7,10 @@
 
 namespace StarFish {
 
+class ComputedStyle;
+class Element;
+class Document;
+
 // FIXME
 // for support javascript CSSStyleSheet Object
 // we should store style rules that way(like CSSStyleSheet object)
@@ -40,6 +44,13 @@ public:
     float value()
     {
         return m_value;
+    }
+
+    Length toLength(ComputedStyle* parent)
+    {
+        if (m_kind == PX)
+            return Length(Length::Fixed, m_value);
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 protected:
     Kind m_kind;
@@ -162,6 +173,7 @@ protected:
 };
 
 class CSSStyleDeclaration : public gc {
+    friend class StyleResolver;
 public:
     void addValuePair(CSSStyleValuePair p)
     {
@@ -172,11 +184,13 @@ protected:
 };
 
 class CSSStyleRule : public gc {
+    friend class StyleResolver;
 public:
     enum Kind {
-        TagRule = 1,
-        ClassRule = 10,
-        IdRule = 100,
+        UniversalSelector,
+        TypeSelector,
+        ClassSelector,
+        IdSelector,
     };
 
     CSSStyleRule(Kind kind, String* ruleText)
@@ -198,6 +212,7 @@ protected:
 };
 
 class CSSStyleSheet : public gc {
+    friend class StyleResolver;
 public:
     void addRule(CSSStyleRule rule)
     {
@@ -213,6 +228,10 @@ public:
     {
         m_sheets.push_back(rule);
     }
+
+    void resolveDOMStyle(Document* document);
+    ComputedStyle* resolveDocumentStyle();
+    ComputedStyle* resolveStyle(Element* node, ComputedStyle* parent);
 protected:
     std::vector<CSSStyleSheet*, gc_allocator<CSSStyleSheet*>> m_sheets;
 };
