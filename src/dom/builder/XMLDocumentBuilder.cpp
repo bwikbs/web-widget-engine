@@ -100,6 +100,9 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                 }
 
                 document->window()->styleResolver()->addSheet(sheet);
+
+                // TODO add child
+                return ;
             } else if (strcmp(name, "body") == 0) {
                 newNode = new HTMLBodyElement(document);
             } else if (strcmp(name, "div") == 0) {
@@ -114,6 +117,19 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
         }
 
         STARFISH_ASSERT(newNode);
+
+        if (newNode->isElement()) {
+            const tinyxml2::XMLAttribute* attr = xmlElement->FirstAttribute();
+            while(attr) {
+                if (strcmp(attr->Name(), "nodeType") == 0 || strcmp(attr->Name(), "localName") == 0) {
+                    attr = attr->Next();
+                    continue;
+                }
+
+                newNode->asElement()->setAttribute(String::fromUTF8(attr->Name()), String::fromUTF8(attr->Value()));
+                attr = attr->Next();
+            }
+        }
 
         if (parentNode) {
             parentNode->appendChild(newNode);

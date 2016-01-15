@@ -19,6 +19,9 @@ public:
     virtual void* unwrap() = 0;
     virtual float size() = 0;
     virtual String* familyName() = 0;
+
+    // TODO implement font metrics
+    virtual float fontHeight() = 0;
 protected:
 };
 

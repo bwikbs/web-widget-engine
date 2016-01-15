@@ -13,6 +13,10 @@ class FrameText;
 class FrameBox;
 class FrameBlockBox;
 
+class LayoutContext {
+
+};
+
 class Frame : public gc {
 public:
     Frame(Node* node, ComputedStyle* style)
@@ -174,7 +178,20 @@ public:
 
     }
 
-    virtual const char* name() = 0;
+    virtual const char* name()
+    {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    virtual void layout(LayoutContext& ctx)
+    {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    virtual void paint(Canvas* canvas)
+    {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
 
 protected:
     Node* m_node;

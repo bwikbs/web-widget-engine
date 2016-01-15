@@ -19,6 +19,13 @@ public:
         return true;
     }
 
+    virtual void dump()
+    {
+        Frame::dump();
+        printf(" frameRect(%g,%g,%g,%g) ", x(), y(), width(), height());
+    }
+
+
     float x() const { return m_frameRect.x(); }
     float y() const { return m_frameRect.y(); }
     float width() const { return m_frameRect.width(); }
@@ -29,11 +36,50 @@ public:
     void setWidth(float width) { m_frameRect.setWidth(width); }
     void setHeight(float height) { m_frameRect.setHeight(height); }
 
+    float paddingWidth()
+    {
+        return m_padding.left() + m_padding.right();
+    }
+
+    float paddingHeight()
+    {
+        return m_padding.top() + m_padding.bottom();
+    }
+
+    float borderWidth()
+    {
+        return m_border.left() + m_border.right();
+    }
+
+    float borderHeight()
+    {
+        return m_border.top() + m_border.bottom();
+    }
+
+    float marginWidth()
+    {
+        return m_margin.left() + m_margin.right();
+    }
+
+    float marginHeight()
+    {
+        return m_margin.top() + m_margin.bottom();
+    }
+
+    float contentWidth()
+    {
+        return m_frameRect.width() - paddingWidth() - borderWidth();
+    }
+
+    float contentHeight()
+    {
+        return m_frameRect.height() - paddingHeight() - borderHeight();
+    }
+
 protected:
     // content + padding + border
     Rect m_frameRect;
-    BoxSurroundData m_margin;
-
+    BoxSurroundData m_padding, m_border, m_margin;
 };
 
 }

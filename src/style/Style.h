@@ -4,6 +4,7 @@
 #include "util/String.h"
 #include "style/Unit.h"
 #include "style/Length.h"
+#include "platform/canvas/font/Font.h"
 
 namespace StarFish {
 
@@ -46,7 +47,7 @@ public:
         return m_value;
     }
 
-    Length toLength(ComputedStyle* parent)
+    Length toLength(/* parentValue */)
     {
         if (m_kind == PX)
             return Length(Length::Fixed, m_value);

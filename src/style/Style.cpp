@@ -31,11 +31,11 @@ void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
         float f;
         sscanf(value, "%f%%", &f);
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Percentage;
+        f = f / 100.f;
         ret.m_value.m_floatValue = f;
     } else if (endsWith(value, "px")) {
         float f;
         sscanf(value, "%fpx", &f);
-        f = f / 100.f;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
         ret.m_value.m_length = CSSLength(f);
     } else {
@@ -159,7 +159,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
                     style->m_width = Length();
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
-                    style->m_width = cssValues[k].lengthValue().toLength(parentStyle);
+                    style->m_width = cssValues[k].lengthValue().toLength();
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
                     style->m_width = Length(Length::Percent, cssValues[k].percentageValue());
                 } else {
@@ -172,7 +172,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
                     style->m_height = Length();
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
-                    style->m_height = cssValues[k].lengthValue().toLength(parentStyle);
+                    style->m_height = cssValues[k].lengthValue().toLength();
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
                     style->m_height = Length(Length::Percent, cssValues[k].percentageValue());
                 } else {
@@ -188,6 +188,12 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
                 break;
             case CSSStyleValuePair::KeyKind::FontSize:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_inheritedStyles.m_fontSize = parentStyle->m_inheritedStyles.m_fontSize;
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length);
+                    style->m_inheritedStyles.m_fontSize = cssValues[k].lengthValue().toLength().fixed();
+                }
                 break;
             case CSSStyleValuePair::KeyKind::TextAlign:
                 STARFISH_RELEASE_ASSERT_NOT_REACHED();

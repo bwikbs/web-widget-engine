@@ -6,6 +6,7 @@
 #include "layout/FrameTreeBuilder.h"
 #include "platform/canvas/font/Font.h"
 
+#include "layout/Frame.h"
 
 #include <Elementary.h>
 #include <Evas_Engine_Buffer.h>
@@ -59,6 +60,23 @@ public:
     {
         m_lastRenderTime = 0;
     }
+
+    virtual int width()
+    {
+        WindowImplEFL* eflWindow = (WindowImplEFL*)this;
+        int width;
+        evas_object_geometry_get(eflWindow->m_window, NULL, NULL, &width, NULL);
+        return width;
+    }
+
+    virtual int height()
+    {
+        WindowImplEFL* eflWindow = (WindowImplEFL*)this;
+        int height;
+        evas_object_geometry_get(eflWindow->m_window, NULL, NULL, NULL, &height);
+        return height;
+    }
+
     uintptr_t m_handle;
     Evas_Object* m_window;
     Evas_Object* m_background;
@@ -274,9 +292,12 @@ void Window::rendering()
 
     // create frame tree
     FrameTreeBuilder::buildFrameTree(m_document);
-    FrameTreeBuilder::dumpFrameTree(m_document);
 
-    // lay frame tree
+    // lay out frame tree
+    LayoutContext ctx;
+    m_document->frame()->layout(ctx);
+
+    FrameTreeBuilder::dumpFrameTree(m_document);
 
     // painting
     WindowImplEFL* eflWindow = (WindowImplEFL*)this;
@@ -316,6 +337,7 @@ void Window::rendering()
 
     canvas->setColor(Color(0,0,0,255));
     canvas->clearColor(Color(255,255,255,255));
+    m_document->frame()->paint(canvas);
 
 #ifdef STARFISH_TIZEN_WEARABLE
     canvas->save();

@@ -17,6 +17,8 @@ public:
     {
         return "FrameDocument";
     }
+
+    virtual void layout(LayoutContext& ctx);
 };
 
 }

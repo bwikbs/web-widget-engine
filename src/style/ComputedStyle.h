@@ -10,6 +10,8 @@ class ComputedStyle : public gc {
 public:
     ComputedStyle()
     {
+        m_font = nullptr;
+
         m_inheritedStyles.m_color = Color(0, 0, 0, 255);
         m_inheritedStyles.m_fontSize = 10;
 
@@ -18,6 +20,8 @@ public:
 
     ComputedStyle(ComputedStyle* from)
     {
+        m_font = nullptr;
+
         m_inheritedStyles = from->m_inheritedStyles;
         initNonInheritedStyles();
     }
@@ -36,6 +40,19 @@ public:
     {
         return m_height;
     }
+
+    Color color()
+    {
+        return m_inheritedStyles.m_color;
+    }
+
+    Font* font()
+    {
+        if (m_font == nullptr) {
+            m_font = FontSelector::loadFont(String::emptyString, m_inheritedStyles.m_fontSize);
+        }
+        return m_font;
+    }
 protected:
     void initNonInheritedStyles()
     {
@@ -50,6 +67,8 @@ protected:
     DisplayValue m_display;
     Length m_width;
     Length m_height;
+
+    Font* m_font;
 };
 
 }

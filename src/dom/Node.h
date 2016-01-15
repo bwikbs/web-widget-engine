@@ -75,7 +75,20 @@ public:
 
     CharacterData* asCharacterData()
     {
+        STARFISH_ASSERT(isCharacterData());
         return (CharacterData*)this;
+    }
+
+    Element* asElement()
+    {
+        STARFISH_ASSERT(isElement());
+        return (Element*)this;
+    }
+
+    Document* asDocument()
+    {
+        STARFISH_ASSERT(isDocument());
+        return (Document*)this;
     }
 
     virtual String* localName()
@@ -146,12 +159,6 @@ public:
     void setParentNode(Node* s)
     {
         m_parentNode = s;
-    }
-
-    Element* asElement()
-    {
-        STARFISH_ASSERT(isElement());
-        return (Element*)this;
     }
 
     Document* document()

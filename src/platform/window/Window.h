@@ -68,6 +68,9 @@ public:
         return &m_styleResolver;
     }
 
+    virtual int width() = 0;
+    virtual int height() = 0;
+
 protected:
     Window(StarFish* starFish);
     void rendering();

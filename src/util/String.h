@@ -11,6 +11,8 @@ class String;
 class String {
 public:
     static String* emptyString;
+    static String* spaceString;
+
     static String* fromUTF8(const char* src);
     static String* fromUTF8(const char* src, size_t len);
     static String* createASCIIString(const char* src);
@@ -63,6 +65,11 @@ public:
         }
     }
 
+    char32_t operator[](size_t idx)
+    {
+        return charAt(idx);
+    }
+
     size_t indexOf(char32_t ch)
     {
         for (size_t i = 0; i < length(); i ++) {
@@ -72,6 +79,26 @@ public:
         }
         return SIZE_MAX;
     }
+
+    static inline bool isASCIISpace(char32_t c) { return c <= ' ' && (c == ' ' || (c <= 0xD && c >= 0x9)); }
+    static inline bool isSpaceOrNewline(char32_t c)
+    {
+        // Use isASCIISpace() for basic Latin-1.
+        // This will include newlines, which aren't included in Unicode DirWS.
+        return c <= 0x7F ? isASCIISpace(c) : false; /* : u_charDirection(c) == U_WHITE_SPACE_NEUTRAL;*/
+    }
+
+    bool containsOnlyWhitespace()
+    {
+        for (size_t i = 0; i < length(); i ++) {
+            if (!isASCIISpace(charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    String* substring(size_t pos, size_t len);
 
 protected:
     String()
@@ -84,6 +111,12 @@ protected:
 
 class StringDataASCII : public String, public ASCIIString, public gc {
 public:
+    StringDataASCII(ASCIIString&& str)
+        : ASCIIString(str)
+    {
+
+    }
+
     StringDataASCII(const char* str)
         : ASCIIString(str)
     {
@@ -136,6 +169,15 @@ inline const char* String::utf8Data()
 {
     STARFISH_ASSERT(m_isASCIIString);
     return asASCIIString()->data();
+}
+
+inline String* String::substring(size_t pos, size_t len)
+{
+    if (m_isASCIIString) {
+        return new StringDataASCII(std::move(asASCIIString()->substr(pos, len)));
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 }

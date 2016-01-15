@@ -10,6 +10,7 @@ public:
     FrameText (Node* node, ComputedStyle* style)
         : Frame(node, style)
     {
+        m_text = node->asCharacterData()->data();
     }
 
     virtual bool isFrameText()
@@ -20,6 +21,11 @@ public:
     virtual const char* name()
     {
         return "FrameText";
+    }
+
+    String* text()
+    {
+        return m_text;
     }
 
     static std::string replaceAll(const std::string &str, const std::string &pattern, const std::string &replace)
@@ -43,6 +49,14 @@ public:
         str = replaceAll(str, "\n", "\\n");
         printf("text-> %s", str.data());
     }
+
+    virtual void layout(LayoutContext& ctx)
+    {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
+protected:
+    String* m_text;
 };
 
 }
