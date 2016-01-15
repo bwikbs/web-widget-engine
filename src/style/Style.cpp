@@ -280,7 +280,7 @@ void StyleResolver::resolveDOMStyle(Document* document)
     Node* child = document->firstChild();
     while (child) {
         if (child->isElement()) {
-            resolveDOMStyleInner(this, child->asElement(), document->frame()->style());
+            resolveDOMStyleInner(this, child->asElement(), document->style());
         }
         child = child->nextSibling();
     }

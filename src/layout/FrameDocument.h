@@ -1,16 +1,21 @@
-#ifndef __StarFishBlockBox__
-#define __StarFishBlockBox__
+#ifndef __StarFishFrameDocument__
+#define __StarFishFrameDocument__
 
-#include "layout/FrameBox.h"
+#include "layout/FrameBlockBox.h"
 
 namespace StarFish {
 
-class FrameDocument : public FrameBox {
+class FrameDocument : public FrameBlockBox {
 public:
     FrameDocument(Node* node, ComputedStyle* style)
-        : FrameBox(node, style)
+        : FrameBlockBox(node, style)
     {
 
+    }
+
+    virtual const char* name()
+    {
+        return "FrameDocument";
     }
 };
 

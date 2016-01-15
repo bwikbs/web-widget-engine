@@ -2,6 +2,10 @@
 #include "Window.h"
 
 #include "dom/builder/XMLDocumentBuilder.h"
+#include "dom/HTMLDocument.h"
+#include "layout/FrameTreeBuilder.h"
+#include "platform/canvas/font/Font.h"
+
 
 #include <Elementary.h>
 #include <Evas_Engine_Buffer.h>
@@ -9,8 +13,6 @@
 #include <Ecore_Input.h>
 #include <Ecore_Input_Evas.h>
 
-#include "dom/HTMLDocument.h"
-#include "platform/canvas/font/Font.h"
 
 #ifdef STARFISH_TIZEN_WEARABLE
 #include <efl_extension.h>
@@ -268,10 +270,11 @@ void Window::rendering()
     STARFISH_LOG_INFO("Window::rendering\n");
 
     // resolve style
-
     m_styleResolver.resolveDOMStyle(m_document);
 
     // create frame tree
+    FrameTreeBuilder::buildFrameTree(m_document);
+    FrameTreeBuilder::dumpFrameTree(m_document);
 
     // lay frame tree
 

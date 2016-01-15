@@ -8,12 +8,12 @@
 #include "platform/canvas/Canvas.h"
 #include "platform/canvas/image/ImageData.h"
 #include "dom/EventTarget.h"
-#include "layout/Frame.h"
 
 namespace StarFish {
 
-class Element;
 class CharacterData;
+class Element;
+class Frame;
 
 class Node : public EventTarget<ScriptWrappable> {
 protected:
@@ -188,7 +188,6 @@ public:
 
     void setFrame(Frame* frame)
     {
-        STARFISH_ASSERT(frame->style() == style());
         m_frame = frame;
     }
 

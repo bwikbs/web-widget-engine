@@ -14,6 +14,7 @@ public:
         : Document(window, scriptBindingInstance, style)
     {
         initScriptWrappable(this);
+        setStyle(style);
     }
 
 protected:

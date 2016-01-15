@@ -1,0 +1,148 @@
+#include "StarFishConfig.h"
+#include "FrameTreeBuilder.h"
+
+#include "dom/DOM.h"
+
+#include "Frame.h"
+#include "FrameBlockBox.h"
+#include "FrameText.h"
+#include "FrameBlockBox.h"
+#include "FrameDocument.h"
+
+namespace StarFish {
+
+void clearTree(Node* current)
+{
+    current->setFrame(nullptr);
+
+    Node* n = current->firstChild();
+    while(n) {
+        clearTree(n);
+        n = n->nextSibling();
+    }
+}
+
+void buildTree(Node* current, Frame* parent)
+{
+    DisplayValue display = current->style()->display();
+    Frame* currentFrame;
+
+    bool isBlockChild = false;
+    if (display == DisplayValue::BlockDisplayValue) {
+        isBlockChild = true;
+        currentFrame = new FrameBlockBox(current, current->style());
+    } else if (display == DisplayValue::InlineDisplayValue) {
+        if (current->isCharacterData() && current->asCharacterData()->isText()) {
+            currentFrame = new FrameText(current, current->style());
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
+    } else if (display == DisplayValue::NoneDisplayValue) {
+        clearTree(current);
+        return ;
+    }
+
+    ASSERT(parent->isFrameBlockBox());
+
+    if (!parent->firstChild()) {
+        parent->appendChild(currentFrame);
+    } else {
+        if (parent->firstChild()->isFrameBlockBox()) {
+            if (isBlockChild) {
+                // Block... + Block case
+                parent->appendChild(currentFrame);
+            } else {
+                // Block... + Inline case
+                Frame* last = parent->lastChild();
+                STARFISH_ASSERT(last->isFrameBlockBox());
+                if (last->node()) {
+                    last = new FrameBlockBox(nullptr, parent->style());
+                    parent->appendChild(last);
+                }
+
+                last->appendChild(currentFrame);
+            }
+
+        } else {
+            if (isBlockChild) {
+                // Inline... + Block case
+                std::vector<Frame*, gc_allocator<Frame*>> backup;
+                while (parent->firstChild()) {
+                    backup.push_back(parent->firstChild());
+                    parent->removeChild(parent->firstChild());
+                }
+
+                FrameBlockBox* blockBox = new FrameBlockBox(nullptr, parent->style());
+                for(unsigned i = 0; i < backup.size(); i ++) {
+                    blockBox->appendChild(backup[i]);
+                }
+
+                parent->appendChild(blockBox);
+                parent->appendChild(currentFrame);
+            } else {
+                // Inline... + Inline case
+                parent->appendChild(currentFrame);
+            }
+
+        }
+    }
+
+    current->setFrame(currentFrame);
+    Node* n = current->firstChild();
+    while(n) {
+        buildTree(n, currentFrame);
+        n = n->nextSibling();
+    }
+}
+
+void FrameTreeBuilder::buildFrameTree(Document* document)
+{
+    auto df = new FrameDocument(document, document->style());
+    document->setFrame(df);
+
+    // root element of html document is HTMLHtmlElement
+    // https://www.w3.org/TR/html-markup/html.html
+    Node* n = document->firstChild();
+    while(n) {
+        if (n->isElement() && n->asElement() && n->asElement()->isHTMLElement() && n->asElement()->asHTMLElement()->isHTMLElement()) {
+            break;
+        }
+        n = n->nextSibling();
+    }
+    ASSERT(n);
+
+    // FIXME display of html element always considered as "block"
+    ASSERT(n->style()->display() == DisplayValue::BlockDisplayValue);
+    buildTree(n, df);
+}
+
+void dump(Frame* frm, unsigned depth)
+{
+    for (unsigned i = 0; i < depth; i ++) {
+        printf("  ");
+    }
+    printf("%s", frm->name());
+    if (frm->node()) {
+        printf("[%s] ", frm->node()->localName()->utf8Data());
+    } else {
+        printf("[anonymous block box] ");
+    }
+
+    frm->dump();
+
+    printf("\n");
+
+    Frame* f = frm->firstChild();
+    while (f) {
+        dump(f, depth + 1);
+        f = f->next();
+    }
+}
+
+void FrameTreeBuilder::dumpFrameTree(Document* document)
+{
+    dump(document->frame(), 0);
+}
+
+
+}

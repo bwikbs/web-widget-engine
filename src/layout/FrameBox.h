@@ -14,6 +14,11 @@ public:
 
     }
 
+    virtual bool isFrameBox()
+    {
+        return true;
+    }
+
     float x() const { return m_frameRect.x(); }
     float y() const { return m_frameRect.y(); }
     float width() const { return m_frameRect.width(); }

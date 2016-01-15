@@ -12,6 +12,19 @@ public:
     {
 
     }
+
+    virtual bool isFrameBlockBox()
+    {
+        return true;
+    }
+
+    virtual const char* name()
+    {
+        return "FrameBlockBox";
+    }
+
+protected:
+
 };
 
 }

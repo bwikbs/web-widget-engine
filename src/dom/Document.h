@@ -15,7 +15,7 @@ protected:
     {
         m_window = window;
         m_scriptBindingInstance = scriptBindingInstance;
-        setDocumentStyle(style);
+        setStyle(style);
     }
 
 public:
@@ -35,7 +35,6 @@ public:
         return m_scriptBindingInstance;
     }
 
-    void setDocumentStyle(ComputedStyle* s);
     virtual String* localName();
 protected:
     Window* m_window;

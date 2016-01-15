@@ -21,6 +21,21 @@ public:
         m_inheritedStyles = from->m_inheritedStyles;
         initNonInheritedStyles();
     }
+
+    DisplayValue display()
+    {
+        return m_display;
+    }
+
+    Length width()
+    {
+        return m_width;
+    }
+
+    Length height()
+    {
+        return m_height;
+    }
 protected:
     void initNonInheritedStyles()
     {
