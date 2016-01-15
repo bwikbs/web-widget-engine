@@ -94,6 +94,63 @@ private:
     Size m_size;
 };
 
+class BoxSurroundData {
+public:
+    BoxSurroundData(float top = 0, float right = 0, float bottom = 0, float left = 0)
+    {
+        m_top = top;
+        m_right = right;
+        m_bottom = bottom;
+        m_left = left;
+    }
+
+    float top()
+    {
+        return m_top;
+    }
+
+    float right()
+    {
+        return m_right;
+    }
+
+    float bottom()
+    {
+        return m_bottom;
+    }
+
+    float left()
+    {
+        return m_left;
+    }
+
+    void setTop(float v)
+    {
+        m_top = v;
+    }
+
+    void setRight(float v)
+    {
+        m_right = v;
+    }
+
+    void setBottom(float v)
+    {
+        m_bottom = v;
+    }
+
+    void setLeft(float v)
+    {
+        m_left = v;
+    }
+
+protected:
+    float m_top;
+    float m_right;
+    float m_bottom;
+    float m_left;
+};
+
 class Color {
 public:
     Color()

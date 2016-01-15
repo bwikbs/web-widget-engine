@@ -36,17 +36,10 @@ public:
     }
 
     void setDocumentStyle(ComputedStyle* s);
-
-    ComputedStyle* documentStyle()
-    {
-        return m_documentStyle;
-    }
-
     virtual String* localName();
 protected:
     Window* m_window;
     ScriptBindingInstance* m_scriptBindingInstance;
-    ComputedStyle* m_documentStyle;
 };
 
 void Node::setNeedsRendering()

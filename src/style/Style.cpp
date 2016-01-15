@@ -257,15 +257,18 @@ void resolveDOMStyleInner(StyleResolver* resolver, Element* element, ComputedSty
 {
     ComputedStyle* style = resolver->resolveStyle(element, parentStyle);
 
-    element->setFrame(new Frame(element, style));
+    element->setStyle(style);
 
+    ComputedStyle* childStyle = nullptr;
     Node* child = element->firstChild();
     while (child) {
         if (child->isElement()) {
             resolveDOMStyleInner(resolver, child->asElement(), style);
         } else {
-            ComputedStyle* s = new ComputedStyle(style);
-            child->setFrame(new Frame(child, s));
+            if (childStyle == nullptr) {
+                childStyle = new ComputedStyle(style);
+            }
+            child->setStyle(childStyle);
         }
 
         child = child->nextSibling();

@@ -1,6 +1,7 @@
 #ifndef __StarFishFrame__
 #define __StarFishFrame__
 
+#include "style/Unit.h"
 #include "style/ComputedStyle.h"
 
 namespace StarFish {
@@ -13,6 +14,11 @@ public:
         : m_node(node)
         , m_style(style)
     {
+        m_firstChild = m_lastChild = m_next = m_previous = m_parent = nullptr;
+    }
+
+    virtual ~Frame()
+    {
 
     }
 
@@ -21,9 +27,19 @@ public:
         return m_style;
     }
 
+    void appendChild(Frame* frm)
+    {
+
+    }
+
 protected:
     Node* m_node;
     ComputedStyle* m_style;
+    Frame* m_parent;
+    Frame* m_previous;
+    Frame* m_next;
+    Frame* m_firstChild;
+    Frame* m_lastChild;
 };
 
 }

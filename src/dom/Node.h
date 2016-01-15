@@ -26,6 +26,7 @@ protected:
         m_firstChild = nullptr;
         m_state = NodeStateNormal;
         m_needsStyleRecalc = true;
+        m_style = nullptr;
         m_frame = nullptr;
     }
 
@@ -38,6 +39,7 @@ protected:
         m_firstChild = nullptr;
         m_state = NodeStateNormal;
         m_needsStyleRecalc = true;
+        m_style = nullptr;
         m_frame = nullptr;
     }
 public:
@@ -174,8 +176,19 @@ public:
         setNeedsRendering();
     }
 
+    void setStyle(ComputedStyle* style)
+    {
+        m_style = style;
+    }
+
+    ComputedStyle* style()
+    {
+        return m_style;
+    }
+
     void setFrame(Frame* frame)
     {
+        STARFISH_ASSERT(frame->style() == style());
         m_frame = frame;
     }
 
@@ -198,6 +211,7 @@ protected:
     Document* m_document;
     NodeState m_state;
 
+    ComputedStyle* m_style;
     Frame* m_frame;
 };
 

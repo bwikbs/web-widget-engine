@@ -49,7 +49,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     fetchData(this)->m_window = WindowFunction;
 
     fetchData(this)->m_instance->globalObject()->defineAccessorProperty(escargot::ESString::create("document"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj) -> escargot::ESValue {
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         return (escargot::ESObject *)((Window *)ScriptWrappableGlobalObject::fetch())->document();
     }, NULL, false, false, false);
 

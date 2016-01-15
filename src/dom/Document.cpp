@@ -1,6 +1,8 @@
 #include "StarFishConfig.h"
 #include "Document.h"
 
+#include "layout/FrameDocument.h"
+
 namespace StarFish {
 
 String* Document::localName()
@@ -10,8 +12,8 @@ String* Document::localName()
 
 void Document::setDocumentStyle(ComputedStyle* s)
 {
-    m_documentStyle = s;
-    setFrame(new Frame(this, s));
+    setStyle(s);
+    setFrame(new FrameDocument(this, style()));
 }
 
 

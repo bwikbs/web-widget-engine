@@ -10,6 +10,7 @@
 #include <Ecore_Input_Evas.h>
 
 #include "dom/HTMLDocument.h"
+#include "platform/canvas/font/Font.h"
 
 #ifdef STARFISH_TIZEN_WEARABLE
 #include <efl_extension.h>
@@ -266,8 +267,11 @@ void Window::rendering()
 
     STARFISH_LOG_INFO("Window::rendering\n");
 
-    // create frame tree
+    // resolve style
+
     m_styleResolver.resolveDOMStyle(m_document);
+
+    // create frame tree
 
     // lay frame tree
 
