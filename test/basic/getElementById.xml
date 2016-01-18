@@ -85,6 +85,8 @@
         function test() {
 			print(document.getElementById("idText"));
 			print(document.getElementById("idTextT"));
+			print(Document.prototype.getElementById);
+			Document.prototype.getElementById.call({});
             return 1<2;
         }
 		test();

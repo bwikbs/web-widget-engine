@@ -122,26 +122,6 @@ void ScriptWrappable::initScriptWrappable(Document*)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     ((escargot::ESObject *)this)->set__proto__(data->m_document->protoType());
-
-    escargot::ESFunctionObject* getElementByIdFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
-        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
-        if (thisValue.isObject()) {
-            ::escargot::ESObject* obj = thisValue.asESPointer()->asESObject();
-            if (((Node*) obj)->isDocument()) {
-                Document* doc = (Document*) obj;
-                escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
-                if (argValue.isESString()) {
-                    escargot::ESString* argStr = argValue.asESString();
-                    Element* elem = doc->getElementById(String::fromUTF8(argStr->utf8Data()));
-                    if (elem != nullptr)
-                        return escargot::ESValue((escargot::ESObject *)elem);
-                }
-
-            }
-        }
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, escargot::ESString::create("getElementById"), 1, false);
-    ((escargot::ESObject *)this)->defineDataProperty(escargot::ESString::create("getElementById"), false, false, false, getElementByIdFunction);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLDocument*)

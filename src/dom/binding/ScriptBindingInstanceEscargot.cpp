@@ -34,11 +34,22 @@ ScriptBindingInstance::ScriptBindingInstance()
     escargot::ESFunctionObject* functionName##Function = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue \
         { \
             return escargot::ESValue(); \
-        }, functionName##String, 0, false); \
+        }, functionName##String, 0, true, false); \
         functionName##Function->protoType().asESPointer()->asESObject()->forceNonVectorHiddenClass(false); \
         fetchData(this)->m_instance->globalObject()->defineDataProperty(functionName##String, false, false, false, functionName##Function); \
         functionName##Function->protoType().asESPointer()->asESObject()->set__proto__(parentName);
 
+// TypeError: Illegal invocation
+#define THROW_ILLEGAL_INVOCATION() \
+    escargot::ESVMInstance::currentInstance()->throwError(escargot::ESValue(escargot::TypeError::create(escargot::ESString::create("Illegal invocation"))));
+
+#define CHECK_TYPEOF(thisValue, type) \
+    {\
+        escargot::ESValue v = thisValue;\
+        if (!(v.isObject() && v.asESPointer()->asESObject()->extraData() == type)) { \
+            THROW_ILLEGAL_INVOCATION()\
+        }\
+    }\
 
 void ScriptBindingInstance::initBinding(StarFish* sf)
 {
@@ -64,6 +75,27 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(Document, NodeFunction->protoType());
     fetchData(this)->m_document = DocumentFunction;
+
+    escargot::ESFunctionObject* getElementByIdFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+        Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+
+        if (obj->isDocument()) {
+            Document* doc = obj->asDocument();
+            escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+            if (argValue.isESString()) {
+                escargot::ESString* argStr = argValue.asESString();
+                Element* elem = doc->getElementById(String::fromUTF8(argStr->utf8Data()));
+                if (elem != nullptr)
+                    return escargot::ESValue((escargot::ESObject *)elem);
+            }
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("getElementById"), 1, false);
+    DocumentFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("getElementById"), false, false, false, getElementByIdFunction);
 
     DEFINE_FUNCTION(HTMLDocument, DocumentFunction->protoType());
     fetchData(this)->m_htmlDocument = HTMLDocumentFunction;
@@ -112,21 +144,3 @@ void ScriptBindingInstance::evaluate(String* str)
 }
 
 
-/*
-    escargot::ESFunctionObject* getElementByIdFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
-        escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isObject()) {
-            if (v.asESPointer()->asESObject()->extraData() == ScriptWrappable::NodeObject) {
-                Node* nd = (Node*)v.asESPointer()->asESObject();
-                if (nd->isElement()) {
-                    Element* ret = nd->asElement()->getElementById(String::createASCIIString(instance->currentExecutionContext()->readArgument(0).toString()->utf8Data()));
-                    if (ret) {
-                        return (escargot::ESObject*)ret;
-                    }
-                }
-            }
-        }
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, escargot::ESString::create("getElementById"), 1, false);
-    elementFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("getElementById"), false, false, false, getElementByIdFunction);
-*/
