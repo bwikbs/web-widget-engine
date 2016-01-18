@@ -78,23 +78,6 @@ void ScriptWrappable::initScriptWrappable(Node* ptr, ScriptBindingInstance* inst
 {
     auto data = fetchData(instance);
     ((escargot::ESObject *)this)->set__proto__(data->m_node->protoType());
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("nextSibling"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        Node* nd = ((Node *)originalObj)->nextSibling();
-        if (nd == nullptr)
-            return escargot::ESValue(escargot::ESValue::ESNull);
-        return escargot::ESValue((escargot::ESObject *)nd);
-    }, NULL, false, false, false);
-
-    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("firstChild"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        Node* nd = ((Node *)originalObj)->firstChild();
-        if (nd == nullptr)
-            return escargot::ESValue(escargot::ESValue::ESNull);
-        return escargot::ESValue((escargot::ESObject *)nd);
-    }, NULL, false, false, false);
-
     ((escargot::ESObject *)this)->setExtraData(NodeObject);
 }
 

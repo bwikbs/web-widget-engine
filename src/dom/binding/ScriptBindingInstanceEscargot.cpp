@@ -67,6 +67,25 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(Node, EventTargetFunction->protoType());
     fetchData(this)->m_node = NodeFunction;
 
+    escargot::ESString* nextSiblingString = escargot::ESString::create("nextSibling");
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(nextSiblingString,
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj)->nextSibling();
+        if (nd == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return escargot::ESValue((escargot::ESObject *)nd);
+    }, NULL, false, false, false);
+
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("firstChild"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj)->firstChild();
+        if (nd == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return escargot::ESValue((escargot::ESObject *)nd);
+    }, NULL, false, false, false);
+
     DEFINE_FUNCTION(Element, NodeFunction->protoType());
     fetchData(this)->m_element = ElementFunction;
 
