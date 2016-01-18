@@ -22,8 +22,10 @@ protected:
         m_document = document;
         initScriptWrappable(this, instance);
         m_nextSibling = nullptr;
+        m_previousSibling = nullptr;
         m_parentNode = nullptr;
         m_firstChild = nullptr;
+        m_lastChild = nullptr;
         m_state = NodeStateNormal;
         m_needsStyleRecalc = true;
         m_style = nullptr;
@@ -35,42 +37,187 @@ protected:
         m_document = document;
         initScriptWrappable(this);
         m_nextSibling = nullptr;
+        m_previousSibling = nullptr;
         m_parentNode = nullptr;
         m_firstChild = nullptr;
+        m_lastChild = nullptr;
         m_state = NodeStateNormal;
         m_needsStyleRecalc = true;
         m_style = nullptr;
         m_frame = nullptr;
     }
 public:
-    enum NodeState {
-        NodeStateNormal,
-        NodeStateActive,
-    };
-
-    enum NodeType {
-        ELEMENT_NODE = 1,
-        ATTRIBUTE_NODE,        // historical
-        TEXT_NODE,
-        CDATA_SECTION_NODE,    // historical
-        ENTITY_REFERENCE_NODE, // historical
-        ENTITY_NODE,           // historical
-        PROCESSING_INSTRUCTION_NODE,
-        COMMENT_NODE,
-        DOCUMENT_NODE,
-        DOCUMENT_TYPE_NODE,
-        DOCUMENT_FRAGMENT_NODE,
-        NOTATION_NODE,         // historical
-    };
-
     virtual ~Node()
     {
 
     }
 
+    /* 4.4 Interface Node */
+
+    enum NodeType {
+        ELEMENT_NODE = 1,
+        ATTRIBUTE_NODE = 2,        // historical
+        TEXT_NODE = 3,
+        CDATA_SECTION_NODE = 4,    // historical
+        ENTITY_REFERENCE_NODE = 5, // historical
+        ENTITY_NODE = 6,           // historical
+        PROCESSING_INSTRUCTION_NODE = 7,
+        COMMENT_NODE = 8,
+        DOCUMENT_NODE = 9,
+        DOCUMENT_TYPE_NODE = 10,
+        DOCUMENT_FRAGMENT_NODE = 11,
+        NOTATION_NODE = 12,         // historical
+    };
+
+    enum DocumentPosition {
+        DOCUMENT_POSITION_DISCONNECTED = 0x01,
+        DOCUMENT_POSITION_PRECEDING = 0x02,
+        DOCUMENT_POSITION_FOLLOWING = 0x04,
+        DOCUMENT_POSITION_CONTAINS = 0x08,
+        DOCUMENT_POSITION_CONTAINED_BY = 0x10,
+        DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20,
+    };
+
     virtual NodeType nodeType() = 0;
 
     virtual String* nodeName() = 0;
+
+    virtual Document* ownerDocument()
+    {
+        if(isDocument()) {
+            return nullptr;
+        } else {
+            return m_document;
+        }
+    }
+
+    Node* parentNode()
+    {
+        return m_parentNode;
+    }
+
+    virtual String* localName()
+    {
+        return String::emptyString;
+    }
+
+    bool hasChildNodes()
+    {
+        return firstChild();
+    }
+
+    Node* firstChild()
+    {
+        return m_firstChild;
+    }
+
+    Node* lastChild()
+    {
+        return m_lastChild;
+    }
+
+    Node* previousSibling() {
+        return m_previousSibling;
+    }
+
+    Node* nextSibling()
+    {
+        return m_nextSibling;
+    }
+
+    Node* appendChild(Node* child)
+    {
+        STARFISH_ASSERT(child);
+        STARFISH_ASSERT(child->parentNode() == nullptr);
+        STARFISH_ASSERT(child->nextSibling() == nullptr);
+        STARFISH_ASSERT(child->previousSibling() == nullptr);
+
+        if(m_lastChild) {
+            child->setPreviousSibling(m_lastChild);
+            m_lastChild->setNextSibling(child);
+        } else {
+            m_firstChild = child;
+        }
+        m_lastChild = child;
+        child->setParentNode(this);
+        setNeedsRendering();
+        return child;
+    }
+
+    Node* insertBefore(Node* child, Node* childRef = nullptr)
+    {
+        STARFISH_ASSERT(child);
+
+        if(!childRef) {
+            appendChild(child);
+        }
+
+        STARFISH_ASSERT(childRef->parentNode() == this);
+        STARFISH_ASSERT(child->parentNode() == nullptr);
+        STARFISH_ASSERT(child->nextSibling() == nullptr);
+        STARFISH_ASSERT(child->previousSibling() == nullptr);
+
+        childRef->setPreviousSibling(child);
+        Node* prev = childRef->previousSibling();
+        STARFISH_ASSERT(m_lastChild != prev);
+        if(prev) {
+            STARFISH_ASSERT(m_firstChild != childRef);
+            prev->setNextSibling(child);
+        } else {
+            STARFISH_ASSERT(m_firstChild == childRef);
+            m_firstChild = child;
+        }
+
+        child->setParentNode(this);
+        child->setPreviousSibling(prev);
+        child->setNextSibling(childRef);
+        return child;
+    }
+
+    Node* removeChild(Node* child)
+    {
+        STARFISH_ASSERT(child);
+        STARFISH_ASSERT(child->parentNode() == this);
+
+        Node* prevChild = child->previousSibling();
+        Node* nextChild = child->nextSibling();
+
+        if(nextChild) {
+            nextChild->setPreviousSibling(prevChild);
+        }
+        if(prevChild) {
+            prevChild->setNextSibling(nextChild);
+        }
+        if(m_firstChild == child) {
+            m_firstChild = nextChild;
+        }
+        if(m_lastChild == child) {
+            m_lastChild = prevChild;
+        }
+
+        child->setPreviousSibling(nullptr);
+        child->setNextSibling(nullptr);
+        child->setParentNode(nullptr);
+        setNeedsRendering();
+        return child;
+    }
+
+    Node* replaceChild(Node* child, Node* childToRemove)
+    {
+        STARFISH_ASSERT(child);
+        STARFISH_ASSERT(child->parentNode() == this);
+        STARFISH_ASSERT(childToRemove);
+        STARFISH_ASSERT(childToRemove->parentNode() == this);
+
+        insertBefore(child, childToRemove);
+        return removeChild(childToRemove);
+    }
+
+    /* Other methods */
+    enum NodeState {
+        NodeStateNormal,
+        NodeStateActive,
+    };
 
     virtual bool isNode()
     {
@@ -110,63 +257,9 @@ public:
         return (Document*)this;
     }
 
-    virtual String* localName()
-    {
-        return String::emptyString;
-    }
-
-    bool hasChildNodes() {
-        return firstChild()? true: false;
-    }
-
-    Node* firstChild()
-    {
-        return m_firstChild;
-    }
-
     void setFirstChild(Node* s)
     {
         m_firstChild = s;
-    }
-
-    void appendChild(Node* child)
-    {
-        STARFISH_ASSERT(child->parentNode() == nullptr);
-        if (m_firstChild) {
-            Node* node = m_firstChild;
-            while (node->nextSibling() != nullptr) {
-                node = node->nextSibling();
-            }
-            STARFISH_ASSERT(node->nextSibling() == nullptr);
-            node->setNextSibling(child);
-        } else {
-            m_firstChild = child;
-        }
-        child->setParentNode(this);
-        setNeedsRendering();
-    }
-
-    void removeChild(Node* child)
-    {
-        STARFISH_ASSERT(child);
-        STARFISH_ASSERT(child->parentNode() == this);
-        Node* prevNode = nullptr;
-        Node* node = m_firstChild;
-        while (node != child) {
-            prevNode = node;
-            node = node->nextSibling();
-        }
-
-        STARFISH_ASSERT(node == child);
-        node->setParentNode(nullptr);
-        prevNode->setNextSibling(node->nextSibling());
-        node->setNextSibling(nullptr);
-        setNeedsRendering();
-    }
-
-    Node* nextSibling()
-    {
-        return m_nextSibling;
     }
 
     void setNextSibling(Node* s)
@@ -174,9 +267,9 @@ public:
         m_nextSibling = s;
     }
 
-    Node* parentNode()
+    void setPreviousSibling(Node* s)
     {
-        return m_parentNode;
+        m_previousSibling = s;
     }
 
     void setParentNode(Node* s)
@@ -238,9 +331,9 @@ protected:
     bool m_needsStyleRecalc;
 
     Node* m_nextSibling;
-    // Node* m_previousSibling;
+    Node* m_previousSibling;
     Node* m_firstChild;
-    // Node* m_lastChild;
+    Node* m_lastChild;
     Node* m_parentNode;
     Document* m_document;
     NodeState m_state;
