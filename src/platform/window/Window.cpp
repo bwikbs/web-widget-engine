@@ -267,6 +267,12 @@ Window::Window(StarFish* starFish)
         userAgentStyleSheet->addRule(rule);
     }
 
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("img"));
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "inline"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
     m_styleResolver.addSheet(userAgentStyleSheet);
 
     m_document = new HTMLDocument(this, m_starFish->scriptBindingInstance(), m_styleResolver.resolveDocumentStyle());
@@ -458,15 +464,13 @@ void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)
             t->setState(Node::NodeStateActive);
             t = t->parentNode();
         }
-    }
-    while (node) {
-        // TODO
-        // translate x, y
-        // if (node->onTouchEvent(kind, x, y))
-        //    break;
-        node = node->parentNode();
-    }
+   }
+
     if (kind == TouchEventUp) {
+        if (m_activeNodeWithTouchDown == node) {
+            node->callFunction(m_document->window()->starFish()->staticStrings()->m_onclick);
+        }
+
         Node* t = m_activeNodeWithTouchDown;
         while (t) {
             t->setState(Node::NodeStateNormal);

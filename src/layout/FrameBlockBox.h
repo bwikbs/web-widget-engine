@@ -2,6 +2,7 @@
 #define __StarFishBlockBox__
 
 #include "layout/FrameBox.h"
+#include "layout/FrameReplaced.h"
 
 namespace StarFish {
 
@@ -14,7 +15,7 @@ public:
     }
 
     virtual bool isInlineTextBox() const { return false; }
-    virtual bool isInlineContentBox() const { return false; }
+    virtual bool isInlineReplacedBox() const { return false; }
     virtual bool isInlineBlockBox() const { return false; }
 };
 
@@ -38,6 +39,25 @@ public:
 
 protected:
     String* m_text;
+};
+
+class InlineReplacedBox : public InlineBox {
+public:
+    InlineReplacedBox(Node* node, ComputedStyle* style, FrameReplaced* f)
+        : InlineBox(node, style)
+    {
+        m_frameReplaced = f;
+    }
+
+    virtual bool isInlineReplacedBox() const { return true; }
+
+    virtual void paint(Canvas* canvas, PaintingStage stage)
+    {
+        m_frameReplaced->paintReplaced(canvas);
+    }
+
+protected:
+    FrameReplaced* m_frameReplaced;
 };
 
 class LineBox : public gc {

@@ -20,6 +20,11 @@ class HTMLHtmlElement;
 class HTMLHeadElement;
 class HTMLBodyElement;
 class HTMLScriptElement;
+class HTMLDivElement;
+class HTMLImageElement;
+class Event;
+class UIEvent;
+class MouseEvent;
 
 class ScriptBindingInstance;
 
@@ -28,7 +33,8 @@ public:
     enum Type {
         None,
         WindowObject,
-        NodeObject
+        NodeObject,
+        EventObject,
     };
     ScriptWrappable();
 
@@ -46,6 +52,14 @@ public:
     void initScriptWrappable(HTMLHeadElement* ptr);
     void initScriptWrappable(HTMLBodyElement* ptr);
     void initScriptWrappable(HTMLScriptElement* ptr);
+    void initScriptWrappable(HTMLImageElement* ptr);
+    void initScriptWrappable(HTMLDivElement* ptr);
+
+    void initScriptWrappable(Event* ptr, ScriptBindingInstance*);
+    void initScriptWrappable(UIEvent* ptr, ScriptBindingInstance*);
+    void initScriptWrappable(MouseEvent* ptr, ScriptBindingInstance*);
+
+    bool hasProperty(String* name);
 
     void callFunction(String* name);
 protected:

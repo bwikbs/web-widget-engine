@@ -8,6 +8,10 @@ namespace StarFish {
 class Window;
 class Node;
 
+// TODO
+// addEventListener, removeEventListener..
+// implement event listeners storage
+
 template<typename T>
 class EventTarget : public T {
 protected:

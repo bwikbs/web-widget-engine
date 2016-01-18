@@ -163,6 +163,25 @@ void ScriptWrappable::initScriptWrappable(HTMLScriptElement* ptr)
     ((escargot::ESObject *)this)->set__proto__(data->m_htmlScriptElement->protoType());
 }
 
+void ScriptWrappable::initScriptWrappable(HTMLImageElement* ptr)
+{
+    Node* node = (Node*)this;
+    auto data = fetchData(node->document()->scriptBindingInstance());
+    ((escargot::ESObject *)this)->set__proto__(data->m_htmlImageElement->protoType());
+}
+
+void ScriptWrappable::initScriptWrappable(HTMLDivElement* ptr)
+{
+    Node* node = (Node*)this;
+    auto data = fetchData(node->document()->scriptBindingInstance());
+    ((escargot::ESObject *)this)->set__proto__(data->m_htmlDivElement->protoType());
+}
+
+bool ScriptWrappable::hasProperty(String* name)
+{
+    return escargot::ESObject::hasProperty(escargot::ESString::create(name->utf8Data()));
+}
+
 void ScriptWrappable::callFunction(String* name)
 {
     escargot::ESObject* obj = (escargot::ESObject*)this;
@@ -178,5 +197,25 @@ void ScriptWrappable::callFunction(String* name)
         printf("Uncaught %s\n", err.toString()->utf8Data());
     }
 }
+
+void ScriptWrappable::initScriptWrappable(Event* ptr, ScriptBindingInstance* instance)
+{
+    auto data = fetchData(instance);
+    ((escargot::ESObject *)this)->set__proto__(data->m_event->protoType());
+    ((escargot::ESObject *)this)->setExtraData(EventObject);
+}
+
+void ScriptWrappable::initScriptWrappable(UIEvent* ptr, ScriptBindingInstance* instance)
+{
+    auto data = fetchData(instance);
+    ((escargot::ESObject *)this)->set__proto__(data->m_uiEvent->protoType());
+}
+
+void ScriptWrappable::initScriptWrappable(MouseEvent* ptr, ScriptBindingInstance* instance)
+{
+    auto data = fetchData(instance);
+    ((escargot::ESObject *)this)->set__proto__(data->m_mouseEvent->protoType());
+}
+
 
 }

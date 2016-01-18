@@ -213,6 +213,23 @@ public:
         return removeChild(childToRemove);
     }
 
+
+    template <typename T>
+    Node* childMatchedBy(Node* parent, T fn)
+    {
+        Node* child = parent->firstChild();
+        while (child) {
+            if (fn(child)) {
+                return child;
+            }
+            Node* matchedDescendant = childMatchedBy(child, fn);
+            if (matchedDescendant)
+                return matchedDescendant;
+            child = child->nextSibling();
+        }
+        return nullptr;
+    }
+
     /* Other methods */
     enum NodeState {
         NodeStateNormal,

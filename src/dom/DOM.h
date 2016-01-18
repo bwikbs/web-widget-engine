@@ -17,5 +17,6 @@
 #include "dom/HTMLStyleElement.h"
 #include "dom/HTMLBodyElement.h"
 #include "dom/HTMLDivElement.h"
+#include "dom/HTMLImageElement.h"
 
 #endif

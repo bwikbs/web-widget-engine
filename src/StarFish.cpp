@@ -79,6 +79,15 @@ StaticStrings::StaticStrings()
     m_scriptLocalName = String::createASCIIString("script");
     m_bodyLocalName = String::createASCIIString("body");
     m_divLocalName = String::createASCIIString("div");
+    m_imageLocalName = String::createASCIIString("img");
+
+    m_id = String::createASCIIString("id");
+    m_class = String::createASCIIString("class");
+    m_src = String::createASCIIString("src");
+
+    m_click = String::createASCIIString("click");
+    m_onclick = String::createASCIIString("onclick");
 }
 
 }
+

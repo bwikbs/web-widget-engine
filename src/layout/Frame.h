@@ -12,6 +12,7 @@ class Node;
 class FrameText;
 class FrameBox;
 class FrameBlockBox;
+class FrameReplaced;
 
 enum PaintingStage {
     PaintingStackingContext,
@@ -71,6 +72,11 @@ public:
         return false;
     }
 
+    virtual bool isFrameReplaced()
+    {
+        return false;
+    }
+
     FrameText* asFrameText()
     {
         STARFISH_ASSERT(isFrameText());
@@ -81,6 +87,12 @@ public:
     {
         STARFISH_ASSERT(isFrameBox());
         return (FrameBox*)this;
+    }
+
+    FrameReplaced* asFrameReplaced()
+    {
+        STARFISH_ASSERT(isFrameReplaced());
+        return (FrameReplaced*)this;
     }
 
     FrameBlockBox* asFrameBlockBox()

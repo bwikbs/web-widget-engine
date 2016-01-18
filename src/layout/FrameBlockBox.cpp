@@ -24,13 +24,13 @@ void FrameBlockBox::layoutBlock(LayoutContext& ctx)
     Frame* child = firstChild();
     while (child) {
         // TODO Place the child.
-        child->asFrameBlockBox()->setX(0);
-        child->asFrameBlockBox()->setY(normalFlowHeight);
+        child->asFrameBox()->setX(0);
+        child->asFrameBox()->setY(normalFlowHeight);
 
         // Lay out the child
         child->layout(ctx);
 
-        normalFlowHeight += child->asFrameBlockBox()->height();
+        normalFlowHeight += child->asFrameBox()->height();
 
         child = child->next();
     }
@@ -116,6 +116,22 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
                 m_lineBoxes[nowLine].m_boxes.back()->setHeight(f->style()->font()->fontHeight());
                 offset = nextOffset;
             }
+        } else if (f->isFrameReplaced()) {
+            FrameReplaced* r = f->asFrameReplaced();
+            r->layout(ctx);
+
+            insertReplacedBox:
+            if (r->width() < (parentContentWidth - nowLineWidth) || nowLineWidth == 0) {
+                m_lineBoxes[nowLine].m_boxes.push_back(new InlineReplacedBox(f->node(), f->style(), r));
+                m_lineBoxes[nowLine].m_boxes.back()->setWidth(r->width());
+                m_lineBoxes[nowLine].m_boxes.back()->setHeight(r->height());
+                nowLineWidth += r->width();
+            } else {
+                m_lineBoxes.push_back(LineBox());
+                nowLine++;
+                nowLineWidth = 0;
+                goto insertReplacedBox;
+            }
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
@@ -135,9 +151,12 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
         float maxH = 0;
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
             b.m_boxes[j]->setX(x);
-            b.m_boxes[j]->setY(0);
             x += b.m_boxes[j]->width();
             maxH = std::max(maxH, b.m_boxes[j]->height());
+        }
+
+        for (size_t j = 0; j < b.m_boxes.size(); j ++) {
+            b.m_boxes[j]->setY(maxH - b.m_boxes[j]->height());
         }
 
         b.m_frameRect.setWidth(x);

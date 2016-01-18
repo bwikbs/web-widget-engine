@@ -25,7 +25,8 @@ public:
         return true;
     }
 
-    virtual NodeType nodeType() {
+    virtual NodeType nodeType()
+    {
         return DOCUMENT_NODE;
     }
 

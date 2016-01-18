@@ -26,9 +26,6 @@ ScriptBindingInstance::ScriptBindingInstance()
     fetchData(this)->m_instance->enter();
 }
 
-// TODO
-// every function have to check typeof this
-
 #define DEFINE_FUNCTION(functionName, parentName) \
     escargot::ESString* functionName##String = escargot::ESString::create(#functionName); \
     escargot::ESFunctionObject* functionName##Function = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance*) -> escargot::ESValue \
@@ -107,6 +104,29 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(Document, NodeFunction->protoType());
     fetchData(this)->m_document = DocumentFunction;
 
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("body"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isDocument()) {
+            Document* document = nd->asDocument();
+            Node* body = document->childMatchedBy(document, [](Node* nd) -> bool {
+                if (nd->isElement() && nd->asElement()->isHTMLElement() && nd->asElement()->asHTMLElement()->isHTMLBodyElement()) {
+                    return true;
+                }
+                return false;
+            });
+            if (body) {
+                // NOTE. this casting is not necessary. only needed for check its type for debug.
+                HTMLBodyElement* e = body->asElement()->asHTMLElement()->asHTMLBodyElement();
+                return escargot::ESValue((escargot::ESObject *)e);
+            }
+        } else {
+            THROW_ILLEGAL_INVOCATION();
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, NULL, false, false, false);
+
     escargot::ESFunctionObject* getElementByIdFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
         CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
@@ -157,6 +177,46 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(HTMLDivElement, HTMLElementFunction->protoType());
     fetchData(this)->m_htmlDivElement = HTMLDivElementFunction;
+
+    DEFINE_FUNCTION(HTMLImageElement, HTMLElementFunction->protoType());
+    fetchData(this)->m_htmlImageElement = HTMLImageElementFunction;
+
+    escargot::ESString* srcString = escargot::ESString::create("src");
+    HTMLImageElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(srcString,
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isElement()) {
+            if (nd->asElement()->isHTMLElement()) {
+                if (nd->asElement()->asHTMLElement()->isHTMLImageElement()) {
+                    return escargot::ESString::create(nd->asElement()->asHTMLElement()->asHTMLImageElement()->src()->utf8Data());
+                }
+            }
+        }
+        THROW_ILLEGAL_INVOCATION();
+        RELEASE_ASSERT_NOT_REACHED();
+    }, [] (::escargot::ESObject* obj, ::escargot::ESObject* originalObj, ::escargot::ESString* propertyName, const ::escargot::ESValue& value) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isElement()) {
+            if (nd->asElement()->isHTMLElement()) {
+                if (nd->asElement()->asHTMLElement()->isHTMLImageElement()) {
+                    nd->asElement()->asHTMLElement()->asHTMLImageElement()->setSrc(String::fromUTF8(value.toString()->utf8Data()));
+                    return;
+                }
+            }
+        }
+        THROW_ILLEGAL_INVOCATION();
+    } , true, true, false);
+
+    DEFINE_FUNCTION(Event, fetchData(this)->m_instance->globalObject()->objectPrototype());
+    fetchData(this)->m_event = EventFunction;
+
+    DEFINE_FUNCTION(UIEvent, EventFunction->protoType());
+    fetchData(this)->m_uiEvent = UIEventFunction;
+
+    DEFINE_FUNCTION(MouseEvent, UIEventFunction->protoType());
+    fetchData(this)->m_mouseEvent = MouseEventFunction;
 }
 
 void ScriptBindingInstance::evaluate(String* str)

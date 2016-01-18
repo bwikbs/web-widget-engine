@@ -58,6 +58,14 @@ public:
     }
 
     size_t hasAtttibute(String* name);
+    String* getAttribute(String* name)
+    {
+        size_t siz = hasAtttibute(name);
+        if (siz == SIZE_MAX)
+            return String::emptyString;
+        return getAttribute(siz);
+    }
+    String* getAttribute(size_t pos);
     void setAttribute(String* name, String* value);
     void removeAttribute(String* name);
 

@@ -8,6 +8,8 @@
 #include "FrameText.h"
 #include "FrameBlockBox.h"
 #include "FrameDocument.h"
+#include "FrameReplaced.h"
+#include "FrameReplacedImage.h"
 
 namespace StarFish {
 
@@ -30,10 +32,19 @@ void buildTree(Node* current, Frame* parent)
     bool isBlockChild = false;
     if (display == DisplayValue::BlockDisplayValue) {
         isBlockChild = true;
-        currentFrame = new FrameBlockBox(current, current->style());
+        if (current->isElement() && current->asElement()->isHTMLElement() && current->asElement()->asHTMLElement()->isHTMLImageElement()) {
+            auto element = current->asElement()->asHTMLElement()->asHTMLImageElement();
+            currentFrame = new FrameReplacedImage(current, current->style(), element->src());
+        } else {
+            currentFrame = new FrameBlockBox(current, current->style());
+        }
+
     } else if (display == DisplayValue::InlineDisplayValue) {
         if (current->isCharacterData() && current->asCharacterData()->isText()) {
             currentFrame = new FrameText(current, current->style());
+        } else if (current->isElement() && current->asElement()->isHTMLElement() && current->asElement()->asHTMLElement()->isHTMLImageElement()) {
+            auto element = current->asElement()->asHTMLElement()->asHTMLImageElement();
+            currentFrame = new FrameReplacedImage(current, current->style(), element->src());
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
@@ -54,7 +65,7 @@ void buildTree(Node* current, Frame* parent)
             } else {
                 // Block... + Inline case
                 Frame* last = parent->lastChild();
-                STARFISH_ASSERT(last->isFrameBlockBox());
+                STARFISH_ASSERT(last->style()->display() == BlockDisplayValue);
                 if (last->node()) {
                     last = new FrameBlockBox(nullptr, parent->style());
                     parent->appendChild(last);

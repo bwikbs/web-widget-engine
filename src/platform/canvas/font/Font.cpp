@@ -63,7 +63,7 @@ public:
     // TODO implement font metrics
     virtual float fontHeight()
     {
-        return m_size;
+        return m_size * 1.4f;
     }
 protected:
     float m_size;

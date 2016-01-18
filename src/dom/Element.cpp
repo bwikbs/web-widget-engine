@@ -15,6 +15,11 @@ size_t Element::hasAtttibute(String* name)
     return SIZE_MAX;
 }
 
+String* Element::getAttribute(size_t pos)
+{
+    return m_attributes[pos].value();
+}
+
 void Element::setAttribute(String* name, String* value)
 {
     size_t idx = hasAtttibute(name);

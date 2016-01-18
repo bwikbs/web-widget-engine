@@ -12,6 +12,7 @@ class StaticStrings {
 public:
     StaticStrings();
 
+    // Node Names
     String* m_documentLocalName;
     String* m_textLocalName;
     String* m_htmlLocalName;
@@ -20,6 +21,16 @@ public:
     String* m_scriptLocalName;
     String* m_bodyLocalName;
     String* m_divLocalName;
+    String* m_imageLocalName;
+
+    // Attribute Names
+    String* m_id;
+    String* m_class;
+    String* m_src;
+
+    // Event Names
+    String* m_click;
+    String* m_onclick;
 };
 
 class StarFish : public gc {

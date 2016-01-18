@@ -82,9 +82,7 @@
                 <node nodeType="1" localName="script" type="text/javascript">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-        function test() {
-            return 1<2;
-        }
+document.body.onclick = function() { print("bodyclick") }
     ]]></text>
                     </node>
                 </node>
