@@ -86,6 +86,18 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         return escargot::ESValue((escargot::ESObject *)nd);
     }, NULL, false, false, false);
 
+    escargot::ESFunctionObject* appendChildFunction = escargot::ESFunctionObject::create(nullptr, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+        CHECK_TYPEOF(instance->currentExecutionContext()->readArgument(0), ScriptWrappable::Type::NodeObject);
+        Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+        Node* child = (Node*)instance->currentExecutionContext()->readArgument(0).asESPointer()->asESObject();
+        obj->appendChild(child);
+        return escargot::ESValue((escargot::ESObject *)child);
+    }, escargot::ESString::create("appendChild"), 1, false);
+
+    NodeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("appendChild"), false, false, false, appendChildFunction);
+
     DEFINE_FUNCTION(Element, NodeFunction->protoType());
     fetchData(this)->m_element = ElementFunction;
 
