@@ -45,6 +45,8 @@ public:
     }
 
     virtual String* localName();
+
+    Element* getElementById(String* id);
 protected:
     Window* m_window;
     ScriptBindingInstance* m_scriptBindingInstance;
