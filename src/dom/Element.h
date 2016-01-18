@@ -24,6 +24,10 @@ public:
         m_id = String::emptyString;
     }
 
+    virtual NodeType nodeType() {
+        return ELEMENT_NODE;
+    }
+
     virtual bool isElement()
     {
         return true;

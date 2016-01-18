@@ -16,6 +16,10 @@ public:
         m_data = data;
     }
 
+    virtual NodeType nodeType() {
+        return TEXT_NODE;
+    }
+
     virtual void paint(Canvas* canvas)
     {
     }

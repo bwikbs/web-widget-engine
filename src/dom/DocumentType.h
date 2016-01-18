@@ -13,6 +13,10 @@ public:
         initScriptWrappable(this);
     }
 
+    virtual NodeType nodeType() {
+        return DOCUMENT_TYPE_NODE;
+    }
+
 protected:
 };
 

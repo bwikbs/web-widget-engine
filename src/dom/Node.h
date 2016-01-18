@@ -48,10 +48,27 @@ public:
         NodeStateActive,
     };
 
+    enum NodeType {
+        ELEMENT_NODE = 1,
+        ATTRIBUTE_NODE,        // historical
+        TEXT_NODE,
+        CDATA_SECTION_NODE,    // historical
+        ENTITY_REFERENCE_NODE, // historical
+        ENTITY_NODE,           // historical
+        PROCESSING_INSTRUCTION_NODE,
+        COMMENT_NODE,
+        DOCUMENT_NODE,
+        DOCUMENT_TYPE_NODE,
+        DOCUMENT_FRAGMENT_NODE,
+        NOTATION_NODE,         // historical
+    };
+
     virtual ~Node()
     {
 
     }
+
+    virtual NodeType nodeType() = 0;
 
     virtual bool isNode()
     {
@@ -94,6 +111,10 @@ public:
     virtual String* localName()
     {
         return String::emptyString;
+    }
+
+    bool hasChildNodes() {
+        return firstChild()? true: false;
     }
 
     Node* firstChild()

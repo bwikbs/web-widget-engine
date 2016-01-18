@@ -25,6 +25,10 @@ public:
         return true;
     }
 
+    virtual NodeType nodeType() {
+        return DOCUMENT_NODE;
+    }
+
     Window* window()
     {
         return m_window;
