@@ -431,7 +431,21 @@ uint32_t Window::setTimeout(WindowSetTimeoutHandler handler, uint32_t delay, voi
 Node* Window::hitTest(float x, float y)
 {
     renderingIfNeeds();
-    return NULL;
+
+    if (document() && document()->frame()) {
+        Frame* frame = document()->frame()->hitTest(x, y);
+        while (!frame->node()) {
+            frame = frame->parent();
+        }
+
+        printf("hitTest Result-> ");
+        frame->node()->dump();
+        puts("");
+
+        return frame->node();
+    }
+
+    return nullptr;
 }
 
 void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)

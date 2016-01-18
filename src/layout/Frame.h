@@ -13,6 +13,22 @@ class FrameText;
 class FrameBox;
 class FrameBlockBox;
 
+enum PaintingStage {
+    PaintingStackingContext,
+    PaintingNormalFlowBlock, // the in-flow, non-inline-level, non-positioned descendants.
+    PaintingNonPositionedFloats, // the non-positioned floats.
+    PaintingNormalFlowInline, // the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
+    PaintingPositionedElements, // the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
+};
+
+enum HitTestStage {
+    HitTestStackingContext,
+    HitTestNormalFlowBlock,
+    HitTestNonPositionedFloats,
+    HitTestNormalFlowInline,
+    HitTestPositionedElements,
+};
+
 class LayoutContext {
 
 };
@@ -23,7 +39,16 @@ public:
         : m_node(node)
         , m_style(style)
     {
-        m_firstChild = m_next = m_parent = nullptr;
+        m_firstChild = m_lastChild = m_next = m_previous = m_parent = nullptr;
+        m_flags.m_needsLayout = true;
+
+        bool isRootElement = node && node->isElement() && node->asElement()->isHTMLElement() && node->asElement()->asHTMLElement()->isHTMLHtmlElement();
+        // TODO add condition
+        m_flags.m_isEstablishesBlockFormattingContext = isRootElement;
+        // TODO add condition
+        m_flags.m_isEstablishesStackingContext = isRootElement;
+        // TODO add condition
+        m_flags.m_isPositionedElement = false;
     }
 
     virtual ~Frame()
@@ -89,6 +114,11 @@ public:
         return m_next;
     }
 
+    Frame* previous()
+    {
+        return m_previous;
+    }
+
     Frame* firstChild()
     {
         return m_firstChild;
@@ -96,13 +126,7 @@ public:
 
     Frame* lastChild()
     {
-        // TODO implement lastChild member
-        Frame* f = m_firstChild;
-        while (f && f->next()) {
-            f = f->next();
-        }
-
-        return f;
+        return m_lastChild;
     }
 
     void setNext(Frame* f)
@@ -110,67 +134,42 @@ public:
         m_next = f;
     }
 
-    void appendChild(Frame* child)
+    void appendChild(Frame* newChild)
     {
-        STARFISH_ASSERT(child->parent() == nullptr);
-        if (m_firstChild) {
-            Frame* frame = m_firstChild;
-            while (frame->next() != nullptr) {
-                frame = frame->next();
-            }
-            STARFISH_ASSERT(frame->next() == nullptr);
-            frame->setNext(child);
-        } else {
-            m_firstChild = child;
+        STARFISH_ASSERT(newChild->parent() == nullptr);
+
+        newChild->setParent(this);
+        Frame* lChild = lastChild();
+
+        if(lChild) {
+            newChild->m_previous = lChild;
+            lChild->m_next = newChild;
         }
-        child->setParent(this);
+        else {
+            m_firstChild = newChild;
+        }
+
+        m_lastChild = newChild;
     }
 
-    void removeChild(Frame* child)
+    void removeChild(Frame* oldChild)
     {
-        STARFISH_ASSERT(child);
-        STARFISH_ASSERT(child->parent() == this);
-        Frame* prevFrame = nullptr;
-        Frame* frame = m_firstChild;
-        while (frame != child) {
-            prevFrame = frame;
-            frame = frame->next();
-        }
+        STARFISH_ASSERT(oldChild);
+        STARFISH_ASSERT(oldChild->parent() == this);
 
-        STARFISH_ASSERT(frame == child);
-        frame->setParent(nullptr);
-        if (prevFrame)
-            prevFrame->setNext(frame->next());
-        else
-            m_firstChild = frame->next();
+       if (oldChild->m_previous)
+           oldChild->m_previous->m_next = oldChild->next();
+       if (oldChild->m_next)
+           oldChild->m_next->m_previous = oldChild->previous();
 
-        frame->setNext(nullptr);
-    }
+       if (m_firstChild == oldChild)
+           m_firstChild = oldChild->next();
+       if (m_lastChild == oldChild)
+           m_lastChild = oldChild->previous();
 
-    void replaceChildWith(Frame* now, Frame* after)
-    {
-        if (m_firstChild == now) {
-            after->setNext(m_firstChild->next());
-            after->setParent(this);
-            m_firstChild->setParent(nullptr);
-            m_firstChild->setNext(nullptr);
-            m_firstChild = after;
-            return ;
-        }
-
-        Frame* frameBefore = m_firstChild;
-        Frame* frame = m_firstChild->next();
-        while (frame->next() != now) {
-            frameBefore = frame;
-            frame = frame->next();
-        }
-        STARFISH_ASSERT(frame);
-
-        after->setNext(frame->next());
-        after->setParent(this);
-        frame->setParent(nullptr);
-        frame->setNext(nullptr);
-        frameBefore->setNext(after);
+       oldChild->m_previous = nullptr;
+       oldChild->m_next = nullptr;
+       oldChild->setParent(nullptr);
     }
 
     virtual void dump()
@@ -188,19 +187,59 @@ public:
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 
-    virtual void paint(Canvas* canvas)
+    virtual void paint(Canvas* canvas, PaintingStage = PaintingStackingContext)
     {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 
+    virtual Frame* hitTest(float x, float y,HitTestStage stage = HitTestStackingContext)
+    {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    bool isEstablishesBlockFormattingContext()
+    {
+        return m_flags.m_isEstablishesBlockFormattingContext;
+    }
+
+    bool isEstablishesStackingContext()
+    {
+        return m_flags.m_isEstablishesStackingContext;
+    }
+
+    bool isPositionedElement()
+    {
+        return m_flags.m_isPositionedElement;
+    }
+
 protected:
+    struct {
+        bool m_needsLayout: 1;
+
+        // https://www.w3.org/TR/CSS21/visuren.html#block-formatting
+        // Floats, absolutely positioned elements, block containers (such as inline-blocks, table-cells, and table-captions) that are not block boxes, and block boxes with 'overflow' other than 'visible' (except when that value has been propagated to the viewport) establish new block formatting contexts for their contents.
+        bool m_isEstablishesBlockFormattingContext:1;
+
+        // https://www.w3.org/TR/CSS21/visuren.html#propdef-z-index
+        // Other stacking contexts are generated by any positioned element (including relatively positioned elements) having a computed value of 'z-index' other than 'auto'. Stacking contexts are not necessarily related to containing blocks. In future levels of CSS, other properties may introduce stacking contexts, for example 'opacity' [CSS3COLOR].
+        bool m_isEstablishesStackingContext: 1;
+
+        // https://www.w3.org/TR/CSS21/visuren.html#positioning-scheme
+        // 9.3.2
+        // An element is said to be positioned if its 'position' property has a value other than 'static'. Positioned elements generate positioned boxes, laid out according to four properties:
+        bool m_isPositionedElement;
+    } m_flags;
+
     Node* m_node;
     ComputedStyle* m_style;
+
     Frame* m_parent;
-    // Frame* m_previous;
+
+    Frame* m_previous;
     Frame* m_next;
+
     Frame* m_firstChild;
-    // Frame* m_lastChild;
+    Frame* m_lastChild;
 };
 
 }

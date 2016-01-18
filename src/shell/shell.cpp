@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
                 p->sf->evaluate(String::fromUTF8(p->buf));
 
-                delete p->buf;
+                delete [] p->buf;
                 delete p;
                 return ECORE_CALLBACK_CANCEL;
             }, pass);

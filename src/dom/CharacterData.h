@@ -49,6 +49,30 @@ public:
         STARFISH_ASSERT(isText());
         return (Text*)this;
     }
+
+    static std::string replaceAll(const std::string &str, const std::string &pattern, const std::string &replace)
+    {
+        std::string result = str;
+        std::string::size_type pos = 0;
+        std::string::size_type offset = 0;
+
+        while((pos = result.find(pattern, offset)) != std::string::npos)
+        {
+            result.replace(result.begin() + pos, result.begin() + pos + pattern.size(), replace);
+            offset = pos + replace.size();
+        }
+
+        return result;
+    }
+
+    virtual void dump()
+    {
+        Node::dump();
+
+        std::string str = m_data->utf8Data();
+        str = replaceAll(str, "\n", "\\n");
+        printf("data:%s ", str.data());
+    }
 protected:
     String* m_data;
 };

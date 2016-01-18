@@ -18,6 +18,11 @@ public:
         return document()->window()->starFish()->staticStrings()->m_headLocalName;
     }
 
+    virtual bool isHTMLHeadElement()
+    {
+        return true;
+    }
+
 protected:
 };
 

@@ -63,6 +63,20 @@ public:
 
     virtual void didAttributeChanged(String* name, String* old, String* value);
 
+    virtual void dump()
+    {
+        Node::dump();
+
+        printf("id:%s ,", m_id->utf8Data());
+        std::string className;
+        for (unsigned i = 0; i < m_classNames.size(); i ++) {
+            className += m_classNames[i]->utf8Data();
+            className += " ";
+        }
+
+        printf("className:%s ", className.data());
+    }
+
 protected:
     std::vector<Attribute, gc_allocator<Attribute>> m_attributes;
 

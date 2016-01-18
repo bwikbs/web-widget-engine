@@ -28,8 +28,9 @@ public:
 
     virtual bool isInlineTextBox() const { return true; }
 
-    virtual void paint(Canvas* canvas)
+    virtual void paint(Canvas* canvas, PaintingStage stage)
     {
+        STARFISH_ASSERT(stage == PaintingNormalFlowInline);
         canvas->setFont(style()->font());
         canvas->setColor(style()->color());
         canvas->drawText(0, 0, m_text);
@@ -79,7 +80,8 @@ public:
         }
     }
 
-    void paint(Canvas* canvas);
+    virtual void paint(Canvas* canvas, PaintingStage stage);
+    virtual Frame* hitTest(float x, float y,HitTestStage stage);
 
 protected:
     void layoutBlock(LayoutContext& ctx);

@@ -16,10 +16,10 @@ namespace StarFish {
 #define FORWRAD_DECLARE_NAME(kind) class HTML##kind##Element;
 
 #define IS_KIND_ELEMENT(kind) \
-    virtual bool isHTML##kind() { return false; } \
+    virtual bool isHTML##kind##Element() { return false; } \
     virtual HTML##kind##Element* asHTML##kind##Element() \
     { \
-        STARFISH_ASSERT(isHTML##kind()); \
+        STARFISH_ASSERT(isHTML##kind##Element()); \
         return (HTML##kind##Element*)this; \
     }
 

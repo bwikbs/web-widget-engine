@@ -226,6 +226,11 @@ public:
         return m_frame;
     }
 
+    virtual void dump()
+    {
+        printf("%s ", localName()->utf8Data());
+    }
+
 private:
     inline void setNeedsRendering();
 

@@ -18,6 +18,11 @@ public:
         return document()->window()->starFish()->staticStrings()->m_divLocalName;
     }
 
+    virtual bool isHTMLDivElement()
+    {
+        return true;
+    }
+
 protected:
 };
 

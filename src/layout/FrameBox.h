@@ -76,6 +76,20 @@ public:
         return m_frameRect.height() - paddingHeight() - borderHeight();
     }
 
+    void paintBackgroundAndBorders(Canvas* canvas)
+    {
+        // TODO draw background color
+        // TODO draw background image
+        // TODO draw border
+    }
+
+    virtual Frame* hitTest(float x, float y,HitTestStage stage)
+    {
+        if (x >= 0 && x < m_frameRect.width() && y >= 0 && y < m_frameRect.height()) {
+            return this;
+        }
+        return nullptr;
+    }
 protected:
     // content + padding + border
     Rect m_frameRect;

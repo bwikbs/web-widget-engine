@@ -150,35 +150,198 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
     setHeight(contentHeight);
 }
 
-void FrameBlockBox::paint(Canvas* canvas)
+void FrameBlockBox::paint(Canvas* canvas, PaintingStage stage)
 {
-    // TODO draw background color
-    // TODO draw background image
-    // TODO draw border
+    if (isEstablishesStackingContext()) {
+        ASSERT(stage == PaintingStackingContext);
+        // Within each stacking context, the following layers are painted in back-to-front order:
 
-    if (hasBlockFlow()) {
+        // the background and borders of the element forming the stacking context.
+        paintBackgroundAndBorders(canvas);
+
+        // TODO the child stacking contexts with negative stack levels (most negative first).
+
+        // the in-flow, non-inline-level, non-positioned descendants.
+        ASSERT(hasBlockFlow());
         Frame* child = firstChild();
         while (child) {
             canvas->save();
             canvas->translate(child->asFrameBox()->x(), child->asFrameBox()->y());
-            child->paint(canvas);
+            child->paint(canvas, PaintingNormalFlowBlock);
             canvas->restore();
             child = child->next();
         }
-    } else {
-        for (size_t i = 0; i < m_lineBoxes.size(); i ++) {
+
+        // TODO the non-positioned floats.
+        /*
+        child = firstChild();
+        while (child) {
             canvas->save();
-            LineBox& b = m_lineBoxes[i];
-            canvas->translate(b.m_frameRect.x(), b.m_frameRect.y());
-            for (size_t j = 0; j < b.m_boxes.size(); j ++) {
-                canvas->save();
-                canvas->translate(b.m_boxes[j]->x(), b.m_boxes[j]->y());
-                b.m_boxes[j]->paint(canvas);
-                canvas->restore();
-            }
+            canvas->translate(child->asFrameBox()->x(), child->asFrameBox()->y());
+            child->paint(canvas, PaintingNonPositionedFloats);
             canvas->restore();
+            child = child->next();
+        }
+        */
+
+        // the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
+        child = firstChild();
+        while (child) {
+            canvas->save();
+            canvas->translate(child->asFrameBox()->x(), child->asFrameBox()->y());
+            child->paint(canvas, PaintingNormalFlowInline);
+            canvas->restore();
+            child = child->next();
+        }
+
+        // TODO the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
+        /*
+        child = firstChild();
+        while (child) {
+            canvas->save();
+            canvas->translate(child->asFrameBox()->x(), child->asFrameBox()->y());
+            child->paint(canvas, PaintingPositionedElements);
+            canvas->restore();
+            child = child->next();
+        }
+        */
+
+        // TODO the child stacking contexts with positive stack levels (least positive first).
+    } else {
+        if (stage == PaintingNormalFlowBlock) {
+            if (hasBlockFlow()) {
+                paintBackgroundAndBorders(canvas);
+                Frame* child = firstChild();
+                while (child) {
+                    canvas->save();
+                    canvas->translate(child->asFrameBox()->x(), child->asFrameBox()->y());
+                    child->paint(canvas, stage);
+                    canvas->restore();
+                    child = child->next();
+                }
+            }
+        } else if (stage == PaintingNormalFlowInline) {
+            if (!hasBlockFlow()) {
+                for (size_t i = 0; i < m_lineBoxes.size(); i ++) {
+                    canvas->save();
+                    LineBox& b = m_lineBoxes[i];
+                    canvas->translate(b.m_frameRect.x(), b.m_frameRect.y());
+                    for (size_t j = 0; j < b.m_boxes.size(); j ++) {
+                        canvas->save();
+                        canvas->translate(b.m_boxes[j]->x(), b.m_boxes[j]->y());
+                        b.m_boxes[j]->paint(canvas, stage);
+                        canvas->restore();
+                    }
+                    canvas->restore();
+                }
+            } else {
+                Frame* child = firstChild();
+                while (child) {
+                    canvas->save();
+                    canvas->translate(child->asFrameBox()->x(), child->asFrameBox()->y());
+                    child->paint(canvas, stage);
+                    canvas->restore();
+                    child = child->next();
+                }
+            }
         }
     }
+}
+
+Frame* FrameBlockBox::hitTest(float x, float y,HitTestStage stage)
+{
+    if (isEstablishesStackingContext()) {
+        ASSERT(stage == HitTestStackingContext);
+        Frame* result = nullptr;
+        Frame* child;
+        // TODO the child stacking contexts with positive stack levels (least positive first).
+
+        // TODO the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
+
+        // the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
+        child = lastChild();
+        while (child) {
+            float cx = x - child->asFrameBox()->x();
+            float cy = y - child->asFrameBox()->y();
+            result = child->hitTest(cx ,cy , HitTestNormalFlowInline);
+            if (result)
+                return result;
+            child = child->previous();
+        }
+
+        // TODO the non-positioned floats.
+
+        // the in-flow, non-inline-level, non-positioned descendants.
+        ASSERT(hasBlockFlow());
+        child = lastChild();
+        while (child) {
+            float cx = x - child->asFrameBox()->x();
+            float cy = y - child->asFrameBox()->y();
+            result = child->hitTest(cx, cy, HitTestNormalFlowBlock);
+            if (result)
+                return result;
+            child = child->previous();
+        }
+
+        // the background and borders of the element forming the stacking context.
+        result = FrameBox::hitTest(x, y, stage);
+        if (result)
+            return result;
+
+        // TODO the child stacking contexts with negative stack levels (most negative first).
+        return nullptr;
+    } else {
+        if (stage == HitTestNormalFlowBlock) {
+            if (hasBlockFlow()) {
+                Frame* result = nullptr;
+                Frame* child = lastChild();
+                while (child) {
+                    float cx = x - child->asFrameBox()->x();
+                    float cy = y - child->asFrameBox()->y();
+                    result = child->hitTest(cx ,cy , stage);
+                    if (result)
+                        return result;
+                    child = child->previous();
+                }
+
+                return FrameBox::hitTest(x, y, stage);
+            } else {
+                return FrameBox::hitTest(x, y, stage);
+            }
+        } else if (stage == HitTestNormalFlowInline) {
+            if (!hasBlockFlow()) {
+                Frame* result = nullptr;
+                for (size_t i = 0; i < m_lineBoxes.size(); i ++) {
+                    LineBox& b = m_lineBoxes[i];
+                    float cx = x - b.m_frameRect.x();
+                    float cy = y - b.m_frameRect.y();
+
+                    for (size_t j = 0; j < b.m_boxes.size(); j ++) {
+                        float cx2 = cx - b.m_boxes[j]->x();
+                        float cy2 = cy - b.m_boxes[j]->y();
+                        result = b.m_boxes[j]->hitTest(cx2, cy2, stage);
+                        if (result)
+                            return result;
+                    }
+                }
+
+                return nullptr;
+            } else {
+                Frame* result = nullptr;
+                Frame* child = lastChild();
+                while (child) {
+                    float cx = x - child->asFrameBox()->x();
+                    float cy = y - child->asFrameBox()->y();
+                    result = child->hitTest(cx ,cy , stage);
+                    if (result)
+                        return result;
+                    child = child->previous();
+                }
+                return nullptr;
+            }
+        }
+    }
+    return nullptr;
 }
 
 }
