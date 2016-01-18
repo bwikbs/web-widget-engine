@@ -85,6 +85,14 @@ void ScriptWrappable::initScriptWrappable(Element* element)
 {
     Node* node = (Node*)this;
     initScriptWrappable(element, node->document()->scriptBindingInstance());
+
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("firstElementChild"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        Node* nd = ((Node *)originalObj)->firstElementChild();
+        if (nd == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return escargot::ESValue((escargot::ESObject *)nd);
+    }, NULL, false, false, false);
 }
 
 void ScriptWrappable::initScriptWrappable(DocumentType* element)
@@ -105,6 +113,14 @@ void ScriptWrappable::initScriptWrappable(Document*)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     ((escargot::ESObject *)this)->set__proto__(data->m_document->protoType());
+
+    ((escargot::ESObject *)this)->defineAccessorProperty(escargot::ESString::create("firstElementChild"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        Node* nd = ((Node *)originalObj)->firstElementChild();
+        if (nd == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return escargot::ESValue((escargot::ESObject *)nd);
+    }, NULL, false, false, false);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLDocument*)

@@ -341,6 +341,10 @@ public:
         printf("%s ", localName()->utf8Data());
     }
 
+    Element* firstElementChild();
+    Element* lastElementChild();
+    unsigned long childElementCount();
+
 private:
     inline void setNeedsRendering();
 
