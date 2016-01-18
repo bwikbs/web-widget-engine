@@ -100,6 +100,8 @@ public:
 
     String* substring(size_t pos, size_t len);
 
+    String* toUpper();
+
 protected:
     String()
     {
@@ -175,6 +177,17 @@ inline String* String::substring(size_t pos, size_t len)
 {
     if (m_isASCIIString) {
         return new StringDataASCII(std::move(asASCIIString()->substr(pos, len)));
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+inline String* String::toUpper()
+{
+    if (m_isASCIIString) {
+        ASCIIString str = *asASCIIString();
+        std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+        return new StringDataASCII(std::move(str));
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }

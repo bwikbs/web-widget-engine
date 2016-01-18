@@ -70,6 +70,8 @@ public:
 
     virtual NodeType nodeType() = 0;
 
+    virtual String* nodeName() = 0;
+
     virtual bool isNode()
     {
         return true;

@@ -28,6 +28,8 @@ public:
         return ELEMENT_NODE;
     }
 
+    virtual String* nodeName() = 0;
+
     virtual bool isElement()
     {
         return true;

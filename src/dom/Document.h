@@ -29,6 +29,11 @@ public:
         return DOCUMENT_NODE;
     }
 
+    virtual String* nodeName()
+    {
+        return String::createASCIIString("#document");
+    }
+
     Window* window()
     {
         return m_window;

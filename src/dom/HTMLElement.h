@@ -35,6 +35,11 @@ public:
         m_className = String::emptyString;
     }
 
+    virtual String* nodeName()
+    {
+        return localName()->toUpper();
+    }
+
     virtual bool isHTMLElement()
     {
         return true;

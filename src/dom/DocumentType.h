@@ -11,15 +11,26 @@ public:
         : Node(document)
     {
         initScriptWrappable(this);
+        // FIXME: should be given by the parser
+        m_name = String::createASCIIString("html");
+        m_publicId = String::emptyString;
+        m_systemId = String::emptyString;
     }
 
     virtual NodeType nodeType() {
         return DOCUMENT_TYPE_NODE;
     }
 
-protected:
-};
+    virtual String* nodeName()
+    {
+        return m_name;
+    }
 
+protected:
+    String* m_name;
+    String* m_publicId;
+    String* m_systemId;
+};
 
 }
 
