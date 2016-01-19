@@ -90,14 +90,14 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         String* nodeName = ((Node *)originalObj)->nodeName();
-        return escargot::ESValue(nodeName->asASCIIString());
+        return toJSString(nodeName);
     }, NULL, false, false, false);
 
     NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("baseURI"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         String* uri = ((Node *)originalObj)->baseURI();
-        return escargot::ESValue(uri->asASCIIString());
+        return toJSString(uri);
     }, NULL, false, false, false);
 
     NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("ownerDocument"),
@@ -193,7 +193,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             if (ns == nullptr) {
                 return escargot::ESValue(escargot::ESValue::ESNull);
             }
-            return escargot::ESValue(ns->asASCIIString());
+            return toJSString(ns);
         }, escargot::ESString::create("lookupPrefix"), 1, false)
     );
 
@@ -208,7 +208,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             if (ns == nullptr) {
                 return escargot::ESValue(escargot::ESValue::ESNull);
             }
-            return escargot::ESValue(ns->asASCIIString());
+            return toJSString(ns);
         }, escargot::ESString::create("lookupNamespaceURI"), 1, false)
     );
 
