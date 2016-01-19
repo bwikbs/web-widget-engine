@@ -69,6 +69,7 @@ protected:
     Length m_height;
 
     Font* m_font;
+    Color m_bgColor;
 };
 
 }

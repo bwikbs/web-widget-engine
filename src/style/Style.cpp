@@ -93,6 +93,18 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
             ret.m_value.m_stringValue = String::fromUTF8(value);
         }
+    } else if (strcmp(key, "background-color") == 0) {
+        // color | <transparent> | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundColor;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Transparent;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            // TODO: Consider CSS Colors (Hexadecimal/etc. colors)
+            //       Check the value has right color strings
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+            ret.m_value.m_stringValue = String::fromUTF8(value);
+        }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -197,6 +209,16 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::TextAlign:
                 STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                break;
+            case CSSStyleValuePair::KeyKind::BackgroundColor:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_bgColor = parentStyle->m_bgColor;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
+                    style->m_bgColor = Color(0, 0, 0, 0);
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::StringValueKind);
+                    style->m_bgColor = parseColor(cssValues[k].stringValue());
+                }
                 break;
             }
         }
