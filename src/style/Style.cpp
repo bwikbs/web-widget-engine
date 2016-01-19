@@ -444,5 +444,28 @@ void StyleResolver::resolveDOMStyle(Document* document)
     }
 }
 
+void dump(Node* node, unsigned depth)
+{
+    for (unsigned i = 0; i < depth; i ++) {
+        printf("  ");
+    }
+
+    node->dumpStyle();
+    printf("\n");
+
+    Node* child = node->firstChild();
+    while (child) {
+        if (child->isElement()) {
+            dump(child, depth + 1);
+        }
+        child = child->nextSibling();
+    }
+}
+
+void StyleResolver::dumpDOMStyle(Document* document)
+{
+    dump(document->asNode(), 0);
+    printf("\n");
+}
 
 }

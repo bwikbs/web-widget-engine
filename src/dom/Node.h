@@ -392,6 +392,47 @@ public:
         printf("%s ", localName()->utf8Data());
     }
 
+    virtual void dumpStyle()
+    {
+        printf("[%s] ", localName()->utf8Data());
+
+        // display
+        if (m_style->display() == InlineDisplayValue) {
+            printf("display: inline, ");
+        } else if (m_style->display() == BlockDisplayValue) {
+            printf("display: block, ");
+        } else if (m_style->display() == NoneDisplayValue) {
+            printf("display: none, ");
+        }
+
+        // width
+        if (m_style->width().isFixed()) {
+            printf("width: %f, ", m_style->width().fixed());
+        } else if (m_style->width().isPercent()) {
+            printf("width: %f, ", m_style->width().percent());
+        } else if (m_style->width().isAuto()) {
+            printf("width: auto, ");
+        }
+
+        // height
+        if (m_style->height().isFixed()) {
+            printf("height: %f, ", m_style->height().fixed());
+        } else if (m_style->height().isPercent()) {
+            printf("height: %f, ", m_style->height().percent());
+        } else if (m_style->height().isAuto()) {
+            printf("height: auto, ");
+        }
+
+        // font-size
+        printf("font-size: %.0f, ", m_style->font()->size());
+
+        // color
+        printf("color: (%d,%d,%d,%d), ", m_style->color().r(), m_style->color().g(), m_style->color().b(), m_style->color().a());
+
+        // background-color
+        printf("background-color: (%d,%d,%d,%d), ", m_style->bgColor().r(), m_style->bgColor().g(), m_style->bgColor().b(), m_style->bgColor().a());
+    }
+
     Element* firstElementChild();
     Element* lastElementChild();
     unsigned long childElementCount();
