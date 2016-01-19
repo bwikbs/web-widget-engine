@@ -68,6 +68,13 @@
                         <text><![CDATA[
         					function test() {
                                 print(document.createElement("test"));
+                                print(document.createElement("html"));
+                                print(document.createElement("head"));
+                                print(document.createElement("style"));
+                                print(document.createElement("script"));
+                                print(document.createElement("body"));
+                                print(document.createElement("div"));
+                                print(document.createElement("img"));
                                 return true;
         					}
 							test();

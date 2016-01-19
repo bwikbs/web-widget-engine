@@ -25,7 +25,21 @@ Element* Document::getElementById(String* id)
 
 Element* Document::createElement(String* localName)
 {
-  //FIXME: mh.byun (temp soluation.)
+  if(localName->equals(window()->starFish()->staticStrings()->m_htmlLocalName)){
+    return new HTMLElement(this);
+  }else if(localName->equals(window()->starFish()->staticStrings()->m_headLocalName)){
+    return new HTMLHeadElement(this);
+  }else if(localName->equals(window()->starFish()->staticStrings()->m_styleLocalName)){
+    return new HTMLStyleElement(this);
+  }else if(localName->equals(window()->starFish()->staticStrings()->m_scriptLocalName)){
+    return new HTMLScriptElement(this);
+  }else if(localName->equals(window()->starFish()->staticStrings()->m_bodyLocalName)){
+    return new HTMLBodyElement(this);
+  }else if(localName->equals(window()->starFish()->staticStrings()->m_divLocalName)){
+    return new HTMLDivElement(this);
+  }else if(localName->equals(window()->starFish()->staticStrings()->m_imageLocalName)){
+    return new HTMLImageElement(this);
+  }
   return new HTMLUnknownElement(this,localName);
 }
 
