@@ -18,12 +18,22 @@ Element* Node::firstElementChild()
 
 Element* Node::lastElementChild()
 {
-    return nullptr;
+    return (Element*) Traverse::lastChild(this, [](Node* child) {
+        if (child->isElement())
+            return true;
+        else
+            return false;
+    });
 }
 
 unsigned long Node::childElementCount()
 {
-    return 0;
+    return Traverse::childCount(this, [](Node* child) {
+        if (child->isElement())
+            return true;
+        else
+            return false;
+    });
 }
 
 String* Node::lookupNamespacePrefix(String* namespaceUri, Element* element)
