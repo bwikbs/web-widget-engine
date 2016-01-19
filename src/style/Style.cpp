@@ -134,6 +134,34 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::SizeValueKind;
             ret.m_value.m_sizeValue = SizeValue::fromString(value);
         }
+    } else if (strcmp(key, "background-repeat-x") == 0) {
+    	// repeat | no-repeat | initial | inherit // initial value -> repeat
+    	ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatX;
+    	ret.m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
+
+    	if (VALUE_IS_INHERIT()) {
+    		ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    	} else if (VALUE_IS_STRING("no-repeat")) {
+    		ret.m_value.m_backgroundRepeatX = BackgroundRepeatValue::NoRepeatRepeatValue;
+    	} else if (VALUE_IS_STRING("repeat") || VALUE_IS_STRING("initial")) {
+    		ret.m_value.m_backgroundRepeatX = BackgroundRepeatValue::RepeatRepeatValue;
+    	} else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
+    } else if (strcmp(key, "background-repeat-y") == 0) {
+    	// repeat | no-repeat | initial | inherit // initial value -> repeat
+    	ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatY;
+    	ret.m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
+
+    	if (VALUE_IS_INHERIT()) {
+    		ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    	} else if (VALUE_IS_STRING("no-repeat")) {
+    		ret.m_value.m_backgroundRepeatY = BackgroundRepeatValue::NoRepeatRepeatValue;
+    	} else if (VALUE_IS_STRING("repeat") || VALUE_IS_STRING("initial")) {
+    		ret.m_value.m_backgroundRepeatY = BackgroundRepeatValue::RepeatRepeatValue;
+    	} else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -306,6 +334,22 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
             // no inherited
             case CSSStyleValuePair::KeyKind::BackgroundSize:
                 break;
+            case CSSStyleValuePair::KeyKind::BackgroundRepeatX:
+            	if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+            		style->m_backgroundRepeatX = parentStyle->m_backgroundRepeatX;
+            	} else {
+            		STARFISH_ASSERT(CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind == cssValues[k].valueKind());
+            		style->m_backgroundRepeatX = cssValues[k].backgroundRepeatXValue();
+            	}
+            	break;
+            case CSSStyleValuePair::KeyKind::BackgroundRepeatY:
+				if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+					style->m_backgroundRepeatY = parentStyle->m_backgroundRepeatY;
+				} else {
+					STARFISH_ASSERT(CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind == cssValues[k].valueKind());
+					style->m_backgroundRepeatY = cssValues[k].backgroundRepeatYValue();
+				}
+				break;
             }
         }
     };

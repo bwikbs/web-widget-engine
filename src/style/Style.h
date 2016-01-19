@@ -73,6 +73,12 @@ enum TextAlignValue {
     // JustifyTextAlignValue,
 };
 
+enum BackgroundRepeatValue {
+	RepeatRepeatValue,
+    NoRepeatRepeatValue,
+    IntialRepeatValue,
+};
+
 class SizeValueComponent {
 public:
     enum ValueKind {
@@ -130,6 +136,10 @@ public:
         BackgroundColor, // color | <transparent> | inherit
         // https://www.w3.org/TR/css3-background/#the-background-size
         BackgroundSize, // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
+        // https://www.w3.org/TR/CSS21/colors.html#propdef-background-repeat
+        //BackgroundRepeat, // repeat | repeat-x | repeat-y | no-repeat | initial | inherit
+        BackgroundRepeatX, // repeat | no-repeat | initial | inherit
+        BackgroundRepeatY, // repeat | no-repeat | initial | inherit
     };
 
     enum ValueKind {
@@ -143,10 +153,13 @@ public:
         TextAlignValueKind,
 
         Transparent,
+
         //BackgroundSize
         Cover,
         Contain,
         SizeValueKind,  //(width: [length|percentage|auto], height: [length|percentage|auto]) pair
+
+        BackgroundRepeatValueKind,
     };
 
     CSSStyleValuePair()
@@ -212,6 +225,18 @@ public:
         return m_value.m_sizeValue;
     }
 
+    BackgroundRepeatValue backgroundRepeatXValue()
+    {
+    	STARFISH_ASSERT(m_valueKind == BackgroundRepeatValueKind);
+    	return m_value.m_backgroundRepeatX;
+    }
+
+    BackgroundRepeatValue backgroundRepeatYValue()
+	{
+		STARFISH_ASSERT(m_valueKind == BackgroundRepeatValueKind);
+		return m_value.m_backgroundRepeatY;
+	}
+
     friend void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value);
     static CSSStyleValuePair fromString(const char* key, const char* value);
 protected:
@@ -225,6 +250,8 @@ protected:
         CSSLength m_length;
         String* m_stringValue;
         SizeValue* m_sizeValue;
+        BackgroundRepeatValue m_backgroundRepeatX;
+        BackgroundRepeatValue m_backgroundRepeatY;
     } m_value;
 };
 

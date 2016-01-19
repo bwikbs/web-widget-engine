@@ -58,6 +58,14 @@ public:
         }
         return m_font;
     }
+
+    BackgroundRepeatValue backgroundRepeatX() {
+    	return m_backgroundRepeatX;
+    }
+
+    BackgroundRepeatValue backgroundRepeatY() {
+		return m_backgroundRepeatY;
+	}
 protected:
     void initNonInheritedStyles()
     {
@@ -77,6 +85,9 @@ protected:
     Font* m_font;
     Color m_bgColor;
     SizeValue* m_bgSize;
+
+    BackgroundRepeatValue m_backgroundRepeatX;
+    BackgroundRepeatValue m_backgroundRepeatY;
 };
 
 }
