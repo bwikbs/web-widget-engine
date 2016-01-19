@@ -51,6 +51,11 @@ public:
         return m_inheritedStyles.m_textAlign;
     }
 
+    Color bgColor()
+    {
+        return m_bgColor;
+    }
+
     Font* font()
     {
         if (m_font == nullptr) {
