@@ -12,7 +12,7 @@
                 <node nodeType="1" localName="style" type="text/css">
                     <style selectorText="#idText" font-size="20px" color="red"/>
                     <style selectorText=".classText" font-size="12px"/>
-                    <style selectorText="div" display="block"/>
+                    <style selectorText="div" display="block" background-color="blue"/>
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
             #idText {
