@@ -58,7 +58,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_value.m_display = DisplayValue::InlineDisplayValue;
         } else if (VALUE_IS_STRING("none")) {
             ret.m_value.m_display = DisplayValue::NoneDisplayValue;
-        }else {
+        } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "width") == 0) {
@@ -105,6 +105,24 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
             ret.m_value.m_stringValue = String::fromUTF8(value);
         }
+    } else if (strcmp(key, "text-align") == 0) {
+        // left | right | center | justify | <inherit>
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::TextAlign;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        }  else if (VALUE_IS_STRING("left")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::TextAlignValueKind;
+            ret.m_value.m_textAlign = TextAlignValue::LeftTextAlignValue;
+        } else if (VALUE_IS_STRING("center")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::TextAlignValueKind;
+            ret.m_value.m_textAlign = TextAlignValue::CenterTextAlignValue;
+        } else if (VALUE_IS_STRING("right")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::TextAlignValueKind;
+            ret.m_value.m_textAlign = TextAlignValue::RightTextAlignValue;
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -119,6 +137,8 @@ ComputedStyle* StyleResolver::resolveDocumentStyle()
     ret->m_display = DisplayValue::BlockDisplayValue;
     ret->m_inheritedStyles.m_color = Color(0,0,0,255);
     ret->m_inheritedStyles.m_fontSize = 10;
+    // TODO implement ltr, rtl
+    ret->m_inheritedStyles.m_textAlign = TextAlignValue::LeftTextAlignValue;
     return ret;
 }
 
@@ -208,7 +228,12 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
                 break;
             case CSSStyleValuePair::KeyKind::TextAlign:
-                STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_inheritedStyles.m_textAlign = parentStyle->m_inheritedStyles.m_textAlign;
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::TextAlignValueKind);
+                    style->m_inheritedStyles.m_textAlign = cssValues[k].textAlignValue();
+                }
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundColor:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {

@@ -46,6 +46,11 @@ public:
         return m_inheritedStyles.m_color;
     }
 
+    TextAlignValue textAlign()
+    {
+        return m_inheritedStyles.m_textAlign;
+    }
+
     Font* font()
     {
         if (m_font == nullptr) {
@@ -62,6 +67,7 @@ protected:
     struct {
         Color m_color;
         float m_fontSize;
+        TextAlignValue m_textAlign;
     } m_inheritedStyles;
 
     DisplayValue m_display;

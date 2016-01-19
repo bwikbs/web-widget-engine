@@ -69,7 +69,7 @@ enum TextAlignValue {
     LeftTextAlignValue,
     RightTextAlignValue,
     CenterTextAlignValue,
-    JustifyTextAlignValue,
+    // JustifyTextAlignValue,
 };
 
 class CSSStyleValuePair : public gc {
@@ -87,7 +87,7 @@ public:
         // https://www.w3.org/TR/CSS21/fonts.html#font-size-props
         FontSize, // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
         // https://www.w3.org/TR/CSS21/text.html#propdef-text-align
-        TextAlign, // left | right | center | justify | inherit
+        TextAlign, // left | right | center | justify | <inherit>
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/colors.html#background-properties
         BackgroundColor, // color | <transparent> | inherit
     };

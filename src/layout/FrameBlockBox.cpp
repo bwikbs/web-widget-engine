@@ -12,15 +12,14 @@ void FrameBlockBox::layoutBlock(LayoutContext& ctx)
     // https://www.w3.org/TR/CSS2/visudet.html#the-width-property
     // TODO consider negative width
     if (m_style->width().isAuto()) {
-        setWidth(parentContentWidth - marginWidth());
+        setContentWidth(parentContentWidth);
     } else if (m_style->width().isFixed()) {
-        setWidth(m_style->width().fixed() + paddingWidth() + borderWidth());
+        setContentWidth(m_style->width().fixed());
     } else if (m_style->width().isPercent()) {
-        setWidth(parentContentWidth * m_style->width().percent() + paddingWidth() + borderWidth());
+        setContentWidth(parentContentWidth * m_style->width().percent());
     }
 
     float normalFlowHeight = 0;
-
     Frame* child = firstChild();
     while (child) {
         // TODO Place the child.
@@ -155,6 +154,26 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
             maxH = std::max(maxH, b.m_boxes[j]->height());
         }
 
+        // text align
+        if (style()->textAlign() == TextAlignValue::LeftTextAlignValue) {
+        } else if (style()->textAlign() == TextAlignValue::RightTextAlignValue) {
+            float xx = 0;
+            for (size_t j = 0; j < b.m_boxes.size(); j ++) {
+                InlineBox* box = b.m_boxes[b.m_boxes.size() -1 - j];
+                box->setX(x - xx);
+                xx += box->width();
+            }
+        } else {
+            STARFISH_ASSERT(style()->textAlign() == TextAlignValue::CenterTextAlignValue);
+            float diff = (parentContentWidth - x) / 2;
+            for (size_t j = 0; j < b.m_boxes.size(); j ++) {
+                InlineBox* box = b.m_boxes[j];
+                box->setX(box->x() + diff);
+            }
+        }
+
+
+        // TODO vertical align
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
             b.m_boxes[j]->setY(maxH - b.m_boxes[j]->height());
         }
