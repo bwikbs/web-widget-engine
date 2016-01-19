@@ -169,7 +169,7 @@ public:
         }
         m_lastChild = child;
         child->setParentNode(this);
-        setNeedsRendering();
+        setNeedsStyleRecalc();
         return child;
     }
 
@@ -200,6 +200,7 @@ public:
         child->setParentNode(this);
         child->setPreviousSibling(prev);
         child->setNextSibling(childRef);
+        setNeedsStyleRecalc();
         return child;
     }
 
@@ -227,7 +228,7 @@ public:
         child->setPreviousSibling(nullptr);
         child->setNextSibling(nullptr);
         child->setParentNode(nullptr);
-        setNeedsRendering();
+        setNeedsStyleRecalc();
         return child;
     }
 

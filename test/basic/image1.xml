@@ -12,7 +12,7 @@
 				<node nodeType="1" localName="style" type="text/css">
 					<style selectorText="#idText" font-size="20px" color="red"/>
 					<style selectorText=".classText" font-size="12px"/>
-					<style selectorText="#block" display="block"/>
+					<style selectorText="#block" display="block" width="50%" />
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
 			#idText {
@@ -23,6 +23,7 @@
 				font-size: 12px;
 			}
                         #block {
+				width : 50%;
                                 display: block;
                         }
 		]]></text>

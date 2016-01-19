@@ -18,9 +18,10 @@ public:
 
     }
 
-    bool isAuto() { return m_type == Auto; }
-    bool isFixed() { return m_type == Fixed; }
-    bool isPercent() { return m_type == Percent; }
+    bool isSpecified() const { return isFixed() || isPercent(); }
+    bool isAuto() const { return m_type == Auto; }
+    bool isFixed() const { return m_type == Fixed; }
+    bool isPercent() const { return m_type == Percent; }
     Type type() const { return m_type; }
 
     float percent() const
@@ -34,6 +35,15 @@ public:
     {
         STARFISH_ASSERT(m_type == Fixed);
         return m_data;
+    }
+
+    float specifiedValue(float parentLength) const
+    {
+        STARFISH_ASSERT(isSpecified());
+        if (isFixed())
+            return fixed();
+        else
+            return percent() * parentLength;
     }
 
     bool operator == (const Length& src)

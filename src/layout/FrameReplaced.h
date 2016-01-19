@@ -37,8 +37,38 @@ public:
 
     virtual void layout(LayoutContext& ctx)
     {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        // TODO A computed value of 'auto' for 'margin-left' or 'margin-right' becomes a used value of '0'.
+        Size s = intrinsicSize();
+        if (s.width() == 0 || s.height() == 0) {
+            setContentWidth(0);
+            setContentHeight(0);
+            return;
+        }
+        if (style()->width().isAuto() && style()->height().isAuto()) {
+            setContentWidth(s.width());
+            setContentHeight(s.height());
+        } else if (style()->width().isSpecified() && style()->height().isAuto()) {
+            float w = style()->width().specifiedValue(ctx.parentContentWidth(this));
+            float h = w * (s.height() / s.width());
+            setContentWidth(w);
+            setContentHeight(h);
+        } else if (style()->width().isAuto() && style()->height().isSpecified()) {
+            if (style()->height().isFixed()) {
+                float h = style()->height().fixed();
+                float w = h * (s.width() / s.height());
+                setContentWidth(w);
+                setContentHeight(h);
+            } else {
+                // FIXME
+                setContentWidth(s.width());
+                setContentHeight(s.height());
+            }
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
     }
+
+    virtual Size intrinsicSize() = 0;
 
     virtual void paintReplaced(Canvas* canvas)
     {

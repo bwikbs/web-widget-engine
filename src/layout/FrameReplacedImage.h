@@ -11,6 +11,10 @@ public:
     FrameReplacedImage(Node* node, ComputedStyle* style, String* src)
         : FrameReplaced(node, style)
     {
+        if (src == String::emptyString || src->equals(String::emptyString)) {
+            m_imageData = nullptr;
+            return ;
+        }
         m_imageData = node->document()->window()->starFish()->fetchImage(node->document()->window()->starFish()->makeResourcePath(src));
     }
 
@@ -24,15 +28,18 @@ public:
         return "FrameReplacedImage";
     }
 
-    virtual void layout(LayoutContext& ctx)
-    {
-        m_frameRect.setWidth(m_imageData->width());
-        m_frameRect.setHeight(m_imageData->height());
-    }
-
     virtual void paintReplaced(Canvas* canvas)
     {
-        canvas->drawImage(m_imageData, Rect(0, 0, width(), height()));
+        if (m_imageData)
+            canvas->drawImage(m_imageData, Rect(0, 0, width(), height()));
+    }
+
+    virtual Size intrinsicSize()
+    {
+        if (m_imageData)
+            return Size(m_imageData->width(), m_imageData->height());
+        else
+            return Size(0, 0);
     }
 
 protected:

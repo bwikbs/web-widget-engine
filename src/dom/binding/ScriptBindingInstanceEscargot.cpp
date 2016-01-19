@@ -38,7 +38,8 @@ ScriptBindingInstance::ScriptBindingInstance()
 
 // TypeError: Illegal invocation
 #define THROW_ILLEGAL_INVOCATION() \
-    escargot::ESVMInstance::currentInstance()->throwError(escargot::ESValue(escargot::TypeError::create(escargot::ESString::create("Illegal invocation"))));
+    escargot::ESVMInstance::currentInstance()->throwError(escargot::ESValue(escargot::TypeError::create(escargot::ESString::create("Illegal invocation")))); \
+    STARFISH_RELEASE_ASSERT_NOT_REACHED();
 
 #define CHECK_TYPEOF(thisValue, type) \
     {\
@@ -48,8 +49,17 @@ ScriptBindingInstance::ScriptBindingInstance()
         }\
     }\
 
+String* toString(const escargot::ESValue& v)
+{
+    escargot::NullableUTF8String s = v.toString()->toNullableUTF8String();
+    return String::fromUTF8(s.m_buffer, s.m_bufferSize);
+}
+
+
 void ScriptBindingInstance::initBinding(StarFish* sf)
 {
+    escargot::ESValue v;
+
     DEFINE_FUNCTION(EventTarget, fetchData(this)->m_instance->globalObject()->objectPrototype());
     DEFINE_FUNCTION(Window, EventTargetFunction->protoType());
     fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("window"), false, false, false, fetchData(this)->m_instance->globalObject());
@@ -144,6 +154,44 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         firstElementChildGetter, NULL, false, false, false);
     ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("childElementCount"),
         firstElementChildGetter, NULL, false, false, false);
+
+    ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("id"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isElement()) {
+            return escargot::ESString::create(nd->asElement()->getAttribute(nd->document()->window()->starFish()->staticStrings()->m_id)->utf8Data());
+        } else {
+            THROW_ILLEGAL_INVOCATION();
+        }
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isElement()) {
+            nd->asElement()->setAttribute(nd->document()->window()->starFish()->staticStrings()->m_id, toString(v));
+        } else {
+            THROW_ILLEGAL_INVOCATION();
+        }
+    }, true, true, true);
+
+    ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("class"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isElement()) {
+            return escargot::ESString::create(nd->asElement()->getAttribute(nd->document()->window()->starFish()->staticStrings()->m_class)->utf8Data());
+        } else {
+            THROW_ILLEGAL_INVOCATION();
+        }
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isElement()) {
+            nd->asElement()->setAttribute(nd->document()->window()->starFish()->staticStrings()->m_class, toString(v));
+        } else {
+            THROW_ILLEGAL_INVOCATION();
+        }
+    }, true, true, true);
 
 
     DEFINE_FUNCTION(DocumentType, NodeFunction->protoType());

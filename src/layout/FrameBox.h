@@ -36,6 +36,24 @@ public:
     void setWidth(float width) { m_frameRect.setWidth(width); }
     void setHeight(float height) { m_frameRect.setHeight(height); }
 
+    void setContentWidth(float width) { m_frameRect.setWidth(width + paddingWidth() + borderWidth()); }
+    void setContentHeight(float height) { m_frameRect.setHeight(height + paddingHeight() + borderHeight()); }
+
+    void setPaddingTop(float t) { m_padding.setTop(t); }
+    void setPaddingRight(float t) { m_padding.setRight(t); }
+    void setPaddingBottom(float t) { m_padding.setBottom(t); }
+    void setPaddingLeft(float t) { m_padding.setLeft(t); }
+
+    void setBorderTop(float t) { m_border.setTop(t); }
+    void setBorderRight(float t) { m_border.setRight(t); }
+    void setBorderBottom(float t) { m_border.setBottom(t); }
+    void setBorderLeft(float t) { m_border.setLeft(t); }
+
+    void setMarginTop(float t) { m_margin.setTop(t); }
+    void setMarginRight(float t) { m_margin.setRight(t); }
+    void setMarginBottom(float t) { m_margin.setBottom(t); }
+    void setMarginLeft(float t) { m_margin.setLeft(t); }
+
     float paddingWidth()
     {
         return m_padding.left() + m_padding.right();
