@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+    <node nodeType="9" localName="document">
+        <node nodeType="10" localName="documentType">
+        </node>
+        <node nodeType="1" localName="html">
+            <node nodeType="1" localName="head">
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="style" type="text/css">
+                    <style selectorText="#idText" font-size="20px" color="red" background-size="100px 50%"/>
+                    <style selectorText=".classText" background-size="150px"/>
+                    <style selectorText="div" display="block" background-size="cover"/>
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+            #idText {
+                font-size: 20px;    
+            
+                color: red;
+                background-size: 100px 50%;
+            }
+            .classText {
+                text-align: 16px;
+                background-size: 150px;
+            }
+            div {
+                display: block;
+                background-size: cover;
+            }
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+    ]]></text>
+                </node>
+            </node>
+            <node nodeType="3" localName="text">
+                <text><![CDATA[
+    ]]></text>
+            </node>
+            <node nodeType="1" localName="body">
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+    test
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="idText">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+            text2
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" class="classText">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+            tttttt
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+    
+    ]]></text>
+                </node>
+                <node nodeType="1" localName="script" type="text/javascript">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+        function test() {
+            return 1<2;
+        }
+    ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+
+            ]]></text>
+                </node>
+            </node>
+        </node>
+    </node>
+</HTMLDocument>

@@ -76,6 +76,7 @@ protected:
 
     Font* m_font;
     Color m_bgColor;
+    SizeValue* m_bgSize;
 };
 
 }

@@ -4,6 +4,7 @@
 #include "util/String.h"
 #include "style/Unit.h"
 #include "style/Length.h"
+#include "style/CSSParser.h"
 #include "platform/canvas/font/Font.h"
 
 namespace StarFish {
@@ -72,6 +73,43 @@ enum TextAlignValue {
     // JustifyTextAlignValue,
 };
 
+class SizeValueComponent {
+public:
+    enum ValueKind {
+        Length,
+        Percentage,
+        Auto
+    };
+    SizeValueComponent()
+        : m_valueKind(ValueKind::Auto),
+          m_value{0}
+    {
+    }
+
+    ValueKind m_valueKind;
+    union {
+        float m_floatValue;
+        CSSLength m_length;
+    } m_value;
+};
+
+class SizeValue : public gc {
+    SizeValue()
+    {
+    }
+    SizeValue(SizeValueComponent width)
+        : m_width(width) {
+    }
+    SizeValue(SizeValueComponent width, SizeValueComponent height)
+        : m_width(width),
+          m_height(height) {
+    }
+public:
+    static SizeValue* fromString(const char* value);
+    SizeValueComponent m_width;
+    SizeValueComponent m_height;
+};
+
 class CSSStyleValuePair : public gc {
 public:
     enum KeyKind {
@@ -90,6 +128,8 @@ public:
         TextAlign, // left | right | center | justify | <inherit>
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/colors.html#background-properties
         BackgroundColor, // color | <transparent> | inherit
+        // https://www.w3.org/TR/css3-background/#the-background-size
+        BackgroundSize, // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
     };
 
     enum ValueKind {
@@ -103,6 +143,10 @@ public:
         TextAlignValueKind,
 
         Transparent,
+        //BackgroundSize
+        Cover,
+        Contain,
+        SizeValueKind,  //(width: [length|percentage|auto], height: [length|percentage|auto]) pair
     };
 
     CSSStyleValuePair()
@@ -162,6 +206,12 @@ public:
         return m_value.m_stringValue;
     }
 
+    SizeValue* sizeValue()
+    {
+        STARFISH_ASSERT(m_valueKind == SizeValueKind);
+        return m_value.m_sizeValue;
+    }
+
     friend void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value);
     static CSSStyleValuePair fromString(const char* key, const char* value);
 protected:
@@ -174,6 +224,7 @@ protected:
         TextAlignValue m_textAlign;
         CSSLength m_length;
         String* m_stringValue;
+        SizeValue* m_sizeValue;
     } m_value;
 };
 
