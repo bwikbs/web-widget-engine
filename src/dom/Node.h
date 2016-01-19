@@ -84,7 +84,7 @@ public:
 
     virtual String* nodeName() = 0;
 
-    String* baseUri()
+    String* baseURI()
     {
         return m_baseUri;
     }
