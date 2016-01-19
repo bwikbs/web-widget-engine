@@ -49,12 +49,16 @@ ScriptBindingInstance::ScriptBindingInstance()
         }\
     }\
 
-String* toString(const escargot::ESValue& v)
+String* toBrowserString(const escargot::ESValue& v)
 {
     escargot::NullableUTF8String s = v.toString()->toNullableUTF8String();
     return String::fromUTF8(s.m_buffer, s.m_bufferSize);
 }
 
+escargot::ESValue toJSString(String* v)
+{
+    return escargot::ESString::create(v->utf8Data());
+}
 
 void ScriptBindingInstance::initBinding(StarFish* sf)
 {
@@ -168,7 +172,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         Node* nd = ((Node *)originalObj);
         if (nd->isElement()) {
-            nd->asElement()->setAttribute(nd->document()->window()->starFish()->staticStrings()->m_id, toString(v));
+            nd->asElement()->setAttribute(nd->document()->window()->starFish()->staticStrings()->m_id, toBrowserString(v));
         } else {
             THROW_ILLEGAL_INVOCATION();
         }
@@ -187,7 +191,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         Node* nd = ((Node *)originalObj);
         if (nd->isElement()) {
-            nd->asElement()->setAttribute(nd->document()->window()->starFish()->staticStrings()->m_class, toString(v));
+            nd->asElement()->setAttribute(nd->document()->window()->starFish()->staticStrings()->m_class, toBrowserString(v));
         } else {
             THROW_ILLEGAL_INVOCATION();
         }
@@ -257,6 +261,25 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(CharacterData, NodeFunction->protoType());
     fetchData(this)->m_characterData = CharacterDataFunction;
 
+    CharacterDataFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("data"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isCharacterData()) {
+            return toJSString(nd->asCharacterData()->data());
+        }
+        THROW_ILLEGAL_INVOCATION();
+        RELEASE_ASSERT_NOT_REACHED();
+    }, [] (::escargot::ESObject* obj, ::escargot::ESObject* originalObj, ::escargot::ESString* propertyName, const ::escargot::ESValue& value) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isCharacterData()) {
+            nd->asCharacterData()->setData(toBrowserString(value));
+            return;
+        }
+        THROW_ILLEGAL_INVOCATION();
+    } , true, true, false);
+
     DEFINE_FUNCTION(Text, CharacterDataFunction->protoType());
     fetchData(this)->m_text = TextFunction;
 
@@ -292,7 +315,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         if (nd->isElement()) {
             if (nd->asElement()->isHTMLElement()) {
                 if (nd->asElement()->asHTMLElement()->isHTMLImageElement()) {
-                    return escargot::ESString::create(nd->asElement()->asHTMLElement()->asHTMLImageElement()->src()->utf8Data());
+                    return toJSString(nd->asElement()->asHTMLElement()->asHTMLImageElement()->src());
                 }
             }
         }
@@ -304,7 +327,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         if (nd->isElement()) {
             if (nd->asElement()->isHTMLElement()) {
                 if (nd->asElement()->asHTMLElement()->isHTMLImageElement()) {
-                    nd->asElement()->asHTMLElement()->asHTMLImageElement()->setSrc(String::fromUTF8(value.toString()->utf8Data()));
+                    nd->asElement()->asHTMLElement()->asHTMLImageElement()->setSrc(toBrowserString(value));
                     return;
                 }
             }

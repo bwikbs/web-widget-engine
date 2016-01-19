@@ -16,7 +16,8 @@ public:
         m_data = data;
     }
 
-    virtual NodeType nodeType() {
+    virtual NodeType nodeType()
+    {
         return TEXT_NODE;
     }
 
@@ -37,6 +38,18 @@ public:
     String* data()
     {
         return m_data;
+    }
+
+    void setData(String* data)
+    {
+        STARFISH_ASSERT(data);
+        m_data = data;
+        setNeedsStyleRecalc();
+    }
+
+    size_t length()
+    {
+        return m_data->length();
     }
 
     virtual bool isCharacterData()

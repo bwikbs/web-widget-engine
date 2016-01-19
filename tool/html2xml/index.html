@@ -52,9 +52,13 @@
 		<script type="text/javascript" >
 	
 			function onSubmit() {
+				if (document.querySelector("iframe")) 
+					document.querySelector("iframe").parentElement.removeChild(document.querySelector("iframe"))
 				var code = document.getElementById("code");
 
 				var iframe = document.createElement("iframe");
+				iframe.width = "360"
+				iframe.height = "360"
 				iframe.srcdoc = code.value;
 				document.body.appendChild(iframe);		
 				
@@ -137,7 +141,7 @@
 					//output.value = x2js.json2xml_str(result);
 					output.value = js2xmlparser("HTMLDocument", result, {useCDATA:true})
 									
-					document.body.removeChild(iframe);
+					// document.body.removeChild(iframe);
 				}
 					
 			}
