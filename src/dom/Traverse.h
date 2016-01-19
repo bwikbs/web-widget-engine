@@ -3,7 +3,6 @@
 
 namespace StarFish {
 
-//template<typename Func>
 class Traverse {
   Traverse(){}
 

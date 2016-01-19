@@ -125,7 +125,8 @@ public:
         return m_lastChild;
     }
 
-    Node* previousSibling() {
+    Node* previousSibling()
+    {
         return m_previousSibling;
     }
 

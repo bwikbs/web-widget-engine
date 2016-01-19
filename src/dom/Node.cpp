@@ -6,24 +6,43 @@
 #include "Traverse.h"
 
 namespace StarFish {
+
 Element* Node::firstElementChild()
 {
-    return (Element*) Traverse::firstChild(this, [](Node* child) {
+    Node* ret = Traverse::firstChild(this, [](Node* child) {
         if (child->isElement())
             return true;
         else
             return false;
     });
+#ifndef NDEBUG
+    // if debug mode, we can run-time type check
+    if (ret)
+        return ret->asElement();
+    else
+        return nullptr;
+#else
+    return ret->asElement();
+#endif
 }
 
 Element* Node::lastElementChild()
 {
-    return (Element*) Traverse::lastChild(this, [](Node* child) {
+    Node* ret = Traverse::lastChild(this, [](Node* child) {
         if (child->isElement())
             return true;
         else
             return false;
     });
+#ifndef NDEBUG
+    // if debug mode, we can run-time type check
+    if (ret)
+        return ret->asElement();
+    else
+        return nullptr;
+#else
+    return ret->asElement();
+#endif
 }
 
 unsigned long Node::childElementCount()
@@ -59,7 +78,7 @@ String* Node::lookupPrefix(String* namespaceUri = nullptr)
 
     switch(nodeType()) {
         case ELEMENT_NODE:
-        return lookupNamespacePrefix(namespaceUri, asElement());
+            return lookupNamespacePrefix(namespaceUri, asElement());
         case DOCUMENT_NODE: {
             Element* documentElement = asDocument()->documentElement();
             if(documentElement) {
@@ -70,7 +89,7 @@ String* Node::lookupPrefix(String* namespaceUri = nullptr)
         }
         case DOCUMENT_TYPE_NODE:
         case DOCUMENT_FRAGMENT_NODE:
-        return nullptr;
+            return nullptr;
         default: {
             Node* parent = parentNode();
             if(parent) {

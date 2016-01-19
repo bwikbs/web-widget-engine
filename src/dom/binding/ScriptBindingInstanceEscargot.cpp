@@ -74,10 +74,29 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         return escargot::ESValue((escargot::ESObject *)nd);
     }, NULL, false, false, false);
 
+    escargot::ESString* prevSiblingString = escargot::ESString::create("previousSibling");
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(prevSiblingString,
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj)->previousSibling();
+        if (nd == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return escargot::ESValue((escargot::ESObject *)nd);
+    }, NULL, false, false, false);
+
     NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("firstChild"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         Node* nd = ((Node *)originalObj)->firstChild();
+        if (nd == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return escargot::ESValue((escargot::ESObject *)nd);
+    }, NULL, false, false, false);
+
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("lastChild"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj)->lastChild();
         if (nd == nullptr)
             return escargot::ESValue(escargot::ESValue::ESNull);
         return escargot::ESValue((escargot::ESObject *)nd);
@@ -98,11 +117,47 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(Element, NodeFunction->protoType());
     fetchData(this)->m_element = ElementFunction;
 
+    auto firstElementChildGetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj)->firstElementChild();
+        if (nd == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return escargot::ESValue((escargot::ESObject *)nd);
+    };
+
+    auto lastElementChildGetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj)->lastElementChild();
+        if (nd == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return escargot::ESValue((escargot::ESObject *)nd);
+    };
+
+    auto childElementCountGetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        return escargot::ESValue(((Node *)originalObj)->childElementCount());
+    };
+
+    ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("firstElementChild"),
+        firstElementChildGetter, NULL, false, false, false);
+    ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("lastElementChild"),
+        firstElementChildGetter, NULL, false, false, false);
+    ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("childElementCount"),
+        firstElementChildGetter, NULL, false, false, false);
+
+
     DEFINE_FUNCTION(DocumentType, NodeFunction->protoType());
     fetchData(this)->m_documentType = DocumentTypeFunction;
 
     DEFINE_FUNCTION(Document, NodeFunction->protoType());
     fetchData(this)->m_document = DocumentFunction;
+
+    DocumentFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("firstElementChild"),
+        firstElementChildGetter, NULL, false, false, false);
+    DocumentFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("lastElementChild"),
+        firstElementChildGetter, NULL, false, false, false);
+    DocumentFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("childElementCount"),
+        firstElementChildGetter, NULL, false, false, false);
 
     NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("body"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
