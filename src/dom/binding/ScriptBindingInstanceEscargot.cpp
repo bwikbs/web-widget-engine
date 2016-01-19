@@ -236,6 +236,44 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     NodeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("appendChild"), false, false, false, appendChildFunction);
 
+    NodeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("removeChild"), false, false, false,
+        escargot::ESFunctionObject::create(nullptr, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+            escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+            CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+            CHECK_TYPEOF(instance->currentExecutionContext()->readArgument(0), ScriptWrappable::Type::NodeObject);
+            Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+            Node* child = (Node*)instance->currentExecutionContext()->readArgument(0).asESPointer()->asESObject();
+            Node* n = obj->removeChild(child);
+            return escargot::ESValue((escargot::ESObject *)n);
+        }, escargot::ESString::create("removeChild"), 1, false)
+    );
+
+    NodeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("replaceChild"), false, false, false,
+        escargot::ESFunctionObject::create(nullptr, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+            escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+            CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+            CHECK_TYPEOF(instance->currentExecutionContext()->readArgument(0), ScriptWrappable::Type::NodeObject);
+            Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+            Node* node = (Node*)instance->currentExecutionContext()->readArgument(0).asESPointer()->asESObject();
+            Node* child = (Node*)instance->currentExecutionContext()->readArgument(1).asESPointer()->asESObject();
+            Node* n = obj->replaceChild(node, child);
+            return escargot::ESValue((escargot::ESObject *)n);
+        }, escargot::ESString::create("replaceChild"), 1, false)
+    );
+
+    NodeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("insertBefore"), false, false, false,
+        escargot::ESFunctionObject::create(nullptr, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+            escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+            CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+            CHECK_TYPEOF(instance->currentExecutionContext()->readArgument(0), ScriptWrappable::Type::NodeObject);
+            Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+            Node* node = (Node*)instance->currentExecutionContext()->readArgument(0).asESPointer()->asESObject();
+            Node* child = (Node*)instance->currentExecutionContext()->readArgument(1).asESPointer()->asESObject();
+            Node* n = obj->insertBefore(node, child);
+            return escargot::ESValue((escargot::ESObject *)n);
+        }, escargot::ESString::create("insertBefore"), 1, false)
+    );
+
     DEFINE_FUNCTION(Element, NodeFunction->protoType());
     fetchData(this)->m_element = ElementFunction;
 
