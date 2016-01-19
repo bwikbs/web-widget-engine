@@ -135,9 +135,27 @@ public:
         return m_nextSibling;
     }
 
+    virtual unsigned short compareDocumentPosition(Node* other);
+
+    virtual bool contains(Node* other)
+    {
+        if(other == nullptr) {
+            return false;
+        }
+        if(this == other) {
+            return true;
+        }
+        for(Node* child = firstChild(); child != nullptr; child = child->nextSibling()) {
+            if(child->contains(other)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     virtual String* lookupPrefix(String* namespaceUri);
 
-    virtual String* lookupNamespaceURI(String* prefix = nullptr)
+    virtual String* lookupNamespaceURI(String* prefix)
     {
         if(prefix == nullptr) {
             return nullptr;
@@ -148,7 +166,7 @@ public:
         // Impl here
         return nullptr;
     }
-    virtual bool isDefaultNamespace(String* namespace_ = nullptr)
+    virtual bool isDefaultNamespace(String* namespace_)
     {
         // Impl here
         return false;

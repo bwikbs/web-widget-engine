@@ -55,6 +55,59 @@ unsigned long Node::childElementCount()
     });
 }
 
+bool isPreceding(Node* node, Node* isPrec, Node* refNode) {
+    if(node == isPrec) {
+        return true;
+    } else if (node == refNode) {
+        return false;
+    }
+
+    for(Node* child = node->firstChild(); child != nullptr; child = child->nextSibling()) {
+        if(isPreceding(child, isPrec, refNode)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+unsigned short Node::compareDocumentPosition(Node* other)
+{
+    // spec does not say what to do when other is nullptr
+    if(!other) {
+        return DOCUMENT_POSITION_DISCONNECTED;
+    }
+    if(this == other) {
+        return 0;
+    }
+    STARFISH_ASSERT(!isDocument());
+    if(ownerDocument() != other->ownerDocument()) {
+        return DOCUMENT_POSITION_DISCONNECTED +
+               DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC +
+               DOCUMENT_POSITION_PRECEDING;
+    }
+
+    for(Node* p = parentNode(); p != nullptr; p = p->parentNode()) {
+        if(p == other) {
+            return DOCUMENT_POSITION_CONTAINS +
+                   DOCUMENT_POSITION_PRECEDING;
+        }
+    }
+
+    for(Node* p = other->parentNode(); p != nullptr; p = p->parentNode()) {
+        if(p == this) {
+            return DOCUMENT_POSITION_CONTAINED_BY +
+                   DOCUMENT_POSITION_FOLLOWING;
+        }
+    }
+
+    Node* root = ownerDocument();
+    if(isPreceding(root, other, this)) {
+        return DOCUMENT_POSITION_PRECEDING;
+    } else {
+        return DOCUMENT_POSITION_FOLLOWING;
+    }
+}
+
 String* Node::lookupNamespacePrefix(String* namespaceUri, Element* element)
 {
     if(namespaceUri == nullptr) {
