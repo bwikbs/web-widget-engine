@@ -140,6 +140,8 @@ public:
         //BackgroundRepeat, // repeat | repeat-x | repeat-y | no-repeat | initial | inherit
         BackgroundRepeatX, // repeat | no-repeat | initial | inherit
         BackgroundRepeatY, // repeat | no-repeat | initial | inherit
+        Bottom, // length | percentage | <auto> | inherit
+        //https://www.w3.org/TR/CSS21/visuren.html#propdef-bottom
     };
 
     enum ValueKind {

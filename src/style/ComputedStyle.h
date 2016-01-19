@@ -86,6 +86,7 @@ protected:
     DisplayValue m_display;
     Length m_width;
     Length m_height;
+    Length m_bottom;
 
     Font* m_font;
     Color m_bgColor;
