@@ -37,7 +37,7 @@ public:
         if(firstChild() == nullptr) {
             return nullptr;
         } else {
-            STARFISH_ASSERT(firstchild()->localName().equals("html"));
+            STARFISH_ASSERT(firstChild()->localName()->equals("html"));
             return firstChild()->asElement();
         }
     }

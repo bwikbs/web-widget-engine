@@ -80,6 +80,7 @@ String* Node::lookupPrefix(String* namespaceUri = nullptr)
             }
         }
     }
+    return nullptr;
 }
 
 }
