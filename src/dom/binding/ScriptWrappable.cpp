@@ -177,6 +177,13 @@ void ScriptWrappable::initScriptWrappable(HTMLDivElement* ptr)
     ((escargot::ESObject *)this)->set__proto__(data->m_htmlDivElement->protoType());
 }
 
+void ScriptWrappable::initScriptWrappable(HTMLUnknownElement* ptr)
+{
+    Node* node = (Node*)this;
+    auto data = fetchData(node->document()->scriptBindingInstance());
+    ((escargot::ESObject *)this)->set__proto__(data->m_htmlUnknownElement->protoType());
+}
+
 bool ScriptWrappable::hasProperty(String* name)
 {
     return escargot::ESObject::hasProperty(escargot::ESString::create(name->utf8Data()));

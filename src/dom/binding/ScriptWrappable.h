@@ -22,6 +22,7 @@ class HTMLBodyElement;
 class HTMLScriptElement;
 class HTMLDivElement;
 class HTMLImageElement;
+class HTMLUnknownElement;
 class Event;
 class UIEvent;
 class MouseEvent;
@@ -56,6 +57,7 @@ public:
     void initScriptWrappable(HTMLScriptElement* ptr);
     void initScriptWrappable(HTMLImageElement* ptr);
     void initScriptWrappable(HTMLDivElement* ptr);
+    void initScriptWrappable(HTMLUnknownElement* ptr);
 
     void initScriptWrappable(Event* ptr, ScriptBindingInstance*);
     void initScriptWrappable(UIEvent* ptr, ScriptBindingInstance*);

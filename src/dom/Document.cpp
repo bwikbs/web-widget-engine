@@ -25,7 +25,8 @@ Element* Document::getElementById(String* id)
 
 Element* Document::createElement(String* localName)
 {
-  return NULL;
+  //FIXME: mh.byun (temp soluation.)
+  return new HTMLUnknownElement(this,localName);
 }
 
 Text*    Document::createTextNode(String* data)
