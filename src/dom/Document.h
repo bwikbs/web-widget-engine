@@ -65,6 +65,8 @@ public:
     }
 
     Element* getElementById(String* id);
+    Element* createElement(String* localName);
+    Text*    createTextNode(String* data);
 protected:
     Window* m_window;
     ScriptBindingInstance* m_scriptBindingInstance;

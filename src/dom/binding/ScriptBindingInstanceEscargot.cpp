@@ -255,6 +255,48 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     }, escargot::ESString::create("getElementById"), 1, false);
     DocumentFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("getElementById"), false, false, false, getElementByIdFunction);
 
+    escargot::ESFunctionObject* createElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+        Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+
+        if (obj->isDocument()) {
+            Document* doc = obj->asDocument();
+            escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+            if (argValue.isESString()) {
+                escargot::ESString* argStr = argValue.asESString();
+                Element* elem = doc->createElement(String::fromUTF8(argStr->utf8Data()));
+                if (elem != nullptr)
+                    return escargot::ESValue((escargot::ESObject *)elem);
+            }
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("createElement"), 1, false);
+    DocumentFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("createElement"), false, false, false, createElementFunction);
+
+    escargot::ESFunctionObject* createTextNodeFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+        Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+
+        if (obj->isDocument()) {
+            Document* doc = obj->asDocument();
+            escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+            if (argValue.isESString()) {
+                escargot::ESString* argStr = argValue.asESString();
+                Text* elem = doc->createTextNode(String::fromUTF8(argStr->utf8Data()));
+                if (elem != nullptr)
+                    return escargot::ESValue((escargot::ESObject *)elem);
+            }
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("createTextNode"), 1, false);
+    DocumentFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("createTextNode"), false, false, false, createTextNodeFunction);
+
     DEFINE_FUNCTION(HTMLDocument, DocumentFunction->protoType());
     fetchData(this)->m_htmlDocument = HTMLDocumentFunction;
 

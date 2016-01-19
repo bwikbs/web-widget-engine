@@ -22,4 +22,16 @@ Element* Document::getElementById(String* id)
     });
 }
 
+
+Element* Document::createElement(String* localName)
+{
+  return NULL;
+}
+
+Text*    Document::createTextNode(String* data)
+{
+  return new Text(this,data);
+}
+
+
 }
