@@ -23,6 +23,7 @@ public:
     escargot::ESFunctionObject* m_htmlBodyElement;
     escargot::ESFunctionObject* m_htmlDivElement;
     escargot::ESFunctionObject* m_htmlImageElement;
+    escargot::ESFunctionObject* m_htmlCollection;
     escargot::ESFunctionObject* m_event;
     escargot::ESFunctionObject* m_uiEvent;
     escargot::ESFunctionObject* m_mouseEvent;

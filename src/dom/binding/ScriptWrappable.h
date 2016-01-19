@@ -25,6 +25,7 @@ class HTMLImageElement;
 class Event;
 class UIEvent;
 class MouseEvent;
+class HTMLCollection;
 
 class ScriptBindingInstance;
 
@@ -35,6 +36,7 @@ public:
         WindowObject,
         NodeObject,
         EventObject,
+        HTMLCollectionObject,
     };
     ScriptWrappable();
 
@@ -58,6 +60,7 @@ public:
     void initScriptWrappable(Event* ptr, ScriptBindingInstance*);
     void initScriptWrappable(UIEvent* ptr, ScriptBindingInstance*);
     void initScriptWrappable(MouseEvent* ptr, ScriptBindingInstance*);
+    void initScriptWrappable(HTMLCollection* ptr, ScriptBindingInstance*);
 
     bool hasProperty(String* name);
 

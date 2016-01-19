@@ -8,6 +8,7 @@
 #include "platform/canvas/Canvas.h"
 #include "platform/canvas/image/ImageData.h"
 #include "dom/EventTarget.h"
+#include "dom/HTMLCollection.h"
 
 namespace StarFish {
 
@@ -31,6 +32,7 @@ protected:
         m_style = nullptr;
         m_frame = nullptr;
         m_baseUri = String::emptyString; // need to set by the parser
+        m_children = nullptr;
     }
 
     Node(Document* document)
@@ -47,6 +49,7 @@ protected:
         m_style = nullptr;
         m_frame = nullptr;
         m_baseUri = String::emptyString; // need to set by the parser
+        m_children = nullptr;
     }
 public:
     virtual ~Node()
@@ -393,6 +396,11 @@ public:
     Element* lastElementChild();
     unsigned long childElementCount();
 
+    HTMLCollection* children();
+
+    Element* nextElementSibling();
+    Element* previousElementSibling();
+
 private:
     inline void setNeedsRendering();
 
@@ -418,6 +426,7 @@ protected:
 
     ComputedStyle* m_style;
     Frame* m_frame;
+    HTMLCollection* m_children;
 };
 
 }

@@ -51,6 +51,32 @@ public:
   }
 
   template<typename Func>
+  static Node* nextSibling(Node* start, Func matchingRule)
+  {
+      Node* sibling = start->nextSibling();
+      while (sibling) {
+          if (matchingRule(sibling))
+              return sibling;
+          else
+              sibling = sibling->nextSibling();
+      }
+      return nullptr;
+  }
+
+  template<typename Func>
+  static Node* previousSibling(Node* start, Func matchingRule)
+  {
+      Node* sibling = start->previousSibling();
+      while (sibling) {
+          if (matchingRule(sibling))
+              return sibling;
+          else
+              sibling = sibling->previousSibling();
+      }
+      return nullptr;
+  }
+
+  template<typename Func>
   static unsigned long childCount(Node* parent, Func matchingRule)
   {
       unsigned long count = 0;

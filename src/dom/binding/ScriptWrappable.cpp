@@ -217,5 +217,12 @@ void ScriptWrappable::initScriptWrappable(MouseEvent* ptr, ScriptBindingInstance
     ((escargot::ESObject *)this)->set__proto__(data->m_mouseEvent->protoType());
 }
 
+void ScriptWrappable::initScriptWrappable(HTMLCollection* ptr, ScriptBindingInstance* instance)
+{
+    auto data = fetchData(instance);
+    ((escargot::ESObject *)this)->set__proto__(data->m_htmlCollection->protoType());
+    ((escargot::ESObject *)this)->setExtraData(HTMLCollectionObject);
+}
+
 
 }

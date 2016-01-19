@@ -18,5 +18,6 @@
 #include "dom/HTMLBodyElement.h"
 #include "dom/HTMLDivElement.h"
 #include "dom/HTMLImageElement.h"
+#include "dom/HTMLCollection.h"
 
 #endif

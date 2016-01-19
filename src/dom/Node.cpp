@@ -45,6 +45,44 @@ Element* Node::lastElementChild()
 #endif
 }
 
+Element* Node::nextElementSibling()
+{
+    Node* ret = Traverse::nextSibling(this, [](Node* sibling) {
+        if (sibling->isElement())
+            return true;
+        else
+            return false;
+    });
+#ifndef NDEBUG
+    // if debug mode, we can run-time type check
+    if (ret)
+        return ret->asElement();
+    else
+        return nullptr;
+#else
+    return ret->asElement();
+#endif
+}
+
+Element* Node::previousElementSibling()
+{
+    Node* ret = Traverse::previousSibling(this, [](Node* sibling) {
+        if (sibling->isElement())
+            return true;
+        else
+            return false;
+    });
+#ifndef NDEBUG
+    // if debug mode, we can run-time type check
+    if (ret)
+        return ret->asElement();
+    else
+        return nullptr;
+#else
+    return ret->asElement();
+#endif
+}
+
 unsigned long Node::childElementCount()
 {
     return Traverse::childCount(this, [](Node* child) {
@@ -153,6 +191,12 @@ String* Node::lookupPrefix(String* namespaceUri = nullptr)
         }
     }
     return nullptr;
+}
+
+HTMLCollection* Node::children()
+{
+    m_children = new HTMLCollection(this, m_document->scriptBindingInstance());
+    return m_children;
 }
 
 }
