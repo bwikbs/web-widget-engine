@@ -253,6 +253,11 @@ public:
         return child;
     }
 
+    void remove() {
+        if (m_parentNode)
+            m_parentNode->removeChild(this);
+    }
+
     Node* replaceChild(Node* child, Node* childToRemove)
     {
         STARFISH_ASSERT(child);

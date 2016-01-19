@@ -274,6 +274,29 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         }, escargot::ESString::create("insertBefore"), 1, false)
     );
 
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("body"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isDocument()) {
+            Document* document = nd->asDocument();
+            Node* body = document->childMatchedBy(document, [](Node* nd) -> bool {
+                if (nd->isElement() && nd->asElement()->isHTMLElement() && nd->asElement()->asHTMLElement()->isHTMLBodyElement()) {
+                    return true;
+                }
+                return false;
+            });
+            if (body) {
+                // NOTE. this casting is not necessary. only needed for check its type for debug.
+                HTMLBodyElement* e = body->asElement()->asHTMLElement()->asHTMLBodyElement();
+                return escargot::ESValue((escargot::ESObject *)e);
+            }
+        } else {
+            THROW_ILLEGAL_INVOCATION();
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, NULL, false, false, false);
+
     DEFINE_FUNCTION(Element, NodeFunction->protoType());
     fetchData(this)->m_element = ElementFunction;
 
@@ -372,9 +395,19 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     };
     ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("children"), childrenGetter, NULL, false, false, false);
 
+    escargot::ESFunctionObject* removeFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+        Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+        obj->remove();
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("remove"), 0, false);
+    ElementFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("remove"), false, false, false, removeFunction);
 
     DEFINE_FUNCTION(DocumentType, NodeFunction->protoType());
     fetchData(this)->m_documentType = DocumentTypeFunction;
+
+    DocumentTypeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("remove"), false, false, false, removeFunction);
 
     DEFINE_FUNCTION(Document, NodeFunction->protoType());
     fetchData(this)->m_document = DocumentFunction;
@@ -385,29 +418,6 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         lastElementChildGetter, NULL, false, false, false);
     DocumentFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("childElementCount"),
         firstElementChildGetter, NULL, false, false, false);
-
-    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("body"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
-        Node* nd = ((Node *)originalObj);
-        if (nd->isDocument()) {
-            Document* document = nd->asDocument();
-            Node* body = document->childMatchedBy(document, [](Node* nd) -> bool {
-                if (nd->isElement() && nd->asElement()->isHTMLElement() && nd->asElement()->asHTMLElement()->isHTMLBodyElement()) {
-                    return true;
-                }
-                return false;
-            });
-            if (body) {
-                // NOTE. this casting is not necessary. only needed for check its type for debug.
-                HTMLBodyElement* e = body->asElement()->asHTMLElement()->asHTMLBodyElement();
-                return escargot::ESValue((escargot::ESObject *)e);
-            }
-        } else {
-            THROW_ILLEGAL_INVOCATION();
-        }
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, NULL, false, false, false);
 
     escargot::ESFunctionObject* getElementByIdFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
@@ -503,6 +513,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         nextElementChildGetter, NULL, false, false, false);
     CharacterDataFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("previousElementSibling"),
         previousElementChildGetter, NULL, false, false, false);
+
+    CharacterDataFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("remove"), false, false, false, removeFunction);
 
     DEFINE_FUNCTION(Text, CharacterDataFunction->protoType());
     fetchData(this)->m_text = TextFunction;
