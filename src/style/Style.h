@@ -313,7 +313,6 @@ public:
     }
 
     void resolveDOMStyle(Document* document);
-    void dumpDOMStyle(Document* document);
     ComputedStyle* resolveDocumentStyle();
     ComputedStyle* resolveStyle(Element* node, ComputedStyle* parent);
 protected:
