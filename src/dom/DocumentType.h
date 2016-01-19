@@ -26,6 +26,11 @@ public:
         return m_name;
     }
 
+    virtual Element* parentElement()
+    {
+        return nullptr;
+    }
+
 protected:
     String* m_name;
     String* m_publicId;

@@ -30,6 +30,7 @@ protected:
         m_needsStyleRecalc = true;
         m_style = nullptr;
         m_frame = nullptr;
+        m_baseUri = String::emptyString; // need to set by the parser
     }
 
     Node(Document* document)
@@ -45,6 +46,7 @@ protected:
         m_needsStyleRecalc = true;
         m_style = nullptr;
         m_frame = nullptr;
+        m_baseUri = String::emptyString; // need to set by the parser
     }
 public:
     virtual ~Node()
@@ -82,6 +84,11 @@ public:
 
     virtual String* nodeName() = 0;
 
+    String* baseUri()
+    {
+        return m_baseUri;
+    }
+
     virtual Document* ownerDocument()
     {
         if(isDocument()) {
@@ -96,9 +103,11 @@ public:
         return m_parentNode;
     }
 
+    virtual Element* parentElement() = 0;
+
     virtual String* localName()
     {
-        return String::emptyString;
+        return nullptr;
     }
 
     bool hasChildNodes()
@@ -123,6 +132,25 @@ public:
     Node* nextSibling()
     {
         return m_nextSibling;
+    }
+
+    virtual String* lookupPrefix(String* namespaceUri);
+
+    virtual String* lookupNamespaceURI(String* prefix = nullptr)
+    {
+        if(prefix == nullptr) {
+            return nullptr;
+        }
+        if(prefix->equals(String::emptyString)) {
+            return nullptr;
+        }
+        // Impl here
+        return nullptr;
+    }
+    virtual bool isDefaultNamespace(String* namespace_ = nullptr)
+    {
+        // Impl here
+        return false;
     }
 
     Node* appendChild(Node* child)
@@ -348,6 +376,13 @@ public:
 private:
     inline void setNeedsRendering();
 
+    String* lookupNamespacePrefix(String* namespaceUri, Element* element);
+    virtual String* prefix()
+    {
+        // For nodes other than elements and attributes, the prefix is always null
+        return nullptr;
+    }
+
 protected:
     bool m_needsStyleRecalc;
 
@@ -358,6 +393,8 @@ protected:
     Node* m_parentNode;
     Document* m_document;
     NodeState m_state;
+
+    String* m_baseUri;
 
     ComputedStyle* m_style;
     Frame* m_frame;

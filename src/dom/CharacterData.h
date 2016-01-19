@@ -20,6 +20,11 @@ public:
         return TEXT_NODE;
     }
 
+    virtual Element* parentElement()
+    {
+        return nullptr;
+    }
+
     virtual void paint(Canvas* canvas)
     {
     }

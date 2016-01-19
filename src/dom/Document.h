@@ -19,12 +19,7 @@ protected:
     }
 
 public:
-
-    virtual bool isDocument()
-    {
-        return true;
-    }
-
+    /* 4.5. Interface Document */
     virtual NodeType nodeType()
     {
         return DOCUMENT_NODE;
@@ -33,6 +28,30 @@ public:
     virtual String* nodeName()
     {
         return String::createASCIIString("#document");
+    }
+
+    virtual String* localName();
+
+    Element* documentElement()
+    {
+        if(firstChild() == nullptr) {
+            return nullptr;
+        } else {
+            STARFISH_ASSERT(firstchild()->localName().equals("html"));
+            return firstChild()->asElement();
+        }
+    }
+
+    /* Other methods */
+
+    virtual bool isDocument()
+    {
+        return true;
+    }
+
+    virtual Element* parentElement()
+    {
+        return nullptr;
     }
 
     Window* window()
@@ -44,8 +63,6 @@ public:
     {
         return m_scriptBindingInstance;
     }
-
-    virtual String* localName();
 
     Element* getElementById(String* id);
 protected:
