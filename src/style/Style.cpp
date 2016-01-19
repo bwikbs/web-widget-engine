@@ -74,6 +74,14 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "height") == 0) {
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Height;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+        if (VALUE_IS_STRING("auto")) {
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
     } else if (strcmp(key, "font-size") == 0) {
         // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
         //        X      |       X       |   O    |    O       |    O
@@ -233,7 +241,6 @@ ComputedStyle* StyleResolver::resolveDocumentStyle()
     ComputedStyle* ret = new ComputedStyle();
     ret->m_display = DisplayValue::BlockDisplayValue;
     ret->m_inheritedStyles.m_color = Color(0,0,0,255);
-    ret->m_inheritedStyles.m_fontSize = 10;
     // TODO implement ltr, rtl
     ret->m_inheritedStyles.m_textAlign = TextAlignValue::LeftTextAlignValue;
     return ret;

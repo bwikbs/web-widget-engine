@@ -10,8 +10,9 @@
 namespace StarFish {
 
 #ifndef STARFISH_TIZEN_WEARABLE
-StarFish::StarFish(String* currentPath)
+StarFish::StarFish(StarFishStartUpFlag flag, String* currentPath)
 {
+    m_startUpFlag = flag;
     m_currentPath = currentPath;
     GC_add_roots(String::emptyString, String::emptyString + sizeof(String*));
     elm_init(0,0);
@@ -22,8 +23,9 @@ StarFish::StarFish(String* currentPath)
     m_window = Window::create(this, 360, 360);
 }
 #else
-StarFish::StarFish(String* currentPath, void* win)
+StarFish::StarFish(StarFishStartUpFlag flag, String* currentPath, void* win)
 {
+    m_startUpFlag = flag;
     m_currentPath = currentPath;
     GC_add_roots(String::emptyString, String::emptyString + sizeof(String*));
     m_messageLoop = new MessageLoop();

@@ -9,7 +9,19 @@ using namespace StarFish;
 
 int main(int argc, char *argv[])
 {
-    StarFish::StarFish* sf = new StarFish::StarFish();
+    int flag = 0;
+
+    for (int i = 2; i < argc; i ++) {
+        if (strcmp(argv[i], "--dump-frame-tree") == 0) {
+            flag |= StarFish::enableFrameTreeDump;
+        } else if (strcmp(argv[i], "--dump-hittest") == 0) {
+            flag |= StarFish::enableHitTestDump;
+        } else if (strcmp(argv[i], "--enable-black-theme") == 0) {
+            flag |= StarFish::enableBlackTheme;
+        }
+    }
+
+    StarFish::StarFish* sf = new StarFish::StarFish((StarFish::StarFishStartUpFlag)flag);
     if (argc == 1) {
         puts("please specify xml path");
         return -1;

@@ -33,12 +33,18 @@ public:
     String* m_onclick;
 };
 
+enum StarFishStartUpFlag {
+    enableBlackTheme = 1,
+    enableFrameTreeDump = 1 << 1,
+    enableHitTestDump = 1 << 2,
+};
+
 class StarFish : public gc {
 public:
 #ifndef STARFISH_TIZEN_WEARABLE
-    StarFish(String* currentPath = String::createASCIIString(""));
+    StarFish(StarFishStartUpFlag flag, String* currentPath = String::createASCIIString(""));
 #else
-    StarFish(String* currentPath, void* win);
+    StarFish(StarFishStartUpFlag flag, String* currentPath, void* win);
 #endif
     void run();
 
@@ -76,7 +82,13 @@ public:
     {
         return &m_staticStrings;
     }
+
+    StarFishStartUpFlag startUpFlag()
+    {
+        return (StarFishStartUpFlag)m_startUpFlag;
+    }
 protected:
+    unsigned int m_startUpFlag;
     MessageLoop* m_messageLoop;
     ScriptBindingInstance* m_scriptBindingInstance;
     Window* m_window;

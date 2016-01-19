@@ -41,6 +41,11 @@ public:
         return m_height;
     }
 
+    void setColor(Color r)
+    {
+        m_inheritedStyles.m_color = r;
+    }
+
     Color color()
     {
         return m_inheritedStyles.m_color;

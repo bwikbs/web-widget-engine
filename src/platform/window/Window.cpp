@@ -276,6 +276,11 @@ Window::Window(StarFish* starFish)
     m_styleResolver.addSheet(userAgentStyleSheet);
 
     m_document = new HTMLDocument(this, m_starFish->scriptBindingInstance(), m_styleResolver.resolveDocumentStyle());
+
+    if (m_starFish->startUpFlag() & StarFishStartUpFlag::enableBlackTheme) {
+        m_document->style()->setColor(Color(255, 255, 255, 255));
+    }
+
     initScriptWrappableWindow(this);
     m_document->initScriptWrappable(m_document);
     m_timeoutCounter = 0;
@@ -306,7 +311,9 @@ void Window::rendering()
     LayoutContext ctx;
     m_document->frame()->layout(ctx);
 
-    FrameTreeBuilder::dumpFrameTree(m_document);
+    if (m_starFish->startUpFlag() & StarFishStartUpFlag::enableFrameTreeDump) {
+        FrameTreeBuilder::dumpFrameTree(m_document);
+    }
 
     // painting
     WindowImplEFL* eflWindow = (WindowImplEFL*)this;
@@ -345,9 +352,14 @@ void Window::rendering()
     delete d;
 
     canvas->setColor(Color(0,0,0,255));
-    canvas->clearColor(Color(255,255,255,255));
-    m_document->frame()->paint(canvas);
 
+    if (m_starFish->startUpFlag() & StarFishStartUpFlag::enableBlackTheme)
+        canvas->clearColor(Color(0,0,0,255));
+    else
+        canvas->clearColor(Color(255,255,255,255));
+
+    m_document->frame()->paint(canvas);
+/*
 #ifdef STARFISH_TIZEN_WEARABLE
     canvas->save();
     canvas->setColor(Color(255,0,0,255));
@@ -360,7 +372,7 @@ void Window::rendering()
     canvas->drawText(180 - siz.width()/2, 24, txt);
     canvas->restore();
 #endif
-
+*/
     delete canvas;
     m_needsRendering = false;
 
@@ -447,9 +459,11 @@ Node* Window::hitTest(float x, float y)
             frame = frame->parent();
         }
 
-        printf("hitTest Result-> ");
-        frame->node()->dump();
-        puts("");
+        if (m_starFish->startUpFlag() & StarFishStartUpFlag::enableHitTestDump) {
+            printf("hitTest Result-> ");
+            frame->node()->dump();
+            puts("");
+        }
 
         return frame->node();
     }
