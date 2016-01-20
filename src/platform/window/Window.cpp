@@ -301,8 +301,10 @@ void Window::rendering()
     // resolve style
     m_styleResolver.resolveDOMStyle(m_document);
 
-    // dump style
-    m_styleResolver.dumpDOMStyle(m_document);
+    if (m_starFish->startUpFlag() & StarFishStartUpFlag::enableComputedStyleDump) {
+        // dump style
+        m_styleResolver.dumpDOMStyle(m_document);
+    }
 
     // create frame tree
     FrameTreeBuilder::buildFrameTree(m_document);

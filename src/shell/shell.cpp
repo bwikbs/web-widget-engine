@@ -12,7 +12,9 @@ int main(int argc, char *argv[])
     int flag = 0;
 
     for (int i = 2; i < argc; i ++) {
-        if (strcmp(argv[i], "--dump-frame-tree") == 0) {
+        if (strcmp(argv[i], "--dump-computed-style") == 0) {
+            flag |= StarFish::enableComputedStyleDump;
+        } else if (strcmp(argv[i], "--dump-frame-tree") == 0) {
             flag |= StarFish::enableFrameTreeDump;
         } else if (strcmp(argv[i], "--dump-hittest") == 0) {
             flag |= StarFish::enableHitTestDump;

@@ -274,29 +274,6 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         }, escargot::ESString::create("insertBefore"), 1, false)
     );
 
-    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("body"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
-        Node* nd = ((Node *)originalObj);
-        if (nd->isDocument()) {
-            Document* document = nd->asDocument();
-            Node* body = document->childMatchedBy(document, [](Node* nd) -> bool {
-                if (nd->isElement() && nd->asElement()->isHTMLElement() && nd->asElement()->asHTMLElement()->isHTMLBodyElement()) {
-                    return true;
-                }
-                return false;
-            });
-            if (body) {
-                // NOTE. this casting is not necessary. only needed for check its type for debug.
-                HTMLBodyElement* e = body->asElement()->asHTMLElement()->asHTMLBodyElement();
-                return escargot::ESValue((escargot::ESObject *)e);
-            }
-        } else {
-            THROW_ILLEGAL_INVOCATION();
-        }
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, NULL, false, false, false);
-
     DEFINE_FUNCTION(Element, NodeFunction->protoType());
     fetchData(this)->m_element = ElementFunction;
 
@@ -411,6 +388,29 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(Document, NodeFunction->protoType());
     fetchData(this)->m_document = DocumentFunction;
+
+    DocumentFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("body"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isDocument()) {
+            Document* document = nd->asDocument();
+            Node* body = document->childMatchedBy(document, [](Node* nd) -> bool {
+                if (nd->isElement() && nd->asElement()->isHTMLElement() && nd->asElement()->asHTMLElement()->isHTMLBodyElement()) {
+                    return true;
+                }
+                return false;
+            });
+            if (body) {
+                // NOTE. this casting is not necessary. only needed for check its type for debug.
+                HTMLBodyElement* e = body->asElement()->asHTMLElement()->asHTMLBodyElement();
+                return escargot::ESValue((escargot::ESObject *)e);
+            }
+        } else {
+            THROW_ILLEGAL_INVOCATION();
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, NULL, false, false, false);
 
     DocumentFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("firstElementChild"),
         firstElementChildGetter, NULL, false, false, false);
