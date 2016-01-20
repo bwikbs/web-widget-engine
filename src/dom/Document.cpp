@@ -32,6 +32,40 @@ HTMLCollection* Document::getElementsByTagName(String* qualifiedName)
   return new HTMLCollection(scriptBindingInstance(), this, filter);
 }
 
+HTMLCollection* Document::getElementsByClassName(String* classNames)
+{
+  auto filter = [=](Node* node) {
+      if (node->isElement()&&node->asElement()->classNames().size()>0){
+
+        bool is_single_query = true;
+
+        std::string query = std::string(classNames->utf8Data());
+        std::string::size_type start = 0;
+        std::string::size_type pos = query.find(" ");
+
+        while (pos != std::string::npos||is_single_query)
+        {
+            bool is_match = false;
+            is_single_query = false;
+            String* tok = String::fromUTF8(query.substr(start, pos - start).data());
+            auto c_classNames =  node->asElement()->classNames();
+            for (unsigned i = 0; i < c_classNames.size(); i ++) {
+              if(tok->equals(c_classNames[i]))
+                is_match=true;
+            }
+            if(is_match==false)
+              return false;
+
+            start = pos + 1;
+            pos = query.find(" ", start);
+        }
+        return true;
+      }
+      return false;
+  };
+  return new HTMLCollection(scriptBindingInstance(), this, filter);
+}
+
 Element* Document::createElement(String* localName)
 {
   if(localName->equals(window()->starFish()->staticStrings()->m_htmlLocalName)){

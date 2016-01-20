@@ -78,6 +78,8 @@ public:
     Element* createElement(String* localName);
     Text*    createTextNode(String* data);
     HTMLCollection* getElementsByTagName(String* qualifiedName);
+    HTMLCollection* getElementsByClassName(String* classNames);
+
 protected:
     Window* m_window;
     ScriptBindingInstance* m_scriptBindingInstance;

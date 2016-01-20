@@ -551,6 +551,27 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     }, escargot::ESString::create("getElementsByTagName"), 1, false);
     DocumentFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("getElementsByTagName"), false, false, false, getElementsByTagNameFunction);
 
+    escargot::ESFunctionObject*  getElementsByClassNameFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+        Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+
+        if (obj->isDocument()) {
+            Document* doc = obj->asDocument();
+            escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+            if (argValue.isESString()) {
+                escargot::ESString* argStr = argValue.asESString();
+                HTMLCollection* result = doc->getElementsByClassName(String::fromUTF8(argStr->utf8Data()));
+                if (result != nullptr)
+                    return escargot::ESValue((escargot::ESObject *)result);
+            }
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("getElementsByClassName"), 1, false);
+    DocumentFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("getElementsByClassName"), false, false, false, getElementsByClassNameFunction);
+
 
     DocumentFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("children"), childrenGetter, NULL, false, false, false);
 

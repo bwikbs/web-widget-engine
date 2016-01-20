@@ -58,24 +58,45 @@
                 <node nodeType="1" localName="div" class="classText">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            tttttt
-            ]]></text>
-                    </node>
-                    <node nodeType="1" localName="div">
-                        <node nodeType="3" localName="text">
-                            <text><![CDATA[
-                div in div asdf asdf asd f asd fa sdf a sdf as df asd f asd fas df
-            ]]></text>
-                        </node>
-                    </node>
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
+            AAAAAA
         ]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
-    body end
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" class="classText2">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+            BBBBBB
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" class="classText2">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+            CCCCCC
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" class="classText2">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+            DDDDDD
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
 
     ]]></text>
                 </node>
@@ -83,7 +104,7 @@
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
         function test() {
-            print("<Document-getElementById Test>");
+                        print("<Document-getElementById Test>");
             print(document.getElementById("idText"));
             print(document.getElementById("idTextT"));
             print(Document.prototype.getElementById);
@@ -100,9 +121,17 @@
             print(test.item(1));
             print(test.item(0).textContent);
             print(test.item(1).textContent);
+
+            print("<Document-getElementsByClassName Test>");
+            var test = document.getElementsByClassName("classText2");
+            print(test.length);
+            print(test.item(0));
+            print(test.item(0).textContent);
+            print(test.item(1).textContent);
             return true;
         }
-		test();
+             test();
+
     ]]></text>
                     </node>
                 </node>
