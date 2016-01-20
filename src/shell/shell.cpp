@@ -9,6 +9,7 @@ using namespace StarFish;
 
 int main(int argc, char *argv[])
 {
+    // GC_disable();
     int flag = 0;
 
     for (int i = 2; i < argc; i ++) {

@@ -96,7 +96,7 @@ void mainRenderingFunction(Evas_Object *o, Evas_Object_Box_Data *priv, void *use
 #ifndef STARFISH_TIZEN_WEARABLE
 Window* Window::create(StarFish* sf, size_t w, size_t h)
 {
-    auto wnd = new WindowImplEFL(sf);
+    auto wnd = new(GC) WindowImplEFL(sf);
     wnd->m_starFish = sf;
     wnd->m_window = elm_win_add(NULL, "", ELM_WIN_BASIC);
 
@@ -165,7 +165,7 @@ Window* Window::create(StarFish* sf, size_t w, size_t h)
 #else
 Window* Window::create(StarFish* sf, size_t w, size_t h, void* win)
 {
-    auto wnd = new WindowImplEFL(sf);
+    auto wnd = new(GC) WindowImplEFL(sf);
     wnd->m_starFish = sf;
     wnd->m_window = (Evas_Object*)win;
 

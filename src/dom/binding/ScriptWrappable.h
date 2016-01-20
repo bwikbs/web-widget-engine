@@ -43,6 +43,16 @@ public:
     };
     ScriptWrappable();
 
+    inline void* operator new(size_t size)
+    {
+        return GC_MALLOC(size);
+    }
+
+    inline void operator delete(void* obj)
+    {
+        GC_free(obj);
+    }
+
     void initScriptWrappable(Node* ptr);
     void initScriptWrappable(Node* ptr, ScriptBindingInstance*);
     void initScriptWrappable(DocumentType* ptr);

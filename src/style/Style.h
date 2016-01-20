@@ -311,6 +311,7 @@ class StyleResolver {
 public:
     void addSheet(CSSStyleSheet* rule)
     {
+        STARFISH_ASSERT(rule);
         m_sheets.push_back(rule);
     }
 
