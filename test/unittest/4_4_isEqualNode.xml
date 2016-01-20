@@ -22,7 +22,7 @@
 			</node>
 			<node nodeType="1" localName="body">
 				<node nodeType="3" localName="text">
-					<text><![CDATA[  ]]></text>
+					<text><![CDATA[ abc ]]></text>
 				</node>
 				<node nodeType="1" localName="div" id="idText">
 					<node nodeType="3" localName="text">
@@ -46,14 +46,9 @@
   function run() {
     print(document.firstChild);
     var htmlNode = document.firstChild.nextSibling;
-    print("testing nodeName, firstChild, lastChild, nextSibling, prevSibling, parentNode");
-    print("HTML == " + htmlNode.nodeName);
-    print("HEAD == " + htmlNode.firstChild.nodeName);
-    print("#text == " + htmlNode.firstChild.nextSibling.nodeName);
-    print("BODY == " + htmlNode.lastChild.nodeName);
-    print("BODY == " + htmlNode.lastChild.firstChild.parentNode.nodeName);
-    print("null == " + htmlNode.lastChild.nextSibling);
-    htmlNode.childNodes;
+    print("testing isEqualNode");
+    print("true == " + htmlNode.lastChild.isEqualNode(htmlNode.lastChild));
+    print("false == " + htmlNode.lastChild.isEqualNode(htmlNode));
     print("done");
   }
   run();

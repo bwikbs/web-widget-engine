@@ -194,6 +194,18 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         return toJSString(s);
     }, NULL, false, false, false);
 
+    NodeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("isEqualNode"), false, false, false,
+        escargot::ESFunctionObject::create(nullptr, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+            escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+            CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+            CHECK_TYPEOF(instance->currentExecutionContext()->readArgument(0), ScriptWrappable::Type::NodeObject);
+            Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+            Node* node = (Node*)instance->currentExecutionContext()->readArgument(0).asESPointer()->asESObject();
+            bool found = obj->isEqualNode(node);
+            return escargot::ESValue(found);
+        }, escargot::ESString::create("isEqualNode"), 1, false)
+    );
+
     NodeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("compareDocumentPosition"), false, false, false,
         escargot::ESFunctionObject::create(nullptr, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
             escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();

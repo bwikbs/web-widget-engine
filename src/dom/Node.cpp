@@ -2,6 +2,7 @@
 #include "Node.h"
 
 #include "Document.h"
+#include "DocumentType.h"
 #include "Element.h"
 #include "Traverse.h"
 #include "NodeList.h"
@@ -15,6 +16,51 @@ NodeList* Node::childNodes()
         return node->parentNode() == this? true: false;
     });
     return list;
+}
+
+bool Node::isEqualNode(Node* other) {
+    if(other == nullptr) {
+        return false;
+    }
+    if(nodeType() != other->nodeType()) {
+        return false;
+    }
+
+    switch(nodeType()) {
+        case DOCUMENT_TYPE_NODE: {
+            DocumentType* thisNode = asDocumentType();
+            DocumentType* otherNode = other->asDocumentType();
+            if(!(thisNode->nodeName()->equals(otherNode->nodeName()) &&
+                 thisNode->publicId()->equals(otherNode->publicId()) &&
+                 thisNode->systemId()->equals(otherNode->systemId()))) {
+                return false;
+            }
+        }
+        case ELEMENT_NODE: {
+            Element* thisNode = asElement();
+            Element* otherNode = other->asElement();
+            if(!(thisNode->namespaceUri()->equals(otherNode->namespaceUri()) &&
+                 thisNode->namespacePrefix()->equals(otherNode->namespacePrefix()) &&
+                 thisNode->localName()->equals(otherNode->localName()) &&
+                 true /* FIXME: impl 4.8.1 NamedNodeMap */  )) {
+                 return false;
+            }
+        }
+        case PROCESSING_INSTRUCTION_NODE:
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        case TEXT_NODE:
+        case COMMENT_NODE:
+            if(!nodeValue()->equals(other->nodeValue())) {
+                return false;
+            }
+        default: {
+            // for any other node, do nothing
+        }
+    }
+
+    // FIXME: impl 4.8.1 NamedNodeMap to iterate attr
+    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    return true;
 }
 
 Element* Node::firstElementChild()

@@ -151,6 +151,8 @@ public:
 
     virtual String* textContent() = 0;
 
+    virtual bool isEqualNode(Node* other);
+
     virtual unsigned short compareDocumentPosition(Node* other);
 
     virtual bool contains(Node* other)
@@ -326,6 +328,11 @@ public:
         return false;
     }
 
+    virtual bool isDocumentType()
+    {
+        return false;
+    }
+
     CharacterData* asCharacterData()
     {
         STARFISH_ASSERT(isCharacterData());
@@ -342,6 +349,12 @@ public:
     {
         STARFISH_ASSERT(isDocument());
         return (Document*)this;
+    }
+
+    DocumentType* asDocumentType()
+    {
+        STARFISH_ASSERT(isDocumentType());
+        return (DocumentType*)this;
     }
 
     void setFirstChild(Node* s)

@@ -15,6 +15,8 @@ public:
     {
         initScriptWrappable(this, instance);
         m_id = String::emptyString;
+        m_namespace = String::emptyString;
+        m_namespacePrefix = String::emptyString;
     }
 
     Element(Document* document)
@@ -81,6 +83,15 @@ public:
         return m_id;
     }
 
+    String* namespaceUri() {
+        return m_namespace;
+    }
+
+    String* namespacePrefix()
+    {
+        return m_namespacePrefix;
+    }
+
     // DO NOT MODIFY THIS VECTOR
     const std::vector<String*, gc_allocator<String*>>& classNames()
     {
@@ -120,7 +131,8 @@ protected:
 
     String* m_id;
     std::vector<String*, gc_allocator<String*>> m_classNames;
-
+    String* m_namespace;
+    String* m_namespacePrefix;
 };
 
 

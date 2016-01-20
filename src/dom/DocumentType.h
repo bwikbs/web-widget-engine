@@ -41,6 +41,22 @@ public:
         return nullptr;
     }
 
+    /* Other methods */
+    virtual bool isDocumentType()
+    {
+        return true;
+    }
+
+    String* publicId()
+    {
+        return m_publicId;
+    }
+
+    String* systemId()
+    {
+        return m_systemId;
+    }
+
 protected:
     String* m_name;
     String* m_publicId;
