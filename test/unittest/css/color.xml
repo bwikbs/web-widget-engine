@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+	<node nodeType="9" localName="document">
+		<node nodeType="10" localName="documentType">
+		</node>
+		<node nodeType="1" localName="html">
+			<node nodeType="1" localName="head">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+		]]></text>
+				</node>
+				<node nodeType="1" localName="style" type="text/css">
+					<style selectorText="#idText" font-size="20px" color="fuchsia"/>
+					<style selectorText=".classText" font-size="12px"/>
+					<style selectorText="div" border-image-source="url(&quot;paper.gif&quot;)"/>
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+			#idText {
+				font-size: 20px;				
+				color: fuchsia;
+			}
+			.classText {
+				font-size: 12px;
+				text-align: 16px;
+			}
+			div {
+				border-image-source: url(paper.gif);
+			}
+		]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+	]]></text>
+				</node>
+			</node>
+			<node nodeType="3" localName="text">
+				<text><![CDATA[
+	]]></text>
+			</node>
+			<node nodeType="1" localName="body">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+	test
+		]]></text>
+				</node>
+				<node nodeType="1" localName="div" id="idText">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+			text2
+		]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+	
+	]]></text>
+				</node>
+				<node nodeType="1" localName="script" type="text/javascript">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+		function test() {
+			return 1<2;
+		}
+	]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+			]]></text>
+				</node>
+			</node>
+		</node>
+	</node>
+</HTMLDocument>
