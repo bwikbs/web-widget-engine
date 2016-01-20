@@ -25,6 +25,19 @@ public:
   }
 
   template<typename Func>
+  static void getherDescendant(std::vector<Node*, gc_allocator<Node*>>* collection, Node* root, Func filter)
+  {
+      Node* child = root->firstChild();
+      while (child) {
+          if (filter(child))
+             collection->push_back(child);
+
+          getherDescendant(collection, child, filter);
+          child = child->nextSibling();
+      }
+  }
+
+  template<typename Func>
   static Node* firstChild(Node* parent, Func matchingRule)
   {
       Node* child = parent->firstChild();

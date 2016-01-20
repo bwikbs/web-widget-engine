@@ -7,35 +7,23 @@ namespace StarFish {
 
 unsigned long HTMLCollection::length() const
 {
-    unsigned long count = 0;
-    Element* child = m_parent->firstElementChild();
-    while (child) {
-        count++;
-        child = ((Node*) child)->nextElementSibling();
-    }
-    return count;
+    return m_collection.size();
 }
 
 Element* HTMLCollection::item(unsigned long index)
 {
-    Element* child = m_parent->firstElementChild();
-    unsigned long count = index;
-    while (count > 0) {
-        count--;
-        child = ((Node*) child)->nextElementSibling();
-        if (!child)
-            return nullptr;
+    if (index < m_collection.size()) {
+        return m_collection.at(index)->asElement();
     }
-    return child;
+    return nullptr;
 }
 
 Element* HTMLCollection::namedItem(String* key)
 {
-    Element* child = m_parent->firstElementChild();
-    while (child) {
-        if (child->id()->equals(key))
-            return child;
-        child = ((Node*) child)->nextElementSibling();
+    for (unsigned i = 0; i < m_collection.size(); i++) {
+        Element* elem = m_collection.at(i)->asElement();
+        if (elem->id()->equals(key))
+            return elem;
     }
     return nullptr;
 }
