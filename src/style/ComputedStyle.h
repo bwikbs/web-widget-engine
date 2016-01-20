@@ -93,12 +93,17 @@ public:
         return m_marginBottom;
     }
 
+    float opacity() {
+        return m_opacity;
+    }
+
 protected:
     void initNonInheritedStyles()
     {
         m_display = DisplayValue::InlineDisplayValue;
         m_borderImageRepeat = BorderImageRepeatValue::StretchValue;
         m_marginBottom = Length(Length::Fixed, 0);
+        m_opacity = 1;
     }
 
     struct {
@@ -123,6 +128,7 @@ protected:
     String* m_borderImageSource;
 
     Length m_marginBottom;
+    float m_opacity;
 };
 
 }

@@ -219,6 +219,16 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             parsePercentageOrLength(ret, value);
         }
+    } else if (strcmp(key, "opacity") == 0) {
+        // alphavalue | inherit <1>
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::Opacity;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Number;
+            sscanf(value, "%f%%", &ret.m_value.m_floatValue);
+        }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -441,6 +451,16 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_marginBottom = cssValues[k].lengthValue().toLength();
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
                     style->m_marginBottom = Length(Length::Percent, cssValues[k].percentageValue());
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::Opacity:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_opacity = parentStyle->m_opacity;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Number) {
+                    float beforeClip = cssValues[k].numberValue();
+                    style->m_opacity = beforeClip < 0 ? 0 : (beforeClip > 1.0 ? 1.0: beforeClip);
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }

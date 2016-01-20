@@ -505,6 +505,9 @@ public:
             printf("margin-bottom: auto, ");
         }
 
+        // opacity
+        printf("opacity: %f, ", m_style->opacity());
+
         printf("}");
     }
 

@@ -154,6 +154,8 @@ public:
         BorderImageSource,
         MarginBottom, // length | percentage | auto | inherit // <0>
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-bottom
+        Opacity, // alphavalue | inherit // <1>
+        // https://www.w3.org/TR/css3-color/#transparency
     };
 
     enum ValueKind {
@@ -162,6 +164,7 @@ public:
         Percentage,
         Auto,
         None,
+        Number, // real number values - https://www.w3.org/TR/CSS21/syndata.html#value-def-number
         StringValueKind,
 
         DisplayValueKind,
@@ -221,6 +224,11 @@ public:
     {
         STARFISH_ASSERT(m_valueKind == Length);
         return m_value.m_length;
+    }
+
+    float numberValue() {
+        STARFISH_ASSERT(m_valueKind == Number);
+        return m_value.m_floatValue;
     }
 
     // 0~1
