@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+	<node nodeType="9" localName="document">
+		<node nodeType="10" localName="documentType">
+		</node>
+		<node nodeType="1" localName="html">
+			<node nodeType="1" localName="head">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="style">
+					<style selectorText="#box" background-color="rgb(0, 255, 0)" height="50px"/>
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+#box {
+    background-color: #00FF00;
+    height: 50px;
+}
+]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+			</node>
+			<node nodeType="3" localName="text">
+				<text><![CDATA[
+]]></text>
+			</node>
+			<node nodeType="1" localName="body">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" id="box">
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+
+
+]]></text>
+				</node>
+			</node>
+		</node>
+	</node>
+</HTMLDocument>

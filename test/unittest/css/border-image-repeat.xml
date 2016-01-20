@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+    <node nodeType="9" localName="document">
+        <node nodeType="10" localName="documentType">
+        </node>
+        <node nodeType="1" localName="html">
+            <node nodeType="1" localName="head">
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+]]></text>
+                </node>
+                <node nodeType="1" localName="style">
+                    <style selectorText="#borderimg1" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;border.png&quot;)" border-image-repeat="repeat" border-image-slice="30"/>
+                    <style selectorText="#borderimg2" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;border.png&quot;)" border-image-repeat="round" border-image-slice="30"/>
+                    <style selectorText="#borderimg3" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;border.png&quot;)" border-image-repeat="stretch" border-image-slice="30"/>
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[ 
+#borderimg1 { 
+    border-width: 15px;
+    border-style: solid;
+    padding: 15px;
+    border-image-source: url(border.png);
+    border-image-repeat: repeat;
+    border-image-slice: 30;
+}
+
+#borderimg2 { 
+    border-width: 15px;
+    border-style: solid;
+    padding: 15px;
+    border-image-source: url(border.png);
+    border-image-repeat: round;
+    border-image-slice: 30;
+}
+
+#borderimg3 { 
+    border-width: 15px;
+    border-style: solid;
+    padding: 15px;
+    border-image-source: url(border.png);
+    border-image-repeat: stretch;    
+    border-image-slice: 30;
+}
+]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+]]></text>
+                </node>
+            </node>
+            <node nodeType="3" localName="text">
+                <text><![CDATA[
+]]></text>
+            </node>
+            <node nodeType="1" localName="body">
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+
+]]></text>
+                </node>
+                <node nodeType="1" localName="p">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[The border-image-repeat property specifies whether the border image should be repeated, rounded or stretched:]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+]]></text>
+                </node>
+                <node nodeType="1" localName="p" id="borderimg1">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[border-image-repeat: repeat;]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+]]></text>
+                </node>
+                <node nodeType="1" localName="p" id="borderimg2">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[border-image-repeat: round;]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+]]></text>
+                </node>
+                <node nodeType="1" localName="p" id="borderimg3">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[border-image-repeat: stretched;]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+
+]]></text>
+                </node>
+                <node nodeType="1" localName="p">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[Here is the original image:]]></text>
+                    </node>
+                </node>
+                <node nodeType="1" localName="img" src="border.png">
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+]]></text>
+                </node>
+                <node nodeType="1" localName="p">
+                    <node nodeType="1" localName="strong">
+                        <node nodeType="3" localName="text">
+                            <text><![CDATA[Note:]]></text>
+                        </node>
+                    </node>
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[ Internet Explorer 10, and earlier versions, do not support the border-image-repeat property.]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+
+
+
+]]></text>
+                </node>
+            </node>
+        </node>
+    </node>
+</HTMLDocument>
