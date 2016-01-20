@@ -158,7 +158,7 @@ String* Node::lookupNamespacePrefix(String* namespaceUri, Element* element)
     return nullptr;
 }
 
-String* Node::lookupPrefix(String* namespaceUri = nullptr)
+String* Node::lookupPrefix(String* namespaceUri)
 {
     if(!namespaceUri) {
         return nullptr;

@@ -207,8 +207,8 @@ public:
         STARFISH_ASSERT(child->nextSibling() == nullptr);
         STARFISH_ASSERT(child->previousSibling() == nullptr);
 
-        childRef->setPreviousSibling(child);
         Node* prev = childRef->previousSibling();
+        childRef->setPreviousSibling(child);
         STARFISH_ASSERT(m_lastChild != prev);
         if(prev) {
             STARFISH_ASSERT(m_firstChild != childRef);
@@ -261,7 +261,6 @@ public:
     Node* replaceChild(Node* child, Node* childToRemove)
     {
         STARFISH_ASSERT(child);
-        STARFISH_ASSERT(child->parentNode() == this);
         STARFISH_ASSERT(childToRemove);
         STARFISH_ASSERT(childToRemove->parentNode() == this);
 
@@ -286,7 +285,7 @@ public:
         return nullptr;
     }
 
-    /* Other methods */
+    /* Other methods (not in Node Interface) */
     enum NodeState {
         NodeStateNormal,
         NodeStateActive,
