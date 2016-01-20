@@ -181,6 +181,19 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             parsePercentageOrLength(ret, value);
         }
+    } else if (strcmp(key, "border-image-repeat") == 0) {
+        // <stretch> | repeat | round | space
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageRepeat;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderImageRepeatValueKind;
+        ret.m_value.m_borderImageRepeat = BorderImageRepeatValue::StretchValue;
+
+        if (VALUE_IS_STRING("repeat")) {
+            ret.m_value.m_borderImageRepeat = BorderImageRepeatValue::RepeatValue;
+        } else if (VALUE_IS_STRING("round")) {
+            ret.m_value.m_borderImageRepeat = BorderImageRepeatValue::RoundValue;
+        } else if (VALUE_IS_STRING("space")) {
+            ret.m_value.m_borderImageRepeat = BorderImageRepeatValue::SpaceValue;
+        }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -380,6 +393,11 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderImageRepeat:
+                //STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderImageRepeatValueKind);
+                //remove assert. duplicate in borderImageRepeat()
+                style->m_borderImageRepeat = cssValues[k].borderImageRepeat();
                 break;
             }
         }

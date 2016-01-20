@@ -80,6 +80,7 @@ protected:
     void initNonInheritedStyles()
     {
         m_display = DisplayValue::InlineDisplayValue;
+        m_borderImageRepeat = BorderImageRepeatValue::StretchValue;
     }
 
     struct {
@@ -99,6 +100,8 @@ protected:
 
     BackgroundRepeatValue m_backgroundRepeatX;
     BackgroundRepeatValue m_backgroundRepeatY;
+
+    BorderImageRepeatValue m_borderImageRepeat;
 };
 
 }

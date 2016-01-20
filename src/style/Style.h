@@ -79,6 +79,13 @@ enum BackgroundRepeatValue {
     IntialRepeatValue,
 };
 
+enum BorderImageRepeatValue {
+    StretchValue,
+    RepeatValue,
+    RoundValue,
+    SpaceValue,
+};
+
 class SizeValueComponent {
 public:
     enum ValueKind {
@@ -141,7 +148,9 @@ public:
         BackgroundRepeatX, // repeat | no-repeat | initial | inherit
         BackgroundRepeatY, // repeat | no-repeat | initial | inherit
         Bottom, // length | percentage | <auto> | inherit
-        //https://www.w3.org/TR/CSS21/visuren.html#propdef-bottom
+        // https://www.w3.org/TR/CSS21/visuren.html#propdef-bottom
+        BorderImageRepeat, // <stretch> | repeat | round | space
+        // https://www.w3.org/TR/css3-background/#the-border-image-repeat
     };
 
     enum ValueKind {
@@ -162,6 +171,8 @@ public:
         SizeValueKind,  //(width: [length|percentage|auto], height: [length|percentage|auto]) pair
 
         BackgroundRepeatValueKind,
+
+        BorderImageRepeatValueKind,
     };
 
     CSSStyleValuePair()
@@ -239,6 +250,11 @@ public:
 		return m_value.m_backgroundRepeatY;
 	}
 
+    BorderImageRepeatValue borderImageRepeat() {
+        STARFISH_ASSERT(m_valueKind == BorderImageRepeatValueKind);
+        return m_value.m_borderImageRepeat;
+    }
+
     friend void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value);
     static CSSStyleValuePair fromString(const char* key, const char* value);
 protected:
@@ -254,6 +270,7 @@ protected:
         SizeValue* m_sizeValue;
         BackgroundRepeatValue m_backgroundRepeatX;
         BackgroundRepeatValue m_backgroundRepeatY;
+        BorderImageRepeatValue m_borderImageRepeat;
     } m_value;
 };
 
