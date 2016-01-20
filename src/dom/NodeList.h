@@ -1,22 +1,22 @@
 #ifndef __StarFishNodeList__
 #define __StarFishNodeList__
 
-#include "dom/EventTarget.h"
+#include "dom/binding/ScriptWrappable.h"
 
 namespace StarFish {
 
 class Node;
-class NodeList : public EventTarget<ScriptWrappable> {
+class NodeList : public ScriptWrappable {
 public:
-    NodeList(ScriptBindingInstance* instance)
-    {
+    NodeList(ScriptBindingInstance* instance, Node* root, std::function<bool (Node*)> filter)
+    : m_root(root), m_filter(filter) {
         initScriptWrappable(this, instance);
     }
     unsigned long length() const;
     Node* item(unsigned long index);
-    std::vector<Node*, gc_allocator<Node*>>* collection() { return &m_collection; }
 private:
-    std::vector<Node*, gc_allocator<Node*>> m_collection;
+    Node* m_root;
+    std::function<bool (Node*)> m_filter;
 };
 
 }

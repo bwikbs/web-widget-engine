@@ -2,26 +2,33 @@
 #include "HTMLCollection.h"
 #include "dom/Document.h"
 #include "dom/Element.h"
+#include "dom/Traverse.h"
 
 namespace StarFish {
 
 unsigned long HTMLCollection::length() const
 {
-    return m_collection.size();
+    std::vector<Node*, gc_allocator<Node*>> collection;
+    Traverse::getherDescendant(&collection, m_root, m_filter);
+    return collection.size();
 }
 
 Element* HTMLCollection::item(unsigned long index)
 {
-    if (index < m_collection.size()) {
-        return m_collection.at(index)->asElement();
+    std::vector<Node*, gc_allocator<Node*>> collection;
+    Traverse::getherDescendant(&collection, m_root, m_filter);
+    if (index < collection.size()) {
+        return collection.at(index)->asElement();
     }
     return nullptr;
 }
 
 Element* HTMLCollection::namedItem(String* key)
 {
-    for (unsigned i = 0; i < m_collection.size(); i++) {
-        Element* elem = m_collection.at(i)->asElement();
+    std::vector<Node*, gc_allocator<Node*>> collection;
+    Traverse::getherDescendant(&collection, m_root, m_filter);
+    for (unsigned i = 0; i < collection.size(); i++) {
+        Element* elem = collection.at(i)->asElement();
         if (elem->id()->equals(key))
             return elem;
     }

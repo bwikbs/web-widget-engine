@@ -1,24 +1,24 @@
 #ifndef __StarFishHTMLCollection__
 #define __StarFishHTMLCollection__
 
-#include "dom/EventTarget.h"
+#include "dom/binding/ScriptWrappable.h"
 
 namespace StarFish {
 
 class Node;
 class Element;
-class HTMLCollection : public EventTarget<ScriptWrappable> {
+class HTMLCollection : public ScriptWrappable {
 public:
-    HTMLCollection(ScriptBindingInstance* instance)
-    {
+    HTMLCollection(ScriptBindingInstance* instance, Node* root, std::function<bool (Node*)> filter)
+    : m_root(root), m_filter(filter) {
         initScriptWrappable(this, instance);
     }
     unsigned long length() const;
     Element* item(unsigned long index);
     Element* namedItem(String* name);
-    std::vector<Node*, gc_allocator<Node*>>* collection() { return &m_collection; }
 private:
-    std::vector<Node*, gc_allocator<Node*>> m_collection;
+    Node* m_root;
+    std::function<bool (Node*)> m_filter;
 };
 
 }

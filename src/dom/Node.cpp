@@ -195,13 +195,12 @@ String* Node::lookupPrefix(String* namespaceUri)
 
 HTMLCollection* Node::children()
 {
-    m_children = new HTMLCollection(m_document->scriptBindingInstance());
     auto filter = [&](Node* node) {
       if (node->parentNode() == this && node->isElement())
           return true;
       return false;
     };
-    Traverse::getherDescendant(m_children->collection(), this, filter);
+    m_children = new HTMLCollection(m_document->scriptBindingInstance(), this, filter);
     return m_children;
 }
 
