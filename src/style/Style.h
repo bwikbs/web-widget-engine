@@ -151,6 +151,8 @@ public:
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-bottom
         BorderImageRepeat, // <stretch> | repeat | round | space
         // https://www.w3.org/TR/css3-background/#the-border-image-repeat
+        //https://www.w3.org/TR/CSS21/visuren.html#propdef-bottom
+        BorderImageSource,
     };
 
     enum ValueKind {
@@ -158,6 +160,7 @@ public:
         Length,
         Percentage,
         Auto,
+        None,
         StringValueKind,
 
         DisplayValueKind,

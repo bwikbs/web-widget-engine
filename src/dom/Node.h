@@ -474,6 +474,15 @@ public:
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
 
+        // border-image-source
+        if(m_style->borderImageSource() != 0)
+            printf("border-image-source: %s, ", m_style->borderImageSource()->utf8Data());
+
+        // background-repeat-x
+        printf("background-repeat-x: %d, ", m_style->backgroundRepeatX());
+        // background-repeat-y
+        printf("background-repeat-y: %d, ", m_style->backgroundRepeatY());
+
         printf("}");
     }
 

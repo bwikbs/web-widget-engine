@@ -194,6 +194,20 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else if (VALUE_IS_STRING("space")) {
             ret.m_value.m_borderImageRepeat = BorderImageRepeatValue::SpaceValue;
         }
+    } else if (strcmp(key, "border-image-source") == 0) {
+        // none | <image>
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSource;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::None;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if(VALUE_IS_STRING("none") || VALUE_IS_STRING("initial")) {
+            // Do nothing!!
+        } else {
+            // TODO: parse "url()"
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+            ret.m_value.m_stringValue = String::fromUTF8(value);
+        }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -366,21 +380,21 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
             case CSSStyleValuePair::KeyKind::BackgroundSize:
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundRepeatX:
-            	if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-            		style->m_backgroundRepeatX = parentStyle->m_backgroundRepeatX;
-            	} else {
-            		STARFISH_ASSERT(CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind == cssValues[k].valueKind());
-            		style->m_backgroundRepeatX = cssValues[k].backgroundRepeatXValue();
-            	}
-            	break;
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_backgroundRepeatX = parentStyle->m_backgroundRepeatX;
+                } else {
+                    STARFISH_ASSERT(CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind == cssValues[k].valueKind());
+                    style->m_backgroundRepeatX = cssValues[k].backgroundRepeatXValue();
+                }
+                break;
             case CSSStyleValuePair::KeyKind::BackgroundRepeatY:
-				if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-					style->m_backgroundRepeatY = parentStyle->m_backgroundRepeatY;
-				} else {
-					STARFISH_ASSERT(CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind == cssValues[k].valueKind());
-					style->m_backgroundRepeatY = cssValues[k].backgroundRepeatYValue();
-				}
-				break;
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_backgroundRepeatY = parentStyle->m_backgroundRepeatY;
+                } else {
+                    STARFISH_ASSERT(CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind == cssValues[k].valueKind());
+                    style->m_backgroundRepeatY = cssValues[k].backgroundRepeatYValue();
+                }
+                break;
             case CSSStyleValuePair::KeyKind::Bottom:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->m_bottom = parentStyle->m_bottom;
@@ -398,6 +412,14 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 //STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderImageRepeatValueKind);
                 //remove assert. duplicate in borderImageRepeatValue()
                 style->m_borderImageRepeat = cssValues[k].borderImageRepeatValue();
+                break;
+            case CSSStyleValuePair::KeyKind::BorderImageSource:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_borderImageSource = parentStyle->m_borderImageSource;
+                } else {
+                    STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
+                    style->m_borderImageSource = cssValues[k].stringValue();
+                }
                 break;
             }
         }

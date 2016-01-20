@@ -85,6 +85,10 @@ public:
         return m_borderImageRepeat;
     }
 
+    String* borderImageSource() {
+        return m_borderImageSource;
+    }
+
 protected:
     void initNonInheritedStyles()
     {
@@ -111,6 +115,7 @@ protected:
     BackgroundRepeatValue m_backgroundRepeatY;
 
     BorderImageRepeatValue m_borderImageRepeat;
+    String* m_borderImageSource;
 };
 
 }
