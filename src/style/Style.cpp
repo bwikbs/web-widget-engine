@@ -396,8 +396,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageRepeat:
                 //STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderImageRepeatValueKind);
-                //remove assert. duplicate in borderImageRepeat()
-                style->m_borderImageRepeat = cssValues[k].borderImageRepeat();
+                //remove assert. duplicate in borderImageRepeatValue()
+                style->m_borderImageRepeat = cssValues[k].borderImageRepeatValue();
                 break;
             }
         }

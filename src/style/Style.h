@@ -250,7 +250,7 @@ public:
 		return m_value.m_backgroundRepeatY;
 	}
 
-    BorderImageRepeatValue borderImageRepeat() {
+    BorderImageRepeatValue borderImageRepeatValue() {
         STARFISH_ASSERT(m_valueKind == BorderImageRepeatValueKind);
         return m_value.m_borderImageRepeat;
     }
