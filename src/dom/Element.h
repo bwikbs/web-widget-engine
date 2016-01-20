@@ -24,12 +24,12 @@ public:
         m_id = String::emptyString;
     }
 
+    /* 4.4 Interface Node */
     virtual NodeType nodeType() {
         return ELEMENT_NODE;
     }
 
     virtual String* nodeName() = 0;
-
 
     virtual Element* parentElement()
     {
@@ -40,6 +40,25 @@ public:
             return nullptr;
         }
     }
+
+    virtual String* nodeValue()
+    {
+        return nullptr;
+    }
+
+    virtual String* textContent()
+    {
+        if((nodeType() == TEXT_NODE) || (nodeType() == DOCUMENT_FRAGMENT_NODE)) {
+            return textContent();
+        }
+        String* str = String::createASCIIString("");
+        for(Node* child = firstChild(); child != nullptr; child = child->nextSibling()) {
+            str = str->concat(child->textContent());
+        }
+        return str;
+    }
+
+    /* Other methods (not in Node interface) */
 
     virtual bool isElement()
     {

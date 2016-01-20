@@ -32,6 +32,16 @@ public:
 
     virtual String* localName();
 
+    virtual String* nodeValue()
+    {
+        return nullptr;
+    }
+
+    virtual String* textContent()
+    {
+        return nullptr;
+    }
+
     Element* documentElement()
     {
         if(firstChild() == nullptr) {

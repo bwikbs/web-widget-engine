@@ -144,6 +144,10 @@ public:
         return m_nextSibling;
     }
 
+    virtual String* nodeValue() = 0;
+
+    virtual String* textContent() = 0;
+
     virtual unsigned short compareDocumentPosition(Node* other);
 
     virtual bool contains(Node* other)
@@ -270,10 +274,12 @@ public:
         STARFISH_ASSERT(childToRemove);
         STARFISH_ASSERT(childToRemove->parentNode() == this);
 
+        setNeedsStyleRecalc();
         insertBefore(child, childToRemove);
-        return removeChild(childToRemove);
+        Node* n = removeChild(childToRemove);
+        setNeedsStyleRecalc();
+        return n;
     }
-
 
     template <typename T>
     Node* childMatchedBy(Node* parent, T fn)

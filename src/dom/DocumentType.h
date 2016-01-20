@@ -31,6 +31,16 @@ public:
         return nullptr;
     }
 
+    virtual String* nodeValue()
+    {
+        return nullptr;
+    }
+
+    virtual String* textContent()
+    {
+        return nullptr;
+    }
+
 protected:
     String* m_name;
     String* m_publicId;

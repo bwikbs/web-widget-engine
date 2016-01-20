@@ -158,6 +158,24 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         return escargot::ESValue((escargot::ESObject *)nd);
     }, NULL, false, false, false);
 
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("nodeValue"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        String* s = ((Node *)originalObj)->nodeValue();
+        if (s == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return toJSString(s);
+    }, NULL, false, false, false);
+
+        NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("textContent"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        String* s = ((Node *)originalObj)->textContent();
+        if (s == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        return toJSString(s);
+    }, NULL, false, false, false);
+
     NodeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("compareDocumentPosition"), false, false, false,
         escargot::ESFunctionObject::create(nullptr, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
             escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
