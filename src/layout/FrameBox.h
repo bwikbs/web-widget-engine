@@ -44,15 +44,30 @@ public:
     void setPaddingBottom(float t) { m_padding.setBottom(t); }
     void setPaddingLeft(float t) { m_padding.setLeft(t); }
 
+    float paddingTop() { return m_padding.top(); }
+    float paddingRight() { return m_padding.right(); }
+    float paddingBottom() { return m_padding.bottom(); }
+    float paddingLeft() { return m_padding.left(); }
+
     void setBorderTop(float t) { m_border.setTop(t); }
     void setBorderRight(float t) { m_border.setRight(t); }
     void setBorderBottom(float t) { m_border.setBottom(t); }
     void setBorderLeft(float t) { m_border.setLeft(t); }
 
+    float borderTop() { return m_border.top(); }
+    float borderRight() { return m_border.right(); }
+    float borderBottom() { return m_border.bottom(); }
+    float borderLeft() { return m_border.left(); }
+
     void setMarginTop(float t) { m_margin.setTop(t); }
     void setMarginRight(float t) { m_margin.setRight(t); }
     void setMarginBottom(float t) { m_margin.setBottom(t); }
     void setMarginLeft(float t) { m_margin.setLeft(t); }
+
+    float marginTop() { return m_margin.top(); }
+    float marginRight() { return m_margin.right(); }
+    float marginBottom() { return m_margin.bottom(); }
+    float marginLeft() { return m_margin.left(); }
 
     float paddingWidth()
     {
@@ -96,7 +111,12 @@ public:
 
     void paintBackgroundAndBorders(Canvas* canvas)
     {
-        // TODO draw background color
+        if (!style()->bgColor().isTransparent()) {
+            canvas->save();
+            canvas->setColor(style()->bgColor());
+            canvas->drawRect(Rect(borderLeft(), borderTop(), m_frameRect.width() - borderWidth(), m_frameRect.height() - borderHeight()));
+            canvas->restore();
+        }
         // TODO draw background image
         // TODO draw border
     }

@@ -11,7 +11,7 @@
 				</node>
 				<node nodeType="1" localName="style" type="text/css">
 					<style selectorText="#idText" font-size="20px" color="red"/>
-					<style selectorText=".classText" font-size="12px" text-align="center"/>
+					<style selectorText=".classText" font-size="12px" text-align="center" background-color="rgb(200, 200, 200)"/>
 					<style selectorText="div" display="block"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
@@ -22,6 +22,7 @@
             .classText {
                 font-size: 12px;
                 text-align: center;
+                background-color: rgb(200,200,200);
             }
             div {
                 display: block;

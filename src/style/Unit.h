@@ -178,6 +178,11 @@ public:
         return !this->operator ==(c);
     }
 
+    bool isTransparent()
+    {
+        return m_a == 0;
+    }
+
     unsigned char r() const { return m_r; }
     unsigned char g() const { return m_g; }
     unsigned char b() const { return m_b; }
