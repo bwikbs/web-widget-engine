@@ -122,7 +122,25 @@ public:
     SizeValueComponent m_height;
 };
 
+template <typename T>
+class AxisValue : public gc {
+public:
+    AxisValue()
+    {
+    }
+    AxisValue(T xaxis, T yaxis)
+        : m_XAxis(xaxis)
+        , m_YAxis(yaxis)
+    {
+    }
+public:
+    T m_XAxis;
+    T m_YAxis;
+};
+
+
 class ValueList;
+
 class CSSStyleValuePair : public gc {
     friend class ValueList;
 public:
@@ -150,7 +168,7 @@ public:
         BackgroundRepeatY, // repeat | no-repeat | initial | inherit
         Bottom, // length | percentage | <auto> | inherit
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-bottom
-        BorderImageRepeat, // <stretch> | repeat | round | space
+        BorderImageRepeat, // <stretch> | repeat | round | space {1,2}
         // https://www.w3.org/TR/css3-background/#the-border-image-repeat
         BorderImageSource,
         MarginBottom, // length | percentage | auto | inherit // <0>
@@ -265,7 +283,7 @@ public:
 		return m_value.m_backgroundRepeatY;
 	}
 
-    BorderImageRepeatValue borderImageRepeatValue() {
+    AxisValue<BorderImageRepeatValue>* borderImageRepeatValue() {
         STARFISH_ASSERT(m_valueKind == BorderImageRepeatValueKind);
         return m_value.m_borderImageRepeat;
     }
@@ -285,7 +303,7 @@ protected:
         SizeValue* m_sizeValue;
         BackgroundRepeatValue m_backgroundRepeatX;
         BackgroundRepeatValue m_backgroundRepeatY;
-        BorderImageRepeatValue m_borderImageRepeat;
+        AxisValue<BorderImageRepeatValue>* m_borderImageRepeat;
         ValueList* m_multiValue;
     } m_value;
 };

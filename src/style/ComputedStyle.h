@@ -81,7 +81,7 @@ public:
         return m_bottom;
     }
 
-    BorderImageRepeatValue borderImageRepeat() {
+    AxisValue<BorderImageRepeatValue>* borderImageRepeat() {
         return m_borderImageRepeat;
     }
 
@@ -101,7 +101,7 @@ protected:
     void initNonInheritedStyles()
     {
         m_display = DisplayValue::InlineDisplayValue;
-        m_borderImageRepeat = BorderImageRepeatValue::StretchValue;
+        m_borderImageRepeat = new AxisValue<BorderImageRepeatValue>(BorderImageRepeatValue::StretchValue, BorderImageRepeatValue::StretchValue);
         m_marginBottom = Length(Length::Fixed, 0);
         m_opacity = 1;
     }
@@ -124,7 +124,7 @@ protected:
     BackgroundRepeatValue m_backgroundRepeatX;
     BackgroundRepeatValue m_backgroundRepeatY;
 
-    BorderImageRepeatValue m_borderImageRepeat;
+    AxisValue<BorderImageRepeatValue>* m_borderImageRepeat;
     String* m_borderImageSource;
 
     Length m_marginBottom;

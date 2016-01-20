@@ -475,14 +475,25 @@ public:
         }
 
         // border-image-repeat
-        if (m_style->borderImageRepeat() == BorderImageRepeatValue::StretchValue) {
-            printf("border-image-repeat: stretch, ");
-        } else if (m_style->borderImageRepeat() == BorderImageRepeatValue::RepeatValue) {
-            printf("border-image-repeat: repeat, ");
-        } else if (m_style->borderImageRepeat() == BorderImageRepeatValue::RoundValue) {
-            printf("border-image-repeat: round, ");
-        } else if (m_style->borderImageRepeat() == BorderImageRepeatValue::SpaceValue) {
-            printf("border-image-repeat: space, ");
+        if (m_style->borderImageRepeat()->m_XAxis == BorderImageRepeatValue::StretchValue) {
+            printf("border-image-repeat: {stretch ");
+        } else if (m_style->borderImageRepeat()->m_XAxis == BorderImageRepeatValue::RepeatValue) {
+            printf("border-image-repeat: {repeat ");
+        } else if (m_style->borderImageRepeat()->m_XAxis == BorderImageRepeatValue::RoundValue) {
+            printf("border-image-repeat: {round ");
+        } else if (m_style->borderImageRepeat()->m_XAxis == BorderImageRepeatValue::SpaceValue) {
+            printf("border-image-repeat: {space ");
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
+        if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::StretchValue) {
+            printf("stretch}, ");
+        } else if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::RepeatValue) {
+            printf("repeat}}, ");
+        } else if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::RoundValue) {
+            printf("round}, ");
+        } else if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::SpaceValue) {
+            printf("space}, ");
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }

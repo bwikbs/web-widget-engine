@@ -197,18 +197,29 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             parsePercentageOrLength(ret, value);
         }
     } else if (strcmp(key, "border-image-repeat") == 0) {
-        // <stretch> | repeat | round | space
+        // <stretch> | repeat | round | space {1,2}
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageRepeat;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderImageRepeatValueKind;
-        ret.m_value.m_borderImageRepeat = BorderImageRepeatValue::StretchValue;
+        ret.m_value.m_borderImageRepeat = new AxisValue<BorderImageRepeatValue>(BorderImageRepeatValue::StretchValue, BorderImageRepeatValue::StretchValue);
 
-        if (VALUE_IS_STRING("repeat")) {
-            ret.m_value.m_borderImageRepeat = BorderImageRepeatValue::RepeatValue;
-        } else if (VALUE_IS_STRING("round")) {
-            ret.m_value.m_borderImageRepeat = BorderImageRepeatValue::RoundValue;
-        } else if (VALUE_IS_STRING("space")) {
-            ret.m_value.m_borderImageRepeat = BorderImageRepeatValue::SpaceValue;
+        // TODO: find better way to parse axis data
+        // 1) parse X-axis data
+        if (startsWith(value, "repeat")) {
+            ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::RepeatValue;
+        } else if (startsWith(value, "round")) {
+            ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::RoundValue;
+        } else if (startsWith(value, "space")) {
+            ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::SpaceValue;
         }
+        // 2) parse Y-axis data
+        if (endsWith(value, "repeat")) {
+            ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::RepeatValue;
+        } else if (endsWith(value, "round")) {
+            ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::RoundValue;
+        } else if (endsWith(value, "space")) {
+            ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::SpaceValue;
+        }
+
     } else if (strcmp(key, "border-image-source") == 0) {
         // none | <image>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSource;
