@@ -4,6 +4,7 @@
 #include "layout/Frame.h"
 #include "dom/Element.h"
 #include "dom/Document.h"
+#include "CSSParser.h"
 
 namespace StarFish {
 
@@ -139,8 +140,22 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else if (VALUE_IS_STRING("cover")) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Cover;
         } else {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::SizeValueKind;
-            ret.m_value.m_sizeValue = SizeValue::fromString(value);
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
+            CSSPropertyParser* parser = new CSSPropertyParser((char*) value);
+            //NOTE: CSS 2.1 does not support layering multiple background images(for comma-separated)
+            ValueList* values = new ValueList(ValueList::Separator::SpaceSeparator);
+            CSSStyleValuePair::ValueKind kind;
+            while (parser->findNextValueKind(' ', &kind)) {
+                if (kind == CSSStyleValuePair::ValueKind::Auto) {
+                    values->append(kind, {0});
+                } else if (kind == CSSStyleValuePair::ValueKind::Percentage) {
+                    values->append(kind, {.m_floatValue = parser->parsedFloatValue()});
+                } else if (kind == CSSStyleValuePair::ValueKind::Length) {
+                    CSSStyleValuePair::ValueData data = {.m_length = CSSLength(parser->parsedFloatValue())};
+                    values->append(kind, data);
+                }
+            }
+            ret.m_value.m_multiValue = values;
         }
     } else if (strcmp(key, "background-repeat-x") == 0) {
     	// repeat | no-repeat | initial | inherit // initial value -> repeat

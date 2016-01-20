@@ -4,7 +4,6 @@
 #include "util/String.h"
 #include "style/Unit.h"
 #include "style/Length.h"
-#include "style/CSSParser.h"
 #include "platform/canvas/font/Font.h"
 
 namespace StarFish {
@@ -123,7 +122,9 @@ public:
     SizeValueComponent m_height;
 };
 
+class ValueList;
 class CSSStyleValuePair : public gc {
+    friend class ValueList;
 public:
     enum KeyKind {
         // <name> <- initial value
@@ -171,6 +172,8 @@ public:
         TextAlignValueKind,
 
         Transparent,
+
+        ValueListKind,
 
         //BackgroundSize
         Cover,
@@ -273,7 +276,7 @@ protected:
     KeyKind m_keyKind;
     ValueKind m_valueKind;
 
-    union {
+    union ValueData {
         float m_floatValue;
         DisplayValue m_display;
         TextAlignValue m_textAlign;
@@ -283,7 +286,42 @@ protected:
         BackgroundRepeatValue m_backgroundRepeatX;
         BackgroundRepeatValue m_backgroundRepeatY;
         BorderImageRepeatValue m_borderImageRepeat;
+        ValueList* m_multiValue;
     } m_value;
+};
+
+class ValueList : public gc {
+public:
+    enum Separator {
+        SpaceSeparator,
+        CommaSeparator,
+        SlashSeparator
+    };
+
+    ValueList()
+        : m_separator(SpaceSeparator)
+    {
+    }
+
+    ValueList(Separator sep)
+        : m_separator(sep)
+    {
+    }
+
+    void append(CSSStyleValuePair::ValueKind kind, CSSStyleValuePair::ValueData value)
+    {
+        m_valueKinds.push_back(kind);
+        m_values.push_back(value);
+    }
+
+    unsigned int size()
+    {
+        return m_valueKinds.size();
+    }
+protected:
+    Separator m_separator;
+    std::vector<CSSStyleValuePair::ValueKind, gc_allocator<CSSStyleValuePair::ValueKind>> m_valueKinds;
+    std::vector<CSSStyleValuePair::ValueData, gc_allocator<CSSStyleValuePair::ValueData>> m_values;
 };
 
 class CSSStyleDeclaration : public gc {
