@@ -489,7 +489,7 @@ public:
         if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::StretchValue) {
             printf("stretch}, ");
         } else if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::RepeatValue) {
-            printf("repeat}}, ");
+            printf("repeat}, ");
         } else if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::RoundValue) {
             printf("round}, ");
         } else if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::SpaceValue) {
