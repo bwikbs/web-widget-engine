@@ -311,11 +311,35 @@ Color parseColor(String* str)
         } else if (strcmp("red", s) == 0) {
             return Color(255, 0, 0, 255);
         } else if (strcmp("green", s) == 0) {
+            return Color(0, 128, 0, 255);
+        } else if (strcmp("blue", s) == 0) {
+            return Color(0, 0, 255, 255);
+        } else if (strcmp("aqua", s) == 0) {
+            return Color(0, 255, 255, 255);
+        } else if (strcmp("fuchsia", s) == 0) {
+            return Color(255, 0, 255, 255);
+        } else if (strcmp("gray", s) == 0) {
+            return Color(128, 128, 128, 255);
+        } else if (strcmp("lime", s) == 0) {
             return Color(0, 255, 0, 255);
-        } else if (strcmp("blue", s) == 0) {
-            return Color(0, 0, 255, 255);
-        } else if (strcmp("blue", s) == 0) {
-            return Color(0, 0, 255, 255);
+        } else if (strcmp("maroon", s) == 0) {
+            return Color(128, 0, 0, 255);
+        } else if (strcmp("navy", s) == 0) {
+            return Color(0, 0, 128, 255);
+        } else if (strcmp("olive", s) == 0) {
+            return Color(128, 128, 0, 255);
+        } else if (strcmp("orange", s) == 0) {
+            return Color(255, 165, 0, 255);
+        } else if (strcmp("yellow", s) == 0) {
+            return Color(255, 255, 0, 255);
+        } else if (strcmp("purple", s) == 0) {
+            return Color(128, 0, 128, 255);
+        } else if (strcmp("silver", s) == 0) {
+            return Color(192, 192, 192, 255);
+        } else if (strcmp("teal", s) == 0) {
+            return Color(0, 128, 128, 255);
+        } else if (strcmp("white", s) == 0) {
+            return Color(255, 255, 255, 255);
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
@@ -438,7 +462,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->m_borderImageSource = parentStyle->m_borderImageSource;
                 } else {
-                    STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
+                    //STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
                     style->m_borderImageSource = cssValues[k].stringValue();
                 }
                 break;
