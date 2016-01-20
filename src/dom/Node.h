@@ -483,6 +483,15 @@ public:
         // background-repeat-y
         printf("background-repeat-y: %d, ", m_style->backgroundRepeatY());
 
+        // margin-bottom
+        if (m_style->marginBottom().isFixed()) {
+            printf("margin-bottom: %f, ", m_style->marginBottom().fixed());
+        } else if (m_style->marginBottom().isPercent()) {
+            printf("margin-bottom: %f, ", m_style->marginBottom().percent());
+        } else if (m_style->marginBottom().isAuto()) {
+            printf("margin-bottom: auto, ");
+        }
+
         printf("}");
     }
 

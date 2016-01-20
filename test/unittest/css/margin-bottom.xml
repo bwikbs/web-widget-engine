@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+	<node nodeType="9" localName="document">
+		<node nodeType="10" localName="documentType">
+		</node>
+		<node nodeType="1" localName="html">
+			<node nodeType="1" localName="head">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="style">
+					<style selectorText="#div1" margin-bottom="50px"/>
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+#div1 {
+    margin-bottom: 50px;
+}
+]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+			</node>
+			<node nodeType="3" localName="text">
+				<text><![CDATA[
+]]></text>
+			</node>
+			<node nodeType="1" localName="body">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" id="div1">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[DIV 1]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="div">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[DIV 2]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+
+
+]]></text>
+				</node>
+			</node>
+		</node>
+	</node>
+</HTMLDocument>
