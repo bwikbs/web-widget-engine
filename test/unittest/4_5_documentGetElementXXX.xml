@@ -16,7 +16,7 @@
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
             #idText {
-                font-size: 20px;                
+                font-size: 20px;
                 color: red;
             }
             .classText {
@@ -76,18 +76,26 @@
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
     body end
-    
+
     ]]></text>
                 </node>
                 <node nodeType="1" localName="script" type="text/javascript">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
         function test() {
-			print(document.getElementById("idText"));
-			print(document.getElementById("idTextT"));
-			print(Document.prototype.getElementById);
-			Document.prototype.getElementById.call({});
-            return 1<2;
+            print("<Document-getElementById Test>");
+            print(document.getElementById("idText"));
+            print(document.getElementById("idTextT"));
+            print(Document.prototype.getElementById);
+            Document.prototype.getElementById.call({});
+
+            print("<Document-getElementsByTagName Test>");
+            print(document.getElementsByTagName("html"));
+            print(document.getElementsByTagName("head"));
+            print(document.getElementsByTagName("body"));
+            print(document.getElementsByTagName("div"));
+
+            return true;
         }
 		test();
     ]]></text>
