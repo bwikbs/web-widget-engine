@@ -16,6 +16,12 @@ class CharacterData;
 class Element;
 class Frame;
 
+class RareNodeMembers : public gc {
+public:
+    RareNodeMembers():m_children(nullptr) {}
+    HTMLCollection* m_children;
+};
+
 class Node : public EventTarget<ScriptWrappable> {
 protected:
     Node(Document* document, ScriptBindingInstance* instance)
@@ -32,7 +38,7 @@ protected:
         m_style = nullptr;
         m_frame = nullptr;
         m_baseUri = String::emptyString; // need to set by the parser
-        m_children = nullptr;
+        m_rareNodeMembers = nullptr;
     }
 
     Node(Document* document)
@@ -49,7 +55,7 @@ protected:
         m_style = nullptr;
         m_frame = nullptr;
         m_baseUri = String::emptyString; // need to set by the parser
-        m_children = nullptr;
+        m_rareNodeMembers = nullptr;
     }
 public:
     virtual ~Node()
@@ -474,7 +480,7 @@ protected:
 
     ComputedStyle* m_style;
     Frame* m_frame;
-    HTMLCollection* m_children;
+    RareNodeMembers* m_rareNodeMembers;
 };
 
 }

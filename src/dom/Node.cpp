@@ -195,13 +195,18 @@ String* Node::lookupPrefix(String* namespaceUri)
 
 HTMLCollection* Node::children()
 {
+    if (!m_rareNodeMembers) {
+        m_rareNodeMembers = new RareNodeMembers();
+    } else if (!m_rareNodeMembers->m_children)
+        return m_rareNodeMembers->m_children;
+
     auto filter = [&](Node* node) {
-      if (node->parentNode() == this && node->isElement())
-          return true;
-      return false;
+        if (node->parentNode() == this && node->isElement())
+            return true;
+        return false;
     };
-    m_children = new HTMLCollection(m_document->scriptBindingInstance(), this, filter);
-    return m_children;
+    m_rareNodeMembers->m_children = new HTMLCollection(m_document->scriptBindingInstance(), this, filter);
+    return m_rareNodeMembers->m_children;
 }
 
 }
