@@ -443,6 +443,28 @@ public:
         // background-color
         printf("background-color: (%d,%d,%d,%d), ", m_style->bgColor().r(), m_style->bgColor().g(), m_style->bgColor().b(), m_style->bgColor().a());
 
+        // bottom
+        if (m_style->bottom().isFixed()) {
+            printf("bottom: %f, ", m_style->bottom().fixed());
+        } else if (m_style->bottom().isPercent()) {
+            printf("bottom: %f, ", m_style->bottom().percent());
+        } else if (m_style->bottom().isAuto()) {
+            printf("bottom: auto, ");
+        }
+
+        // border-image-repeat
+        if (m_style->borderImageRepeat() == BorderImageRepeatValue::StretchValue) {
+            printf("border-image-repeat: stretch, ");
+        } else if (m_style->borderImageRepeat() == BorderImageRepeatValue::RepeatValue) {
+            printf("border-image-repeat: repeat, ");
+        } else if (m_style->borderImageRepeat() == BorderImageRepeatValue::RoundValue) {
+            printf("border-image-repeat: round, ");
+        } else if (m_style->borderImageRepeat() == BorderImageRepeatValue::SpaceValue) {
+            printf("border-image-repeat: space, ");
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
+
         printf("}");
     }
 

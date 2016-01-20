@@ -76,6 +76,15 @@ public:
     BackgroundRepeatValue backgroundRepeatY() {
 		return m_backgroundRepeatY;
 	}
+
+    Length bottom() {
+        return m_bottom;
+    }
+
+    BorderImageRepeatValue borderImageRepeat() {
+        return m_borderImageRepeat;
+    }
+
 protected:
     void initNonInheritedStyles()
     {
