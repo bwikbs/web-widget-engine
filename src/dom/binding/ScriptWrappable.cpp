@@ -231,5 +231,11 @@ void ScriptWrappable::initScriptWrappable(HTMLCollection* ptr, ScriptBindingInst
     ((escargot::ESObject *)this)->setExtraData(HTMLCollectionObject);
 }
 
+void ScriptWrappable::initScriptWrappable(NodeList* ptr, ScriptBindingInstance* instance)
+{
+    auto data = fetchData(instance);
+    ((escargot::ESObject *)this)->set__proto__(data->m_nodeList->protoType());
+    ((escargot::ESObject *)this)->setExtraData(NodeListObject);
+}
 
 }
