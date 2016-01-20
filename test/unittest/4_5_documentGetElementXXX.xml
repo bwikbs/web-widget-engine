@@ -87,14 +87,19 @@
             print(document.getElementById("idText"));
             print(document.getElementById("idTextT"));
             print(Document.prototype.getElementById);
-            Document.prototype.getElementById.call({});
+            //Document.prototype.getElementById.call({});
 
             print("<Document-getElementsByTagName Test>");
-            print(document.getElementsByTagName("html"));
-            print(document.getElementsByTagName("head"));
-            print(document.getElementsByTagName("body"));
-            print(document.getElementsByTagName("div"));
+            print(document.getElementsByTagName("html").length);
+            print(document.getElementsByTagName("head").length);
+            print(document.getElementsByTagName("body").length);
 
+            var test = document.getElementsByTagName("div");
+            print(test.length);
+            print(test.item(0));
+            print(test.item(1));
+            print(test.item(0).textContent);
+            print(test.item(1).textContent);
             return true;
         }
 		test();

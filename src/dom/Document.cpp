@@ -22,6 +22,15 @@ Element* Document::getElementById(String* id)
     });
 }
 
+HTMLCollection* Document::getElementsByTagName(String* qualifiedName)
+{
+  auto filter = [=](Node* node) {
+      if ( node->isElement() && node->localName()->equals(qualifiedName))
+          return true;
+      return false;
+  };
+  return new HTMLCollection(scriptBindingInstance(), this, filter);
+}
 
 Element* Document::createElement(String* localName)
 {
