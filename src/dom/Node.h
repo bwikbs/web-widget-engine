@@ -393,12 +393,13 @@ public:
 
     virtual void dump()
     {
-        printf("%s ", localName()->utf8Data());
+        printf("[%s] ", localName()->utf8Data());
     }
 
     virtual void dumpStyle()
     {
-        printf("[%s] ", localName()->utf8Data());
+        dump();
+        printf(", style: { ");
 
         // display
         if (m_style->display() == InlineDisplayValue) {
@@ -435,6 +436,8 @@ public:
 
         // background-color
         printf("background-color: (%d,%d,%d,%d), ", m_style->bgColor().r(), m_style->bgColor().g(), m_style->bgColor().b(), m_style->bgColor().a());
+
+        printf("}");
     }
 
     Element* firstElementChild();

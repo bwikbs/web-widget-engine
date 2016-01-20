@@ -86,14 +86,14 @@ public:
     {
         Node::dump();
 
-        printf("id:%s ,", m_id->utf8Data());
+        printf("id:%s, ", m_id->utf8Data());
         std::string className;
         for (unsigned i = 0; i < m_classNames.size(); i ++) {
             className += m_classNames[i]->utf8Data();
             className += " ";
         }
 
-        printf("className:%s ", className.data());
+        printf("className:%s", className.data());
     }
 
 protected:
