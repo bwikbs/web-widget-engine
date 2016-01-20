@@ -67,8 +67,21 @@
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
         					function test() {
-                                var test = document.createTextNode("Create-Text-Node Test!!");
+                                print("<Document-createElement Test>");
+                                print(document.createElement("test"));
+                                print(document.createElement("html"));
+                                print(document.createElement("head"));
+                                print(document.createElement("style"));
+                                print(document.createElement("script"));
+                                print(document.createElement("body"));
+                                print(document.createElement("div"));
+                                print(document.createElement("img"));
+
+                                print("<Document-createTextNode Test>");
+                                var test = document.createTextNode("createTextNode success!");
                                 document.getElementById("idText").appendChild(test);
+
+                                return true;
         					}
 							test();
     					]]></text>
