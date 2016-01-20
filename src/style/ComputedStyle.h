@@ -89,11 +89,16 @@ public:
         return m_borderImageSource;
     }
 
+    Length marginBottom() {
+        return m_marginBottom;
+    }
+
 protected:
     void initNonInheritedStyles()
     {
         m_display = DisplayValue::InlineDisplayValue;
         m_borderImageRepeat = BorderImageRepeatValue::StretchValue;
+        m_marginBottom = Length(Length::Fixed, 0);
     }
 
     struct {
@@ -116,6 +121,8 @@ protected:
 
     BorderImageRepeatValue m_borderImageRepeat;
     String* m_borderImageSource;
+
+    Length m_marginBottom;
 };
 
 }

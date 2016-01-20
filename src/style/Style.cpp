@@ -173,9 +173,9 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "bottom") == 0) {
         // length | percentage | <auto> | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Bottom;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
 
         if (VALUE_IS_STRING("auto")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
         } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else {
@@ -207,6 +207,17 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             // TODO: parse "url()"
             ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
             ret.m_value.m_stringValue = String::fromUTF8(value);
+        }
+    } else if (strcmp(key, "margin-bottom") == 0) {
+        // length | percentage | <auto> | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginBottom;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+        if (VALUE_IS_STRING("auto")) {
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            parsePercentageOrLength(ret, value);
         }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
@@ -419,6 +430,19 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
                     style->m_borderImageSource = cssValues[k].stringValue();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::MarginBottom:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_marginBottom = parentStyle->m_marginBottom;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
+                    style->m_marginBottom = Length();
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->m_marginBottom = cssValues[k].lengthValue().toLength();
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
+                    style->m_marginBottom = Length(Length::Percent, cssValues[k].percentageValue());
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
                 break;
             }
