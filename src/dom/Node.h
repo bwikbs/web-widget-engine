@@ -15,6 +15,7 @@ namespace StarFish {
 class CharacterData;
 class Element;
 class Frame;
+class NodeList;
 
 class RareNodeMembers : public gc {
 public:
@@ -123,6 +124,8 @@ public:
     {
         return firstChild();
     }
+
+    virtual NodeList* childNodes();
 
     Node* firstChild()
     {

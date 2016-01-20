@@ -120,6 +120,24 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         return escargot::ESValue((escargot::ESObject*)p);
     }, NULL, false, false, false);
 
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("parentElement"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Element* p = ((Node *)originalObj)->parentElement();
+        if(p == nullptr) {
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        }
+        return escargot::ESValue((escargot::ESObject*)p);
+    }, NULL, false, false, false);
+
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("childNodes"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        NodeList* list = ((Node *)originalObj)->childNodes();
+        STARFISH_ASSERT(list);
+        return escargot::ESValue((escargot::ESObject*)list);
+    }, NULL, false, false, false);
+
     escargot::ESString* nextSiblingString = escargot::ESString::create("nextSibling");
     NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(nextSiblingString,
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {

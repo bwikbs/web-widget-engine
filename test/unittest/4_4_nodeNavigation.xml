@@ -53,6 +53,7 @@
     print("BODY == " + htmlNode.lastChild.nodeName);
     print("BODY == " + htmlNode.lastChild.firstChild.parentNode.nodeName);
     print("null == " + htmlNode.lastChild.nextSibling);
+    htmlNode.chlidNodes;
     print("done");
   }
   run();

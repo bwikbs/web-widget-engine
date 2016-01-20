@@ -4,8 +4,18 @@
 #include "Document.h"
 #include "Element.h"
 #include "Traverse.h"
+#include "NodeList.h"
 
 namespace StarFish {
+
+NodeList* Node::childNodes()
+{
+    STARFISH_ASSERT(m_document);
+    NodeList* list = new NodeList(m_document->scriptBindingInstance(), this, [&](Node* node) {
+        return node->parentNode() == this? true: false;
+    });
+    return list;
+}
 
 Element* Node::firstElementChild()
 {
