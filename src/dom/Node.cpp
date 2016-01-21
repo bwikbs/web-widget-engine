@@ -18,7 +18,22 @@ NodeList* Node::childNodes()
     return list;
 }
 
-bool Node::isEqualNode(Node* other) {
+Node* Node::cloneNode(bool deep = false)
+{
+    Node* newNode = clone();
+    STARFISH_ASSERT(newNode);
+    if(deep) {
+        for(Node* child=firstChild(); child; child=child->nextSibling()) {
+            Node* newChild = child->clone();
+            STARFISH_ASSERT(newChild);
+            newNode->appendChild(newChild);
+        }
+    }
+    return newNode;
+}
+
+bool Node::isEqualNode(Node* other)
+{
     if(other == nullptr) {
         return false;
     }
@@ -152,7 +167,8 @@ unsigned long Node::childElementCount()
     });
 }
 
-bool isPreceding(Node* node, Node* isPrec, Node* refNode) {
+bool isPreceding(Node* node, Node* isPrec, Node* refNode)
+{
     if(node == isPrec) {
         return true;
     } else if (node == refNode) {

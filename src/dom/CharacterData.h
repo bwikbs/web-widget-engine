@@ -18,6 +18,8 @@ public:
 
     virtual NodeType nodeType() = 0;
 
+    virtual Node* clone() = 0;
+
     virtual Element* parentElement()
     {
         return nullptr;

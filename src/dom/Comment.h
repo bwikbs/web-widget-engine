@@ -37,6 +37,11 @@ public:
         return data();
     }
 
+    virtual Node* clone()
+    {
+        return new Comment(document(), data());
+    }
+
 protected:
 };
 

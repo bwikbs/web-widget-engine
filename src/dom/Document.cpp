@@ -16,6 +16,11 @@ String* Document::localName()
     return window()->starFish()->staticStrings()->m_documentLocalName;
 }
 
+Node* Document::clone()
+{
+    return new Document(window(), scriptBindingInstance(), style());
+}
+
 Element* Document::getElementById(String* id)
 {
     return (Element*) Traverse::findDescendant(this, [&](Node* child){

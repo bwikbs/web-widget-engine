@@ -134,6 +134,8 @@ public:
         printf("className:%s", className.data());
     }
 
+    virtual Node* clone();
+
 protected:
     std::vector<Attribute, gc_allocator<Attribute>> m_attributes;
 

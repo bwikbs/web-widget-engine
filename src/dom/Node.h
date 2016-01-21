@@ -153,6 +153,8 @@ public:
 
     virtual bool isEqualNode(Node* other);
 
+    virtual Node* cloneNode(bool deep);
+
     virtual unsigned short compareDocumentPosition(Node* other);
 
     virtual bool contains(Node* other)
@@ -386,6 +388,8 @@ public:
     {
         return m_document;
     }
+
+    virtual Node* clone() = 0;
 
     void setState(NodeState state)
     {

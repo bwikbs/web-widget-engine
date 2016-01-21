@@ -3,6 +3,15 @@
 
 #include "Document.h"
 
+#include "HTMLHtmlElement.h"
+#include "HTMLHeadElement.h"
+#include "HTMLBodyElement.h"
+#include "HTMLDivElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLScriptElement.h"
+#include "HTMLStyleElement.h"
+
+
 namespace StarFish {
 
 size_t Element::hasAtttibute(String* name)
@@ -83,6 +92,37 @@ void Element::didAttributeChanged(String* name, String* old, String* value)
 
         setNeedsStyleRecalc();
     }
+}
+
+Node* Element::clone()
+{
+    Node* newNode = nullptr;
+    if(isHTMLElement()) {
+        if(localName()->equals("html")) {
+            newNode = new HTMLHtmlElement(document());
+        } else if(localName()->equals("head")) {
+            newNode = new HTMLHeadElement(document());
+        } else if(localName()->equals("body")) {
+            newNode = new HTMLBodyElement(document());
+        } else if(localName()->equals("div")) {
+            newNode = new HTMLDivElement(document());
+        } else if(localName()->equals("img")) {
+            newNode = new HTMLImageElement(document());
+        } else if(localName()->equals("script")) {
+            newNode = new HTMLScriptElement(document());
+        } else if(localName()->equals("style")) {
+            newNode = new HTMLStyleElement(document());
+        } else {
+            STARFISH_RELEASE_ASSERT(false);
+        }
+    } else {
+        STARFISH_RELEASE_ASSERT(false);
+    }
+
+    // FIXME: impl 4.8.1 NamedNodeMap to iterate attr
+
+    STARFISH_ASSERT(newNode);
+    return newNode;
 }
 
 }

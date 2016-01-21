@@ -47,6 +47,15 @@ public:
         return true;
     }
 
+    virtual Node* clone()
+    {
+        DocumentType* n = new DocumentType(document());
+        n->m_name = m_name;
+        n->m_publicId = m_publicId;
+        n->m_systemId = m_systemId;
+        return n;
+    }
+
     String* publicId()
     {
         return m_publicId;

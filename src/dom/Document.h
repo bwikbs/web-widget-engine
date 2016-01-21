@@ -61,6 +61,8 @@ public:
         return nullptr;
     }
 
+    virtual Node* clone();
+
     Window* window()
     {
         return m_window;
