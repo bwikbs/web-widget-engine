@@ -840,6 +840,9 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     }, escargot::ESString::create("namedItem"), 1, false);
     HTMLCollectionFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("namedItem"), false, false, false, namedItemFunction);
 
+    DEFINE_FUNCTION(NodeList, fetchData(this)->m_instance->globalObject()->objectPrototype());
+    fetchData(this)->m_nodeList = NodeListFunction;
+
     DEFINE_FUNCTION(HTMLUnknownElement, HTMLElementFunction->protoType());
     fetchData(this)->m_htmlUnknownElement = HTMLUnknownElementFunction;
 
