@@ -422,8 +422,8 @@ void Node::dumpStyle()
         printf("border-image-source: %s, ", m_style->borderImageSource()->utf8Data());
 
     // border-width
-    printf("border-width(t,r,b,l) : (%.0f,%.0f,%.0f,%.0f), ", m_style->surround()->border.top().fixed(),
-            m_style->surround()->border.right().fixed(), m_style->surround()->border.bottom().fixed(), m_style->surround()->border.left().fixed());
+    printf("border-width(t,r,b,l) : (%.0f,%.0f,%.0f,%.0f), ", m_style->borderTopWidth().fixed(), m_style->borderRightWidth().fixed(),
+            m_style->borderBottomWidth().fixed(), m_style->borderLeftWidth().fixed());
 
     // background-repeat-x
     printf("background-repeat-x: %d, ", m_style->backgroundRepeatX());

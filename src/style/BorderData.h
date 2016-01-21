@@ -1,61 +1,54 @@
 #ifndef __StarFishBorderData__
 #define __StarFishBorderData__
 
+#include "style/BorderValue.h"
+
 namespace StarFish {
 
 class BorderData {
 public:
     BorderData()
     {
-
     }
 
-    BorderData(Length top, Length right, Length bottom, Length left)
+    Length topWidth()
     {
-        m_top = top;
-        m_right = right;
-        m_bottom = bottom;
-        m_left = left;
+        return m_top.width();
     }
 
-    Length top()
+    Length rightWidth()
+    {
+        return m_right.width();
+    }
+
+    Length bottomWidth()
+    {
+        return m_bottom.width();
+    }
+
+    Length leftWidth()
+    {
+        return m_left.width();
+    }
+
+    BorderValue& top()
     {
         return m_top;
     }
 
-    Length right()
+    BorderValue& right()
     {
         return m_right;
     }
 
-    Length bottom()
+    BorderValue& bottom()
     {
         return m_bottom;
     }
 
-    Length left()
+    BorderValue& left()
     {
         return m_left;
-    }
-
-    void setTop(Length top)
-    {
-        m_top = top;
-    }
-
-    void setRight(Length right)
-    {
-        m_right = right;
-    }
-
-    void setBottom(Length bottom)
-    {
-        m_bottom = bottom;
-    }
-
-    void setLeft(Length left)
-    {
-        m_left = left;
     }
 
     Length imageOffsetTop()
@@ -126,10 +119,10 @@ public:
     }
 
 private:
-    Length m_top;
-    Length m_right;
-    Length m_bottom;
-    Length m_left;
+    BorderValue m_top;
+    BorderValue m_right;
+    BorderValue m_bottom;
+    BorderValue m_left;
 
     // border-image-slice
     Length m_imageOffsetTop;
@@ -138,10 +131,9 @@ private:
     Length m_imageOffsetLeft;
 
     bool m_imageFill;
-
-    // TODO: Add background image and more styles (color, etc.)
 };
 
 } /* namespace StarFish */
 
 #endif /* __StarFishBorderData__ */
+

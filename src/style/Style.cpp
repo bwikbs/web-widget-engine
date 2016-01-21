@@ -808,15 +808,15 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
             case CSSStyleValuePair::KeyKind::BorderTopWidth:
                 // 'thin' <='medium' <= 'thick'
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_surround->border.setTop(parentStyle->m_surround->border.top());
+                    style->setBorderTopWidth(parentStyle->borderTopWidth());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
-                    style->m_surround->border.setTop(cssValues[k].lengthValue().toLength());
+                    style->setBorderTopWidth(cssValues[k].lengthValue().toLength());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThin) {
-                    style->m_surround->border.setTop(Length(Length::Fixed, 1));
+                    style->setBorderTopWidth(Length(Length::Fixed, 1));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderMedium) {
-                    style->m_surround->border.setTop(Length(Length::Fixed, 3));
+                    style->setBorderTopWidth(Length(Length::Fixed, 3));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThick) {
-                    style->m_surround->border.setTop(Length(Length::Fixed, 5));
+                    style->setBorderTopWidth(Length(Length::Fixed, 5));
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
@@ -824,15 +824,15 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
             case CSSStyleValuePair::KeyKind::BorderRightWidth:
                 // 'thin' <='medium' <= 'thick'
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_surround->border.setRight(parentStyle->m_surround->border.right());
+                    style->setBorderRightWidth(parentStyle->borderRightWidth());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
-                    style->m_surround->border.setRight(cssValues[k].lengthValue().toLength());
+                    style->setBorderRightWidth(cssValues[k].lengthValue().toLength());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThin) {
-                    style->m_surround->border.setRight(Length(Length::Fixed, 1));
+                    style->setBorderRightWidth(Length(Length::Fixed, 1));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderMedium) {
-                    style->m_surround->border.setRight(Length(Length::Fixed, 3));
+                    style->setBorderRightWidth(Length(Length::Fixed, 3));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThick) {
-                    style->m_surround->border.setRight(Length(Length::Fixed, 5));
+                    style->setBorderRightWidth(Length(Length::Fixed, 5));
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
@@ -840,15 +840,15 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
             case CSSStyleValuePair::KeyKind::BorderBottomWidth:
                 // 'thin' <='medium' <= 'thick'
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_surround->border.setBottom(parentStyle->m_surround->border.bottom());
+                    style->setBorderBottomWidth(parentStyle->borderBottomWidth());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
-                    style->m_surround->border.setBottom(cssValues[k].lengthValue().toLength());
+                    style->setBorderBottomWidth(cssValues[k].lengthValue().toLength());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThin) {
-                    style->m_surround->border.setBottom(Length(Length::Fixed, 1));
+                    style->setBorderBottomWidth(Length(Length::Fixed, 1));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderMedium) {
-                    style->m_surround->border.setBottom(Length(Length::Fixed, 3));
+                    style->setBorderBottomWidth(Length(Length::Fixed, 3));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThick) {
-                    style->m_surround->border.setBottom(Length(Length::Fixed, 5));
+                    style->setBorderBottomWidth(Length(Length::Fixed, 5));
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
@@ -856,15 +856,15 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
             case CSSStyleValuePair::KeyKind::BorderLeftWidth:
                 // 'thin' <='medium' <= 'thick'
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_surround->border.setLeft(parentStyle->m_surround->border.left());
+                    style->setBorderLeftWidth(parentStyle->borderLeftWidth());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
-                    style->m_surround->border.setLeft(cssValues[k].lengthValue().toLength());
+                    style->setBorderLeftWidth(cssValues[k].lengthValue().toLength());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThin) {
-                    style->m_surround->border.setLeft(Length(Length::Fixed, 1));
+                    style->setBorderLeftWidth(Length(Length::Fixed, 1));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderMedium) {
-                    style->m_surround->border.setLeft(Length(Length::Fixed, 3));
+                    style->setBorderLeftWidth(Length(Length::Fixed, 3));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThick) {
-                    style->m_surround->border.setLeft(Length(Length::Fixed, 5));
+                    style->setBorderLeftWidth(Length(Length::Fixed, 5));
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }

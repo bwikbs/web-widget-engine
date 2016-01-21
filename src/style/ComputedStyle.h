@@ -209,10 +209,66 @@ public:
         return m_background;
     }
 
-    StyleSurroundData* surround()
+    Length borderTopWidth()
     {
         if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->border.topWidth();
+        }
+    }
+
+    Length borderRightWidth()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->border.rightWidth();
+        }
+    }
+
+    Length borderBottomWidth()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->border.bottomWidth();
+        }
+    }
+
+    Length borderLeftWidth()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->border.leftWidth();
+        }
+    }
+
+    void setBorderTopWidth(Length width)
+    {
+        surround()->border.top().setWidth(width);
+    }
+
+    void setBorderRightWidth(Length width)
+    {
+        surround()->border.right().setWidth(width);
+    }
+
+    void setBorderBottomWidth(Length width)
+    {
+        surround()->border.bottom().setWidth(width);
+    }
+
+    void setBorderLeftWidth(Length width)
+    {
+        surround()->border.left().setWidth(width);
+    }
+
+    StyleSurroundData* surround() {
+        if (m_surround == nullptr) {
             m_surround = new StyleSurroundData();
+            m_surround->border.borderImageSliceInitialize();
         }
         return m_surround;
     }
@@ -234,8 +290,6 @@ protected:
         m_marginLeft = Length(Length::Fixed, 0);
         m_opacity = 1;
         m_background = NULL;
-        m_surround = new StyleSurroundData();
-        m_surround->border.borderImageSliceInitialize();
     }
 
     void loadResources(StarFish* sf);
