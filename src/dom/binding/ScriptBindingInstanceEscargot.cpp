@@ -480,7 +480,30 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("previousElementSibling"),
         previousElementChildGetter, NULL, false, false, false);
     ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("childElementCount"),
-        firstElementChildGetter, NULL, false, false, false);
+        childElementCountGetter, NULL, false, false, false);
+
+    ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("localName"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isElement()) {
+            return escargot::ESString::create(nd->asElement()->getAttribute(String::fromUTF8("localName"))->utf8Data());
+        } else {
+            THROW_ILLEGAL_INVOCATION();
+        }
+    }, NULL, true, true, true);
+
+    ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("tagName"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        Node* nd = ((Node *)originalObj);
+        if (nd->isElement()) {
+            // FIXME(JMP): We have to fix this to follow DOM spec after implementing Namespace
+            return escargot::ESString::create(nd->asElement()->getAttribute(String::fromUTF8("localName"))->toUpper()->utf8Data());
+        } else {
+            THROW_ILLEGAL_INVOCATION();
+        }
+    }, NULL, true, true, true);
 
     ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("id"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {

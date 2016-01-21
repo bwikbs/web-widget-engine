@@ -123,7 +123,7 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
         if (newNode->isElement()) {
             const tinyxml2::XMLAttribute* attr = xmlElement->FirstAttribute();
             while(attr) {
-                if (strcmp(attr->Name(), "nodeType") == 0 || strcmp(attr->Name(), "localName") == 0) {
+                if (strcmp(attr->Name(), "nodeType") == 0) {
                     attr = attr->Next();
                     continue;
                 }

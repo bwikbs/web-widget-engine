@@ -78,7 +78,7 @@ void Element::didAttributeChanged(String* name, String* old, String* value)
         if (str.length()) {
             m_classNames.push_back(String::fromUTF8(str.data(), str.length()));
         }
-        STARFISH_RELEASE_ASSERT(value->indexOf(' ') == SIZE_MAX);
+        STARFISH_RELEASE_ASSERT(value->indexOf(' ') == SIZE_MAX || m_classNames.size() > 1);
         m_classNames.push_back(value);
 
         setNeedsStyleRecalc();
