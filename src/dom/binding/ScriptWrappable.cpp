@@ -68,6 +68,22 @@ void ScriptWrappableGlobalObject::initScriptWrappableWindow(Window* window)
 
 }
 
+void ScriptWrappableGlobalObject::callFunction(String* name)
+{
+    escargot::ESObject* obj = ((escargot::ESObject *)this->m_object);
+    escargot::ESValue fn = obj->get(escargot::ESString::create(name->utf8Data()));
+    escargot::ESVMInstance* instance = escargot::ESVMInstance::currentInstance();
+
+    std::jmp_buf tryPosition;
+    if (setjmp(instance->registerTryPos(&tryPosition)) == 0) {
+        escargot::ESFunctionObject::call(instance, fn, obj, NULL, 0, false);
+        instance->unregisterTryPos(&tryPosition);
+    } else {
+        escargot::ESValue err = instance->getCatchedError();
+        printf("Uncaught %s\n", err.toString()->utf8Data());
+    }
+}
+
 void ScriptWrappable::initScriptWrappable(Node* ptr)
 {
     Node* node = (Node*)this;

@@ -73,8 +73,21 @@ public:
 
     Font* font()
     {
+        STARFISH_ASSERT(m_font);
+        return m_font;
+    }
+
+    void ensureFont(StarFish* sf)
+    {
         if (m_font == nullptr) {
-            m_font = FontSelector::loadFont(String::emptyString, m_inheritedStyles.m_fontSize);
+            m_font = fontSlowCase(sf);
+        }
+    }
+
+    Font* font(StarFish* sf)
+    {
+        if (m_font == nullptr) {
+            return fontSlowCase(sf);
         }
         return m_font;
     }
@@ -84,8 +97,8 @@ public:
     }
 
     BackgroundRepeatValue backgroundRepeatY() {
-		return m_backgroundRepeatY;
-	}
+        return m_backgroundRepeatY;
+    }
 
     Length bottom() {
         return m_bottom;
@@ -133,6 +146,8 @@ protected:
         m_background = new StyleBackgroundData();;
         m_surround = new StyleSurroundData();
     }
+
+    Font* fontSlowCase(StarFish* sf);
 
     struct {
         Color m_color;

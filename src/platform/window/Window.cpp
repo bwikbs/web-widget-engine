@@ -361,20 +361,22 @@ void Window::rendering()
         canvas->clearColor(Color(255,255,255,255));
 
     m_document->frame()->paint(canvas);
-/*
+
 #ifdef STARFISH_TIZEN_WEARABLE
+    /*
     canvas->save();
     canvas->setColor(Color(255,0,0,255));
-    canvas->drawRect(Rect(180-20, 20, 40, 20));
+    canvas->drawRect(Rect(180-20, 320, 40, 20));
     canvas->setColor(Color(255,255,255,255));
     String* txt = String::createASCIIString("SWC");
     Font* fnt = FontSelector::loadFont(String::createASCIIString(""), 12);
     Size siz = fnt->measureText(txt);
     canvas->setFont(fnt);
-    canvas->drawText(180 - siz.width()/2, 24, txt);
+    canvas->drawText(180 - siz.width()/2, 324, txt);
     canvas->restore();
+    */
 #endif
-*/
+
     delete canvas;
     m_needsRendering = false;
 
@@ -511,14 +513,14 @@ void Window::dispatchKeyEvent(String* key, KeyEventKind kind)
 void Window::pause()
 {
     STARFISH_LOG_INFO("onPause");
-    // callFunction(String::createASCIIString("onPause"));
+    callFunction(String::createASCIIString("onpause"));
     m_isRunning = false;
 }
 
 void Window::resume()
 {
     STARFISH_LOG_INFO("onResume");
-    // callFunction(String::createASCIIString("onResume"));
+    callFunction(String::createASCIIString("onresume"));
     m_isRunning = true;
     setNeedsRendering();
     WindowImplEFL* eflWindow = (WindowImplEFL*)this;

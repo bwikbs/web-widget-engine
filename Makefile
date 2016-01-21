@@ -58,8 +58,8 @@ endif
 
 ifeq ($(HOST), linux)
   OUTDIR=out/$(ARCH)/$(TYPE)/$(MODE)
-  CXXFLAGS += $(shell pkg-config --cflags elementary ecore ecore-x libpng)
-  LDFLAGS += $(shell pkg-config --libs elementary ecore ecore-x ecore-imf-evas libpng)
+  CXXFLAGS += $(shell pkg-config --cflags elementary ecore ecore-x libpng cairo freetype2 fontconfig)
+  LDFLAGS += $(shell pkg-config --libs elementary ecore ecore-x ecore-imf-evas libpng cairo freetype2 fontconfig)
 else ifeq ($(HOST), tizen_arm)
   OUTDIR=out/tizen_$(ARCH)/$(TYPE)/$(MODE)
   	TIZEN_INCLUDE = elementary-1 elocation-1 efl-1 ecore-x-1 eina-1 eina-1/eina eet-1 evas-1 ecore-1 ecore-evas-1 ecore-file-1 \
@@ -86,10 +86,9 @@ else ifeq ($(HOST), tizen_wearable_arm)
   OUTDIR=out/tizen_$(ARCH)/$(TYPE)/$(MODE)
   	TIZEN_INCLUDE = dlog elementary-1 elocation-1 efl-1 ecore-x-1 eina-1 eina-1/eina eet-1 evas-1 ecore-1 ecore-evas-1 ecore-file-1 \
 			ecore-input-1 edje-1 eo-1 emotion-1 ecore-imf-1 ecore-con-1 eio-1 eldbus-1 efl-extension \
-			efreet-1 ecore-input-evas-1 ecore-audio-1 embryo-1 ecore-imf-evas-1 ethumb-1 eeze-1 eeze-1 e_dbus-1 e_dbus-1 dbus-1.0
+			efreet-1 ecore-input-evas-1 ecore-audio-1 embryo-1 ecore-imf-evas-1 ethumb-1 eeze-1 eeze-1 e_dbus-1 e_dbus-1 dbus-1.0 freetype2
 
-	TIZEN_LIB = elementary ecore ecore_input \
-		    evas ecore_evas rt efl-extension
+	TIZEN_LIB = ecore evas rt efl-extension freetype
 	
 	DEPENDENCY_INCLUDE =
 				

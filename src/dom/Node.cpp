@@ -300,5 +300,132 @@ DOMTokenList* Node::classList()
     return nullptr;
 }
 
+void Node::dumpStyle()
+{
+    dump();
+    printf(", style: { ");
+
+    // display
+    if (m_style->display() == InlineDisplayValue) {
+        printf("display: inline, ");
+    } else if (m_style->display() == BlockDisplayValue) {
+        printf("display: block, ");
+    } else if (m_style->display() == NoneDisplayValue) {
+        printf("display: none, ");
+    }
+
+    // width
+    if (m_style->width().isFixed()) {
+        printf("width: %f, ", m_style->width().fixed());
+    } else if (m_style->width().isPercent()) {
+        printf("width: %f, ", m_style->width().percent());
+    } else if (m_style->width().isAuto()) {
+        printf("width: auto, ");
+    }
+
+    // height
+    if (m_style->height().isFixed()) {
+        printf("height: %f, ", m_style->height().fixed());
+    } else if (m_style->height().isPercent()) {
+        printf("height: %f, ", m_style->height().percent());
+    } else if (m_style->height().isAuto()) {
+        printf("height: auto, ");
+    }
+
+    // font-size
+    printf("font-size: %.0f, ", m_style->font(document()->window()->starFish())->size());
+
+    // color
+    printf("color: (%d,%d,%d,%d), ", m_style->color().r(), m_style->color().g(), m_style->color().b(), m_style->color().a());
+
+    // background-color
+    printf("background-color: (%d,%d,%d,%d), ", m_style->bgColor().r(), m_style->bgColor().g(), m_style->bgColor().b(), m_style->bgColor().a());
+
+    // background-image
+    if (m_style->bgImage()->length() == 0) {
+        printf("background-image: none, ");
+    } else {
+        printf("background-image: %s, ", m_style->bgImage()->utf8Data());
+    }
+
+    // background-size
+    if (m_style->background()->sizeType() == BackgroundSizeType::Cover) {
+        printf("background-size: cover, ");
+    } else if (m_style->background()->sizeType() == BackgroundSizeType::Contain) {
+        printf("background-size: contain, ");
+    } else if (m_style->background()->sizeType() == BackgroundSizeType::SizeValue) {
+        printf("background-size: (%s, %s),", m_style->background()->sizeValue()->width().dumpString()->utf8Data(),
+                                            m_style->background()->sizeValue()->height().dumpString()->utf8Data());
+    }
+
+    // bottom
+    if (m_style->bottom().isFixed()) {
+        printf("bottom: %f, ", m_style->bottom().fixed());
+    } else if (m_style->bottom().isPercent()) {
+        printf("bottom: %f, ", m_style->bottom().percent());
+    } else if (m_style->bottom().isAuto()) {
+        printf("bottom: auto, ");
+    }
+
+    // left
+    if (m_style->left().isFixed()) {
+        printf("left: %f, ", m_style->left().fixed());
+    } else if (m_style->left().isPercent()) {
+        printf("left: %f, ", m_style->left().percent());
+    } else if (m_style->left().isAuto()) {
+        printf("left: auto, ");
+    }
+
+    // border-image-repeat
+    if (m_style->borderImageRepeat()->m_XAxis == BorderImageRepeatValue::StretchValue) {
+        printf("border-image-repeat: {stretch ");
+    } else if (m_style->borderImageRepeat()->m_XAxis == BorderImageRepeatValue::RepeatValue) {
+        printf("border-image-repeat: {repeat ");
+    } else if (m_style->borderImageRepeat()->m_XAxis == BorderImageRepeatValue::RoundValue) {
+        printf("border-image-repeat: {round ");
+    } else if (m_style->borderImageRepeat()->m_XAxis == BorderImageRepeatValue::SpaceValue) {
+        printf("border-image-repeat: {space ");
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+    if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::StretchValue) {
+        printf("stretch}, ");
+    } else if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::RepeatValue) {
+        printf("repeat}, ");
+    } else if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::RoundValue) {
+        printf("round}, ");
+    } else if (m_style->borderImageRepeat()->m_YAxis == BorderImageRepeatValue::SpaceValue) {
+        printf("space}, ");
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    // border-image-source
+    if(m_style->borderImageSource() != 0)
+        printf("border-image-source: %s, ", m_style->borderImageSource()->utf8Data());
+
+    // border-width
+    printf("border-width(t,r,b,l) : (%.0f,%.0f,%.0f,%.0f), ", m_style->surround()->border.top().fixed(),
+            m_style->surround()->border.right().fixed(), m_style->surround()->border.bottom().fixed(), m_style->surround()->border.left().fixed());
+
+    // background-repeat-x
+    printf("background-repeat-x: %d, ", m_style->backgroundRepeatX());
+    // background-repeat-y
+    printf("background-repeat-y: %d, ", m_style->backgroundRepeatY());
+
+    // margin-bottom
+    if (m_style->marginBottom().isFixed()) {
+        printf("margin-bottom: %f, ", m_style->marginBottom().fixed());
+    } else if (m_style->marginBottom().isPercent()) {
+        printf("margin-bottom: %f, ", m_style->marginBottom().percent());
+    } else if (m_style->marginBottom().isAuto()) {
+        printf("margin-bottom: auto, ");
+    }
+
+    // opacity
+    printf("opacity: %f, ", m_style->opacity());
+
+    printf("}");
+}
 
 }

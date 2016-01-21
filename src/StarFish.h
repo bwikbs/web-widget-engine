@@ -1,6 +1,8 @@
 #ifndef __StarFish__
 #define __StarFish__
 
+#include "platform/canvas/font/Font.h"
+
 namespace StarFish {
 
 class MessageLoop;
@@ -82,6 +84,12 @@ public:
     void evaluate(String* s);
 
     ImageData* fetchImage(String* str);
+    Font* fetchFont(String* familyName, float size, int style)
+    {
+        Font* f = nullptr;
+        f = m_fontSelector.loadFont(familyName, size, style);
+        return f;
+    }
 
     StaticStrings* staticStrings()
     {
@@ -100,6 +108,7 @@ protected:
     String* m_currentPath;
     std::unordered_map<std::string, ImageData*, std::hash<std::string>, std::equal_to<std::string>,
         gc_allocator<std::pair<std::string, ImageData*>>> m_imageCache;
+    FontSelector m_fontSelector;
     StaticStrings m_staticStrings;
 };
 

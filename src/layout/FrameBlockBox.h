@@ -31,10 +31,11 @@ public:
 
     virtual void paint(Canvas* canvas, PaintingStage stage)
     {
-        STARFISH_ASSERT(stage == PaintingNormalFlowInline);
-        canvas->setFont(style()->font());
-        canvas->setColor(style()->color());
-        canvas->drawText(0, 0, m_text);
+        if (stage == PaintingNormalFlowInline) {
+            canvas->setFont(style()->font());
+            canvas->setColor(style()->color());
+            canvas->drawText(0, 0, m_text);
+        }
     }
 
 protected:
@@ -53,7 +54,9 @@ public:
 
     virtual void paint(Canvas* canvas, PaintingStage stage)
     {
-        m_frameReplaced->paintReplaced(canvas);
+        if (stage == PaintingNormalFlowInline) {
+            m_frameReplaced->paintReplaced(canvas);\
+        }
     }
 
 protected:
@@ -109,7 +112,7 @@ protected:
 
     bool hasBlockFlow()
     {
-        return m_firstChild->isFrameBlockBox();
+        return !m_firstChild || m_firstChild->isFrameBlockBox();
     }
 
     std::vector<LineBox, gc_allocator<LineBox>> m_lineBoxes;

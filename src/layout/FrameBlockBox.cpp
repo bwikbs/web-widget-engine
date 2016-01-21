@@ -7,10 +7,9 @@ namespace StarFish {
 void FrameBlockBox::layoutBlock(LayoutContext& ctx)
 {
     // TODO Determine horizontal margins of this object.
-    float parentContentWidth = m_parent->asFrameBlockBox()->contentWidth();
+    float parentContentWidth = ctx.parentContentWidth(this);
 
     // https://www.w3.org/TR/CSS2/visudet.html#the-width-property
-    // TODO consider negative width
     if (m_style->width().isAuto()) {
         setContentWidth(parentContentWidth);
     } else if (m_style->width().isFixed()) {
@@ -22,12 +21,12 @@ void FrameBlockBox::layoutBlock(LayoutContext& ctx)
     float normalFlowHeight = 0;
     Frame* child = firstChild();
     while (child) {
+        // Lay out the child
+        child->layout(ctx);
+
         // TODO Place the child.
         child->asFrameBox()->setX(0);
         child->asFrameBox()->setY(normalFlowHeight);
-
-        // Lay out the child
-        child->layout(ctx);
 
         normalFlowHeight += child->asFrameBox()->height();
 
@@ -36,7 +35,7 @@ void FrameBlockBox::layoutBlock(LayoutContext& ctx)
 
     // Now the intrinsic height of the object is known because the children are placed
     // TODO Determine the final height
-    setHeight(normalFlowHeight + paddingHeight() + borderHeight());
+    setContentHeight(normalFlowHeight);
 }
 
 void FrameBlockBox::layoutInline(LayoutContext& ctx)
@@ -92,12 +91,12 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
                 String* resultString;
                 if(isWhiteSpace) {
                     resultString = String::spaceString;
-                    textWidth = f->style()->font()->measureText(String::spaceString).width();
+                    textWidth = f->style()->font()->measureText(String::spaceString);
                 }
                 else {
                     String* ss = txt->substring(offset,nextOffset-offset);
                     resultString = ss;
-                    textWidth = f->style()->font()->measureText(ss).width();
+                    textWidth = f->style()->font()->measureText(ss);
                 }
 
                 if(textWidth <= parentContentWidth - nowLineWidth) {
@@ -112,7 +111,7 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
 
                 m_lineBoxes[nowLine].m_boxes.push_back(new InlineTextBox(f->node(), f->style(), resultString));
                 m_lineBoxes[nowLine].m_boxes.back()->setWidth(textWidth);
-                m_lineBoxes[nowLine].m_boxes.back()->setHeight(f->style()->font()->fontHeight());
+                m_lineBoxes[nowLine].m_boxes.back()->setHeight(f->style()->font()->metrics().m_fontHeight);
                 offset = nextOffset;
             }
         } else if (f->isFrameReplaced()) {
@@ -256,6 +255,20 @@ void FrameBlockBox::paint(Canvas* canvas, PaintingStage stage)
                     child->paint(canvas, stage);
                     canvas->restore();
                     child = child->next();
+                }
+            } else {
+                paintBackgroundAndBorders(canvas);
+                for (size_t i = 0; i < m_lineBoxes.size(); i ++) {
+                    canvas->save();
+                    LineBox& b = m_lineBoxes[i];
+                    canvas->translate(b.m_frameRect.x(), b.m_frameRect.y());
+                    for (size_t j = 0; j < b.m_boxes.size(); j ++) {
+                        canvas->save();
+                        canvas->translate(b.m_boxes[j]->x(), b.m_boxes[j]->y());
+                        b.m_boxes[j]->paint(canvas, stage);
+                        canvas->restore();
+                    }
+                    canvas->restore();
                 }
             }
         } else if (stage == PaintingNormalFlowInline) {

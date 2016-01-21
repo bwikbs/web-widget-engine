@@ -94,11 +94,13 @@ public:
     Evas_Object* m_clipper;
     SkRect m_clipRect;
     float m_opacity;
+    Font* m_font;
 
     CanvasState()
     {
         m_clipper = NULL;
         m_opacity = 1;
+        m_font = nullptr;
     }
 };
 
@@ -366,14 +368,9 @@ public:
         return clr;
     }
 
-    virtual void setTextShadowColor(const Color& clr)
-    {
-        m_textShadowColor = clr;
-    }
-
     virtual void setFont(Font* font)
     {
-        m_font = font;
+        lastState().m_font = font;
     }
 
     virtual void drawRect(const Rect& rt)
@@ -402,9 +399,9 @@ public:
 
     virtual void drawText(const float x,const float y,String* text)
     {
-        Evas_Object* eo = evas_object_text_add(m_canvas);
+        Evas_Object* eo = evas_object_textblock_add(m_canvas);
         if(m_objList) m_objList->push_back(eo);
-        Size sz = m_font->measureText(text);
+        Size sz(lastState().m_font->measureText(text), lastState().m_font->metrics().m_fontHeight);
         Rect rt(x,y,sz.width(),sz.height());
         SkRect sss = SkRect::MakeXYWH(
         SkFloatToScalar((float)rt.x()),
@@ -415,10 +412,42 @@ public:
         if(!shouldApplyEvasMap())
             lastState().m_matrix.mapRect(&sss);
 
-        evas_object_text_font_set(eo,m_font->familyName()->utf8Data(),m_font->size());
+        Evas_Textblock_Style* st = evas_textblock_style_new();
+        char buf[256];
+        snprintf(buf, 256, "DEFAULT='font=%s font_size=%f color=#%02x%02x%02x%02x valign=bottom'",lastState().m_font->familyName()->utf8Data(), lastState().m_font->size(),
+                (int)lastState().m_color.r(), (int)lastState().m_color.g(), (int)lastState().m_color.b(), (int)lastState().m_color.a());
+        evas_textblock_style_set(st, buf);
+        evas_object_textblock_style_set(eo, st);
         evas_object_color_set(eo, lastState().m_color.r(),lastState().m_color.g(),lastState().m_color.b(),lastState().m_color.a());
-        evas_object_text_style_set(eo,Evas_Text_Style_Type::EVAS_TEXT_STYLE_SHADOW);
-        evas_object_text_shadow_color_set(eo,m_textShadowColor.r(),m_textShadowColor.g(),m_textShadowColor.b(),m_textShadowColor.a());
+        evas_object_textblock_text_markup_set(eo, text->utf8Data());
+
+        evas_object_resize(eo, sss.width(), sss.height());
+        evas_object_move(eo,sss.x(),sss.y());
+
+        applyClippers(eo);
+
+        if(shouldApplyEvasMap()) {
+           applyEvasMapIfNeeded(eo, rt);
+        }
+        evas_object_show(eo);
+        evas_textblock_style_free(st);
+
+        /*
+        Evas_Object* eo = evas_object_text_add(m_canvas);
+        if(m_objList) m_objList->push_back(eo);
+        Size sz(lastState().m_font->measureText(text), lastState().m_font->metrics().m_fontHeight);
+        Rect rt(x,y,sz.width(),sz.height());
+        SkRect sss = SkRect::MakeXYWH(
+        SkFloatToScalar((float)rt.x()),
+        SkFloatToScalar((float)rt.y()),
+        SkFloatToScalar((float)rt.width()),
+        SkFloatToScalar((float)rt.height())
+        );
+        if(!shouldApplyEvasMap())
+            lastState().m_matrix.mapRect(&sss);
+
+        evas_object_text_font_set(eo,lastState().m_font->familyName()->utf8Data(),lastState().m_font->size());
+        evas_object_color_set(eo, lastState().m_color.r(),lastState().m_color.g(),lastState().m_color.b(),lastState().m_color.a());
         evas_object_text_text_set(eo, text->utf8Data());
 
         evas_object_move(eo,sss.x(),sss.y());
@@ -428,6 +457,7 @@ public:
            applyEvasMapIfNeeded(eo, rt);
         }
         evas_object_show(eo);
+        */
     }
 
     Evas_Object* findPrevDrawnData(ImageData* data)
@@ -593,10 +623,6 @@ public:
 
 protected:
     std::vector<CanvasState> m_state;
-    //FIXME(ksh8281) Move these into state
-    Font* m_font;
-    Color m_textShadowColor;
-    ////////////////////
     Evas* m_canvas;
     bool m_directDraw;
     Evas_Object* m_image;

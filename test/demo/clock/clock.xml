@@ -3,16 +3,15 @@
 	<node nodeType="9" localName="document">
 		<node nodeType="10" localName="documentType">
 		</node>
-		<node nodeType="1" localName="html" style="
-">
+		<node nodeType="1" localName="html">
 			<node nodeType="1" localName="head">
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-        ]]></text>
+]]></text>
 				</node>
 				<node nodeType="1" localName="style" type="text/css">
 					<style selectorText="body" text-align="center"/>
-					<style selectorText="#topSpacer" height="80px" width="30px"/>
+					<style selectorText="#topSpacer" height="100px" width="30px"/>
 					<style selectorText="#time" font-size="28px"/>
 					<style selectorText="#place" font-size="28px"/>
 					<style selectorText="#spot" width="25px"/>
@@ -23,73 +22,71 @@
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
 
-  body {
-  text-align: center;
-	}
-  #topSpacer { height: 80px; width: 30px; }
-  #time { font-size: 28px; }
-  #place { font-size: 28px; }
-  #spot { width: 25px }
-  #tem1	{ font-size : 52px; }
+body {
+	text-align: center;
+}
+#topSpacer { height: 100px; width: 30px; }
+#time { font-size: 28px; }
+#place { font-size: 28px; }
+#spot { width: 25px }
+#tem1	{ font-size : 52px; }
 #tem2	{ font-size : 28px; }
-  #w { width: 120px }
-  .red {
-     color: rgb(255,0,0);
-   }
+#w { width: 120px }
+.red {
+color: rgb(255,0,0);
+}
 ]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-    ]]></text>
+]]></text>
 				</node>
 			</node>
 			<node nodeType="3" localName="text">
 				<text><![CDATA[
-    ]]></text>
+]]></text>
 			</node>
 			<node nodeType="1" localName="body">
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-  ]]></text>
+	]]></text>
 				</node>
 				<node nodeType="1" localName="img" src="" id="topSpacer">
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-]]></text>
+	]]></text>
 				</node>
 				<node nodeType="1" localName="div" id="time">
 					<node nodeType="3" localName="text">
-						<text><![CDATA[11:46 AM]]></text>
+						<text><![CDATA[10:50AM]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-]]></text>
+	]]></text>
 				</node>
 				<node nodeType="1" localName="div" id="place">
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
-]]></text>
+		]]></text>
 					</node>
 					<node nodeType="1" localName="img" src="./test/demo/clock/spot.png" id="spot">
 					</node>
 					<node nodeType="3" localName="text">
-						<text><![CDATA[
-Seoul, Korea]]></text>
+						<text><![CDATA[Seoul, Korea]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[       
-
-            ]]></text>
+	]]></text>
 				</node>
 				<node nodeType="1" localName="img" src="./test/demo/clock/cloud.png" id="w">
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-]]></text>
+	]]></text>
 				</node>
 				<node nodeType="1" localName="div" id="tem1">
 					<node nodeType="3" localName="text">
@@ -98,7 +95,7 @@ Seoul, Korea]]></text>
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-]]></text>
+	]]></text>
 				</node>
 				<node nodeType="1" localName="div" id="tem2">
 					<node nodeType="3" localName="text">
@@ -113,19 +110,37 @@ Seoul, Korea]]></text>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
 
+var running = true;
+
+window.onpause = function() {
+running = false;
+}
+
+window.onresume = function() {
+running = true;
+setTime()
+}
 function setTime()
 {
-var d = new Date();
-var t;
-t = (d.getHours() % 12) + ":" + d.getMinutes() + " ";
-if (d.getHours() > 12) {
-t += "PM"
-} else {
-t += "AM"
-}
-document.getElementById("time").firstChild.data = t;
+if(!running)
+return;
+	var d = new Date();
+	var t;
+        var m = d.getMinutes();
+        if (m < 10)
+            m = "0" + m
+        var s = d.getSeconds();
+        if (s < 10)
+            s = "0" + s
+	t = (d.getHours() % 12) + ":" + m;
+	if (d.getHours() > 12) {
+		t += "PM"
+	} else {
+		t += "AM"
+	}
+	document.getElementById("time").firstChild.data = t;
 
-window.setTimeout(10000, setTime)
+	window.setTimeout(setTime, 30*1000)
 
 }
 
@@ -133,14 +148,14 @@ setTime();
 
 
 document.getElementById("w").onclick = function() {
-if (this.src == "./test/demo/clock/cloud.png") {
-this.src = "./test/demo/clock/sun.png"
-document.getElementById("place").class = "red"
-}
-else {
-this.src = "./test/demo/clock/cloud.png"
-document.getElementById("place").class = ""
-}
+	if (this.src == "./test/demo/clock/cloud.png") {
+		this.src = "./test/demo/clock/sun.png"
+			document.getElementById("place").className = "red"
+	}
+	else {
+		this.src = "./test/demo/clock/cloud.png"
+			document.getElementById("place").className = ""
+	}
 
 
 }

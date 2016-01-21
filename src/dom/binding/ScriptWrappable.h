@@ -96,6 +96,8 @@ public:
     ScriptWrappableGlobalObject();
     void initScriptWrappableWindow(Window* window);
     static ScriptWrappableGlobalObject* fetch();
+
+    void callFunction(String* name);
 protected:
     void* m_object;
 };
