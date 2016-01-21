@@ -143,9 +143,10 @@ public:
         Bottom, // length | percentage | <auto> | inherit
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-left
         Left, // length | percentage | <auto> | inherit
-        BorderImageRepeat, // <stretch> | repeat | round | space {1,2}
         // https://www.w3.org/TR/css3-background/#the-border-image-repeat
-        BorderImageSource,
+        BorderImageRepeat, // <stretch> | repeat | round | space {1,2}
+        // https://www.w3.org/TR/css3-background/#the-border-image-source
+        BorderImageSource, // none | <image>
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-bottom
         MarginBottom, // length | percentage | auto | inherit // <0>
         // https://www.w3.org/TR/css3-color/#transparency
