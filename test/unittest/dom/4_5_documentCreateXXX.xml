@@ -84,6 +84,11 @@
                                 print("<Document-createAttribute Test>");
                                 print(document.createAttribute("test1"));
 
+                                print("<Document-createComment Test>");
+                                test = document.createComment("Test Comment1");
+                                print(test);
+                                print(test.textContent);
+
                                 return true;
         					}
 							test();

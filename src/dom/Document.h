@@ -77,6 +77,7 @@ public:
     Element* getElementById(String* id);
     Element* createElement(String* localName);
     Text*    createTextNode(String* data);
+    Comment* createComment(String* data);
     HTMLCollection* getElementsByTagName(String* qualifiedName);
     HTMLCollection* getElementsByClassName(String* classNames);
     Attr* createAttribute(String* localName);

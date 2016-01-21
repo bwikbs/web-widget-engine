@@ -112,6 +112,11 @@ Text*    Document::createTextNode(String* data)
   return new Text(this,data);
 }
 
+Comment*    Document::createComment(String* data)
+{
+  return new Comment(this,data);
+}
+
 Attr* Document::createAttribute(String* localName){
   return new Attr(scriptBindingInstance(),localName);
 }
