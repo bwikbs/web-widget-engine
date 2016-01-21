@@ -13,5 +13,13 @@ void ComputedStyle::loadResources(StarFish* sf)
     }
 }
 
+ComputedStyleDamage compareStyle(ComputedStyle* oldStyle, ComputedStyle* newStyle)
+{
+    if (memcmp(&oldStyle->m_inheritedStyles, &newStyle->m_inheritedStyles, sizeof (ComputedStyle::InheritedStyles)) != 0) {
+        return ComputedStyleDamage::ComputedStyleDamageInherited;
+    }
+    return ComputedStyleDamage::ComputedStyleDamageNone;
+}
+
 
 }

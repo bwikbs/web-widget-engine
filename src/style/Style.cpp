@@ -864,25 +864,31 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
     return ret;
 }
 
-void resolveDOMStyleInner(StyleResolver* resolver, Element* element, ComputedStyle* parentStyle)
+void resolveDOMStyleInner(StyleResolver* resolver, Element* element, ComputedStyle* parentStyle, bool force = false)
 {
-    ComputedStyle* style = resolver->resolveStyle(element, parentStyle);
-
-    element->setStyle(style);
+    if (element->needsStyleRecalc() || force) {
+        ComputedStyle* style = resolver->resolveStyle(element, parentStyle);
+        if (!element->style() || compareStyle(element->style(), style) == ComputedStyleDamage::ComputedStyleDamageInherited) {
+            force = force | true;
+        }
+        element->setStyle(style);
+        element->clearNeedsStyleRecalc();
+    }
 
     ComputedStyle* childStyle = nullptr;
     Node* child = element->firstChild();
     while (child) {
         if (child->isElement()) {
-            resolveDOMStyleInner(resolver, child->asElement(), style);
+            resolveDOMStyleInner(resolver, child->asElement(), element->style(), force);
         } else {
-            if (childStyle == nullptr) {
-                childStyle = new ComputedStyle(style);
-                childStyle->loadResources(element->document()->window()->starFish());
+            if (force) {
+                if (childStyle == nullptr) {
+                    childStyle = new ComputedStyle(element->style());
+                    childStyle->loadResources(element->document()->window()->starFish());
+                }
+                child->setStyle(childStyle);
             }
-            child->setStyle(childStyle);
         }
-
         child = child->nextSibling();
     }
 }

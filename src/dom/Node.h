@@ -410,8 +410,20 @@ public:
 
     inline void setNeedsStyleRecalc()
     {
-        m_needsStyleRecalc = true;
-        setNeedsRendering();
+        if (!m_needsStyleRecalc) {
+            m_needsStyleRecalc = true;
+            setNeedsRendering();
+        }
+    }
+
+    inline bool needsStyleRecalc()
+    {
+        return m_needsStyleRecalc;
+    }
+
+    void clearNeedsStyleRecalc()
+    {
+        m_needsStyleRecalc = false;
     }
 
     virtual void setStyle(ComputedStyle* style)

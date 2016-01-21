@@ -7,9 +7,15 @@
 
 namespace StarFish {
 
+enum ComputedStyleDamage {
+    ComputedStyleDamageNone,
+    ComputedStyleDamageInherited,
+};
+
 class ComputedStyle : public gc {
     friend class StyleResolver;
-    friend void resolveDOMStyleInner(StyleResolver* resolver, Element* element, ComputedStyle* parentStyle);
+    friend void resolveDOMStyleInner(StyleResolver* resolver, Element* element, ComputedStyle* parentStyle, bool force);
+    friend ComputedStyleDamage compareStyle(ComputedStyle* oldStyle, ComputedStyle* newStyle);
 public:
     ComputedStyle()
     {
@@ -176,7 +182,7 @@ protected:
 
     void loadResources(StarFish* sf);
 
-    struct {
+    struct InheritedStyles {
         Color m_color;
         float m_fontSize;
         TextAlignValue m_textAlign;
@@ -201,6 +207,8 @@ protected:
 
     StyleSurroundData* m_surround;
 };
+
+ComputedStyleDamage compareStyle(ComputedStyle* oldStyle, ComputedStyle* newStyle);
 
 }
 
