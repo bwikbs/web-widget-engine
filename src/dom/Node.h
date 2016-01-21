@@ -9,6 +9,7 @@
 #include "platform/canvas/image/ImageData.h"
 #include "dom/EventTarget.h"
 #include "dom/HTMLCollection.h"
+#include "dom/DOMTokenList.h"
 
 namespace StarFish {
 
@@ -19,8 +20,13 @@ class NodeList;
 
 class RareNodeMembers : public gc {
 public:
-    RareNodeMembers():m_children(nullptr) {}
+    RareNodeMembers()
+        :m_children(nullptr),
+         m_domTokenList(nullptr) {
+
+    }
     HTMLCollection* m_children;
+    DOMTokenList* m_domTokenList;
 };
 
 class Node : public EventTarget<ScriptWrappable> {
@@ -562,6 +568,7 @@ public:
     unsigned long childElementCount();
 
     HTMLCollection* children();
+    DOMTokenList* classList();
 
     Element* nextElementSibling();
     Element* previousElementSibling();

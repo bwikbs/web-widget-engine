@@ -32,6 +32,9 @@ public:
     // Event Names
     String* m_click;
     String* m_onclick;
+
+    // Etc
+    String* m_space;
 };
 
 enum StarFishStartUpFlag {

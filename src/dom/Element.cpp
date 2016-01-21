@@ -59,37 +59,7 @@ void Element::didAttributeChanged(String* name, String* old, String* value)
         m_id = value;
         setNeedsStyleRecalc();
     } else if (name->equals("class")) {
-        m_classNames.clear();
-
-        const char* data = value->utf8Data();
-        size_t length = value->length();
-
-        bool isWhiteSpaceState = true;
-
-        std::string str;
-        for (size_t i = 0; i < length; i ++) {
-            if (isWhiteSpaceState) {
-                if (data[i] != ' ') {
-                    isWhiteSpaceState = false;
-                    str += data[i];
-                }
-            } else {
-                if (data[i] == ' ') {
-                    isWhiteSpaceState = true;
-                    m_classNames.push_back(String::fromUTF8(str.data(), str.length()));
-                    str.clear();
-                } else {
-                    str += data[i];
-                }
-            }
-        }
-
-        if (str.length()) {
-            m_classNames.push_back(String::fromUTF8(str.data(), str.length()));
-        }
-        STARFISH_RELEASE_ASSERT(value->indexOf(' ') == SIZE_MAX || m_classNames.size() > 1);
-        m_classNames.push_back(value);
-
+        DOMTokenList::tokenize(&m_classNames, value);
         setNeedsStyleRecalc();
     }
 }

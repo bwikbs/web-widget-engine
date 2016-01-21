@@ -90,6 +90,8 @@ StaticStrings::StaticStrings()
 
     m_click = String::createASCIIString("click");
     m_onclick = String::createASCIIString("onclick");
+
+    m_space = String::createASCIIString(" ");
 }
 
 }

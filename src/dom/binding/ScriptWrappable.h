@@ -29,6 +29,7 @@ class UIEvent;
 class MouseEvent;
 class HTMLCollection;
 class NodeList;
+class DOMTokenList;
 
 class ScriptBindingInstance;
 
@@ -41,6 +42,7 @@ public:
         EventObject,
         HTMLCollectionObject,
         NodeListObject,
+        DOMTokenListObject,
     };
     ScriptWrappable();
 
@@ -78,6 +80,7 @@ public:
     void initScriptWrappable(MouseEvent* ptr, ScriptBindingInstance*);
     void initScriptWrappable(HTMLCollection* ptr, ScriptBindingInstance*);
     void initScriptWrappable(NodeList* ptr, ScriptBindingInstance*);
+    void initScriptWrappable(DOMTokenList* ptr, ScriptBindingInstance*);
 
     bool hasProperty(String* name);
 

@@ -562,10 +562,19 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         HTMLCollection* nd = ((Node *)originalObj)->children();
         if (nd == nullptr)
-            return escargot::ESValue(escargot::ESValue::ESNull);
+            return escargot::ESValue(escargot::ESValue::ESUndefined);
         return escargot::ESValue((escargot::ESObject *)nd);
     };
     ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("children"), childrenGetter, NULL, false, false, false);
+
+    auto classListGetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        DOMTokenList* nd = ((Node *)originalObj)->classList();
+        if (nd == nullptr)
+            return escargot::ESValue(escargot::ESValue::ESUndefined);
+        return escargot::ESValue((escargot::ESObject *)nd);
+    };
+    ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("classList"), classListGetter, NULL, false, false, false);
 
     escargot::ESFunctionObject* removeFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
@@ -857,6 +866,114 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(NodeList, fetchData(this)->m_instance->globalObject()->objectPrototype());
     fetchData(this)->m_nodeList = NodeListFunction;
+
+    DEFINE_FUNCTION(DOMTokenList, fetchData(this)->m_instance->globalObject()->objectPrototype());
+    fetchData(this)->m_domTokenList = DOMTokenListFunction;
+
+    DOMTokenListFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("length"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::DOMTokenListObject);
+
+        uint32_t len = ((DOMTokenList *)originalObj)->length();
+        return escargot::ESValue(len);
+    }, NULL, false, false, false);
+
+    escargot::ESFunctionObject* domTokenListItemFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::DOMTokenListObject);
+
+        escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+        if (argValue.isUInt32()) {
+            String* elem = ((DOMTokenList*) thisValue.asESPointer()->asESObject())->item(argValue.asUInt32());
+            if (elem != nullptr)
+                return escargot::ESString::create(elem->utf8Data());
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("item"), 1, false);
+    DOMTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("item"), false, false, false, domTokenListItemFunction);
+
+    escargot::ESFunctionObject* domTokenListContainsFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::DOMTokenListObject);
+
+        escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+        if (argValue.isESString()) {
+            bool res = ((DOMTokenList*) thisValue.asESPointer()->asESObject())->contains(String::fromUTF8(argValue.asESString()->utf8Data()));
+            return escargot::ESValue(res);
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+    }, escargot::ESString::create("contains"), 1, false);
+    DOMTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("contains"), false, false, false, domTokenListContainsFunction);
+
+    escargot::ESFunctionObject* domTokenListAddFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::DOMTokenListObject);
+
+        std::vector<String*, gc_allocator<String*>> tokens;
+        int argCount = instance->currentExecutionContext()->argumentCount();
+        for (int i = 0; i < argCount; i++) {
+            escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(i);
+            if (argValue.isESString()) {
+                String* aa = String::fromUTF8(argValue.asESString()->utf8Data());
+                tokens.push_back(aa);
+            } else {
+                THROW_ILLEGAL_INVOCATION()
+            }
+        }
+        if (argCount > 0)
+            ((DOMTokenList*) thisValue.asESPointer()->asESObject())->add(&tokens);
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("add"), 1, false);
+    DOMTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("add"), false, false, false, domTokenListAddFunction);
+
+    escargot::ESFunctionObject* domTokenListRemoveFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::DOMTokenListObject);
+
+        std::vector<String*, gc_allocator<String*>> tokens;
+        int argCount = instance->currentExecutionContext()->argumentCount();
+        for (int i = 0; i < argCount; i++) {
+            escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(i);
+            if (argValue.isESString()) {
+                String* aa = String::fromUTF8(argValue.asESString()->utf8Data());
+                tokens.push_back(aa);
+            } else {
+                THROW_ILLEGAL_INVOCATION()
+            }
+        }
+        if (argCount > 0)
+            ((DOMTokenList*) thisValue.asESPointer()->asESObject())->remove(&tokens);
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("remove"), 1, false);
+    DOMTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("remove"), false, false, false, domTokenListRemoveFunction);
+
+    escargot::ESFunctionObject* domTokenListToggleFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::DOMTokenListObject);
+
+        int argCount = instance->currentExecutionContext()->argumentCount();
+        escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+        escargot::ESValue forceValue;
+        if (argCount >= 2)
+            forceValue = instance->currentExecutionContext()->readArgument(1);
+        if (argCount > 0 && argValue.isESString()) {
+            bool didAdd;
+            if (argCount == 1) {
+                didAdd = ((DOMTokenList*) thisValue.asESPointer()->asESObject())->toggle(String::fromUTF8(argValue.asESString()->utf8Data()), false, false);
+            } else {
+                ASSERT(forceValue.isBoolean());
+                didAdd = ((DOMTokenList*) thisValue.asESPointer()->asESObject())->toggle(String::fromUTF8(argValue.asESString()->utf8Data()), true, forceValue.asBoolean());
+              }
+            return escargot::ESValue(didAdd);
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("toggle"), 1, false);
+    DOMTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("toggle"), false, false, false, domTokenListToggleFunction);
 
     DEFINE_FUNCTION(HTMLUnknownElement, HTMLElementFunction->protoType());
     fetchData(this)->m_htmlUnknownElement = HTMLUnknownElementFunction;

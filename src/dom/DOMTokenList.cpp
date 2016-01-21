@@ -1,0 +1,188 @@
+#include "StarFishConfig.h"
+#include "DOMTokenList.h"
+#include "dom/Document.h"
+#include "dom/Element.h"
+
+namespace StarFish {
+
+void DOMTokenList::tokenize(std::vector<String*, gc_allocator<String*>>* tokens, String* src) {
+    tokens->clear();
+
+    const char* data = src->utf8Data();
+    size_t length = src->length();
+
+    bool isWhiteSpaceState = true;
+
+    std::string str;
+    for (size_t i = 0; i < length; i ++) {
+        if (isWhiteSpaceState) {
+            if (data[i] != ' ') {
+                isWhiteSpaceState = false;
+                str += data[i];
+            }
+        } else {
+            if (data[i] == ' ') {
+                isWhiteSpaceState = true;
+                tokens->push_back(String::fromUTF8(str.data(), str.length()));
+                str.clear();
+            } else {
+                str += data[i];
+            }
+        }
+    }
+
+    if (str.length()) {
+        tokens->push_back(String::fromUTF8(str.data(), str.length()));
+    }
+    STARFISH_ASSERT(src->indexOf(' ') == SIZE_MAX || tokens->size() > 1);
+}
+
+unsigned long DOMTokenList::length()
+{
+    std::vector<String*, gc_allocator<String*>> tokens;
+    String* src = m_element->getAttribute(m_localName);
+    tokenize(&tokens, src);
+    return tokens.size();
+}
+
+String* DOMTokenList::item(unsigned long index)
+{
+    std::vector<String*, gc_allocator<String*>> tokens;
+    String* src = m_element->getAttribute(m_localName);
+    tokenize(&tokens, src);
+    if (index < tokens.size())
+        return tokens.at(index);
+    return nullptr;
+}
+
+bool DOMTokenList::contains(String* token)
+{
+    std::vector<String*, gc_allocator<String*>> tokens;
+    String* src = m_element->getAttribute(m_localName);
+    tokenize(&tokens, src);
+    for (unsigned i = 0; i < tokens.size(); i++) {
+        if (tokens.at(i)->equals(token))
+            return true;
+    }
+    return false;
+}
+
+String* DOMTokenList::addSingleToken(String* src, std::vector<String*, gc_allocator<String*>>* tokens, String* token) {
+    bool matched = false;
+    for (unsigned j = 0; j < tokens->size(); j++) {
+        if (token->equals(tokens->at(j))) {
+            matched = true;
+            break;
+        }
+    }
+    if (!matched) {
+        if (src->length() > 0)
+            return src->concat(m_element->document()->window()->starFish()->staticStrings()->m_space)->concat(token);
+        else
+            return src->concat(token);
+    }
+    return src;
+}
+
+void DOMTokenList::add(std::vector<String*, gc_allocator<String*>>* tokensToAdd)
+{
+    String* str = m_element->getAttribute(m_localName);
+    std::vector<String*, gc_allocator<String*>> tokens;
+    tokenize(&tokens, str);
+    for (unsigned i = 0; i < tokensToAdd->size(); i++) {
+        str = addSingleToken(str, &tokens, tokensToAdd->at(i));
+    }
+    m_element->setAttribute(m_localName, str);
+}
+
+int DOMTokenList::checkMatchedTokens(bool* matchFlags, std::vector<String*, gc_allocator<String*>>* tokens, String* token) {
+    int count = 0;
+    for (unsigned i = 0; i < tokens->size(); i++) {
+        if (tokens->at(i)->equals(token)) {
+            matchFlags[i] = true;
+            count++;
+        }
+    }
+    return count;
+}
+
+void DOMTokenList::remove(String* token)
+{
+    String* src = m_element->getAttribute(m_localName);
+    String* dst;
+    std::vector<String*, gc_allocator<String*>> tokens;
+    tokenize(&tokens, src);
+
+    bool* matchFlags = new bool[tokens.size()];
+    int matchCount = checkMatchedTokens(matchFlags, &tokens, token);
+
+    if (matchCount > 0) {
+        bool isEmpty = true;
+        for (unsigned i = 0; i < tokens.size(); i++) {
+            if (!matchFlags[i]) {
+                if (isEmpty) {
+                    dst = tokens.at(i);
+                    isEmpty = false;
+                } else {
+                    dst = dst->concat(m_element->document()->window()->starFish()->staticStrings()->m_space)->concat(tokens.at(i));
+                }
+            }
+        }
+        m_element->setAttribute(m_localName, dst);
+    }
+}
+
+void DOMTokenList::remove(std::vector<String*, gc_allocator<String*>>* tokensToRemove)
+{
+    String* src = m_element->getAttribute(m_localName);
+    String* dst;
+    std::vector<String*, gc_allocator<String*>> tokens;
+    tokenize(&tokens, src);
+    bool* matchFlags = new bool[tokens.size()];
+    int matchCount = 0;
+    for (unsigned i = 0; i < tokensToRemove->size(); i++) {
+        matchCount += checkMatchedTokens(matchFlags, &tokens, tokensToRemove->at(i));
+    }
+
+    if (matchCount > 0) {
+        bool isEmpty = true;
+        for (unsigned i = 0; i < tokens.size(); i++) {
+            if (!matchFlags[i]) {
+                if (isEmpty) {
+                    dst = tokens.at(i);
+                    isEmpty = false;
+                } else {
+                    dst = dst->concat(m_element->document()->window()->starFish()->staticStrings()->m_space)->concat(tokens.at(i));
+                }
+            }
+        }
+        m_element->setAttribute(m_localName, dst);
+    }
+}
+
+bool DOMTokenList::toggle(String* token, bool isForced, bool forceValue)
+{
+    std::vector<String*, gc_allocator<String*>> tokens;
+    String* str = m_element->getAttribute(m_localName);
+    tokenize(&tokens, str);
+    bool needAdd = false;
+    if (isForced) {
+        if (forceValue) {
+            needAdd = true;
+        }
+    } else {
+        bool* matchFlags = new bool[tokens.size()];
+        int matchCount = checkMatchedTokens(matchFlags, &tokens, token);
+        if (matchCount == 0) {
+            needAdd = true;
+        }
+    }
+    if (needAdd) {
+        str = addSingleToken(str, &tokens, token);
+        m_element->setAttribute(m_localName, str);
+    } else
+        remove(token);
+    return needAdd;
+}
+
+}

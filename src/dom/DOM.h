@@ -21,5 +21,6 @@
 #include "dom/HTMLImageElement.h"
 #include "dom/HTMLCollection.h"
 #include "dom/HTMLUnknownElement.h"
+#include "dom/DOMTokenList.h"
 
 #endif

@@ -284,4 +284,21 @@ HTMLCollection* Node::children()
     return m_rareNodeMembers->m_children;
 }
 
+DOMTokenList* Node::classList()
+{
+    if (isElement()) {
+        if (!m_rareNodeMembers) {
+            m_rareNodeMembers = new RareNodeMembers();
+        } else if (!m_rareNodeMembers->m_domTokenList)
+            return m_rareNodeMembers->m_domTokenList;
+
+
+        m_rareNodeMembers->m_domTokenList = new DOMTokenList(m_document->scriptBindingInstance(), asElement(),
+                document()->window()->starFish()->staticStrings()->m_class);
+        return m_rareNodeMembers->m_domTokenList;
+    }
+    return nullptr;
+}
+
+
 }
