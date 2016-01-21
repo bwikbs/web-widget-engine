@@ -625,12 +625,12 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundSize:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->background()->setSizeType(parentStyle->background()->sizeType());
-                    style->background()->setSizeValue(parentStyle->background()->sizeValue());
+                    style->setBackgroundSizeType(parentStyle->bgSizeType());
+                    style->setBackgroundSizeValue(parentStyle->bgSizeValue());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Cover) {
-                    style->background()->setSizeType(BackgroundSizeType::Cover);
+                    style->setBackgroundSizeType(BackgroundSizeType::Cover);
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Contain) {
-                    style->background()->setSizeType(BackgroundSizeType::Contain);
+                    style->setBackgroundSizeType(BackgroundSizeType::Contain);
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueListKind) {
                     ValueList* list = cssValues[k].multiValue();
                     LengthSize* result = new LengthSize();
@@ -640,7 +640,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     if (list->size() >= 2) {
                         result->m_height = convertValueToLength(list->getValueKindAtIndex(1), list->getValueAtIndex(1));
                     }
-                    style->background()->setSizeValue(result);
+                    style->setBackgroundSizeValue(result);
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }

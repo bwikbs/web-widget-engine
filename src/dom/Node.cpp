@@ -355,13 +355,13 @@ void Node::dumpStyle()
     }
 
     // background-size
-    if (m_style->background()->sizeType() == BackgroundSizeType::Cover) {
+    if (m_style->bgSizeType() == BackgroundSizeType::Cover) {
         printf("background-size: cover, ");
-    } else if (m_style->background()->sizeType() == BackgroundSizeType::Contain) {
+    } else if (m_style->bgSizeType() == BackgroundSizeType::Contain) {
         printf("background-size: contain, ");
-    } else if (m_style->background()->sizeType() == BackgroundSizeType::SizeValue) {
-        printf("background-size: (%s, %s),", m_style->background()->sizeValue()->width().dumpString()->utf8Data(),
-                                            m_style->background()->sizeValue()->height().dumpString()->utf8Data());
+    } else if (m_style->bgSizeType() == BackgroundSizeType::SizeValue) {
+        printf("background-size: (%s, %s),", m_style->bgSizeValue()->width().dumpString()->utf8Data(),
+                                             m_style->bgSizeValue()->height().dumpString()->utf8Data());
     }
 
     // bottom

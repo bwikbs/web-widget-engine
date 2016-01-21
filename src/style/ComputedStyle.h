@@ -70,55 +70,104 @@ public:
         return m_inheritedStyles.m_direction;
     }
 
+    void setBackgroundIfNeeded()
+    {
+        if (m_background == NULL) {
+            m_background = new StyleBackgroundData();
+        }
+    }
+
     void setBgColor(Color color)
     {
+        setBackgroundIfNeeded();
         m_background->setBgColor(color);
     }
 
     void setBgImage(String* img)
     {
+        setBackgroundIfNeeded();
         m_background->setBgImage(img);
+    }
+
+    void setBackgroundRepeatX(BackgroundRepeatValue repeat)
+    {
+        setBackgroundIfNeeded();
+        m_background->setRepeatX(repeat);
+    }
+
+    void setBackgroundRepeatY(BackgroundRepeatValue repeat)
+    {
+        setBackgroundIfNeeded();
+        m_background->setRepeatY(repeat);
+    }
+
+    void setBackgroundSizeType(BackgroundSizeType type)
+    {
+        setBackgroundIfNeeded();
+        m_background->setSizeType(type);
+    }
+
+    void setBackgroundSizeValue(LengthSize* size)
+    {
+        setBackgroundIfNeeded();
+        m_background->setSizeValue(size);
     }
 
     Color bgColor()
     {
+        if (m_background == NULL)
+            return Color();
         return m_background->bgColor();
     }
 
     String* bgImage()
     {
+        if (m_background == NULL)
+            return String::emptyString;
         return m_background->bgImage();
     }
 
     ImageData* bgImageData()
     {
+        if (m_background == NULL)
+            return NULL;
         return m_background->m_imageData;
+    }
+
+    BackgroundRepeatValue backgroundRepeatX()
+    {
+        if (m_background == NULL)
+            return BackgroundRepeatValue::RepeatRepeatValue;
+        return m_background->repeatX();
+    }
+
+    BackgroundRepeatValue backgroundRepeatY()
+    {
+        if (m_background == NULL)
+            return BackgroundRepeatValue::RepeatRepeatValue;
+        return m_background->repeatY();
+    }
+
+    BackgroundSizeType bgSizeType()
+    {
+        if (m_background == NULL)
+            return BackgroundSizeType::SizeValue;
+        return m_background->sizeType();
+    }
+
+    LengthSize* bgSizeValue()
+    {
+        if (m_background == NULL)
+            return new LengthSize();
+
+        STARFISH_ASSERT(m_background && m_background->sizeType() == BackgroundSizeType::SizeValue);
+        return m_background->sizeValue();
     }
 
     Font* font()
     {
         STARFISH_ASSERT(m_font);
         return m_font;
-    }
-
-    void setBackgroundRepeatX(BackgroundRepeatValue repeat)
-    {
-        m_background->setRepeatX(repeat);
-    }
-
-    void setBackgroundRepeatY(BackgroundRepeatValue repeat)
-    {
-        m_background->setRepeatY(repeat);
-    }
-
-    BackgroundRepeatValue backgroundRepeatX()
-    {
-        return m_background->repeatX();
-    }
-
-    BackgroundRepeatValue backgroundRepeatY()
-    {
-        return m_background->repeatY();
     }
 
     Length bottom()
@@ -176,7 +225,7 @@ protected:
         m_marginBottom = Length(Length::Fixed, 0);
         m_marginLeft = Length(Length::Fixed, 0);
         m_opacity = 1;
-        m_background = new StyleBackgroundData();;
+        m_background = NULL;
         m_surround = new StyleSurroundData();
     }
 
