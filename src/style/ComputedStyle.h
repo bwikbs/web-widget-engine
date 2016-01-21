@@ -61,6 +61,10 @@ public:
         return m_bgColor;
     }
 
+    String* bgImage() {
+        return m_bgImage;
+    }
+
     Font* font()
     {
         if (m_font == nullptr) {
@@ -104,6 +108,7 @@ protected:
         m_borderImageRepeat = new AxisValue<BorderImageRepeatValue>(BorderImageRepeatValue::StretchValue, BorderImageRepeatValue::StretchValue);
         m_marginBottom = Length(Length::Fixed, 0);
         m_opacity = 1;
+        m_bgImage = String::emptyString;
     }
 
     struct {
@@ -119,6 +124,7 @@ protected:
 
     Font* m_font;
     Color m_bgColor;
+    String* m_bgImage;
     SizeValue* m_bgSize;
 
     BackgroundRepeatValue m_backgroundRepeatX;

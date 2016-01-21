@@ -162,6 +162,8 @@ public:
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/colors.html#background-properties
         BackgroundColor, // color | <transparent> | inherit
         // https://www.w3.org/TR/css3-background/#the-background-size
+        BackgroundImage, // uri | <none> | inherit
+        // https://www.w3.org/TR/CSS21/colors.html#propdef-background-image
         BackgroundSize, // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
         // https://www.w3.org/TR/CSS21/colors.html#propdef-background-repeat
         //BackgroundRepeat, // repeat | repeat-x | repeat-y | no-repeat | initial | inherit
@@ -290,6 +292,7 @@ public:
     }
 
     friend void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value);
+    friend void parseUrl(CSSStyleValuePair& ret, const char* value);
     static CSSStyleValuePair fromString(const char* key, const char* value);
     static void parseFontSizeForKeyword(CSSStyleValuePair* ret, int col);
 protected:

@@ -470,6 +470,13 @@ public:
         // background-color
         printf("background-color: (%d,%d,%d,%d), ", m_style->bgColor().r(), m_style->bgColor().g(), m_style->bgColor().b(), m_style->bgColor().a());
 
+        // background-image
+        if (m_style->bgImage()->length() == 0) {
+            printf("background-image: none, ");
+        } else {
+            printf("background-image: %s, ", m_style->bgImage()->utf8Data());
+        }
+
         // bottom
         if (m_style->bottom().isFixed()) {
             printf("bottom: %f, ", m_style->bottom().fixed());

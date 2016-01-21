@@ -29,6 +29,9 @@ bool endsWith(const char* base, const char* str)
 #define VALUE_IS_INITIAL() \
     VALUE_IS_STRING("initial")
 
+#define VALUE_IS_NONE() \
+    VALUE_IS_STRING("none")
+
 void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
 {
     if (endsWith(value, "%")) {
@@ -42,6 +45,16 @@ void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
         sscanf(value, "%fpx", &f);
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
         ret.m_value.m_length = CSSLength(f);
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+void parseUrl(CSSStyleValuePair& ret, const char* value)
+{
+    int pathlen = strlen(value);
+    if (pathlen >= 7) {
+        ret.m_value.m_stringValue = String::fromUTF8(value + 5, pathlen - 7);
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
@@ -160,6 +173,18 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             //       Check the value has right color strings
             ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
             ret.m_value.m_stringValue = String::fromUTF8(value);
+        }
+    } else if (strcmp(key, "background-image") == 0) {
+        // uri | <none> | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundImage;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+
+        if (VALUE_IS_NONE() || VALUE_IS_INITIAL()) {
+            ret.m_value.m_stringValue = String::emptyString;
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            parseUrl(ret, value);
         }
     } else if (strcmp(key, "text-align") == 0) {
         // left | right | center | justify | <inherit>
@@ -499,6 +524,13 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::StringValueKind);
                     style->m_bgColor = parseColor(cssValues[k].stringValue());
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BackgroundImage:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_bgImage = parentStyle->m_bgImage;
+                } else {
+                    style->m_bgImage = cssValues[k].stringValue();
                 }
                 break;
             // no inherited
