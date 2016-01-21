@@ -406,6 +406,17 @@ void Node::dumpStyle()
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 
+    // border-image-slice
+    if (m_style->surround()->border.imageOffsetTop().isPercent()) printf("border-image-slice: (%.1fp, ", m_style->surround()->border.imageOffsetTop().percent());
+    else printf("border-image-slice: (%.1f, ", m_style->surround()->border.imageOffsetTop().fixed());
+    if (m_style->surround()->border.imageOffsetRight().isPercent()) printf("%.1fp, ", m_style->surround()->border.imageOffsetRight().percent());
+    else printf("%.1f, ", m_style->surround()->border.imageOffsetRight().fixed());
+    if (m_style->surround()->border.imageOffsetBottom().isPercent()) printf("%.1fp, ", m_style->surround()->border.imageOffsetBottom().percent());
+    else printf("%.1f, ", m_style->surround()->border.imageOffsetBottom().fixed());
+    if (m_style->surround()->border.imageOffsetLeft().isPercent()) printf("%.1fp, ", m_style->surround()->border.imageOffsetLeft().percent());
+    else printf("%.1f, ", m_style->surround()->border.imageOffsetLeft().fixed());
+    printf("%d), ", m_style->surround()->border.imageFill());
+
     // border-image-source
     if(m_style->borderImageSource() != 0)
         printf("border-image-source: %s, ", m_style->borderImageSource()->utf8Data());

@@ -153,6 +153,8 @@ public:
         Left, // length | percentage | <auto> | inherit
         // https://www.w3.org/TR/css3-background/#the-border-image-repeat
         BorderImageRepeat, // <stretch> | repeat | round | space {1,2}
+        // https://www.w3.org/TR/css3-background/#border-image-slice
+        BorderImageSlice, // number | percentage {1,4} && fill? // initial value -> 100%
         // https://www.w3.org/TR/css3-background/#the-border-image-source
         BorderImageSource, // none | <image>
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-bottom
@@ -170,6 +172,7 @@ public:
     };
 
     enum ValueKind {
+        Initial,
         Inherit,
         Length,
         Percentage,

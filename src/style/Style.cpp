@@ -5,6 +5,7 @@
 #include "dom/Element.h"
 #include "dom/Document.h"
 #include "CSSParser.h"
+#include "dom/DOMTokenList.h"
 
 namespace StarFish {
 
@@ -110,6 +111,16 @@ Length convertValueToLength(CSSStyleValuePair::ValueKind kind, CSSStyleValuePair
         return data.m_length.toLength();
     else if (kind == CSSStyleValuePair::ValueKind::Percentage)
         return Length(Length::Percent, data.m_floatValue);
+    else
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+}
+
+Length convertPercentOrNumberToLength(CSSStyleValuePair::ValueKind kind, CSSStyleValuePair::ValueData data)
+{
+    if (kind == CSSStyleValuePair::ValueKind::Percentage)
+        return Length(Length::Percent, data.m_floatValue);
+    else if (kind == CSSStyleValuePair::ValueKind::Number)
+        return Length(Length::Fixed, data.m_floatValue);
     else
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
 }
@@ -354,6 +365,34 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             }
         }
 
+    } else if (strcmp(key, "border-image-slice") == 0) {
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSlice;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
+            ret.m_value.m_multiValue = new ValueList();
+            std::vector<String*, gc_allocator<String*>> tokens;
+            DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+            for (unsigned int i = 0; i < tokens.size(); i++) {
+                const char* currentToken = tokens[i]->utf8Data();
+                if (startsWith(currentToken, "fill")) {
+                    ret.m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::StringValueKind, {0});
+                } else if (endsWith(currentToken, "%")) {
+                    float f;
+                    sscanf(currentToken, "%f%%", &f);
+                    ret.m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::Percentage, {.m_floatValue = (f / 100.f)});
+                } else {
+                    char* pEnd;
+                    double d = strtod (currentToken, &pEnd);
+                    STARFISH_ASSERT(pEnd == currentToken + tokens[i]->length());
+                    ret.m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::Number, {.m_floatValue = (float)d});
+                }
+            }
+        }
     } else if (strcmp(key, "border-image-source") == 0) {
         // none | <image>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSource;
@@ -692,6 +731,38 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_borderImageRepeat = parentStyle->m_borderImageRepeat;
                 } else {
                     style->m_borderImageRepeat = cssValues[k].borderImageRepeatValue();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderImageSlice:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    // Use initialized value
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_surround->border.borderImageSliceInherit(parentStyle->m_surround->border);
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::ValueListKind);
+                    BorderData* b = &style->m_surround->border;
+                    ValueList* l = cssValues[k].multiValue();
+                    unsigned int size = l->size();
+                    if (l->getValueKindAtIndex(size - 1) == CSSStyleValuePair::ValueKind::StringValueKind) {
+                        b->setImageFill(true);
+                        size--;
+                    }
+                    b->setImageOffsetTop(convertPercentOrNumberToLength(l->getValueKindAtIndex(0), l->getValueAtIndex(0)));
+                    if (size > 1) {
+                        b->setImageOffsetRight(convertPercentOrNumberToLength(l->getValueKindAtIndex(1), l->getValueAtIndex(1)));
+                    } else {
+                        b->setImageOffsetRight(b->imageOffsetTop());
+                    }
+                    if (size > 2) {
+                        b->setImageOffsetBottom(convertPercentOrNumberToLength(l->getValueKindAtIndex(2), l->getValueAtIndex(2)));
+                    } else {
+                        b->setImageOffsetBottom(b->imageOffsetTop());
+                    }
+                    if (size > 3) {
+                        b->setImageOffsetLeft(convertPercentOrNumberToLength(l->getValueKindAtIndex(3), l->getValueAtIndex(3)));
+                    } else {
+                        b->setImageOffsetLeft(b->imageOffsetRight());
+                    }
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageSource:

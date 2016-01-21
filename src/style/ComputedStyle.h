@@ -227,6 +227,7 @@ protected:
         m_opacity = 1;
         m_background = NULL;
         m_surround = new StyleSurroundData();
+        m_surround->border.borderImageSliceInitialize();
     }
 
     void loadResources(StarFish* sf);
