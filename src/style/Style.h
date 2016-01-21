@@ -91,35 +91,11 @@ enum BackgroundRepeatValue {
     NoRepeatRepeatValue,
 };
 
-enum BorderImageRepeatValue {
-    StretchValue,
-    RepeatValue,
-    RoundValue,
-    SpaceValue,
-};
-
 // Widget Engine will support only visible and hidden values.
 enum OverflowValue {
     Visible,
     Hidden,
 };
-
-template <typename T>
-class AxisValue : public gc {
-public:
-    AxisValue()
-    {
-    }
-    AxisValue(T xaxis, T yaxis)
-        : m_XAxis(xaxis)
-        , m_YAxis(yaxis)
-    {
-    }
-public:
-    T m_XAxis;
-    T m_YAxis;
-};
-
 
 class ValueList;
 
@@ -296,7 +272,7 @@ public:
 		return m_value.m_backgroundRepeatY;
 	}
 
-    AxisValue<BorderImageRepeatValue>* borderImageRepeatValue() {
+    BorderImageRepeatValue borderImageRepeatValue() {
         STARFISH_ASSERT(m_valueKind == BorderImageRepeatValueKind);
         return m_value.m_borderImageRepeat;
     }
@@ -331,7 +307,7 @@ public:
         String* m_stringValue;
         BackgroundRepeatValue m_backgroundRepeatX;
         BackgroundRepeatValue m_backgroundRepeatY;
-        AxisValue<BorderImageRepeatValue>* m_borderImageRepeat;
+        BorderImageRepeatValue m_borderImageRepeat;
         ValueList* m_multiValue;
         OverflowValue m_overflowX;
         OverflowValue m_overflowY;

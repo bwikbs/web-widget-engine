@@ -339,32 +339,36 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "border-image-repeat") == 0) {
         // <stretch> | repeat | round | space {1,2}
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageRepeat;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderImageRepeatValueKind;
-        ret.m_value.m_borderImageRepeat = new AxisValue<BorderImageRepeatValue>(BorderImageRepeatValue::StretchValue, BorderImageRepeatValue::StretchValue);
-
         if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
         } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
+            ret.m_value.m_multiValue = new ValueList();
+
             // TODO: find better way to parse axis data
             // 1) parse X-axis data
-            if (startsWith(value, "repeat")) {
-                ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::RepeatValue;
+            if (startsWith(value, "stretch")) {
+                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = StretchValue});
+            } else if (startsWith(value, "repeat")) {
+                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RepeatValue});
             } else if (startsWith(value, "round")) {
-                ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::RoundValue;
+                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RoundValue});
             } else if (startsWith(value, "space")) {
-                ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::SpaceValue;
+                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = SpaceValue});
             }
             // 2) parse Y-axis data
-            if (endsWith(value, "repeat")) {
-                ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::RepeatValue;
+            if (endsWith(value, "stretch")) {
+                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = StretchValue});
+            } else if (endsWith(value, "repeat")) {
+                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RepeatValue});
             } else if (endsWith(value, "round")) {
-                ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::RoundValue;
+                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RoundValue});
             } else if (endsWith(value, "space")) {
-                ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::SpaceValue;
+                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = SpaceValue});
             }
         }
-
     } else if (strcmp(key, "border-image-slice") == 0) {
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSlice;
 
@@ -760,20 +764,23 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageRepeat:
-                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_borderImageRepeat = parentStyle->m_borderImageRepeat;
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    // Use initialized value
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->surround()->border.borderImageRepeatInherit(parentStyle->surround()->border);
                 } else {
-                    style->m_borderImageRepeat = cssValues[k].borderImageRepeatValue();
+                    style->surround()->border.setImageRepeatX(cssValues[k].multiValue()->getValueAtIndex(0).m_borderImageRepeat);
+                    style->surround()->border.setImageRepeatY(cssValues[k].multiValue()->getValueAtIndex(1).m_borderImageRepeat);
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageSlice:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
                     // Use initialized value
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_surround->border.borderImageSliceInherit(parentStyle->m_surround->border);
+                    style->surround()->border.borderImageSliceInherit(parentStyle->surround()->border);
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::ValueListKind);
-                    BorderData* b = &style->m_surround->border;
+                    BorderData* b = &style->surround()->border;
                     ValueList* l = cssValues[k].multiValue();
                     unsigned int size = l->size();
                     if (l->getValueKindAtIndex(size - 1) == CSSStyleValuePair::ValueKind::StringValueKind) {

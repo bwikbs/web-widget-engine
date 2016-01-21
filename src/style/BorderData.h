@@ -5,6 +5,13 @@
 
 namespace StarFish {
 
+enum BorderImageRepeatValue {
+    StretchValue,
+    RepeatValue,
+    RoundValue,
+    SpaceValue,
+};
+
 class BorderData {
 public:
     BorderData()
@@ -101,6 +108,26 @@ public:
         m_imageFill = fill;
     }
 
+    BorderImageRepeatValue imageRepeatX()
+    {
+        return m_imageRepeatX;
+    }
+
+    BorderImageRepeatValue imageRepeatY()
+    {
+        return m_imageRepeatY;
+    }
+
+    void setImageRepeatX(BorderImageRepeatValue x)
+    {
+        m_imageRepeatX = x;
+    }
+
+    void setImageRepeatY(BorderImageRepeatValue y)
+    {
+        m_imageRepeatY = y;
+    }
+
     void borderImageSliceInherit(BorderData& parent)
     {
         m_imageOffsetTop = parent.imageOffsetTop();
@@ -118,6 +145,18 @@ public:
         m_imageFill = false;
     }
 
+    void borderImageRepeatInherit(BorderData& parent)
+    {
+        m_imageRepeatX = parent.imageRepeatX();
+        m_imageRepeatY = parent.imageRepeatY();
+    }
+
+    void borderImageRepeatInitialize()
+    {
+        m_imageRepeatX = BorderImageRepeatValue::StretchValue;
+        m_imageRepeatY = BorderImageRepeatValue::StretchValue;
+    }
+
 private:
     BorderValue m_top;
     BorderValue m_right;
@@ -129,8 +168,11 @@ private:
     Length m_imageOffsetRight;
     Length m_imageOffsetBottom;
     Length m_imageOffsetLeft;
-
     bool m_imageFill;
+
+    // border-image-repeat
+    BorderImageRepeatValue m_imageRepeatX;
+    BorderImageRepeatValue m_imageRepeatY;
 };
 
 } /* namespace StarFish */

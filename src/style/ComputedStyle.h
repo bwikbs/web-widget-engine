@@ -180,11 +180,6 @@ public:
         return m_left;
     }
 
-    AxisValue<BorderImageRepeatValue>* borderImageRepeat()
-    {
-        return m_borderImageRepeat;
-    }
-
     String* borderImageSource()
     {
         return m_borderImageSource;
@@ -268,6 +263,7 @@ public:
     StyleSurroundData* surround() {
         if (m_surround == nullptr) {
             m_surround = new StyleSurroundData();
+            m_surround->border.borderImageRepeatInitialize();
             m_surround->border.borderImageSliceInitialize();
         }
         return m_surround;
@@ -285,7 +281,6 @@ protected:
     void initNonInheritedStyles()
     {
         m_display = DisplayValue::InlineDisplayValue;
-        m_borderImageRepeat = new AxisValue<BorderImageRepeatValue>(BorderImageRepeatValue::StretchValue, BorderImageRepeatValue::StretchValue);
         m_marginBottom = Length(Length::Fixed, 0);
         m_marginLeft = Length(Length::Fixed, 0);
         m_opacity = 1;
@@ -310,7 +305,6 @@ protected:
     Font* m_font;
     StyleBackgroundData* m_background;
 
-    AxisValue<BorderImageRepeatValue>* m_borderImageRepeat;
     String* m_borderImageSource;
     OverflowValue m_overflowX;
     OverflowValue m_overflowY;
