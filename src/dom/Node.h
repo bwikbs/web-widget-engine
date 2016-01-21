@@ -477,6 +477,16 @@ public:
             printf("background-image: %s, ", m_style->bgImage()->utf8Data());
         }
 
+        // background-size
+        if (m_style->background()->sizeType() == BackgroundSizeType::Cover) {
+            printf("background-size: cover, ");
+        } else if (m_style->background()->sizeType() == BackgroundSizeType::Contain) {
+            printf("background-size: contain, ");
+        } else if (m_style->background()->sizeType() == BackgroundSizeType::SizeValue) {
+            printf("background-size: (%s, %s),", m_style->background()->sizeValue()->width().dumpString()->utf8Data(),
+                                                m_style->background()->sizeValue()->height().dumpString()->utf8Data());
+        }
+
         // bottom
         if (m_style->bottom().isFixed()) {
             printf("bottom: %f, ", m_style->bottom().fixed());

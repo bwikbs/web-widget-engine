@@ -11,23 +11,23 @@
                 </node>
                 <node nodeType="1" localName="style" type="text/css">
                     <style selectorText="#idText" font-size="20px" color="red" background-size="100px 50%"/>
-                    <style selectorText=".classText" background-size="150px"/>
-                    <style selectorText="div" display="block" background-size="cover"/>
+                    <style selectorText=".classText" font-size="12px" background-size="150px"/>
+                    <style selectorText="div" display="block" background-size="contain"/>
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
             #idText {
-                font-size: 20px;    
-            
+                font-size: 20px;                
                 color: red;
-                background-size: 100px 50%;
+                                background-size: 100px 50%;
             }
             .classText {
+                font-size: 12px;
                 text-align: 16px;
-                background-size: 150px;
+                                background-size: 150px;
             }
             div {
                 display: block;
-                background-size: cover;
+                                background-size: cover
             }
         ]]></text>
                     </node>
@@ -63,6 +63,17 @@
                         <text><![CDATA[
             tttttt
         ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+                ]]></text>
+                </node>
+                <node nodeType="1" localName="div">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+abcde
+                ]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">

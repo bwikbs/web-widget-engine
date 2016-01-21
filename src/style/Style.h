@@ -73,6 +73,13 @@ enum TextAlignValue {
     // JustifyTextAlignValue,
 };
 
+enum BackgroundSizeType {
+    Cover,
+    Contain,
+    SizeValue,
+    SizeNone,
+};
+
 enum BackgroundRepeatValue {
 	RepeatRepeatValue,
     NoRepeatRepeatValue,
@@ -84,43 +91,6 @@ enum BorderImageRepeatValue {
     RepeatValue,
     RoundValue,
     SpaceValue,
-};
-
-class SizeValueComponent {
-public:
-    enum ValueKind {
-        Length,
-        Percentage,
-        Auto
-    };
-    SizeValueComponent()
-        : m_valueKind(ValueKind::Auto),
-          m_value{0}
-    {
-    }
-
-    ValueKind m_valueKind;
-    union {
-        float m_floatValue;
-        CSSLength m_length;
-    } m_value;
-};
-
-class SizeValue : public gc {
-    SizeValue()
-    {
-    }
-    SizeValue(SizeValueComponent width)
-        : m_width(width) {
-    }
-    SizeValue(SizeValueComponent width, SizeValueComponent height)
-        : m_width(width),
-          m_height(height) {
-    }
-public:
-    static SizeValue* fromString(const char* value);
-    SizeValueComponent m_width;
-    SizeValueComponent m_height;
 };
 
 template <typename T>
@@ -199,7 +169,6 @@ public:
         //BackgroundSize
         Cover,
         Contain,
-        SizeValueKind,  //(width: [length|percentage|auto], height: [length|percentage|auto]) pair
 
         BackgroundRepeatValueKind,
         BorderImageRepeatValueKind,
@@ -270,12 +239,6 @@ public:
         return m_value.m_stringValue;
     }
 
-    SizeValue* sizeValue()
-    {
-        STARFISH_ASSERT(m_valueKind == SizeValueKind);
-        return m_value.m_sizeValue;
-    }
-
     BackgroundRepeatValue backgroundRepeatXValue()
     {
     	STARFISH_ASSERT(m_valueKind == BackgroundRepeatValueKind);
@@ -293,13 +256,15 @@ public:
         return m_value.m_borderImageRepeat;
     }
 
+    ValueList* multiValue() {
+        STARFISH_ASSERT(m_valueKind == ValueListKind);
+        return m_value.m_multiValue;
+    }
+
     friend void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value);
     friend void parseUrl(CSSStyleValuePair& ret, const char* value);
     static CSSStyleValuePair fromString(const char* key, const char* value);
     static void parseFontSizeForKeyword(CSSStyleValuePair* ret, int col);
-protected:
-    KeyKind m_keyKind;
-    ValueKind m_valueKind;
 
     union ValueData {
         float m_floatValue;
@@ -307,12 +272,15 @@ protected:
         TextAlignValue m_textAlign;
         CSSLength m_length;
         String* m_stringValue;
-        SizeValue* m_sizeValue;
         BackgroundRepeatValue m_backgroundRepeatX;
         BackgroundRepeatValue m_backgroundRepeatY;
         AxisValue<BorderImageRepeatValue>* m_borderImageRepeat;
         ValueList* m_multiValue;
-    } m_value;
+    };
+protected:
+    KeyKind m_keyKind;
+    ValueKind m_valueKind;
+    ValueData m_value;
 };
 
 class ValueList : public gc {
@@ -337,6 +305,16 @@ public:
     {
         m_valueKinds.push_back(kind);
         m_values.push_back(value);
+    }
+
+    CSSStyleValuePair::ValueKind getValueKindAtIndex(int idx)
+    {
+        return m_valueKinds[idx];
+    }
+
+    CSSStyleValuePair::ValueData getValueAtIndex(int idx)
+    {
+        return m_values[idx];
     }
 
     unsigned int size()
@@ -410,6 +388,7 @@ public:
     void resolveDOMStyle(Document* document);
     void dumpDOMStyle(Document* document);
     ComputedStyle* resolveDocumentStyle();
+    friend Length convertValueToLength(CSSStyleValuePair::ValueKind kind, CSSStyleValuePair::ValueData data);
     ComputedStyle* resolveStyle(Element* node, ComputedStyle* parent);
 protected:
     std::vector<CSSStyleSheet*, gc_allocator<CSSStyleSheet*>> m_sheets;

@@ -90,6 +90,18 @@ void CSSStyleValuePair::parseFontSizeForKeyword(CSSStyleValuePair* ret, int col)
         ret->m_value.m_length = CSSLength(fontSizeFactors[col] * mediumSize);
 }
 
+Length convertValueToLength(CSSStyleValuePair::ValueKind kind, CSSStyleValuePair::ValueData data)
+{
+    if (kind == CSSStyleValuePair::ValueKind::Auto)
+        return Length();
+    else if (kind == CSSStyleValuePair::ValueKind::Length)
+        return data.m_length.toLength();
+    else if (kind == CSSStyleValuePair::ValueKind::Percentage)
+        return Length(Length::Percent, data.m_floatValue);
+    else
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+}
+
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
     CSSStyleValuePair ret;
@@ -348,53 +360,6 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
 
     return ret;
 }
-SizeValue* SizeValue::fromString(const char* value) {
-    unsigned len = strlen(value);
-    char copyvalue[len];
-    char* current = copyvalue;
-    strcpy(copyvalue, value);
-    char* firstVal = CSSPropertyParser::getNextSingleValue(current);
-
-    SizeValueComponent width;
-    if (endsWith(firstVal, "%")) {
-        float f;
-        sscanf(firstVal, "%f%%", &f);
-        f = f / 100.f;
-        width.m_valueKind = SizeValueComponent::ValueKind::Percentage;
-        width.m_value.m_floatValue = f;
-    } else if (endsWith(firstVal, "px")) {
-        float f;
-        sscanf(firstVal, "%fpx", &f);
-        width.m_valueKind = SizeValueComponent::ValueKind::Length;
-        width.m_value.m_length = CSSLength(f);
-    } else {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    }
-
-    if (strlen(firstVal) >= len)
-        return new SizeValue(width);
-    current = firstVal + strlen(firstVal) + 1;
-
-    char* secondVal = CSSPropertyParser::getNextSingleValue(current);
-    SizeValueComponent height;
-    if (strlen(secondVal) > 0) {
-        if (endsWith(secondVal, "%")) {
-            float f;
-            sscanf(secondVal, "%f%%", &f);
-            f = f / 100.f;
-            height.m_valueKind = SizeValueComponent::ValueKind::Percentage;
-            height.m_value.m_floatValue = f;
-        } else if (endsWith(secondVal, "px")) {
-            float f;
-            sscanf(secondVal, "%fpx", &f);
-            height.m_valueKind = SizeValueComponent::ValueKind::Length;
-            height.m_value.m_length = CSSLength(f);
-        } else {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
-        }
-    }
-    return new SizeValue(width, height);
-}
 
 ComputedStyle* StyleResolver::resolveDocumentStyle()
 {
@@ -529,12 +494,12 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundColor:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_bgColor = parentStyle->m_bgColor;
+                    style->setbgColor(parentStyle->bgColor());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
-                    style->m_bgColor = Color(0, 0, 0, 0);
+                    style->setbgColor(Color(0, 0, 0, 0));
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::StringValueKind);
-                    style->m_bgColor = parseColor(cssValues[k].stringValue());
+                    style->setbgColor(parseColor(cssValues[k].stringValue()));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundImage:
@@ -544,8 +509,27 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_bgImage = cssValues[k].stringValue();
                 }
                 break;
-            // no inherited
             case CSSStyleValuePair::KeyKind::BackgroundSize:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->background()->setSizeType(parentStyle->background()->sizeType());
+                    style->background()->setSizeValue(parentStyle->background()->sizeValue());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Cover) {
+                    style->background()->setSizeType(BackgroundSizeType::Cover);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Contain) {
+                    style->background()->setSizeType(BackgroundSizeType::Contain);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueListKind) {
+                    ValueList* list = cssValues[k].multiValue();
+                    LengthSize* result = new LengthSize();
+                    if (list->size() >= 1) {
+                        result->m_width = convertValueToLength(list->getValueKindAtIndex(0), list->getValueAtIndex(0));
+                    }
+                    if (list->size() >= 2) {
+                        result->m_height = convertValueToLength(list->getValueKindAtIndex(1), list->getValueAtIndex(1));
+                    }
+                    style->background()->setSizeValue(result);
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundRepeatX:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {

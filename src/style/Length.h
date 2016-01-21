@@ -56,9 +56,48 @@ public:
         return !operator ==(src);
     }
 
+    String* dumpString()
+    {
+        char temp[100];
+        if (isFixed())
+            sprintf(temp, "%f", fixed());
+        else if(isPercent())
+            sprintf(temp, "%f", percent());
+        else if(isAuto())
+            sprintf(temp, "auto");
+        return String::fromUTF8(temp);
+    }
+
 protected:
     Type m_type;
     float m_data;
+};
+
+class LengthSize : public gc {
+public:
+    LengthSize()
+    {
+    }
+
+    LengthSize(Length width)
+        : m_width(width) {
+    }
+
+    LengthSize(Length width, Length height)
+        : m_width(width),
+          m_height(height) {
+    }
+
+    Length width() {
+        return m_width;
+    }
+
+    Length height() {
+        return m_height;
+    }
+
+    Length m_width;
+    Length m_height;
 };
 
 }

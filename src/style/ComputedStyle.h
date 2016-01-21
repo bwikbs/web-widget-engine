@@ -2,6 +2,7 @@
 #define __StarFishComputedStyle__
 
 #include "style/Style.h"
+#include "style/StyleBackgroundData.h"
 
 namespace StarFish {
 
@@ -56,9 +57,14 @@ public:
         return m_inheritedStyles.m_textAlign;
     }
 
+    void setbgColor(Color color)
+    {
+        m_background->setbgColor(color);
+    }
+
     Color bgColor()
     {
-        return m_bgColor;
+        return m_background->bgColor();
     }
 
     String* bgImage() {
@@ -101,6 +107,10 @@ public:
         return m_opacity;
     }
 
+    StyleBackgroundData* background() {
+        return m_background;
+    }
+
 protected:
     void initNonInheritedStyles()
     {
@@ -109,6 +119,7 @@ protected:
         m_marginBottom = Length(Length::Fixed, 0);
         m_opacity = 1;
         m_bgImage = String::emptyString;
+        m_background = new StyleBackgroundData();;
     }
 
     struct {
@@ -123,9 +134,8 @@ protected:
     Length m_bottom;
 
     Font* m_font;
-    Color m_bgColor;
     String* m_bgImage;
-    SizeValue* m_bgSize;
+    StyleBackgroundData* m_background;
 
     BackgroundRepeatValue m_backgroundRepeatX;
     BackgroundRepeatValue m_backgroundRepeatY;
