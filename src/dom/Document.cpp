@@ -37,17 +37,42 @@ HTMLCollection* Document::getElementsByClassName(String* classNames)
   auto filter = [=](Node* node) {
       if (node->isElement()&&node->asElement()->classNames().size()>0){
 
-        bool is_single_query = true;
+        const char* data = classNames->utf8Data();
+        size_t length = classNames->length();
 
-        std::string query = std::string(classNames->utf8Data());
-        std::string::size_type start = 0;
-        std::string::size_type pos = query.find(" ");
+        bool isWhiteSpaceState = true;
 
-        while (pos != std::string::npos||is_single_query)
-        {
+        std::string str;
+        for (size_t i = 0; i < length; i ++) {
+            if (isWhiteSpaceState) {
+                if (data[i] != ' ') {
+                    isWhiteSpaceState = false;
+                    str += data[i];
+                }
+            } else {
+                if (data[i] == ' ') {
+                    isWhiteSpaceState = true;
+
+                    bool is_match = false;
+                    String* tok = String::fromUTF8(str.data(), str.length());
+                    auto c_classNames =  node->asElement()->classNames();
+                    for (unsigned i = 0; i < c_classNames.size(); i ++) {
+                      if(tok->equals(c_classNames[i]))
+                        is_match=true;
+                    }
+                    if(is_match==false)
+                      return false;
+
+                    str.clear();
+                } else {
+                    str += data[i];
+                }
+            }
+        }
+
+        if (str.length()) {
             bool is_match = false;
-            is_single_query = false;
-            String* tok = String::fromUTF8(query.substr(start, pos - start).data());
+            String* tok = String::fromUTF8(str.data(), str.length());
             auto c_classNames =  node->asElement()->classNames();
             for (unsigned i = 0; i < c_classNames.size(); i ++) {
               if(tok->equals(c_classNames[i]))
@@ -55,10 +80,8 @@ HTMLCollection* Document::getElementsByClassName(String* classNames)
             }
             if(is_match==false)
               return false;
-
-            start = pos + 1;
-            pos = query.find(" ", start);
         }
+
         return true;
       }
       return false;

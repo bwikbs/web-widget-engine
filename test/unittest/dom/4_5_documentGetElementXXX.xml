@@ -55,7 +55,7 @@
                     <text><![CDATA[
         ]]></text>
                 </node>
-                <node nodeType="1" localName="div" class="classText">
+                <node nodeType="1" localName="div" class="classText classText2 classText3">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
             AAAAAA
@@ -66,7 +66,7 @@
                     <text><![CDATA[
         ]]></text>
                 </node>
-                <node nodeType="1" localName="div" class="classText2">
+                <node nodeType="1" localName="div" class="classText">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
             BBBBBB
@@ -77,7 +77,7 @@
                     <text><![CDATA[
         ]]></text>
                 </node>
-                <node nodeType="1" localName="div" class="classText2">
+                <node nodeType="1" localName="div" class="classText">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
             CCCCCC
@@ -123,11 +123,20 @@
             print(test.item(1).textContent);
 
             print("<Document-getElementsByClassName Test>");
-            var test = document.getElementsByClassName("classText2");
+            var test = document.getElementsByClassName("classText");
             print(test.length);
             print(test.item(0));
             print(test.item(0).textContent);
             print(test.item(1).textContent);
+            print(test.item(2).textContent);
+
+            test = document.getElementsByClassName("classText3 classText");
+            print(test.length);
+            print(test.item(0).textContent);
+
+            test = document.getElementsByClassName("classText1 classText");
+            print(test.length);
+
             return true;
         }
              test();
