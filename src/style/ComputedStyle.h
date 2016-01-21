@@ -13,7 +13,7 @@ public:
         m_font = nullptr;
 
         m_inheritedStyles.m_color = Color(0, 0, 0, 255);
-        m_inheritedStyles.m_fontSize = 10;
+        m_inheritedStyles.m_fontSize = DEFAULT_FONT_SIZE;
 
         initNonInheritedStyles();
     }

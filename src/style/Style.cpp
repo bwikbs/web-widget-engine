@@ -47,6 +47,36 @@ void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
     }
 }
 
+static const int strictFontSizeTable[8][8] =
+{
+        { 9,    9,     9,     9,    11,    14,    18,    27 },
+        { 9,    9,     9,    10,    12,    15,    20,    30 },
+        { 9,    9,    10,    11,    13,    17,    22,    33 },
+        { 9,    9,    10,    12,    14,    18,    24,    36 },
+        { 9,   10,    12,    13,    16,    20,    26,    39 }, // fixed font default (13)
+        { 9,   10,    12,    14,    17,    21,    28,    42 },
+        { 9,   10,    13,    15,    18,    23,    30,    45 },
+        { 9,   10,    13,    16,    18,    24,    32,    48 }  // proportional font default (16)
+};
+static const float fontSizeFactors[8] = { 0.60f, 0.75f, 0.89f, 1.0f, 1.2f, 1.5f, 2.0f, 3.0f };
+
+const int fontSizeTableMax = 16;
+const int fontSizeTableMin = 9;
+
+void CSSStyleValuePair::parseFontSizeForKeyword(CSSStyleValuePair* ret, int col) {
+    int mediumSize = DEFAULT_FONT_SIZE;
+    int row = -1;
+    if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax)
+        row =  mediumSize - fontSizeTableMin;
+
+    ret->m_valueKind = CSSStyleValuePair::ValueKind::Length;
+
+    if (row >= 0)
+        ret->m_value.m_length = CSSLength(strictFontSizeTable[row][col]);
+    else
+        ret->m_value.m_length = CSSLength(fontSizeFactors[col] * mediumSize);
+}
+
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
     CSSStyleValuePair ret;
@@ -88,10 +118,24 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "font-size") == 0) {
         // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
-        //        X      |       X       |   O    |    O       |    O
+        //        O      |       X       |   O    |    O       |    O
         ret.m_keyKind = CSSStyleValuePair::KeyKind::FontSize;
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("xx-small")) {
+            parseFontSizeForKeyword(&ret, 0);
+        } else if (VALUE_IS_STRING("x-small")) {
+            parseFontSizeForKeyword(&ret, 1);
+        } else if (VALUE_IS_STRING("small")) {
+            parseFontSizeForKeyword(&ret, 2);
+        } else if (VALUE_IS_STRING("medium")) {
+            parseFontSizeForKeyword(&ret, 3);
+        } else if (VALUE_IS_STRING("large")) {
+            parseFontSizeForKeyword(&ret, 4);
+        } else if (VALUE_IS_STRING("x-large")) {
+            parseFontSizeForKeyword(&ret, 5);
+        } else if (VALUE_IS_STRING("xx-large")) {
+            parseFontSizeForKeyword(&ret, 6);
         } else {
             parsePercentageOrLength(ret, value);
         }

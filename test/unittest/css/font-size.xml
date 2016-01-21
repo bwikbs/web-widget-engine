@@ -10,13 +10,13 @@
 		]]></text>
 				</node>
 				<node nodeType="1" localName="style" type="text/css">
-					<style selectorText="#idText" font-size="20px" color="red"/>
+					<style selectorText="#idText" font-size="xx-large" color="red"/>
 					<style selectorText=".classText" font-size="12px"/>
-					<style selectorText="div" border-image-source="url(&quot;border.png&quot;)"/>
+					<style selectorText="div" display="block"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
 			#idText {
-				font-size: 20px;				
+				font-size: xx-large;
 				color: red;
 			}
 			.classText {
@@ -24,7 +24,7 @@
 				text-align: 16px;
 			}
 			div {
-				border-image-source: url(border.png);
+				display: block;
 			}
 		]]></text>
 					</node>
@@ -48,6 +48,17 @@
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
 			text2
+		]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+		]]></text>
+				</node>
+				<node nodeType="1" localName="div" class="classText">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+			tttttt
 		]]></text>
 					</node>
 				</node>

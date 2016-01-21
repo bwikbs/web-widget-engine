@@ -5,6 +5,7 @@
 #include "style/Unit.h"
 #include "style/Length.h"
 #include "platform/canvas/font/Font.h"
+#include "style/DefaultStyle.h"
 
 namespace StarFish {
 
@@ -290,6 +291,7 @@ public:
 
     friend void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value);
     static CSSStyleValuePair fromString(const char* key, const char* value);
+    static void parseFontSizeForKeyword(CSSStyleValuePair* ret, int col);
 protected:
     KeyKind m_keyKind;
     ValueKind m_valueKind;
