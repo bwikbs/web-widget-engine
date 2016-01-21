@@ -157,6 +157,8 @@ public:
         BorderImageSource, // none | <image>
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-bottom
         MarginBottom, // length | percentage | auto | inherit // <0>
+        // https://www.w3.org/TR/CSS21/box.html#propdef-margin-left
+        MarginLeft, // length | percentage | auto | inherit // Initial value -> 0
         // https://www.w3.org/TR/css3-color/#transparency
         Opacity, // alphavalue | inherit // <1>
         // https://www.w3.org/TR/CSS21/box.html#value-def-border-width

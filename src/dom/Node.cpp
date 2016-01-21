@@ -428,6 +428,15 @@ void Node::dumpStyle()
         printf("margin-bottom: auto, ");
     }
 
+    // margin-left
+    if (m_style->marginLeft().isFixed()) {
+        printf("margin-left: %f, ", m_style->marginLeft().fixed());
+    } else if (m_style->marginLeft().isPercent()) {
+        printf("margin-left: %f, ", m_style->marginLeft().percent());
+    } else if (m_style->marginLeft().isAuto()) {
+        printf("margin-left: auto, ");
+    }
+
     // opacity
     printf("opacity: %f, ", m_style->opacity());
 

@@ -435,6 +435,17 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             parsePercentageOrLength(ret, value);
         }
+    } else if (strcmp(key, "margin-left") == 0) {
+        // length | percentage | <auto> | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginLeft;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+        if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
     } else if (strcmp(key, "opacity") == 0) {
         // alphavalue | inherit <1>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Opacity;
@@ -764,6 +775,19 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_marginBottom = cssValues[k].lengthValue().toLength();
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
                     style->m_marginBottom = Length(Length::Percent, cssValues[k].percentageValue());
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::MarginLeft:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_marginLeft = parentStyle->m_marginLeft;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
+                    style->m_marginLeft = Length();
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->m_marginLeft = cssValues[k].lengthValue().toLength();
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
+                    style->m_marginLeft = Length(Length::Percent, cssValues[k].percentageValue());
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }

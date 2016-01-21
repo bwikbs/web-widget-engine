@@ -140,6 +140,10 @@ public:
         return m_marginBottom;
     }
 
+    Length marginLeft() {
+        return m_marginLeft;
+    }
+
     float opacity() {
         return m_opacity;
     }
@@ -161,6 +165,7 @@ protected:
         m_display = DisplayValue::InlineDisplayValue;
         m_borderImageRepeat = new AxisValue<BorderImageRepeatValue>(BorderImageRepeatValue::StretchValue, BorderImageRepeatValue::StretchValue);
         m_marginBottom = Length(Length::Fixed, 0);
+        m_marginLeft = Length(Length::Fixed, 0);
         m_opacity = 1;
         m_background = new StyleBackgroundData();;
         m_surround = new StyleSurroundData();
@@ -188,6 +193,7 @@ protected:
     String* m_borderImageSource;
 
     Length m_marginBottom;
+    Length m_marginLeft;
     float m_opacity;
 
     StyleSurroundData* m_surround;
