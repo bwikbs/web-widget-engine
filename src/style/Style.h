@@ -131,23 +131,23 @@ public:
         TextAlign, // left | right | center | justify | <inherit>
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/colors.html#background-properties
         BackgroundColor, // color | <transparent> | inherit
-        // https://www.w3.org/TR/css3-background/#the-background-size
-        BackgroundImage, // uri | <none> | inherit
         // https://www.w3.org/TR/CSS21/colors.html#propdef-background-image
+        BackgroundImage, // uri | <none> | inherit
+        // https://www.w3.org/TR/css3-background/#the-background-size
         BackgroundSize, // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
         // https://www.w3.org/TR/CSS21/colors.html#propdef-background-repeat
         //BackgroundRepeat, // repeat | repeat-x | repeat-y | no-repeat | initial | inherit
         BackgroundRepeatX, // repeat | no-repeat | initial | inherit
         BackgroundRepeatY, // repeat | no-repeat | initial | inherit
-        Bottom, // length | percentage | <auto> | inherit
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-bottom
-        BorderImageRepeat, // <stretch> | repeat | round | space {1,2}
+        Bottom, // length | percentage | <auto> | inherit
         // https://www.w3.org/TR/css3-background/#the-border-image-repeat
+        BorderImageRepeat, // <stretch> | repeat | round | space {1,2}
         BorderImageSource,
-        MarginBottom, // length | percentage | auto | inherit // <0>
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-bottom
-        Opacity, // alphavalue | inherit // <1>
+        MarginBottom, // length | percentage | auto | inherit // <0>
         // https://www.w3.org/TR/css3-color/#transparency
+        Opacity, // alphavalue | inherit // <1>
     };
 
     enum ValueKind {
