@@ -98,6 +98,14 @@ public:
         return m_classNames;
     }
 
+    bool hasClassName(String* className){
+        for (unsigned i = 0; i < m_classNames.size(); i ++) {
+          if(className->equals(m_classNames[i]))
+            return true;
+        }
+        return false;
+    }
+
     size_t hasAtttibute(String* name);
     String* getAttribute(String* name)
     {

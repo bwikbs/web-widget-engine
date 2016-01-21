@@ -39,7 +39,6 @@ HTMLCollection* Document::getElementsByClassName(String* classNames)
 
         const char* data = classNames->utf8Data();
         size_t length = classNames->length();
-
         bool isWhiteSpaceState = true;
 
         std::string str;
@@ -53,14 +52,8 @@ HTMLCollection* Document::getElementsByClassName(String* classNames)
                 if (data[i] == ' ') {
                     isWhiteSpaceState = true;
 
-                    bool is_match = false;
                     String* tok = String::fromUTF8(str.data(), str.length());
-                    auto c_classNames =  node->asElement()->classNames();
-                    for (unsigned i = 0; i < c_classNames.size(); i ++) {
-                      if(tok->equals(c_classNames[i]))
-                        is_match=true;
-                    }
-                    if(is_match==false)
+                    if(!node->asElement()->hasClassName(tok))
                       return false;
 
                     str.clear();
@@ -71,15 +64,9 @@ HTMLCollection* Document::getElementsByClassName(String* classNames)
         }
 
         if (str.length()) {
-            bool is_match = false;
-            String* tok = String::fromUTF8(str.data(), str.length());
-            auto c_classNames =  node->asElement()->classNames();
-            for (unsigned i = 0; i < c_classNames.size(); i ++) {
-              if(tok->equals(c_classNames[i]))
-                is_match=true;
-            }
-            if(is_match==false)
-              return false;
+          String* tok = String::fromUTF8(str.data(), str.length());
+          if(!node->asElement()->hasClassName(tok))
+            return false;
         }
 
         return true;
