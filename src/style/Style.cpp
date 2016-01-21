@@ -608,19 +608,19 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundColor:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->setbgColor(parentStyle->bgColor());
+                    style->setBgColor(parentStyle->bgColor());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
-                    style->setbgColor(Color(0, 0, 0, 0));
+                    style->setBgColor(Color(0, 0, 0, 0));
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::StringValueKind);
-                    style->setbgColor(parseColor(cssValues[k].stringValue()));
+                    style->setBgColor(parseColor(cssValues[k].stringValue()));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundImage:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->setbgImage(parentStyle->bgImage());
+                    style->setBgImage(parentStyle->bgImage());
                 } else {
-                    style->setbgImage(cssValues[k].stringValue());
+                    style->setBgImage(cssValues[k].stringValue());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundSize:

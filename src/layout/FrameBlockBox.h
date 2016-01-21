@@ -6,6 +6,8 @@
 
 namespace StarFish {
 
+class InlineTextBox;
+
 class InlineBox : public FrameBox {
 public:
     InlineBox(Node* node, ComputedStyle* style)
@@ -17,6 +19,12 @@ public:
     virtual bool isInlineTextBox() const { return false; }
     virtual bool isInlineReplacedBox() const { return false; }
     virtual bool isInlineBlockBox() const { return false; }
+
+    InlineTextBox* asInlineTextBox()
+    {
+        STARFISH_ASSERT(isInlineTextBox());
+        return (InlineTextBox*)this;
+    }
 };
 
 class InlineTextBox : public InlineBox {

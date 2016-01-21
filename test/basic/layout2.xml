@@ -7,90 +7,63 @@
 			<node nodeType="1" localName="head">
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-		]]></text>
+]]></text>
 				</node>
 				<node nodeType="1" localName="style" type="text/css">
-					<style selectorText="#idText" font-size="20px" color="red" background-color="blue"/>
-					<style selectorText=".classText" font-size="12px"/>
-					<style selectorText="div" display="block" />
+					<style selectorText=".f1" font-size="64px" background-color="red"/>
+					<style selectorText=".f2" display="inline" font-size="32px"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
-			#idText {
-				font-size: 20px;				
-				color: red;
-			}
-			.classText {
-				font-size: 12px;
-				text-align: 16px;
-			}
-			div {
-				display: block;
-			}
-		]]></text>
+.f1 {
+font-size: 24px;
+background-color: red
+}
+.f2 {
+display: inline;
+font-size:18px;
+}
+]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-	]]></text>
+]]></text>
 				</node>
 			</node>
 			<node nodeType="3" localName="text">
 				<text><![CDATA[
-	]]></text>
+]]></text>
 			</node>
 			<node nodeType="1" localName="body">
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-	test
-		]]></text>
+]]></text>
 				</node>
-				<node nodeType="1" localName="div" id="idText">
+				<node nodeType="1" localName="div" class="f1">
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
-			text2
-                        ]]></text>
+Kpfxg]]></text>
 					</node>
-					<node nodeType="1" localName="div">
+					<node nodeType="1" localName="div" class="f2">
 						<node nodeType="3" localName="text">
-							<text><![CDATA[
-                                text in div
-                        ]]></text>
+							<text><![CDATA[Kpfxg]]></text>
 						</node>
 					</node>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
-		]]></text>
+]]></text>
 					</node>
-				</node>
-				<node nodeType="3" localName="text">
-					<text><![CDATA[
-		]]></text>
-				</node>
-				<node nodeType="1" localName="div" class="classText">
+					<node nodeType="1" localName="img" src="test/starfish.png">
+					</node>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
-			tttttt
-		]]></text>
-					</node>
-				</node>
-				<node nodeType="3" localName="text">
-					<text><![CDATA[
-	
-	]]></text>
-				</node>
-				<node nodeType="1" localName="script" type="text/javascript">
-					<node nodeType="3" localName="text">
-						<text><![CDATA[
-		function test() {
-			return 1<2;
-		}
-	]]></text>
+]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
 
-			]]></text>
+]]></text>
 				</node>
 			</node>
 		</node>

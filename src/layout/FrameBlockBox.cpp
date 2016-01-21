@@ -38,6 +38,24 @@ void FrameBlockBox::layoutBlock(LayoutContext& ctx)
     setContentHeight(normalFlowHeight);
 }
 
+bool isInlineBox(Frame* f)
+{
+    return f->isFrameText() || f->isFrameReplaced();
+}
+
+void collectInlineBox(std::vector<Frame*>& result, Frame* current)
+{
+    if (isInlineBox(current)) {
+        result.push_back(current);
+    }
+
+    Frame* f = current->firstChild();
+    while (f) {
+        collectInlineBox(result, f);
+        f = f->next();
+    }
+}
+
 void FrameBlockBox::layoutInline(LayoutContext& ctx)
 {
     m_lineBoxes.clear();
@@ -47,10 +65,14 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
     setWidth(parentContentWidth);
 
     m_lineBoxes.push_back(LineBox());
-    Frame* f = firstChild();
+
+    // we dont need gc_allocator here. because frame-tree-item is referenced by its parent
+    std::vector<Frame*> result;
+    collectInlineBox(result, this);
     float nowLineWidth = 0;
     size_t nowLine = 0;
-    while (f) {
+    for (unsigned i = 0; i < result.size(); i ++) {
+        Frame* f = result[i];
         if (f->isFrameText()) {
             String* txt = f->asFrameText()->text();
             //fast path
@@ -99,7 +121,7 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
                     textWidth = f->style()->font()->measureText(ss);
                 }
 
-                if(textWidth <= parentContentWidth - nowLineWidth) {
+                if(textWidth <= parentContentWidth - nowLineWidth || nowLineWidth == 0) {
                     nowLineWidth += textWidth;
                 } else {
                     // try this at nextline
@@ -133,7 +155,6 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
-        f = f->next();
     }
 
     // position each line
@@ -146,11 +167,9 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
 
         // align boxes
         float x = 0;
-        float maxH = 0;
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
             b.m_boxes[j]->setX(x);
             x += b.m_boxes[j]->width();
-            maxH = std::max(maxH, b.m_boxes[j]->height());
         }
 
         // text align
@@ -171,15 +190,32 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
             }
         }
 
-
-        // TODO vertical align
+        // TODO vertical align(middle, top, bottom, middle)
+        float maxAscender = 0;
+        float maxDecender = 0;
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
-            b.m_boxes[j]->setY(maxH - b.m_boxes[j]->height());
+            InlineBox* ib = b.m_boxes[j];
+            if (ib->isInlineTextBox()) {
+                maxAscender = std::max(ib->asInlineTextBox()->style()->font()->metrics().m_ascender, maxAscender);
+                maxDecender = std::min(ib->asInlineTextBox()->style()->font()->metrics().m_descender, maxDecender);
+            } else if (ib->isInlineReplacedBox()) {
+                maxAscender = std::max(b.m_boxes[j]->height(), maxAscender);
+            }
         }
 
-        b.m_frameRect.setWidth(x);
-        b.m_frameRect.setHeight(maxH);
-        contentHeight += maxH;
+        float height = maxAscender - maxDecender;
+        for (size_t j = 0; j < b.m_boxes.size(); j ++) {
+            InlineBox* ib = b.m_boxes[j];
+            if (ib->isInlineTextBox()) {
+                ib->setY(height + maxDecender - ib->height() - ib->asInlineTextBox()->style()->font()->metrics().m_descender);
+            } else if (ib->isInlineReplacedBox()) {
+                ib->setY(height + maxDecender - ib->height());
+            }
+        }
+
+        b.m_frameRect.setWidth(parentContentWidth);
+        b.m_frameRect.setHeight(height);
+        contentHeight += b.m_frameRect.height();
     }
 
 

@@ -31,7 +31,8 @@ public:
     void loadFont()
     {
         m_text = evas_object_text_add(internalCanvas());
-        evas_object_text_font_set(m_text,m_fontFamily->utf8Data(), m_size);
+        float ptSize = m_size * 12.f / 16.f;
+        evas_object_text_font_set(m_text,m_fontFamily->utf8Data(), ptSize);
     }
 
     void unloadFont()
@@ -142,21 +143,6 @@ Font::FontMetrics loadFontMetrics(String* familyName, double size)
     met.m_ascender = ((float)face->ascender / (float)face->units_per_EM) * size;
     met.m_descender = ((float)face->descender / (float)face->units_per_EM) * size;
     met.m_fontHeight = ((float)face->height / (float)face->units_per_EM) * size;
-
-    /*
-    cairo_surface_t *surface;
-    cairo_t *cr;
-
-    surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 32, 32);
-    cr = cairo_create (surface);
-    cairo_set_font_face(cr, cairo_ft_font_face_create_for_ft_face(face, 0));
-    cairo_set_font_size(cr, size);
-    cairo_font_extents_t extent;
-    cairo_font_extents(cr, &extent);
-
-    cairo_destroy(cr);
-    cairo_surface_destroy(surface);
-*/
 
     FT_Done_Face(face);
     FT_Done_FreeType(library);

@@ -3,6 +3,7 @@
 
 #include "style/Style.h"
 #include "style/StyleBackgroundData.h"
+#include "style/DefaultStyle.h"
 
 namespace StarFish {
 
@@ -62,14 +63,14 @@ public:
         return m_inheritedStyles.m_direction;
     }
 
-    void setbgColor(Color color)
+    void setBgColor(Color color)
     {
-        m_background->setbgColor(color);
+        m_background->setBgColor(color);
     }
 
-    void setbgImage(String* img)
+    void setBgImage(String* img)
     {
-        m_background->setbgImage(img);
+        m_background->setBgImage(img);
     }
 
     Color bgColor()
@@ -112,31 +113,38 @@ public:
         m_background->setRepeatY(repeat);
     }
 
-    BackgroundRepeatValue backgroundRepeatX() {
-    	return m_background->repeatX();
+    BackgroundRepeatValue backgroundRepeatX()
+    {
+        return m_background->repeatX();
     }
 
-    BackgroundRepeatValue backgroundRepeatY() {
+    BackgroundRepeatValue backgroundRepeatY()
+    {
         return m_background->repeatY();
     }
 
-    Length bottom() {
+    Length bottom()
+    {
         return m_bottom;
     }
 
-    Length left() {
+    Length left()
+    {
         return m_left;
     }
 
-    AxisValue<BorderImageRepeatValue>* borderImageRepeat() {
+    AxisValue<BorderImageRepeatValue>* borderImageRepeat()
+    {
         return m_borderImageRepeat;
     }
 
-    String* borderImageSource() {
+    String* borderImageSource()
+    {
         return m_borderImageSource;
     }
 
-    Length marginBottom() {
+    Length marginBottom()
+    {
         return m_marginBottom;
     }
 
@@ -144,15 +152,18 @@ public:
         return m_marginLeft;
     }
 
-    float opacity() {
+    float opacity()
+    {
         return m_opacity;
     }
 
-    StyleBackgroundData* background() {
+    StyleBackgroundData* background()
+    {
         return m_background;
     }
 
-    StyleSurroundData* surround() {
+    StyleSurroundData* surround()
+    {
         if (m_surround == nullptr) {
             m_surround = new StyleSurroundData();
         }

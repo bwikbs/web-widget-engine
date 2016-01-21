@@ -26,12 +26,12 @@ public:
         m_sizeValue = size;
     }
 
-    void setbgColor(Color color)
+    void setBgColor(Color color)
     {
         m_color = color;
     }
 
-    void setbgImage(String* img)
+    void setBgImage(String* img)
     {
         m_image = img;
     }

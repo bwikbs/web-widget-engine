@@ -4,8 +4,8 @@
 #include "dom/DOM.h"
 
 #include "Frame.h"
-#include "FrameBlockBox.h"
 #include "FrameText.h"
+#include "FrameInline.h"
 #include "FrameBlockBox.h"
 #include "FrameDocument.h"
 #include "FrameReplaced.h"
@@ -49,60 +49,63 @@ void buildTree(Node* current, Frame* parent)
             auto element = current->asElement()->asHTMLElement()->asHTMLImageElement();
             currentFrame = new FrameReplacedImage(current, current->style(), element->src());
         } else {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+            currentFrame = new FrameInline(current, current->style());
         }
     } else if (display == DisplayValue::NoneDisplayValue) {
         clearTree(current);
         return ;
     }
 
-    ASSERT(parent->isFrameBlockBox());
+    if (parent->isFrameBlockBox()) {
+        if (!parent->firstChild()) {
+            parent->appendChild(currentFrame);
+        } else {
+            if (parent->firstChild()->isFrameBlockBox()) {
+                if (isBlockChild) {
+                    // Block... + Block case
+                    parent->appendChild(currentFrame);
+                } else {
+                    // Block... + Inline case
+                    Frame* last = parent->lastChild();
+                    STARFISH_ASSERT(last->style()->display() == BlockDisplayValue);
+                    if (last->node()) {
+                        last = new FrameBlockBox(nullptr, parent->style());
+                        // make sure font exists
+                        parent->style()->ensureFont(current->document()->window()->starFish());
+                        parent->appendChild(last);
+                    }
 
-    if (!parent->firstChild()) {
-        parent->appendChild(currentFrame);
-    } else {
-        if (parent->firstChild()->isFrameBlockBox()) {
-            if (isBlockChild) {
-                // Block... + Block case
-                parent->appendChild(currentFrame);
+                    last->appendChild(currentFrame);
+                }
+
             } else {
-                // Block... + Inline case
-                Frame* last = parent->lastChild();
-                STARFISH_ASSERT(last->style()->display() == BlockDisplayValue);
-                if (last->node()) {
-                    last = new FrameBlockBox(nullptr, parent->style());
+                if (isBlockChild) {
+                    // Inline... + Block case
+                    std::vector<Frame*, gc_allocator<Frame*>> backup;
+                    while (parent->firstChild()) {
+                        backup.push_back(parent->firstChild());
+                        parent->removeChild(parent->firstChild());
+                    }
+
+                    FrameBlockBox* blockBox = new FrameBlockBox(nullptr, parent->style());
                     // make sure font exists
                     parent->style()->ensureFont(current->document()->window()->starFish());
-                    parent->appendChild(last);
+                    for(unsigned i = 0; i < backup.size(); i ++) {
+                        blockBox->appendChild(backup[i]);
+                    }
+
+                    parent->appendChild(blockBox);
+                    parent->appendChild(currentFrame);
+                } else {
+                    // Inline... + Inline case
+                    parent->appendChild(currentFrame);
                 }
 
-                last->appendChild(currentFrame);
             }
-
-        } else {
-            if (isBlockChild) {
-                // Inline... + Block case
-                std::vector<Frame*, gc_allocator<Frame*>> backup;
-                while (parent->firstChild()) {
-                    backup.push_back(parent->firstChild());
-                    parent->removeChild(parent->firstChild());
-                }
-
-                FrameBlockBox* blockBox = new FrameBlockBox(nullptr, parent->style());
-                // make sure font exists
-                parent->style()->ensureFont(current->document()->window()->starFish());
-                for(unsigned i = 0; i < backup.size(); i ++) {
-                    blockBox->appendChild(backup[i]);
-                }
-
-                parent->appendChild(blockBox);
-                parent->appendChild(currentFrame);
-            } else {
-                // Inline... + Inline case
-                parent->appendChild(currentFrame);
-            }
-
         }
+    } else {
+        STARFISH_ASSERT(parent->isFrameInline());
+        parent->appendChild(currentFrame);
     }
 
     // make sure font exists

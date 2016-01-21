@@ -73,6 +73,11 @@ public:
         return false;
     }
 
+    virtual bool isFrameInline()
+    {
+        return false;
+    }
+
     virtual bool isFrameReplaced()
     {
         return false;

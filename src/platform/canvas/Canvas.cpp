@@ -414,7 +414,9 @@ public:
 
         Evas_Textblock_Style* st = evas_textblock_style_new();
         char buf[256];
-        snprintf(buf, 256, "DEFAULT='font=%s font_size=%f color=#%02x%02x%02x%02x valign=bottom'",lastState().m_font->familyName()->utf8Data(), lastState().m_font->size(),
+        // FIXME pt->px is right?
+        float ptSize = lastState().m_font->size() * 12.f / 16.f;
+        snprintf(buf, 256, "DEFAULT='font=%s font_size=%f color=#%02x%02x%02x%02x valign=middle'",lastState().m_font->familyName()->utf8Data(), ptSize,
                 (int)lastState().m_color.r(), (int)lastState().m_color.g(), (int)lastState().m_color.b(), (int)lastState().m_color.a());
         evas_textblock_style_set(st, buf);
         evas_object_textblock_style_set(eo, st);
