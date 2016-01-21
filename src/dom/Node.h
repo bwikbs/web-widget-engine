@@ -500,6 +500,15 @@ public:
             printf("bottom: auto, ");
         }
 
+        // left
+        if (m_style->left().isFixed()) {
+            printf("left: %f, ", m_style->left().fixed());
+        } else if (m_style->left().isPercent()) {
+            printf("left: %f, ", m_style->left().percent());
+        } else if (m_style->left().isAuto()) {
+            printf("left: auto, ");
+        }
+
         // border-image-repeat
         if (m_style->borderImageRepeat()->m_XAxis == BorderImageRepeatValue::StretchValue) {
             printf("border-image-repeat: {stretch ");

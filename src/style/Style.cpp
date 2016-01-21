@@ -143,7 +143,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "font-size") == 0) {
         // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
-        //        O      |       X       |   O    |    O       |    O
+        //        O      |       O       |   O    |    O       |    O
         ret.m_keyKind = CSSStyleValuePair::KeyKind::FontSize;
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
@@ -279,6 +279,17 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "bottom") == 0) {
         // length | percentage | <auto> | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Bottom;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+        if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
+    } else if (strcmp(key, "left") == 0) {
+        // length | percentage | <auto> | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::Left;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
 
         if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
@@ -556,6 +567,19 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_bottom = cssValues[k].lengthValue().toLength();
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
                     style->m_bottom = Length(Length::Percent, cssValues[k].percentageValue());
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::Left:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_left = parentStyle->m_left;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
+                    style->m_left = Length();
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->m_left = cssValues[k].lengthValue().toLength();
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
+                    style->m_left = Length(Length::Percent, cssValues[k].percentageValue());
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }

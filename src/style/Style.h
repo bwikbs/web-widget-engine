@@ -141,8 +141,10 @@ public:
         BackgroundRepeatY, // repeat | no-repeat | initial | inherit
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-bottom
         Bottom, // length | percentage | <auto> | inherit
-        // https://www.w3.org/TR/css3-background/#the-border-image-repeat
+        // https://www.w3.org/TR/CSS21/visuren.html#propdef-left
+        Left, // length | percentage | <auto> | inherit
         BorderImageRepeat, // <stretch> | repeat | round | space {1,2}
+        // https://www.w3.org/TR/css3-background/#the-border-image-repeat
         BorderImageSource,
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-bottom
         MarginBottom, // length | percentage | auto | inherit // <0>

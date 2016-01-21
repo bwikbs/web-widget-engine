@@ -91,6 +91,10 @@ public:
         return m_bottom;
     }
 
+    Length left() {
+        return m_left;
+    }
+
     AxisValue<BorderImageRepeatValue>* borderImageRepeat() {
         return m_borderImageRepeat;
     }
@@ -132,6 +136,7 @@ protected:
     Length m_width;
     Length m_height;
     Length m_bottom;
+    Length m_left;
 
     Font* m_font;
     String* m_bgImage;
