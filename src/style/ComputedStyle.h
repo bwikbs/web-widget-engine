@@ -115,6 +115,13 @@ public:
         return m_background;
     }
 
+    StyleSurroundData* surround() {
+        if (m_surround == nullptr) {
+            m_surround = new StyleSurroundData();
+        }
+        return m_surround;
+    }
+
 protected:
     void initNonInheritedStyles()
     {
@@ -124,6 +131,7 @@ protected:
         m_opacity = 1;
         m_bgImage = String::emptyString;
         m_background = new StyleBackgroundData();;
+        m_surround = new StyleSurroundData();
     }
 
     struct {
@@ -150,6 +158,8 @@ protected:
 
     Length m_marginBottom;
     float m_opacity;
+
+    StyleSurroundData* m_surround;
 };
 
 }

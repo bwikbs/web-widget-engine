@@ -50,6 +50,18 @@ void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
     }
 }
 
+void parseLength(CSSStyleValuePair& ret, const char* value)
+{
+    if (endsWith(value, "px")) {
+        float f;
+        sscanf(value, "%fpx", &f);
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
+        ret.m_value.m_length = CSSLength(f);
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 void parseUrl(CSSStyleValuePair& ret, const char* value)
 {
     int pathlen = strlen(value);
@@ -341,6 +353,62 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
             ret.m_value.m_stringValue = String::fromUTF8(value);
         }
+    } else if (strcmp(key, "border-top-width") == 0) {
+        // border-width | inherit // initial value -> medium ('thin' <='medium' <= 'thick')
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderTopWidth;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("thin")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderThin;
+        } else if (VALUE_IS_STRING("medium")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderMedium;
+        } else if (VALUE_IS_STRING("thick")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderThick;
+        } else {
+            parseLength(ret, value);
+        }
+    } else if (strcmp(key, "border-right-width") == 0) {
+        // border-width | inherit // initial value -> medium ('thin' <='medium' <= 'thick')
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderRightWidth;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("thin")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderThin;
+        } else if (VALUE_IS_STRING("medium")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderMedium;
+        } else if (VALUE_IS_STRING("thick")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderThick;
+        } else {
+            parseLength(ret, value);
+        }
+    } else if (strcmp(key, "border-bottom-width") == 0) {
+        // border-width | inherit // initial value -> medium ('thin' <='medium' <= 'thick')
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderBottomWidth;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("thin")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderThin;
+        } else if (VALUE_IS_STRING("medium")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderMedium;
+        } else if (VALUE_IS_STRING("thick")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderThick;
+        } else {
+            parseLength(ret, value);
+        }
+    } else if (strcmp(key, "border-left-width") == 0) {
+        // border-width | inherit // initial value -> medium ('thin' <='medium' <= 'thick')
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderLeftWidth;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("thin")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderThin;
+        } else if (VALUE_IS_STRING("medium")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderMedium;
+        } else if (VALUE_IS_STRING("thick")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderThick;
+        } else {
+            parseLength(ret, value);
+        }
     } else if (strcmp(key, "margin-bottom") == 0) {
         // length | percentage | <auto> | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginBottom;
@@ -597,6 +665,70 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     //STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
                     style->m_borderImageSource = cssValues[k].stringValue();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderTopWidth:
+                // 'thin' <='medium' <= 'thick'
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_surround->border.setTop(parentStyle->m_surround->border.top());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->m_surround->border.setTop(cssValues[k].lengthValue().toLength());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThin) {
+                    style->m_surround->border.setTop(Length(Length::Fixed, 1));
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderMedium) {
+                    style->m_surround->border.setTop(Length(Length::Fixed, 3));
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThick) {
+                    style->m_surround->border.setTop(Length(Length::Fixed, 5));
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderRightWidth:
+                // 'thin' <='medium' <= 'thick'
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_surround->border.setRight(parentStyle->m_surround->border.right());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->m_surround->border.setRight(cssValues[k].lengthValue().toLength());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThin) {
+                    style->m_surround->border.setRight(Length(Length::Fixed, 1));
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderMedium) {
+                    style->m_surround->border.setRight(Length(Length::Fixed, 3));
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThick) {
+                    style->m_surround->border.setRight(Length(Length::Fixed, 5));
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderBottomWidth:
+                // 'thin' <='medium' <= 'thick'
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_surround->border.setBottom(parentStyle->m_surround->border.bottom());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->m_surround->border.setBottom(cssValues[k].lengthValue().toLength());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThin) {
+                    style->m_surround->border.setBottom(Length(Length::Fixed, 1));
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderMedium) {
+                    style->m_surround->border.setBottom(Length(Length::Fixed, 3));
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThick) {
+                    style->m_surround->border.setBottom(Length(Length::Fixed, 5));
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderLeftWidth:
+                // 'thin' <='medium' <= 'thick'
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_surround->border.setLeft(parentStyle->m_surround->border.left());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->m_surround->border.setLeft(cssValues[k].lengthValue().toLength());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThin) {
+                    style->m_surround->border.setLeft(Length(Length::Fixed, 1));
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderMedium) {
+                    style->m_surround->border.setLeft(Length(Length::Fixed, 3));
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThick) {
+                    style->m_surround->border.setLeft(Length(Length::Fixed, 5));
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
                 break;
             case CSSStyleValuePair::KeyKind::MarginBottom:

@@ -543,6 +543,10 @@ public:
         if(m_style->borderImageSource() != 0)
             printf("border-image-source: %s, ", m_style->borderImageSource()->utf8Data());
 
+        // border-width
+        printf("border-width(t,r,b,l) : (%.0f,%.0f,%.0f,%.0f), ", m_style->surround()->border.top().fixed(),
+                m_style->surround()->border.right().fixed(), m_style->surround()->border.bottom().fixed(), m_style->surround()->border.left().fixed());
+
         // background-repeat-x
         printf("background-repeat-x: %d, ", m_style->backgroundRepeatX());
         // background-repeat-y

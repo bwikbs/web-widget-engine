@@ -4,6 +4,7 @@
 #include "util/String.h"
 #include "style/Unit.h"
 #include "style/Length.h"
+#include "style/StyleSurroundData.h"
 #include "platform/canvas/font/Font.h"
 #include "style/DefaultStyle.h"
 
@@ -151,6 +152,12 @@ public:
         MarginBottom, // length | percentage | auto | inherit // <0>
         // https://www.w3.org/TR/css3-color/#transparency
         Opacity, // alphavalue | inherit // <1>
+        // https://www.w3.org/TR/CSS21/box.html#value-def-border-width
+        // BorderWidth, // border-width(thin | <medium> | thick | length) | inherit
+        BorderTopWidth, // border-width(thin | <medium> | thick | length) | inherit
+        BorderRightWidth, // border-width(thin | <medium> | thick | length) | inherit
+        BorderBottomWidth, // border-width(thin | <medium> | thick | length) | inherit
+        BorderLeftWidth, // border-width(thin | <medium> | thick | length) | inherit
     };
 
     enum ValueKind {
@@ -178,6 +185,11 @@ public:
 
         LargerFontSize,
         SmallerFontSize,
+
+        // border-width
+        BorderThin,
+        BorderMedium,
+        BorderThick,
     };
 
     CSSStyleValuePair()
@@ -265,6 +277,7 @@ public:
     }
 
     friend void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value);
+    friend void parseLength(CSSStyleValuePair& ret, const char* value);
     friend void parseUrl(CSSStyleValuePair& ret, const char* value);
     static CSSStyleValuePair fromString(const char* key, const char* value);
     static void parseFontSizeForKeyword(CSSStyleValuePair* ret, int col);
