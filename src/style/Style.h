@@ -74,6 +74,11 @@ enum TextAlignValue {
     // JustifyTextAlignValue,
 };
 
+enum DirectionValue {
+    LtrDirectionValue,
+    RtlDirectionValue,
+};
+
 enum BackgroundSizeType {
     Cover,
     Contain,
@@ -130,6 +135,8 @@ public:
         FontSize, // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
         // https://www.w3.org/TR/CSS21/text.html#propdef-text-align
         TextAlign, // left | right | center | justify | <inherit>
+        // https://www.w3.org/TR/CSS21/visuren.html#propdef-direction
+        Direction, // <ltr> | rtl | inherit
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/colors.html#background-properties
         BackgroundColor, // color | <transparent> | inherit
         // https://www.w3.org/TR/CSS21/colors.html#propdef-background-image
@@ -171,6 +178,7 @@ public:
 
         DisplayValueKind,
         TextAlignValueKind,
+        DirectionValueKind,
 
         Transparent,
 
@@ -230,6 +238,12 @@ public:
         return m_value.m_textAlign;
     }
 
+    DirectionValue directionValue()
+    {
+        STARFISH_ASSERT(m_valueKind == DirectionValueKind);
+        return m_value.m_direction;
+    }
+
     CSSLength lengthValue()
     {
         STARFISH_ASSERT(m_valueKind == Length);
@@ -286,6 +300,7 @@ public:
         float m_floatValue;
         DisplayValue m_display;
         TextAlignValue m_textAlign;
+        DirectionValue m_direction;
         CSSLength m_length;
         String* m_stringValue;
         BackgroundRepeatValue m_backgroundRepeatX;

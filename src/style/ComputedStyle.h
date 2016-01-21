@@ -57,6 +57,11 @@ public:
         return m_inheritedStyles.m_textAlign;
     }
 
+    DirectionValue direction()
+    {
+        return m_inheritedStyles.m_direction;
+    }
+
     void setbgColor(Color color)
     {
         m_background->setbgColor(color);
@@ -153,6 +158,7 @@ protected:
         Color m_color;
         float m_fontSize;
         TextAlignValue m_textAlign;
+        DirectionValue m_direction;
     } m_inheritedStyles;
 
     DisplayValue m_display;

@@ -332,6 +332,12 @@ void Node::dumpStyle()
         printf("height: auto, ");
     }
 
+    // direction
+    if (m_style->direction() == DirectionValue::LtrDirectionValue)
+        printf("direction: ltr, ");
+    else
+        printf("direction: rtl, ");
+
     // font-size
     printf("font-size: %.0f, ", m_style->font(document()->window()->starFish())->size());
 

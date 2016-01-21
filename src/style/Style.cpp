@@ -235,6 +235,19 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
+    } else if (strcmp(key, "direction") == 0) {
+        // <ltr> | rtl | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::Direction;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::DirectionValueKind;
+        if (VALUE_IS_STRING("ltr")) {
+            ret.m_value.m_direction = DirectionValue::LtrDirectionValue;
+        } else if (VALUE_IS_STRING("rtl")) {
+            ret.m_value.m_direction = DirectionValue::RtlDirectionValue;
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
     } else if (strcmp(key, "background-size") == 0) {
         // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundSize;
@@ -242,6 +255,8 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Contain;
         } else if (VALUE_IS_STRING("cover")) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Cover;
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
             CSSPropertyParser* parser = new CSSPropertyParser((char*) value);
@@ -447,6 +462,7 @@ ComputedStyle* StyleResolver::resolveDocumentStyle()
     ret->m_inheritedStyles.m_color = Color(0,0,0,255);
     // TODO implement ltr, rtl
     ret->m_inheritedStyles.m_textAlign = TextAlignValue::LeftTextAlignValue;
+    ret->m_inheritedStyles.m_direction = DirectionValue::LtrDirectionValue;
     return ret;
 }
 
@@ -569,6 +585,14 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::TextAlignValueKind);
                     style->m_inheritedStyles.m_textAlign = cssValues[k].textAlignValue();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::Direction:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_inheritedStyles.m_direction = parentStyle->m_inheritedStyles.m_direction;
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::DirectionValueKind);
+                    style->m_inheritedStyles.m_direction = cssValues[k].directionValue();
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundColor:
