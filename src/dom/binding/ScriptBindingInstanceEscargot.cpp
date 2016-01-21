@@ -258,7 +258,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         return toJSString(s);
     }, NULL, false, false, false);
 
-        NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("textContent"),
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("textContent"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         String* s = ((Node *)originalObj)->textContent();
@@ -589,6 +589,30 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     fetchData(this)->m_documentType = DocumentTypeFunction;
 
     DocumentTypeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("remove"), false, false, false, removeFunction);
+
+
+    /* 4.7 Interface DocumentType */
+
+    DocumentTypeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("name"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        String* s = ((DocumentType *)originalObj)->nodeName();
+        return toJSString(s);
+    }, NULL, false, false, false);
+
+    DocumentTypeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("publicId"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        String* s = ((DocumentType *)originalObj)->publicId();
+        return toJSString(s);
+    }, NULL, false, false, false);
+
+    DocumentTypeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("systemId"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        String* s = ((DocumentType *)originalObj)->systemId();
+        return toJSString(s);
+    }, NULL, false, false, false);
 
     DEFINE_FUNCTION(Document, NodeFunction->protoType());
     fetchData(this)->m_document = DocumentFunction;
