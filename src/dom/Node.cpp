@@ -451,6 +451,11 @@ void Node::dumpStyle()
     // opacity
     printf("opacity: %f, ", m_style->opacity());
 
+    // overflow-x
+    printf("overflow-x: %d, ", m_style->overflowX());
+    // overflow-y
+    printf("overflow-y: %d, ", m_style->overflowY());
+
     printf("}");
 }
 

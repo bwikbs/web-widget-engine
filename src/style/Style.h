@@ -87,9 +87,8 @@ enum BackgroundSizeType {
 };
 
 enum BackgroundRepeatValue {
-	RepeatRepeatValue,
+    RepeatRepeatValue,
     NoRepeatRepeatValue,
-    IntialRepeatValue,
 };
 
 enum BorderImageRepeatValue {
@@ -97,6 +96,12 @@ enum BorderImageRepeatValue {
     RepeatValue,
     RoundValue,
     SpaceValue,
+};
+
+// Widget Engine will support only visible and hidden values.
+enum OverflowValue {
+    Visible,
+    Hidden,
 };
 
 template <typename T>
@@ -163,6 +168,10 @@ public:
         MarginLeft, // length | percentage | auto | inherit // Initial value -> 0
         // https://www.w3.org/TR/css3-color/#transparency
         Opacity, // alphavalue | inherit // <1>
+        // https://www.w3.org/TR/2011/REC-CSS2-20110607/visufx.html#propdef-overflow
+        //Overflow, // visible | hidden | scroll | auto | inherit // Initial value -> visible
+        OverflowX, // visible | hidden | scroll | auto | inherit // Initial value -> visible
+        OverflowY, // visible | hidden | scroll | auto | inherit // Initial value -> visible
         // https://www.w3.org/TR/CSS21/box.html#value-def-border-width
         // BorderWidth, // border-width(thin | <medium> | thick | length) | inherit
         BorderTopWidth, // border-width(thin | <medium> | thick | length) | inherit
@@ -203,6 +212,8 @@ public:
         BorderThin,
         BorderMedium,
         BorderThick,
+
+        OverflowValueKind,
     };
 
     CSSStyleValuePair()
@@ -295,6 +306,16 @@ public:
         return m_value.m_multiValue;
     }
 
+    OverflowValue overflowValueX() {
+        STARFISH_ASSERT(m_valueKind == OverflowValueKind);
+        return m_value.m_overflowX;
+    }
+
+    OverflowValue overflowValueY() {
+        STARFISH_ASSERT(m_valueKind == OverflowValueKind);
+        return m_value.m_overflowY;
+    }
+
     friend void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value);
     friend void parseLength(CSSStyleValuePair& ret, const char* value);
     friend void parseUrl(CSSStyleValuePair& ret, const char* value);
@@ -312,6 +333,8 @@ public:
         BackgroundRepeatValue m_backgroundRepeatY;
         AxisValue<BorderImageRepeatValue>* m_borderImageRepeat;
         ValueList* m_multiValue;
+        OverflowValue m_overflowX;
+        OverflowValue m_overflowY;
     };
 protected:
     KeyKind m_keyKind;

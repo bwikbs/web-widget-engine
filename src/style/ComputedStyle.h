@@ -217,6 +217,14 @@ public:
         return m_surround;
     }
 
+    OverflowValue overflowX() {
+        return m_overflowX;
+    }
+
+    OverflowValue overflowY() {
+        return m_overflowY;
+    }
+
 protected:
     void initNonInheritedStyles()
     {
@@ -250,6 +258,8 @@ protected:
 
     AxisValue<BorderImageRepeatValue>* m_borderImageRepeat;
     String* m_borderImageSource;
+    OverflowValue m_overflowX;
+    OverflowValue m_overflowY;
 
     Length m_marginBottom;
     Length m_marginLeft;

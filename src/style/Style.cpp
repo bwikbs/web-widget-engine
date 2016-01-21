@@ -497,6 +497,38 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             sscanf(value, "%f%%", &ret.m_value.m_floatValue);
         }
+    } else if (strcmp(key, "overflow-x") == 0) {
+        // visible | hidden | scroll(X) | auto(X) | inherit // initial value -> visible
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::OverflowX;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::OverflowValueKind;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("auto") || VALUE_IS_STRING("scroll")) {
+            // Not Supported!!
+        } else if (VALUE_IS_STRING("visible") || VALUE_IS_INITIAL()) {
+            ret.m_value.m_overflowX = OverflowValue::Visible;
+        } else if (VALUE_IS_STRING("hidden")){
+            ret.m_value.m_overflowX = OverflowValue::Hidden;
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
+    } else if (strcmp(key, "overflow-y") == 0) {
+        // visible | hidden | scroll(X) | auto(X) | inherit // initial value -> visible
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::OverflowY;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::OverflowValueKind;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("auto") || VALUE_IS_STRING("scroll")) {
+            // Not Supported!!
+        } else if (VALUE_IS_STRING("visible") || VALUE_IS_INITIAL()) {
+            ret.m_value.m_overflowY = OverflowValue::Visible;
+        } else if (VALUE_IS_STRING("hidden")){
+            ret.m_value.m_overflowY = OverflowValue::Hidden;
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -871,6 +903,20 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_opacity = beforeClip < 0 ? 0 : (beforeClip > 1.0 ? 1.0: beforeClip);
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::OverflowX:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_overflowX = parentStyle->m_overflowX;
+                } else {
+                    style->m_overflowX = cssValues[k].overflowValueX();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::OverflowY:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_overflowY = parentStyle->m_overflowY;
+                } else {
+                    style->m_overflowY = cssValues[k].overflowValueY();
                 }
                 break;
             }
