@@ -26,6 +26,9 @@ bool endsWith(const char* base, const char* str)
 #define VALUE_IS_INHERIT() \
     VALUE_IS_STRING("inherit")
 
+#define VALUE_IS_INITIAL() \
+    VALUE_IS_STRING("initial")
+
 void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
 {
     if (endsWith(value, "%")) {
@@ -67,7 +70,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Width;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
 
-        if (VALUE_IS_STRING("auto")) {
+        if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
         } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else {
@@ -77,7 +80,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Height;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
 
-        if (VALUE_IS_STRING("auto")) {
+        if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
         } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else {
@@ -190,7 +193,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Bottom;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
 
-        if (VALUE_IS_STRING("auto")) {
+        if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
         } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else {
@@ -202,22 +205,27 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderImageRepeatValueKind;
         ret.m_value.m_borderImageRepeat = new AxisValue<BorderImageRepeatValue>(BorderImageRepeatValue::StretchValue, BorderImageRepeatValue::StretchValue);
 
-        // TODO: find better way to parse axis data
-        // 1) parse X-axis data
-        if (startsWith(value, "repeat")) {
-            ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::RepeatValue;
-        } else if (startsWith(value, "round")) {
-            ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::RoundValue;
-        } else if (startsWith(value, "space")) {
-            ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::SpaceValue;
-        }
-        // 2) parse Y-axis data
-        if (endsWith(value, "repeat")) {
-            ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::RepeatValue;
-        } else if (endsWith(value, "round")) {
-            ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::RoundValue;
-        } else if (endsWith(value, "space")) {
-            ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::SpaceValue;
+        if (VALUE_IS_INITIAL()) {
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            // TODO: find better way to parse axis data
+            // 1) parse X-axis data
+            if (startsWith(value, "repeat")) {
+                ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::RepeatValue;
+            } else if (startsWith(value, "round")) {
+                ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::RoundValue;
+            } else if (startsWith(value, "space")) {
+                ret.m_value.m_borderImageRepeat->m_XAxis = BorderImageRepeatValue::SpaceValue;
+            }
+            // 2) parse Y-axis data
+            if (endsWith(value, "repeat")) {
+                ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::RepeatValue;
+            } else if (endsWith(value, "round")) {
+                ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::RoundValue;
+            } else if (endsWith(value, "space")) {
+                ret.m_value.m_borderImageRepeat->m_YAxis = BorderImageRepeatValue::SpaceValue;
+            }
         }
 
     } else if (strcmp(key, "border-image-source") == 0) {
@@ -239,7 +247,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginBottom;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
 
-        if (VALUE_IS_STRING("auto")) {
+        if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
         } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else {
@@ -248,11 +256,13 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "opacity") == 0) {
         // alphavalue | inherit <1>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Opacity;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Number;
 
-        if (VALUE_IS_INHERIT()) {
+        if (VALUE_IS_INITIAL()) {
+            ret.m_value.m_floatValue = 1.0f;
+        } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Number;
             sscanf(value, "%f%%", &ret.m_value.m_floatValue);
         }
     } else {
@@ -480,9 +490,11 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageRepeat:
-                //STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderImageRepeatValueKind);
-                //remove assert. duplicate in borderImageRepeatValue()
-                style->m_borderImageRepeat = cssValues[k].borderImageRepeatValue();
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_borderImageRepeat = parentStyle->m_borderImageRepeat;
+                } else {
+                    style->m_borderImageRepeat = cssValues[k].borderImageRepeatValue();
+                }
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageSource:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
