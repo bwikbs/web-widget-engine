@@ -252,4 +252,11 @@ void ScriptWrappable::initScriptWrappable(DOMTokenList* ptr, ScriptBindingInstan
     ((escargot::ESObject *)this)->setExtraData(DOMTokenListObject);
 }
 
+void ScriptWrappable::initScriptWrappable(Attr* ptr, ScriptBindingInstance* instance)
+{
+    auto data = fetchData(instance);
+    ((escargot::ESObject *)this)->set__proto__(data->m_Attr->protoType());
+    ((escargot::ESObject *)this)->setExtraData(AttributeObject);
+}
+
 }

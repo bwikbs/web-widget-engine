@@ -81,6 +81,9 @@
                                 var test = document.createTextNode("createTextNode success!");
                                 document.getElementById("idText").appendChild(test);
 
+                                print("<Document-createAttribute Test>");
+                                print(document.createAttribute("test1"));
+
                                 return true;
         					}
 							test();

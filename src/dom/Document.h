@@ -7,6 +7,7 @@
 namespace StarFish {
 
 class Window;
+class Attribute;
 
 class Document : public Node {
 protected:
@@ -78,6 +79,7 @@ public:
     Text*    createTextNode(String* data);
     HTMLCollection* getElementsByTagName(String* qualifiedName);
     HTMLCollection* getElementsByClassName(String* classNames);
+    Attr* createAttribute(String* localName);
 
 protected:
     Window* m_window;

@@ -3,6 +3,7 @@
 #include "Traverse.h"
 
 #include "layout/FrameDocument.h"
+#include "dom/Attribute.h"
 
 namespace StarFish {
 
@@ -111,5 +112,8 @@ Text*    Document::createTextNode(String* data)
   return new Text(this,data);
 }
 
+Attr* Document::createAttribute(String* localName){
+  return new Attr(scriptBindingInstance(),localName);
+}
 
 }

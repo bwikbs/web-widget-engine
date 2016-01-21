@@ -2,11 +2,13 @@
 #define __StarFishAttribute__
 
 #include "util/String.h"
+#include "dom/binding/ScriptWrappable.h"
 
 namespace StarFish {
 
-class Attribute {
+class Attribute{
 public:
+
     Attribute()
     {
         m_value = m_name = String::emptyString;
@@ -39,6 +41,16 @@ protected:
     String* m_value;
 };
 
+class Attr : public ScriptWrappable {
+public:
+    Attr(ScriptBindingInstance* instance,String* localName){
+        initScriptWrappable(this,instance);
+        m_attr = Attribute(localName,String::emptyString);
+    }
+protected:
+    //Attr(ScriptBindingInstance* instance);
+    Attribute m_attr;
+};
 
 }
 

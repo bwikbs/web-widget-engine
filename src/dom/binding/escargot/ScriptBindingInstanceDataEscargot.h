@@ -31,6 +31,7 @@ public:
     escargot::ESFunctionObject* m_mouseEvent;
     escargot::ESFunctionObject* m_nodeList;
     escargot::ESFunctionObject* m_domTokenList;
+    escargot::ESFunctionObject* m_Attr;
 };
 
 }

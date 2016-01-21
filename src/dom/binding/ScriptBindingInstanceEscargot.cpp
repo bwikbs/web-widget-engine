@@ -752,6 +752,27 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     }, escargot::ESString::create("getElementsByClassName"), 1, false);
     DocumentFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("getElementsByClassName"), false, false, false, getElementsByClassNameFunction);
 
+    escargot::ESFunctionObject*   createAttributeFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+        Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+
+        if (obj->isDocument()) {
+            Document* doc = obj->asDocument();
+            escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+            if (argValue.isESString()) {
+                escargot::ESString* argStr = argValue.asESString();
+                Attr* result = doc->createAttribute(String::fromUTF8(argStr->utf8Data()));
+                if (result != nullptr)
+                    return escargot::ESValue((escargot::ESObject *)result);
+            }
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("createAttribute"), 1, false);
+    DocumentFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("createAttribute"), false, false, false, createAttributeFunction);
+
 
     DocumentFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("children"), childrenGetter, NULL, false, false, false);
 
@@ -1010,6 +1031,9 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(MouseEvent, UIEventFunction->protoType());
     fetchData(this)->m_mouseEvent = MouseEventFunction;
+
+    DEFINE_FUNCTION(Attr, fetchData(this)->m_instance->globalObject()->objectPrototype());
+    fetchData(this)->m_Attr = AttrFunction;
 }
 
 void ScriptBindingInstance::evaluate(String* str)
