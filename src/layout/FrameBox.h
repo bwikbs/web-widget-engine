@@ -111,11 +111,88 @@ public:
 
     void paintBackgroundAndBorders(Canvas* canvas)
     {
-        Rect bgRect(borderLeft(), borderTop(), m_frameRect.width() - borderWidth(), m_frameRect.height() - borderHeight());
         if (!style()->bgColor().isTransparent()) {
             canvas->save();
             canvas->setColor(style()->bgColor());
+            Rect bgRect(borderLeft(), borderTop(), m_frameRect.width() - borderWidth(), m_frameRect.height() - borderHeight());
             canvas->drawRect(bgRect);
+            canvas->restore();
+        }
+        if (style()->bgImageData()) {
+            ImageData* id = style()->bgImageData();
+            if (!id->width() || !id->height())
+                return;
+
+            // TODO background-position
+            canvas->save();
+            canvas->translate(borderLeft(), borderTop());
+            float bw = m_frameRect.width() - borderWidth();
+            float bh = m_frameRect.height() - borderHeight();
+            canvas->clip(Rect(0, 0, bw, bh));
+
+            if (style()->bgSizeType() == BackgroundSizeType::Cover) {
+                canvas->drawImage(id, Rect(0, 0, bw, bh));
+            } else if (style()->bgSizeType() == BackgroundSizeType::Contain) {
+                float boxR = bw/bh;
+                float imgR = id->width()/(float)id->height();
+                if (boxR > imgR) {
+                    float start = bh * (float)id->width() / (float)id->height();
+                    canvas->drawImage(id, Rect(0, 0, start, bh));
+
+                    if (style()->backgroundRepeatX() == BackgroundRepeatValue::RepeatRepeatValue) {
+                        for (float s = start; s < bw; s += start) {
+                            canvas->drawImage(id, Rect(s, 0, start, bh));
+                        }
+                    }
+                } else {
+                    float start = bw * (float)id->height() / (float)id->width();
+                    canvas->drawImage(id, Rect(0, 0, bw, start));
+
+                    if (style()->backgroundRepeatY() == BackgroundRepeatValue::RepeatRepeatValue) {
+                        for (float s = start; s < bw; s += start) {
+                            canvas->drawImage(id, Rect(0, s, bw, start));
+                        }
+                    }
+                }
+
+            } else if (style()->bgSizeType() == BackgroundSizeType::SizeValue) {
+                float w, h;
+                if (style()->bgSizeValue()->width().isAuto()) {
+                    w = id->width();
+                } else {
+                    w = style()->bgSizeValue()->width().specifiedValue(bw);
+                }
+
+                if (style()->bgSizeValue()->height().isAuto()) {
+                    h = id->height();
+                } else {
+                    h = style()->bgSizeValue()->height().specifiedValue(bh);
+                }
+
+                canvas->drawImage(id, Rect(0, 0, w, h));
+                if (style()->backgroundRepeatX() == BackgroundRepeatValue::RepeatRepeatValue) {
+                    if (style()->backgroundRepeatY() == BackgroundRepeatValue::RepeatRepeatValue) {
+                        for (float x = 0; x < bw; x += w) {
+                            for (float y = 0; y < bh; y += h) {
+                                canvas->drawImage(id, Rect(x, y, w, h));
+                            }
+                        }
+                    } else {
+                        for (float x = 0; x < bw; x += w) {
+                            canvas->drawImage(id, Rect(x, 0, w, h));
+                        }
+                    }
+                } else {
+                    if (style()->backgroundRepeatY() == BackgroundRepeatValue::RepeatRepeatValue) {
+                        for (float y = 0; y < bh; y += h) {
+                            canvas->drawImage(id, Rect(0, y, w, h));
+                        }
+                    }
+                }
+            } else {
+                STARFISH_ASSERT(style()->bgSizeType() == BackgroundSizeType::SizeNone);
+                STARFISH_ASSERT_NOT_REACHED();
+            }
             canvas->restore();
         }
         // TODO draw background image

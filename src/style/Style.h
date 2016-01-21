@@ -453,7 +453,7 @@ public:
 
     void resolveDOMStyle(Document* document);
     void dumpDOMStyle(Document* document);
-    ComputedStyle* resolveDocumentStyle();
+    ComputedStyle* resolveDocumentStyle(StarFish* sf);
     friend Length convertValueToLength(CSSStyleValuePair::ValueKind kind, CSSStyleValuePair::ValueData data);
     ComputedStyle* resolveStyle(Element* node, ComputedStyle* parent);
 protected:

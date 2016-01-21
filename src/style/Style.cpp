@@ -537,7 +537,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     return ret;
 }
 
-ComputedStyle* StyleResolver::resolveDocumentStyle()
+ComputedStyle* StyleResolver::resolveDocumentStyle(StarFish* sf)
 {
     ComputedStyle* ret = new ComputedStyle();
     ret->m_display = DisplayValue::BlockDisplayValue;
@@ -545,6 +545,7 @@ ComputedStyle* StyleResolver::resolveDocumentStyle()
     // TODO implement ltr, rtl
     ret->m_inheritedStyles.m_textAlign = TextAlignValue::LeftTextAlignValue;
     ret->m_inheritedStyles.m_direction = DirectionValue::LtrDirectionValue;
+    ret->loadResources(sf);
     return ret;
 }
 

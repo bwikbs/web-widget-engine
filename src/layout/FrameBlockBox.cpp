@@ -220,7 +220,14 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
 
 
     // compute object height
-    setHeight(contentHeight);
+    if (style()->height().isAuto())
+        setContentHeight(contentHeight);
+    else {
+        // TODO percentage height
+        if (style()->height().isSpecified()) {
+            setContentHeight(style()->height().fixed());
+        }
+    }
 }
 
 void FrameBlockBox::paint(Canvas* canvas, PaintingStage stage)

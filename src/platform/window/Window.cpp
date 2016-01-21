@@ -275,7 +275,7 @@ Window::Window(StarFish* starFish)
 
     m_styleResolver.addSheet(userAgentStyleSheet);
 
-    m_document = new HTMLDocument(this, m_starFish->scriptBindingInstance(), m_styleResolver.resolveDocumentStyle());
+    m_document = new HTMLDocument(this, m_starFish->scriptBindingInstance(), m_styleResolver.resolveDocumentStyle(m_starFish));
 
     if (m_starFish->startUpFlag() & StarFishStartUpFlag::enableBlackTheme) {
         m_document->style()->setColor(Color(255, 255, 255, 255));
