@@ -68,19 +68,19 @@ Node* Element::clone()
 {
     Node* newNode = nullptr;
     if(isHTMLElement()) {
-        if(localName()->equals("html")) {
+        if(localName()->equals(document()->window()->starFish()->staticStrings()->m_htmlLocalName)) {
             newNode = new HTMLHtmlElement(document());
-        } else if(localName()->equals("head")) {
+        } else if(localName()->equals(document()->window()->starFish()->staticStrings()->m_headLocalName)) {
             newNode = new HTMLHeadElement(document());
-        } else if(localName()->equals("body")) {
+        } else if(localName()->equals(document()->window()->starFish()->staticStrings()->m_bodyLocalName)) {
             newNode = new HTMLBodyElement(document());
-        } else if(localName()->equals("div")) {
+        } else if(localName()->equals(document()->window()->starFish()->staticStrings()->m_divLocalName)) {
             newNode = new HTMLDivElement(document());
-        } else if(localName()->equals("img")) {
+        } else if(localName()->equals(document()->window()->starFish()->staticStrings()->m_imageLocalName)) {
             newNode = new HTMLImageElement(document());
-        } else if(localName()->equals("script")) {
+        } else if(localName()->equals(document()->window()->starFish()->staticStrings()->m_scriptLocalName)) {
             newNode = new HTMLScriptElement(document());
-        } else if(localName()->equals("style")) {
+        } else if(localName()->equals(document()->window()->starFish()->staticStrings()->m_styleLocalName)) {
             newNode = new HTMLStyleElement(document());
         } else {
             STARFISH_RELEASE_ASSERT(false);
