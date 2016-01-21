@@ -333,6 +333,11 @@ public:
         return false;
     }
 
+    virtual bool isComment()
+    {
+        return false;
+    }
+
     CharacterData* asCharacterData()
     {
         STARFISH_ASSERT(isCharacterData());
@@ -399,12 +404,12 @@ public:
         setNeedsRendering();
     }
 
-    void setStyle(ComputedStyle* style)
+    virtual void setStyle(ComputedStyle* style)
     {
         m_style = style;
     }
 
-    ComputedStyle* style()
+    virtual ComputedStyle* style()
     {
         return m_style;
     }

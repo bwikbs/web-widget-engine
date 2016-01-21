@@ -22,6 +22,9 @@ bool Node::isEqualNode(Node* other) {
     if(other == nullptr) {
         return false;
     }
+    if(this == other) {
+        return true;
+    }
     if(nodeType() != other->nodeType()) {
         return false;
     }

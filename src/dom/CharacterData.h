@@ -16,10 +16,7 @@ public:
         m_data = data;
     }
 
-    virtual NodeType nodeType()
-    {
-        return TEXT_NODE;
-    }
+    virtual NodeType nodeType() = 0;
 
     virtual Element* parentElement()
     {

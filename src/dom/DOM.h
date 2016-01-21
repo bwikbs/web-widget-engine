@@ -8,6 +8,7 @@
 #include "dom/DocumentType.h"
 #include "dom/CharacterData.h"
 #include "dom/Text.h"
+#include "dom/Comment.h"
 #include "dom/HTMLDocument.h"
 #include "dom/Element.h"
 #include "dom/HTMLElement.h"

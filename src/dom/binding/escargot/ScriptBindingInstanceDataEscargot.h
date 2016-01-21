@@ -15,6 +15,7 @@ public:
     escargot::ESFunctionObject* m_htmlDocument;
     escargot::ESFunctionObject* m_characterData;
     escargot::ESFunctionObject* m_text;
+    escargot::ESFunctionObject* m_comment;
     escargot::ESFunctionObject* m_htmlElement;
     escargot::ESFunctionObject* m_htmlHtmlElement;
     escargot::ESFunctionObject* m_htmlHeadElement;

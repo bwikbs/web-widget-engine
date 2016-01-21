@@ -42,6 +42,9 @@ void buildTree(Node* current, Frame* parent)
     } else if (display == DisplayValue::InlineDisplayValue) {
         if (current->isCharacterData() && current->asCharacterData()->isText()) {
             currentFrame = new FrameText(current, current->style());
+        } else if(current->isComment()) {
+            clearTree(current);
+            return ;
         } else if (current->isElement() && current->asElement()->isHTMLElement() && current->asElement()->asHTMLElement()->isHTMLImageElement()) {
             auto element = current->asElement()->asHTMLElement()->asHTMLImageElement();
             currentFrame = new FrameReplacedImage(current, current->style(), element->src());

@@ -35,6 +35,10 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
             newNode = new Text(document, String::fromUTF8(xmlElement->FirstChildElement()->FirstChild()->Value()));
             parentNode->appendChild(newNode);
             return;
+        } else if (type == 8) {
+            newNode = new Comment(document, String::emptyString);
+            parentNode->appendChild(newNode);
+            return;
         } else if (type == 1) {
             const char* name = xmlElement->Attribute("localName");
             if (strcmp(name, "html") == 0) {

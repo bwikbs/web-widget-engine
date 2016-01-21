@@ -6,6 +6,11 @@
 
 namespace StarFish {
 
+String* Document::nodeName()
+{
+    return window()->starFish()->staticStrings()->m_documentLocalName;
+}
+
 String* Document::localName()
 {
     return window()->starFish()->staticStrings()->m_documentLocalName;

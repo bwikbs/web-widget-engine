@@ -1,26 +1,26 @@
-#ifndef __StarFishText__
-#define __StarFishText__
+#ifndef __StarFishComment__
+#define __StarFishComment__
 
 #include "dom/CharacterData.h"
 
 namespace StarFish {
 
-class Text : public CharacterData {
+class Comment : public CharacterData {
 public:
-    Text(Document* document, String* data)
+    Comment(Document* document, String* data = String::emptyString)
         : CharacterData(document, data)
     {
         initScriptWrappable(this);
     }
 
-    virtual NodeType nodeType()
-    {
-        return Node::TEXT_NODE;
-    }
-
-    virtual bool isText()
+    virtual bool isComment()
     {
         return true;
+    }
+
+    virtual NodeType nodeType()
+    {
+        return Node::COMMENT_NODE;
     }
 
     virtual String* nodeName();
@@ -39,7 +39,6 @@ public:
 
 protected:
 };
-
 
 }
 

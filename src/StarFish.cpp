@@ -75,6 +75,7 @@ StaticStrings::StaticStrings()
 {
     m_documentLocalName = String::createASCIIString("#document");
     m_textLocalName = String::createASCIIString("#text");
+    m_commentLocalName = String::createASCIIString("#comment");
     m_htmlLocalName = String::createASCIIString("html");
     m_headLocalName = String::createASCIIString("head");
     m_styleLocalName = String::createASCIIString("style");

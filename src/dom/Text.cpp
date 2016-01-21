@@ -5,6 +5,11 @@
 
 namespace StarFish {
 
+String* Text::nodeName()
+{
+    return document()->window()->starFish()->staticStrings()->m_textLocalName;
+}
+
 String* Text::localName()
 {
     return document()->window()->starFish()->staticStrings()->m_textLocalName;

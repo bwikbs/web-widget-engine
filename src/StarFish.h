@@ -15,6 +15,7 @@ public:
     // Node Names
     String* m_documentLocalName;
     String* m_textLocalName;
+    String* m_commentLocalName;
     String* m_htmlLocalName;
     String* m_headLocalName;
     String* m_styleLocalName;

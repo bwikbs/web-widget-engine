@@ -15,6 +15,7 @@ class DocumentType;
 class HTMLDocument;
 class CharacterData;
 class Text;
+class Comment;
 class HTMLElement;
 class HTMLHtmlElement;
 class HTMLHeadElement;
@@ -62,6 +63,7 @@ public:
     void initScriptWrappable(HTMLDocument* ptr);
     void initScriptWrappable(CharacterData* ptr);
     void initScriptWrappable(Text* ptr);
+    void initScriptWrappable(Comment* ptr);
     void initScriptWrappable(HTMLElement* ptr);
     void initScriptWrappable(HTMLHtmlElement* ptr);
     void initScriptWrappable(HTMLHeadElement* ptr);

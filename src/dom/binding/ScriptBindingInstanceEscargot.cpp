@@ -742,6 +742,9 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(Text, CharacterDataFunction->protoType());
     fetchData(this)->m_text = TextFunction;
 
+    DEFINE_FUNCTION(Comment, CharacterDataFunction->protoType());
+    fetchData(this)->m_comment = CommentFunction;
+
     DEFINE_FUNCTION(HTMLElement, ElementFunction->protoType());
     fetchData(this)->m_htmlElement = HTMLElementFunction;
 

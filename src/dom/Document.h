@@ -25,10 +25,7 @@ public:
         return DOCUMENT_NODE;
     }
 
-    virtual String* nodeName()
-    {
-        return String::createASCIIString("#document");
-    }
+    virtual String* nodeName();
 
     virtual String* localName();
 
