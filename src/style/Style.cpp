@@ -149,7 +149,14 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             parseFontSizeForKeyword(&ret, 5);
         } else if (VALUE_IS_STRING("xx-large")) {
             parseFontSizeForKeyword(&ret, 6);
-        } else {
+        } else if (VALUE_IS_STRING("larger")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::LargerFontSize;
+        } else if (VALUE_IS_STRING("smaller")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::SmallerFontSize;
+        } else if (VALUE_IS_INITIAL()) {
+            parseFontSizeForKeyword(&ret, 3);
+        }
+        else {
             parsePercentageOrLength(ret, value);
         }
     } else if (strcmp(key, "color") == 0) {
@@ -238,7 +245,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     		ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
     	} else if (VALUE_IS_STRING("no-repeat")) {
     		ret.m_value.m_backgroundRepeatX = BackgroundRepeatValue::NoRepeatRepeatValue;
-    	} else if (VALUE_IS_STRING("repeat") || VALUE_IS_STRING("initial")) {
+    	} else if (VALUE_IS_STRING("repeat") || VALUE_IS_INITIAL()) {
     		ret.m_value.m_backgroundRepeatX = BackgroundRepeatValue::RepeatRepeatValue;
     	} else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -252,7 +259,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     		ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
     	} else if (VALUE_IS_STRING("no-repeat")) {
     		ret.m_value.m_backgroundRepeatY = BackgroundRepeatValue::NoRepeatRepeatValue;
-    	} else if (VALUE_IS_STRING("repeat") || VALUE_IS_STRING("initial")) {
+    	} else if (VALUE_IS_STRING("repeat") || VALUE_IS_INITIAL()) {
     		ret.m_value.m_backgroundRepeatY = BackgroundRepeatValue::RepeatRepeatValue;
     	} else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -304,7 +311,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
 
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if(VALUE_IS_STRING("none") || VALUE_IS_STRING("initial")) {
+        } else if(VALUE_IS_STRING("none") || VALUE_IS_INITIAL()) {
             // Do nothing!!
         } else {
             // TODO: parse "url()"
@@ -503,6 +510,10 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
             case CSSStyleValuePair::KeyKind::FontSize:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->m_inheritedStyles.m_fontSize = parentStyle->m_inheritedStyles.m_fontSize;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::LargerFontSize) {
+                    style->m_inheritedStyles.m_fontSize = (parentStyle->m_inheritedStyles.m_fontSize) * 1.2;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::SmallerFontSize) {
+                    style->m_inheritedStyles.m_fontSize = (parentStyle->m_inheritedStyles.m_fontSize) / 1.2;
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length);
                     style->m_inheritedStyles.m_fontSize = cssValues[k].lengthValue().toLength().fixed();

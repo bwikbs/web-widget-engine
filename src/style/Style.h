@@ -202,8 +202,10 @@ public:
         SizeValueKind,  //(width: [length|percentage|auto], height: [length|percentage|auto]) pair
 
         BackgroundRepeatValueKind,
-
         BorderImageRepeatValueKind,
+
+        LargerFontSize,
+        SmallerFontSize,
     };
 
     CSSStyleValuePair()

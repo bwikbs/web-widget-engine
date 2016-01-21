@@ -10,13 +10,14 @@
 		]]></text>
 				</node>
 				<node nodeType="1" localName="style" type="text/css">
-					<style selectorText="#idText" font-size="xx-large" color="red"/>
+					<style selectorText="#idText" font-size="smaller" color="red"/>
 					<style selectorText=".classText" font-size="12px"/>
 					<style selectorText="div" display="block"/>
+					<style selectorText="body" font-size="xx-large"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
 			#idText {
-				font-size: xx-large;
+				font-size: smaller;				
 				color: red;
 			}
 			.classText {
@@ -26,6 +27,9 @@
 			div {
 				display: block;
 			}
+                        body {
+                                font-size: xx-large;
+                        }
 		]]></text>
 					</node>
 				</node>
