@@ -67,13 +67,18 @@ public:
         m_background->setbgColor(color);
     }
 
+    void setbgImage(String* img)
+    {
+        m_background->setbgImage(img);
+    }
+
     Color bgColor()
     {
         return m_background->bgColor();
     }
 
     String* bgImage() {
-        return m_bgImage;
+        return m_background->bgImage();
     }
 
     Font* font()
@@ -97,12 +102,22 @@ public:
         return m_font;
     }
 
+    void setBackgroundRepeatX(BackgroundRepeatValue repeat)
+    {
+        m_background->setRepeatX(repeat);
+    }
+
+    void setBackgroundRepeatY(BackgroundRepeatValue repeat)
+    {
+        m_background->setRepeatY(repeat);
+    }
+
     BackgroundRepeatValue backgroundRepeatX() {
-    	return m_backgroundRepeatX;
+    	return m_background->repeatX();
     }
 
     BackgroundRepeatValue backgroundRepeatY() {
-        return m_backgroundRepeatY;
+        return m_background->repeatY();
     }
 
     Length bottom() {
@@ -147,7 +162,6 @@ protected:
         m_borderImageRepeat = new AxisValue<BorderImageRepeatValue>(BorderImageRepeatValue::StretchValue, BorderImageRepeatValue::StretchValue);
         m_marginBottom = Length(Length::Fixed, 0);
         m_opacity = 1;
-        m_bgImage = String::emptyString;
         m_background = new StyleBackgroundData();;
         m_surround = new StyleSurroundData();
     }
@@ -168,11 +182,7 @@ protected:
     Length m_left;
 
     Font* m_font;
-    String* m_bgImage;
     StyleBackgroundData* m_background;
-
-    BackgroundRepeatValue m_backgroundRepeatX;
-    BackgroundRepeatValue m_backgroundRepeatY;
 
     AxisValue<BorderImageRepeatValue>* m_borderImageRepeat;
     String* m_borderImageSource;

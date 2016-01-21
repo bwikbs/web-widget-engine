@@ -607,9 +607,9 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundImage:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_bgImage = parentStyle->m_bgImage;
+                    style->setbgImage(parentStyle->bgImage());
                 } else {
-                    style->m_bgImage = cssValues[k].stringValue();
+                    style->setbgImage(cssValues[k].stringValue());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundSize:
@@ -636,18 +636,18 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundRepeatX:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_backgroundRepeatX = parentStyle->m_backgroundRepeatX;
+                    style->setBackgroundRepeatX(parentStyle->backgroundRepeatX());
                 } else {
                     STARFISH_ASSERT(CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind == cssValues[k].valueKind());
-                    style->m_backgroundRepeatX = cssValues[k].backgroundRepeatXValue();
+                    style->setBackgroundRepeatX(cssValues[k].backgroundRepeatXValue());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundRepeatY:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_backgroundRepeatY = parentStyle->m_backgroundRepeatY;
+                    style->setBackgroundRepeatY(parentStyle->backgroundRepeatY());
                 } else {
                     STARFISH_ASSERT(CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind == cssValues[k].valueKind());
-                    style->m_backgroundRepeatY = cssValues[k].backgroundRepeatYValue();
+                    style->setBackgroundRepeatY(cssValues[k].backgroundRepeatYValue());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::Bottom:

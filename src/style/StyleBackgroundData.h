@@ -8,7 +8,8 @@ namespace StarFish {
 class StyleBackgroundData : public gc {
 public:
     StyleBackgroundData()
-        : m_sizeType(BackgroundSizeType::SizeValue),
+        : m_image(String::emptyString),
+          m_sizeType(BackgroundSizeType::SizeValue),
           m_sizeValue(NULL)
     {}
 
@@ -30,14 +31,44 @@ public:
         m_color = color;
     }
 
+    void setbgImage(String* img)
+    {
+        m_image = img;
+    }
+
+    void setRepeatX(BackgroundRepeatValue repeat)
+    {
+        m_repeatX = repeat;
+    }
+
+    void setRepeatY(BackgroundRepeatValue repeat)
+    {
+        m_repeatY = repeat;
+    }
+
     Color bgColor()
     {
         return m_color;
     }
 
+    String* bgImage()
+    {
+        return m_image;
+    }
+
     BackgroundSizeType sizeType()
     {
         return m_sizeType;
+    }
+
+    BackgroundRepeatValue repeatX()
+    {
+        return m_repeatX;
+    }
+
+    BackgroundRepeatValue repeatY()
+    {
+        return m_repeatY;
     }
 
     LengthSize* sizeValue()
@@ -50,9 +81,15 @@ public:
 
     Color m_color;
 
+    String* m_image;
+
     //background-size
     BackgroundSizeType m_sizeType;
     LengthSize* m_sizeValue;
+
+    //background-repeat
+    BackgroundRepeatValue m_repeatX;
+    BackgroundRepeatValue m_repeatY;
 };
 
 }
