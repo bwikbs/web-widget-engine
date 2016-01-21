@@ -69,9 +69,21 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                 CSSStyleSheet* sheet = new CSSStyleSheet;
                 while (e) {
                     if (strcmp(e->Value(),"style") == 0) {
+                        CSSStyleRule::PseudoClass pc = CSSStyleRule::PseudoClass::None;
                         const char* selectorText = e->Attribute("selectorText");
                         CSSStyleRule::Kind kind;
                         String* st;
+                        std::string cSelectorText;
+                        char* pcPos = strchr((char *)selectorText, ':');
+                        if (pcPos) {
+                            cSelectorText = selectorText;
+                            cSelectorText[pcPos - selectorText] = '\0';
+                            selectorText = cSelectorText.data();
+                            if (strcmp(pcPos + 1, "active") == 0) {
+                                pc = CSSStyleRule::PseudoClass::Active;
+                            }
+                        }
+
                         if (selectorText[0] == '.') {
                             kind = CSSStyleRule::Kind::ClassSelector;
                             st = String::fromUTF8(&selectorText[1]);
@@ -88,7 +100,8 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                                 st = String::fromUTF8(selectorText);
                             }
                         }
-                        CSSStyleRule rule(kind, st);
+
+                        CSSStyleRule rule(kind, st, pc);
                         const tinyxml2::XMLAttribute* attr = e->FirstAttribute();
                         while (attr) {
                             if (strcmp(attr->Name(), "selectorText") != 0) {

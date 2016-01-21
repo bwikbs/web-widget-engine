@@ -111,10 +111,11 @@ public:
 
     void paintBackgroundAndBorders(Canvas* canvas)
     {
+        Rect bgRect(borderLeft(), borderTop(), m_frameRect.width() - borderWidth(), m_frameRect.height() - borderHeight());
         if (!style()->bgColor().isTransparent()) {
             canvas->save();
             canvas->setColor(style()->bgColor());
-            canvas->drawRect(Rect(borderLeft(), borderTop(), m_frameRect.width() - borderWidth(), m_frameRect.height() - borderHeight()));
+            canvas->drawRect(bgRect);
             canvas->restore();
         }
         // TODO draw background image

@@ -806,11 +806,26 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
         }
     };
 
+    auto chkPseudoClass = [](CSSStyleRule* rule, Element* e) -> bool {
+        if (rule->m_pseudoClass == CSSStyleRule::None) {
+            return true;
+        }
+
+        bool chk = true;
+        if ((rule->m_pseudoClass & CSSStyleRule::Active) && ((e->state() & Node::NodeState::NodeStateActive) == 0)) {
+            chk = false;
+        }
+
+        return chk;
+    };
+
     // * selector
     for (unsigned i = 0; i < m_sheets.size(); i ++) {
         CSSStyleSheet* sheet = m_sheets[i];
         for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
             if (sheet->m_rules[j].m_kind == CSSStyleRule::UniversalSelector) {
+                if (!chkPseudoClass(&sheet->m_rules[j], element))
+                    continue;
                 auto cssValues = sheet->m_rules[j].styleDeclaration()->m_cssValues;
                 apply(cssValues, ret, parent);
             }
@@ -823,6 +838,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
         for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
             if (sheet->m_rules[j].m_kind == CSSStyleRule::TypeSelector) {
                 if (sheet->m_rules[j].m_ruleText->equals(element->localName())) {
+                    if (!chkPseudoClass(&sheet->m_rules[j], element))
+                        continue;
                     auto cssValues = sheet->m_rules[j].styleDeclaration()->m_cssValues;
                     apply(cssValues, ret, parent);
                 }
@@ -836,9 +853,10 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
         for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
             if (sheet->m_rules[j].m_kind == CSSStyleRule::ClassSelector) {
                 auto className = element->classNames();
-
                 for (unsigned f = 0; f < className.size(); f ++) {
                     if (className[f]->equals(sheet->m_rules[j].m_ruleText)) {
+                        if (!chkPseudoClass(&sheet->m_rules[j], element))
+                            continue;
                         auto cssValues = sheet->m_rules[j].styleDeclaration()->m_cssValues;
                         apply(cssValues, ret, parent);
                     }

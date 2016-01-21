@@ -381,11 +381,17 @@ public:
         IdSelector,
     };
 
-    CSSStyleRule(Kind kind, String* ruleText)
+    enum PseudoClass {
+        None,
+        Active
+    };
+
+    CSSStyleRule(Kind kind, String* ruleText, PseudoClass pc)
     {
         m_kind = kind;
         m_ruleText = ruleText;
         m_styleDeclaration = new CSSStyleDeclaration();
+        m_pseudoClass = pc;
     }
 
     CSSStyleDeclaration* styleDeclaration()
@@ -396,6 +402,7 @@ public:
 protected:
     Kind m_kind;
     String* m_ruleText;
+    PseudoClass m_pseudoClass;
     CSSStyleDeclaration* m_styleDeclaration;
 };
 
