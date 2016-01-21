@@ -260,6 +260,69 @@ public:
         surround()->border.left().setWidth(width);
     }
 
+    Length borderImageOffsetTop()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Percent, 1);
+        } else {
+            return m_surround->border.imageOffsetTop();
+        }
+    }
+
+    Length borderImageOffsetRight()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Percent, 1);
+        } else {
+            return m_surround->border.imageOffsetRight();
+        }
+    }
+
+    Length borderImageOffsetBottom()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Percent, 1);
+        } else {
+            return m_surround->border.imageOffsetBottom();
+        }
+    }
+
+    Length borderImageOffsetLeft()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Percent, 1);
+        } else {
+            return m_surround->border.imageOffsetLeft();
+        }
+    }
+
+    bool borderImageFill()
+    {
+        if (m_surround == nullptr) {
+            return false;
+        } else {
+            return m_surround->border.imageFill();
+        }
+    }
+
+    BorderImageRepeatValue borderImageRepeatX()
+    {
+        if (m_surround == nullptr) {
+            return BorderImageRepeatValue::StretchValue;
+        } else {
+            return m_surround->border.imageRepeatX();
+        }
+    }
+
+    BorderImageRepeatValue borderImageRepeatY()
+    {
+        if (m_surround == nullptr) {
+            return BorderImageRepeatValue::StretchValue;
+        } else {
+            return m_surround->border.imageRepeatY();
+        }
+    }
+
     StyleSurroundData* surround() {
         if (m_surround == nullptr) {
             m_surround = new StyleSurroundData();

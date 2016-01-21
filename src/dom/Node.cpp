@@ -383,39 +383,39 @@ void Node::dumpStyle()
     }
 
     // border-image-repeat
-    if (m_style->surround()->border.imageRepeatX() == BorderImageRepeatValue::StretchValue) {
+    if (m_style->borderImageRepeatX() == BorderImageRepeatValue::StretchValue) {
         printf("border-image-repeat: (stretch ");
-    } else if (m_style->surround()->border.imageRepeatX() == BorderImageRepeatValue::RepeatValue) {
+    } else if (m_style->borderImageRepeatX() == BorderImageRepeatValue::RepeatValue) {
         printf("border-image-repeat: (repeat ");
-    } else if (m_style->surround()->border.imageRepeatX() == BorderImageRepeatValue::RoundValue) {
+    } else if (m_style->borderImageRepeatX() == BorderImageRepeatValue::RoundValue) {
         printf("border-image-repeat: (round ");
-    } else if (m_style->surround()->border.imageRepeatX() == BorderImageRepeatValue::SpaceValue) {
+    } else if (m_style->borderImageRepeatX() == BorderImageRepeatValue::SpaceValue) {
         printf("border-image-repeat: (space ");
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
-    if (m_style->surround()->border.imageRepeatY() == BorderImageRepeatValue::StretchValue) {
+    if (m_style->borderImageRepeatY() == BorderImageRepeatValue::StretchValue) {
         printf("stretch), ");
-    } else if (m_style->surround()->border.imageRepeatY() == BorderImageRepeatValue::RepeatValue) {
+    } else if (m_style->borderImageRepeatY() == BorderImageRepeatValue::RepeatValue) {
         printf("repeat), ");
-    } else if (m_style->surround()->border.imageRepeatY() == BorderImageRepeatValue::RoundValue) {
+    } else if (m_style->borderImageRepeatY() == BorderImageRepeatValue::RoundValue) {
         printf("round), ");
-    } else if (m_style->surround()->border.imageRepeatY() == BorderImageRepeatValue::SpaceValue) {
+    } else if (m_style->borderImageRepeatY() == BorderImageRepeatValue::SpaceValue) {
         printf("space), ");
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 
     // border-image-slice
-    if (m_style->surround()->border.imageOffsetTop().isPercent()) printf("border-image-slice: (%.1fp, ", m_style->surround()->border.imageOffsetTop().percent());
-    else printf("border-image-slice: (%.1f, ", m_style->surround()->border.imageOffsetTop().fixed());
-    if (m_style->surround()->border.imageOffsetRight().isPercent()) printf("%.1fp, ", m_style->surround()->border.imageOffsetRight().percent());
-    else printf("%.1f, ", m_style->surround()->border.imageOffsetRight().fixed());
-    if (m_style->surround()->border.imageOffsetBottom().isPercent()) printf("%.1fp, ", m_style->surround()->border.imageOffsetBottom().percent());
-    else printf("%.1f, ", m_style->surround()->border.imageOffsetBottom().fixed());
-    if (m_style->surround()->border.imageOffsetLeft().isPercent()) printf("%.1fp, ", m_style->surround()->border.imageOffsetLeft().percent());
-    else printf("%.1f, ", m_style->surround()->border.imageOffsetLeft().fixed());
-    printf("%d), ", m_style->surround()->border.imageFill());
+    if (m_style->borderImageOffsetTop().isPercent()) printf("border-image-slice: (%.1fp, ", m_style->borderImageOffsetTop().percent());
+    else printf("border-image-slice: (%.1f, ", m_style->borderImageOffsetTop().fixed());
+    if (m_style->borderImageOffsetRight().isPercent()) printf("%.1fp, ", m_style->borderImageOffsetRight().percent());
+    else printf("%.1f, ", m_style->borderImageOffsetRight().fixed());
+    if (m_style->borderImageOffsetBottom().isPercent()) printf("%.1fp, ", m_style->borderImageOffsetBottom().percent());
+    else printf("%.1f, ", m_style->borderImageOffsetBottom().fixed());
+    if (m_style->borderImageOffsetLeft().isPercent()) printf("%.1fp, ", m_style->borderImageOffsetLeft().percent());
+    else printf("%.1f, ", m_style->borderImageOffsetLeft().fixed());
+    printf("%d), ", m_style->borderImageFill());
 
     // border-image-source
     if(m_style->borderImageSource() != 0)

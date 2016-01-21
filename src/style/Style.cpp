@@ -222,7 +222,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
 
         if (VALUE_IS_NONE() || VALUE_IS_INITIAL()) {
-            ret.m_value.m_stringValue = String::emptyString;
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
         } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else {
@@ -693,7 +693,9 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundImage:
-                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    // Use initialized value
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBgImage(parentStyle->bgImage());
                 } else {
                     style->setBgImage(cssValues[k].stringValue());
@@ -767,6 +769,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
                     // Use initialized value
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    // TODO: Prevent parentStyle->surround() from creating object for this
                     style->surround()->border.borderImageRepeatInherit(parentStyle->surround()->border);
                 } else {
                     style->surround()->border.setImageRepeatX(cssValues[k].multiValue()->getValueAtIndex(0).m_borderImageRepeat);
@@ -777,6 +780,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
                     // Use initialized value
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    // TODO: Prevent parentStyle->surround() from creating object for this
                     style->surround()->border.borderImageSliceInherit(parentStyle->surround()->border);
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::ValueListKind);
