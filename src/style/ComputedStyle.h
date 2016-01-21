@@ -9,6 +9,7 @@ namespace StarFish {
 
 class ComputedStyle : public gc {
     friend class StyleResolver;
+    friend void resolveDOMStyleInner(StyleResolver* resolver, Element* element, ComputedStyle* parentStyle);
 public:
     ComputedStyle()
     {
@@ -78,28 +79,19 @@ public:
         return m_background->bgColor();
     }
 
-    String* bgImage() {
+    String* bgImage()
+    {
         return m_background->bgImage();
+    }
+
+    ImageData* bgImageData()
+    {
+        return m_background->m_imageData;
     }
 
     Font* font()
     {
         STARFISH_ASSERT(m_font);
-        return m_font;
-    }
-
-    void ensureFont(StarFish* sf)
-    {
-        if (m_font == nullptr) {
-            m_font = fontSlowCase(sf);
-        }
-    }
-
-    Font* font(StarFish* sf)
-    {
-        if (m_font == nullptr) {
-            return fontSlowCase(sf);
-        }
         return m_font;
     }
 
@@ -182,7 +174,7 @@ protected:
         m_surround = new StyleSurroundData();
     }
 
-    Font* fontSlowCase(StarFish* sf);
+    void loadResources(StarFish* sf);
 
     struct {
         Color m_color;

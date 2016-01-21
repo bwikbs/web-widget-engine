@@ -339,7 +339,7 @@ void Node::dumpStyle()
         printf("direction: rtl, ");
 
     // font-size
-    printf("font-size: %.0f, ", m_style->font(document()->window()->starFish())->size());
+    printf("font-size: %.0f, ", m_style->font()->size());
 
     // color
     printf("color: (%d,%d,%d,%d), ", m_style->color().r(), m_style->color().g(), m_style->color().b(), m_style->color().a());

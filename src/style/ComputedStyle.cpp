@@ -5,10 +5,12 @@
 
 namespace StarFish {
 
-Font* ComputedStyle::fontSlowCase(StarFish* sf)
+void ComputedStyle::loadResources(StarFish* sf)
 {
     m_font = sf->fetchFont(String::emptyString, m_inheritedStyles.m_fontSize, 0);
-    return m_font;
+    if (!m_background->m_image->equals(String::emptyString)) {
+        m_background->m_imageData = sf->fetchImage(sf->makeResourcePath(m_background->m_image));
+    }
 }
 
 

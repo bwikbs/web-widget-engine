@@ -70,8 +70,6 @@ void buildTree(Node* current, Frame* parent)
                     STARFISH_ASSERT(last->style()->display() == BlockDisplayValue);
                     if (last->node()) {
                         last = new FrameBlockBox(nullptr, parent->style());
-                        // make sure font exists
-                        parent->style()->ensureFont(current->document()->window()->starFish());
                         parent->appendChild(last);
                     }
 
@@ -88,8 +86,6 @@ void buildTree(Node* current, Frame* parent)
                     }
 
                     FrameBlockBox* blockBox = new FrameBlockBox(nullptr, parent->style());
-                    // make sure font exists
-                    parent->style()->ensureFont(current->document()->window()->starFish());
                     for(unsigned i = 0; i < backup.size(); i ++) {
                         blockBox->appendChild(backup[i]);
                     }
@@ -107,9 +103,6 @@ void buildTree(Node* current, Frame* parent)
         STARFISH_ASSERT(parent->isFrameInline());
         parent->appendChild(currentFrame);
     }
-
-    // make sure font exists
-    currentFrame->style()->ensureFont(current->document()->window()->starFish());
 
     current->setFrame(currentFrame);
     Node* n = current->firstChild();

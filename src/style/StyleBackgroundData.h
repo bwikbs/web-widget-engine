@@ -5,13 +5,16 @@
 
 namespace StarFish {
 
+class ImageData;
+
 class StyleBackgroundData : public gc {
 public:
     StyleBackgroundData()
-        : m_image(String::emptyString),
-          m_sizeType(BackgroundSizeType::SizeValue),
-          m_sizeValue(NULL)
-    {}
+        : m_image(String::emptyString)
+        , m_imageData(NULL)
+        , m_sizeType(BackgroundSizeType::SizeValue)
+        , m_sizeValue(NULL)
+    { }
 
     ~StyleBackgroundData() { }
 
@@ -56,6 +59,11 @@ public:
         return m_image;
     }
 
+    ImageData* bgImageData()
+    {
+        return m_imageData;
+    }
+
     BackgroundSizeType sizeType()
     {
         return m_sizeType;
@@ -82,6 +90,7 @@ public:
     Color m_color;
 
     String* m_image;
+    ImageData* m_imageData;
 
     //background-size
     BackgroundSizeType m_sizeType;
