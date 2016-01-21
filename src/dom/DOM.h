@@ -22,5 +22,7 @@
 #include "dom/HTMLCollection.h"
 #include "dom/HTMLUnknownElement.h"
 #include "dom/DOMTokenList.h"
+#include "dom/NamedNodeMap.h"
+#include "dom/Attr.h"
 
 #endif

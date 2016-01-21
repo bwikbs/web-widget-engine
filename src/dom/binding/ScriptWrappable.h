@@ -30,6 +30,7 @@ class MouseEvent;
 class HTMLCollection;
 class NodeList;
 class DOMTokenList;
+class NamedNodeMap;
 class Attr;
 
 class ScriptBindingInstance;
@@ -44,7 +45,8 @@ public:
         HTMLCollectionObject,
         NodeListObject,
         DOMTokenListObject,
-        AttributeObject,
+        NamedNodeMapObject,
+        AttrObject,
     };
     ScriptWrappable();
 
@@ -83,6 +85,7 @@ public:
     void initScriptWrappable(HTMLCollection* ptr, ScriptBindingInstance*);
     void initScriptWrappable(NodeList* ptr, ScriptBindingInstance*);
     void initScriptWrappable(DOMTokenList* ptr, ScriptBindingInstance*);
+    void initScriptWrappable(NamedNodeMap* ptr, ScriptBindingInstance*);
     void initScriptWrappable(Attr* ptr, ScriptBindingInstance*);
 
     bool hasProperty(String* name);

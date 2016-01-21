@@ -10,6 +10,7 @@
 #include "dom/EventTarget.h"
 #include "dom/HTMLCollection.h"
 #include "dom/DOMTokenList.h"
+#include "dom/NamedNodeMap.h"
 
 namespace StarFish {
 
@@ -22,11 +23,13 @@ class RareNodeMembers : public gc {
 public:
     RareNodeMembers()
         :m_children(nullptr),
-         m_domTokenList(nullptr) {
+         m_domTokenList(nullptr),
+         m_namedNodeMap(nullptr) {
 
     }
     HTMLCollection* m_children;
     DOMTokenList* m_domTokenList;
+    NamedNodeMap* m_namedNodeMap;
 };
 
 class Node : public EventTarget<ScriptWrappable> {
@@ -459,6 +462,7 @@ public:
 
     HTMLCollection* children();
     DOMTokenList* classList();
+    NamedNodeMap* attributes();
 
     Element* nextElementSibling();
     Element* previousElementSibling();

@@ -268,11 +268,18 @@ void ScriptWrappable::initScriptWrappable(DOMTokenList* ptr, ScriptBindingInstan
     ((escargot::ESObject *)this)->setExtraData(DOMTokenListObject);
 }
 
+void ScriptWrappable::initScriptWrappable(NamedNodeMap* ptr, ScriptBindingInstance* instance)
+{
+    auto data = fetchData(instance);
+    ((escargot::ESObject *)this)->set__proto__(data->m_namedNodeMap->protoType());
+    ((escargot::ESObject *)this)->setExtraData(NamedNodeMapObject);
+}
+
 void ScriptWrappable::initScriptWrappable(Attr* ptr, ScriptBindingInstance* instance)
 {
     auto data = fetchData(instance);
-    ((escargot::ESObject *)this)->set__proto__(data->m_Attr->protoType());
-    ((escargot::ESObject *)this)->setExtraData(AttributeObject);
+    ((escargot::ESObject *)this)->set__proto__(data->m_attr->protoType());
+    ((escargot::ESObject *)this)->setExtraData(AttrObject);
 }
 
 }

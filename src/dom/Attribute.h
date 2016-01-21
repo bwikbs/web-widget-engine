@@ -41,17 +41,6 @@ protected:
     String* m_value;
 };
 
-class Attr : public ScriptWrappable {
-public:
-    Attr(ScriptBindingInstance* instance,String* localName){
-        initScriptWrappable(this,instance);
-        m_attr = Attribute(localName,String::emptyString);
-    }
-protected:
-    //Attr(ScriptBindingInstance* instance);
-    Attribute m_attr;
-};
-
 }
 
 #endif

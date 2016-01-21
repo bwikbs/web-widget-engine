@@ -300,6 +300,21 @@ DOMTokenList* Node::classList()
     return nullptr;
 }
 
+NamedNodeMap* Node::attributes()
+{
+    if (isElement()) {
+        if (!m_rareNodeMembers) {
+            m_rareNodeMembers = new RareNodeMembers();
+        } else if (!m_rareNodeMembers->m_namedNodeMap)
+            return m_rareNodeMembers->m_namedNodeMap;
+
+
+        m_rareNodeMembers->m_namedNodeMap = new NamedNodeMap(m_document->scriptBindingInstance(), asElement());
+        return m_rareNodeMembers->m_namedNodeMap;
+    }
+    return nullptr;
+}
+
 void Node::dumpStyle()
 {
     dump();

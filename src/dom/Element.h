@@ -136,6 +136,8 @@ public:
 
     virtual Node* clone();
 
+    std::vector<Attribute, gc_allocator<Attribute>>* getAttributes() { return &m_attributes; }
+
 protected:
     std::vector<Attribute, gc_allocator<Attribute>> m_attributes;
 
