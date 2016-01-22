@@ -444,7 +444,7 @@ void Node::dumpStyle()
     printf("%d), ", m_style->borderImageFill());
 
     // border-image-source
-    if(m_style->borderImageSource() != 0)
+    if(!m_style->borderImageSource()->equals(String::emptyString))
         printf("border-image-source: %s, ", m_style->borderImageSource()->utf8Data());
 
     // border-style
@@ -475,9 +475,16 @@ void Node::dumpStyle()
             m_style->borderBottomWidth().fixed(), m_style->borderLeftWidth().fixed());
 
     // background-repeat-x
-    printf("background-repeat-x: %d, ", m_style->backgroundRepeatX());
+    if(m_style->backgroundRepeatX() == BackgroundRepeatValue::RepeatRepeatValue)
+        printf("background-repeat-x: repeat, ");
+    else
+        printf("background-repeat-x: no-repeat, ");
+
     // background-repeat-y
-    printf("background-repeat-y: %d, ", m_style->backgroundRepeatY());
+    if(m_style->backgroundRepeatY() == BackgroundRepeatValue::RepeatRepeatValue)
+        printf("background-repeat-y: repeat, ");
+    else
+        printf("background-repeat-y: no-repeat, ");
 
     // margin-bottom
     if (m_style->marginBottom().isFixed()) {
@@ -510,9 +517,16 @@ void Node::dumpStyle()
     printf("opacity: %.1f, ", m_style->opacity());
 
     // overflow-x
-    printf("overflow-x: %d, ", m_style->overflowX());
+    if(m_style->overflowX() == OverflowValue::Visible)
+        printf("overflow-x: visible, ");
+    else
+        printf("overflow-x: hidden, ");
+
     // overflow-y
-    printf("overflow-y: %d, ", m_style->overflowY());
+    if(m_style->overflowY() == OverflowValue::Visible)
+        printf("overflow-y: visible, ");
+    else
+        printf("overflow-y: hidden, ");
 
     printf("}");
 }
