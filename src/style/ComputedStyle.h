@@ -209,7 +209,7 @@ public:
         if (m_surround == nullptr) {
             return Length(Length::Fixed, 0);
         } else {
-            return m_surround->border.topWidth();
+            return m_surround->border.top().width();
         }
     }
 
@@ -218,7 +218,7 @@ public:
         if (m_surround == nullptr) {
             return Length(Length::Fixed, 0);
         } else {
-            return m_surround->border.rightWidth();
+            return m_surround->border.right().width();
         }
     }
 
@@ -227,7 +227,7 @@ public:
         if (m_surround == nullptr) {
             return Length(Length::Fixed, 0);
         } else {
-            return m_surround->border.bottomWidth();
+            return m_surround->border.bottom().width();
         }
     }
 
@@ -236,7 +236,7 @@ public:
         if (m_surround == nullptr) {
             return Length(Length::Fixed, 0);
         } else {
-            return m_surround->border.leftWidth();
+            return m_surround->border.left().width();
         }
     }
 

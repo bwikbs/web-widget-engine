@@ -18,26 +18,6 @@ public:
     {
     }
 
-    Length topWidth()
-    {
-        return m_top.width();
-    }
-
-    Length rightWidth()
-    {
-        return m_right.width();
-    }
-
-    Length bottomWidth()
-    {
-        return m_bottom.width();
-    }
-
-    Length leftWidth()
-    {
-        return m_left.width();
-    }
-
     BorderValue& top()
     {
         return m_top;
