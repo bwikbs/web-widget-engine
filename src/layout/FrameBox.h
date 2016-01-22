@@ -19,9 +19,9 @@ public:
         return true;
     }
 
-    virtual void dump()
+    virtual void dump(int depth)
     {
-        Frame::dump();
+        Frame::dump(depth);
         printf(" frameRect(%g,%g,%g,%g) ", x(), y(), width(), height());
     }
 

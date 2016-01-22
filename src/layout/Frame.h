@@ -22,17 +22,62 @@ enum PaintingStage
     PaintingNonPositionedFloats, // the non-positioned floats.
     PaintingNormalFlowInline, // the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
     PaintingPositionedElements, // the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
+    PaintingStageEnd
 };
 
 enum HitTestStage
 {
-    HitTestStackingContext, HitTestNormalFlowBlock, HitTestNonPositionedFloats, HitTestNormalFlowInline, HitTestPositionedElements,
+    HitTestStackingContext,
+    HitTestNormalFlowBlock,
+    HitTestNonPositionedFloats,
+    HitTestNormalFlowInline,
+    HitTestPositionedElements,
+    HitTestStageEnd,
 };
 
 class LayoutContext
 {
 public:
     float parentContentWidth(Frame* currentFrame);
+    bool parentHasFixedHeight(Frame* currentFrame);
+    float parentFixedHeight(Frame* currentFrame);
+    Frame* blockContainer(Frame* currentFrame);
+private:
+};
+
+class ComputePreferredWidthContext
+{
+public:
+    ComputePreferredWidthContext(LayoutContext& lc, float lastKnownWidth)
+        : m_layoutContext(lc)
+    {
+        m_result = 0;
+        m_lastKnownWidth = lastKnownWidth;
+    }
+
+    LayoutContext& layoutContext()
+    {
+        return m_layoutContext;
+    }
+
+    void setResult(float r)
+    {
+        m_result = std::max(m_result, r);
+    }
+
+    float result()
+    {
+        return m_result;
+    }
+
+    float lastKnownWidth()
+    {
+        return m_lastKnownWidth;
+    }
+private:
+    LayoutContext& m_layoutContext;
+    float m_result;
+    float m_lastKnownWidth;
 };
 
 class Frame: public gc
@@ -189,7 +234,7 @@ public:
         oldChild->setParent(nullptr);
     }
 
-    virtual void dump()
+    virtual void dump(int depth)
     {
 
     }
@@ -200,6 +245,11 @@ public:
     }
 
     virtual void layout(LayoutContext& ctx)
+    {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    virtual void computePreferredWidth(ComputePreferredWidthContext& ctx)
     {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }

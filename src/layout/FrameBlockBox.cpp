@@ -11,7 +11,14 @@ void FrameBlockBox::layoutBlock(LayoutContext& ctx)
 
     // https://www.w3.org/TR/CSS2/visudet.html#the-width-property
     if (m_style->width().isAuto()) {
-        setContentWidth(parentContentWidth);
+        if (m_style->display() == DisplayValue::BlockDisplayValue)
+            setContentWidth(parentContentWidth);
+        else {
+            STARFISH_ASSERT(m_style->display() == DisplayValue::InlineBlockDisplayValue);
+            ComputePreferredWidthContext p(ctx, parentContentWidth);
+            computePreferredWidth(p);
+            setContentWidth(p.result());
+        }
     } else if (m_style->width().isFixed()) {
         setContentWidth(m_style->width().fixed());
     } else if (m_style->width().isPercent()) {
@@ -40,18 +47,22 @@ void FrameBlockBox::layoutBlock(LayoutContext& ctx)
 
 bool isInlineBox(Frame* f)
 {
-    return f->isFrameText() || f->isFrameReplaced();
+    return f->isFrameText() || f->isFrameReplaced() || f->isFrameBlockBox();
 }
 
-void collectInlineBox(std::vector<Frame*>& result, Frame* current)
+// NOTE this function collect only normal-flow child!
+void collectInlineBox(std::vector<Frame*>& result, Frame* current, Frame* top)
 {
-    if (isInlineBox(current)) {
-        result.push_back(current);
+    if (current != top) {
+        if (isInlineBox(current)) {
+            result.push_back(current);
+            return;
+        }
     }
 
     Frame* f = current->firstChild();
     while (f) {
-        collectInlineBox(result, f);
+        collectInlineBox(result, f, top);
         f = f->next();
     }
 }
@@ -61,14 +72,26 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
     m_lineBoxes.clear();
     // m_lineBoxes.shrink_to_fit();
 
-    float parentContentWidth = m_parent->asFrameBlockBox()->contentWidth();
-    setWidth(parentContentWidth);
+    float parentContentWidth = ctx.parentContentWidth(this);
+    if (style()->display() == DisplayValue::InlineBlockDisplayValue) {
+        if (style()->width().isSpecified()) {
+            setContentWidth(style()->width().specifiedValue(parentContentWidth));
+        } else {
+            ComputePreferredWidthContext p(ctx, parentContentWidth);
+            computePreferredWidth(p);
+            setContentWidth(p.result());
+        }
+    } else {
+        setContentWidth(parentContentWidth);
+    }
+
 
     m_lineBoxes.push_back(LineBox());
 
     // we dont need gc_allocator here. because frame-tree-item is referenced by its parent
     std::vector<Frame*> result;
-    collectInlineBox(result, this);
+    // NOTE this function collect only normal-flow child!
+    collectInlineBox(result, this, this);
     float nowLineWidth = 0;
     size_t nowLine = 0;
     for (unsigned i = 0; i < result.size(); i ++) {
@@ -152,8 +175,21 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
                 nowLineWidth = 0;
                 goto insertReplacedBox;
             }
-        } else {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        } else if (f->isFrameBlockBox()){
+            FrameBlockBox* r = f->asFrameBlockBox();
+            f->layout(ctx);
+            insertBlockBox:
+            if (r->width() < (parentContentWidth - nowLineWidth) || nowLineWidth == 0) {
+                m_lineBoxes[nowLine].m_boxes.push_back(new InlineBlockBox(f->node(), f->style(), r));
+                m_lineBoxes[nowLine].m_boxes.back()->setWidth(r->width());
+                m_lineBoxes[nowLine].m_boxes.back()->setHeight(r->height());
+                nowLineWidth += r->width();
+            } else {
+                m_lineBoxes.push_back(LineBox());
+                nowLine++;
+                nowLineWidth = 0;
+                goto insertBlockBox;
+            }
         }
     }
 
@@ -200,6 +236,11 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
                 maxDecender = std::min(ib->asInlineTextBox()->style()->font()->metrics().m_descender, maxDecender);
             } else if (ib->isInlineReplacedBox()) {
                 maxAscender = std::max(b.m_boxes[j]->height(), maxAscender);
+            } else if (ib->isInlineBlockBox()) {
+                // TODO implement align with root linebox
+                maxAscender = std::max(b.m_boxes[j]->height(), maxAscender);
+            } else {
+                STARFISH_RELEASE_ASSERT_NOT_REACHED();
             }
         }
 
@@ -227,6 +268,106 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
         if (style()->height().isSpecified()) {
             setContentHeight(style()->height().fixed());
         }
+    }
+}
+
+void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)
+{
+    if (hasBlockFlow()) {
+        if (style()->width().isFixed()) {
+            ctx.setResult(style()->width().fixed());
+        } else {
+            Frame* child = firstChild();
+            while (child) {
+                child->computePreferredWidth(ctx);
+                child = child->next();
+            }
+        }
+
+    } else {
+        // we dont need gc_allocator here. because frame-tree-item is referenced by its parent
+        std::vector<Frame*> result;
+        // NOTE this function collect only normal-flow child!
+        collectInlineBox(result, this, this);
+
+        float currentLineWidth = 0;
+        for (unsigned i = 0; i < result.size(); i ++) {
+            Frame* f = result[i];
+            if (f->isFrameText()) {
+                // TODO consider white-space
+                // TODO consider letter-spacing
+                String* s = f->asFrameText()->text();
+
+                size_t start = 0;
+                for (size_t i = 0; i < s->length(); i ++) {
+                    if (!String::isSpaceOrNewline(s->charAt(i))) {
+                        start = i;
+                        break;
+                    }
+                }
+
+                #define ADD_TO_LINE(w)\
+                    if (currentLineWidth + w < ctx.lastKnownWidth()) {\
+                        currentLineWidth += w;\
+                    } else {\
+                        ctx.setResult(currentLineWidth);\
+                        currentLineWidth = 0;\
+                    }\
+                    if (w > ctx.lastKnownWidth()) {\
+                        ctx.setResult(currentLineWidth);\
+                        currentLineWidth = 0;\
+                    }
+
+                bool isWhiteSpaceMode = false;
+                size_t nonWhiteSpaceStart = start;
+                for (size_t i = start; i < s->length(); i ++) {
+                    if (!isWhiteSpaceMode && String::isSpaceOrNewline(s->charAt(i))) {
+                        ADD_TO_LINE(style()->font()->measureText(s->substring(nonWhiteSpaceStart, i - nonWhiteSpaceStart)));
+                        isWhiteSpaceMode = true;
+                    } else if (isWhiteSpaceMode && String::isSpaceOrNewline(s->charAt(i))) {
+
+                    } else if (isWhiteSpaceMode && !String::isSpaceOrNewline(s->charAt(i))) {
+                        nonWhiteSpaceStart = i;
+                        isWhiteSpaceMode = false;
+                    } else {
+
+                    }
+                }
+
+                if (!isWhiteSpaceMode) {
+                    ADD_TO_LINE(style()->font()->measureText(s->substring(nonWhiteSpaceStart, s->length() - nonWhiteSpaceStart - 1)));
+                }
+
+            } else if (f->isFrameBlockBox()) {
+                f->computePreferredWidth(ctx);
+                if (f->style()->width().isFixed()) {
+                    ctx.setResult(f->style()->width().fixed());
+                }
+            } else {
+                STARFISH_ASSERT(f->isFrameReplaced());
+                float w = f->asFrameReplaced()->intrinsicSize().width();
+
+                if (f->style()->width().isFixed()) {
+                    w = f->style()->width().fixed();
+                }
+
+                ctx.setResult(w);
+
+                if (currentLineWidth + w < ctx.lastKnownWidth()) {
+                    currentLineWidth += w;
+                } else {
+                    ctx.setResult(currentLineWidth);
+                    currentLineWidth = w;
+                }
+
+                if (currentLineWidth > ctx.lastKnownWidth()) {
+                    // linebreaks
+                    ctx.setResult(currentLineWidth);
+                    currentLineWidth = 0;
+                }
+            }
+        }
+        ctx.setResult(currentLineWidth);
     }
 }
 
@@ -437,5 +578,59 @@ Frame* FrameBlockBox::hitTest(float x, float y,HitTestStage stage)
     }
     return nullptr;
 }
+
+void InlineBlockBox::paint(Canvas* canvas, PaintingStage stage)
+{
+    if (stage == PaintingNormalFlowInline) {
+        STARFISH_ASSERT(!m_frameBlockBox->isEstablishesStackingContext());
+        PaintingStage s = PaintingStage::PaintingNormalFlowBlock;
+        while (s != PaintingStageEnd) {
+            m_frameBlockBox->paint(canvas, s);
+            s = (PaintingStage)(s + 1);
+        }
+    }
+}
+
+Frame* InlineBlockBox::hitTest(float x, float y, HitTestStage stage)
+{
+    if (stage == HitTestStage::HitTestNormalFlowInline) {
+        Frame* result = nullptr;
+        HitTestStage s = HitTestStage::HitTestNonPositionedFloats;
+        while (s != HitTestStageEnd) {
+            result = m_frameBlockBox->hitTest(x, y, s);
+            if (result)
+                return result;
+            s = (HitTestStage)(s + 1);
+        }
+    }
+    return nullptr;
+}
+
+void FrameBlockBox::dump(int depth)
+{
+    FrameBox::dump(depth);
+    if (!hasBlockFlow()) {
+        if (m_lineBoxes.size() && m_lineBoxes[0].m_boxes.size()) {
+            for (size_t i = 0; i < m_lineBoxes.size(); i ++) {
+                puts("");
+                for(int k = 0; k < depth + 1; k ++)
+                    printf("  ");
+                printf("LineBox(%g,%g,%g,%g)\n", m_lineBoxes[i].m_frameRect.x(), m_lineBoxes[i].m_frameRect.y()
+                    , m_lineBoxes[i].m_frameRect.width(), m_lineBoxes[i].m_frameRect.height());
+
+                const LineBox& lb = m_lineBoxes[i];
+                for (size_t j = 0; j < lb.m_boxes.size(); j ++) {
+                    for(int k = 0; k < depth + 2; k ++)
+                        printf("  ");
+                    printf("%s", lb.m_boxes[j]->name());
+                    lb.m_boxes[j]->dump(depth + 3);
+                    if (j != lb.m_boxes.size() - 1)
+                        puts("");
+                }
+            }
+        }
+    }
+}
+
 
 }

@@ -43,7 +43,7 @@ public:
         return result;
     }
 
-    virtual void dump()
+    virtual void dump(int depth)
     {
         std::string str = m_node->asCharacterData()->asText()->data()->utf8Data();
         str = replaceAll(str, "\n", "\\n");

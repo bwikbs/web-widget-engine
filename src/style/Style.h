@@ -71,7 +71,7 @@ enum PositionValue {
     StaticPositionValue,
     RelativePositionValue,
     AbsolutePositionValue,
-    // FixedPositionValue, // TODO
+    FixedPositionValue, // TODO
 };
 
 enum TextAlignValue {

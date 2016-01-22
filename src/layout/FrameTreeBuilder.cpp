@@ -54,6 +54,8 @@ void buildTree(Node* current, Frame* parent)
     } else if (display == DisplayValue::NoneDisplayValue) {
         clearTree(current);
         return ;
+    } else if (display == DisplayValue::InlineBlockDisplayValue) {
+        currentFrame = new FrameBlockBox(current, current->style());
     }
 
     if (parent->isFrameBlockBox()) {
@@ -145,7 +147,7 @@ void dump(Frame* frm, unsigned depth)
         printf("[anonymous block box] ");
     }
 
-    frm->dump();
+    frm->dump(depth);
 
     printf("\n");
 

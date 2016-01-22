@@ -23,9 +23,9 @@ public:
         return "FrameInline";
     }
 
-    virtual void dump()
+    virtual void dump(int depth)
     {
-        Frame::dump();
+        Frame::dump(depth);
     }
 
 protected:

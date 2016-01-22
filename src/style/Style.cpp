@@ -1300,6 +1300,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
     }
 
     ret->loadResources(element->document()->window()->starFish());
+    ret->arrangeStyleValues();
     return ret;
 }
 
@@ -1324,6 +1325,7 @@ void resolveDOMStyleInner(StyleResolver* resolver, Element* element, ComputedSty
                 if (childStyle == nullptr) {
                     childStyle = new ComputedStyle(element->style());
                     childStyle->loadResources(element->document()->window()->starFish());
+                    childStyle->arrangeStyleValues();
                 }
                 child->setStyle(childStyle);
             }

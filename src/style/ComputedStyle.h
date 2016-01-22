@@ -497,6 +497,16 @@ protected:
         m_background = NULL;
     }
 
+    void arrangeStyleValues()
+    {
+        // if float: left, right
+        // display-> block
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/float
+
+        if (position() == AbsolutePositionValue || position() == FixedPositionValue) {
+            m_display = DisplayValue::BlockDisplayValue;
+        }
+    }
     void loadResources(StarFish* sf);
 
     struct InheritedStyles {

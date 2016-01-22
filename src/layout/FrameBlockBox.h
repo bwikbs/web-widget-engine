@@ -6,7 +6,9 @@
 
 namespace StarFish {
 
+class FrameBlockBox;
 class InlineTextBox;
+class InlineBlockBox;
 
 class InlineBox : public FrameBox {
 public:
@@ -46,6 +48,11 @@ public:
         }
     }
 
+    virtual const char* name()
+    {
+        return "InlineTextBox";
+    }
+
 protected:
     String* m_text;
 };
@@ -67,8 +74,33 @@ public:
         }
     }
 
+    virtual const char* name()
+    {
+        return "InlineReplacedBox";
+    }
+
 protected:
     FrameReplaced* m_frameReplaced;
+};
+
+class InlineBlockBox : public InlineBox {
+public:
+    InlineBlockBox(Node* node, ComputedStyle* style, FrameBlockBox* f)
+        : InlineBox(node, style)
+    {
+        m_frameBlockBox = f;
+    }
+
+    virtual bool isInlineBlockBox() const { return true; }
+
+    virtual void paint(Canvas* canvas, PaintingStage stage);
+    virtual Frame* hitTest(float x, float y, HitTestStage stage);
+    virtual const char* name()
+    {
+        return "InlineBlockBox";
+    }
+protected:
+    FrameBlockBox* m_frameBlockBox;
 };
 
 class LineBox : public gc {
@@ -111,6 +143,9 @@ public:
         }
     }
 
+    virtual void computePreferredWidth(ComputePreferredWidthContext& ctx);
+
+    virtual void dump(int depth);
     virtual void paint(Canvas* canvas, PaintingStage stage);
     virtual Frame* hitTest(float x, float y,HitTestStage stage);
 
