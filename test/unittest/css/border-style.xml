@@ -11,36 +11,31 @@
                 </node>
                 <node nodeType="1" localName="style" type="text/css">
                     <style selectorText="#div1" color="red"/>
-                    <style selectorText="#div2" color="gray" border-top-width="10px" border-right-width="10px" border-bottom-width="10px" border-left-width="10px"/>
-                    <style selectorText="#div3" color="green" border-top-width="thin" border-right-width="thin" border-bottom-width="thin" border-left-width="thin"/>
-                    <style selectorText="#div4" color="red" border-top-width="medium" border-right-width="medium" border-bottom-width="medium" border-left-width="medium"/>
-                    <style selectorText="#div5" color="blue" border-top-width="thick" border-right-width="thick" border-bottom-width="thick" border-left-width="thick"/>
-                    <style selectorText="#div6" color="gray" border-top-width="10px"/>
-                    <style selectorText="#div7" color="gray" border-right-width="10px"/>
-                    <style selectorText="#div8" color="gray" border-bottom-width="10px"/>
-                    <style selectorText="#div9" color="gray" border-left-width="10px"/>
-                    <style selectorText="#divParent" color="black" border-top-width="thick" border-right-width="thick" border-bottom-width="thick" border-left-width="thick"/>
-                    <style selectorText="#divChild1" color="fuchsia" border-top-width="thin" border-right-width="thin" border-bottom-width="thin" border-left-width="thin"/>
-                    <style selectorText="#divChild2" color="orange" border-top-width="inherit" border-right-width="inherit" border-bottom-width="inherit" border-left-width="inherit"/>
-                    <style selectorText="div" width="200px" font-size="16px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid"/>
+                    <style selectorText="#div2" color="gray" border-top-style="none" border-right-style="none" border-bottom-style="none" border-left-style="none"/>
+                    <style selectorText="#div3" color="green" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid"/>
+                    <style selectorText="#div4" color="red" border-top-style="solid"/>
+                    <style selectorText="#div5" color="red" border-right-style="solid"/>
+                    <style selectorText="#div6" color="red" border-bottom-style="solid"/>
+                    <style selectorText="#div7" color="red" border-left-style="solid"/>
+                    <style selectorText="#divParent" color="black" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid"/>
+                    <style selectorText="#divChild1" color="fuchsia" border-top-style="none" border-right-style="none" border-bottom-style="none" border-left-style="none"/>
+                    <style selectorText="#divChild2" color="orange" border-top-style="inherit" border-right-style="inherit" border-bottom-style="inherit" border-left-style="inherit"/>
+                    <style selectorText="div" width="200px" font-size="16px"/>
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
             #div1 { color: red; }
-            #div2 { color: gray; border-width: 10px; }
-            #div3 { color: green; border-width: thin; }
-            #div4 { color: red; border-width: medium; }
-            #div5 { color: blue; border-width: thick; }            
-            #div6 { color: gray; border-top-width: 10px; }
-            #div7 { color: gray; border-right-width: 10px; }
-            #div8 { color: gray; border-bottom-width: 10px; }
-            #div9 { color: gray; border-left-width: 10px; }
-            #divParent { color: black; border-width: thick; }
-            #divChild1 { color: fuchsia; border-width: thin; }
-            #divChild2 { color: orange; border-width: inherit; }
+            #div2 { color: gray; border-style: none; }
+            #div3 { color: green; border-style: solid; }
+            #div4 { color: red; border-top-style: solid; }
+            #div5 { color: red; border-right-style: solid; }            
+            #div6 { color: red; border-bottom-style: solid; }
+            #div7 { color: red; border-left-style: solid; }
+            #divParent { color: black; border-style: solid; }
+            #divChild1 { color: fuchsia; border-style: none; }
+            #divChild2 { color: orange; border-style: inherit; }
             div {
                 width: 200px;
                 font-size: 16px;
-                border-style: solid;
             }
         ]]></text>
                     </node>
@@ -62,7 +57,7 @@
                 <node nodeType="1" localName="div" id="div1">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-width: default 
+           border-style: default
         ]]></text>
                     </node>
                 </node>
@@ -73,7 +68,7 @@
                 <node nodeType="1" localName="div" id="div2">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-width: 10px
+           border-style: none
         ]]></text>
                     </node>
                 </node>
@@ -84,7 +79,7 @@
                 <node nodeType="1" localName="div" id="div3">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-width: thin
+           border-style: solid
         ]]></text>
                     </node>
                 </node>
@@ -95,7 +90,7 @@
                 <node nodeType="1" localName="div" id="div4">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-width: medium
+           border-top-style: solid
         ]]></text>
                     </node>
                 </node>
@@ -106,7 +101,7 @@
                 <node nodeType="1" localName="div" id="div5">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-width: thick
+           border-right-style: solid
         ]]></text>
                     </node>
                 </node>
@@ -117,7 +112,7 @@
                 <node nodeType="1" localName="div" id="div6">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-top-width: 10px
+           border-bottm-style: solid
         ]]></text>
                     </node>
                 </node>
@@ -128,29 +123,7 @@
                 <node nodeType="1" localName="div" id="div7">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-right-width: 10px
-        ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
-        ]]></text>
-                </node>
-                <node nodeType="1" localName="div" id="div8">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-           border-bottom-width: 10px
-        ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
-        ]]></text>
-                </node>
-                <node nodeType="1" localName="div" id="div9">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-           border-left-width: 10px
+           border-left-style: solid
         ]]></text>
                     </node>
                 </node>
@@ -161,13 +134,13 @@
                 <node nodeType="1" localName="div" id="divParent">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-width: thick
+           border-style: solid
             ]]></text>
                     </node>
                     <node nodeType="1" localName="div" id="divChild1">
                         <node nodeType="3" localName="text">
                             <text><![CDATA[
-               border-width: thin
+               border-style: none
             ]]></text>
                         </node>
                     </node>
@@ -178,7 +151,7 @@
                     <node nodeType="1" localName="div" id="divChild2">
                         <node nodeType="3" localName="text">
                             <text><![CDATA[
-               border-width: inherit
+               border-style: inherit
             ]]></text>
                         </node>
                     </node>

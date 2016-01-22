@@ -447,6 +447,29 @@ void Node::dumpStyle()
     if(m_style->borderImageSource() != 0)
         printf("border-image-source: %s, ", m_style->borderImageSource()->utf8Data());
 
+    // border-style
+    printf("border-style(t,r,b,l) : (");
+    if (m_style->borderTopStyle() == BorderStyleValue::BNone) {
+        printf("none,");
+    } else if (m_style->borderTopStyle() == BorderStyleValue::BSolid) {
+        printf("solid,");
+    }
+    if (m_style->borderRightStyle() == BorderStyleValue::BNone) {
+        printf("none,");
+    } else if (m_style->borderRightStyle() == BorderStyleValue::BSolid) {
+        printf("solid,");
+    }
+    if (m_style->borderBottomStyle() == BorderStyleValue::BNone) {
+        printf("none,");
+    } else if (m_style->borderBottomStyle() == BorderStyleValue::BSolid) {
+        printf("solid,");
+    }
+    if (m_style->borderLeftStyle() == BorderStyleValue::BNone) {
+        printf("none), ");
+    } else if (m_style->borderLeftStyle() == BorderStyleValue::BSolid) {
+        printf("solid), ");
+    }
+
     // border-width
     printf("border-width(t,r,b,l) : (%.0f,%.0f,%.0f,%.0f), ", m_style->borderTopWidth().fixed(), m_style->borderRightWidth().fixed(),
             m_style->borderBottomWidth().fixed(), m_style->borderLeftWidth().fixed());

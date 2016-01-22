@@ -4,7 +4,6 @@
 #include "util/String.h"
 #include "style/Unit.h"
 #include "style/Length.h"
-#include "style/StyleSurroundData.h"
 #include "platform/canvas/font/Font.h"
 #include "style/DefaultStyle.h"
 
@@ -105,6 +104,18 @@ enum OverflowValue {
     Hidden,
 };
 
+enum BorderImageRepeatValue {
+    StretchValue,
+    RepeatValue,
+    RoundValue,
+    SpaceValue,
+};
+
+enum BorderStyleValue {
+    BNone,
+    BSolid,
+};
+
 class ValueList;
 
 class CSSStyleValuePair : public gc {
@@ -148,6 +159,18 @@ public:
         BorderImageSlice, // number | percentage {1,4} && fill? // initial value -> 100%
         // https://www.w3.org/TR/css3-background/#the-border-image-source
         BorderImageSource, // none | <image>
+        // https://www.w3.org/TR/CSS21/box.html#border-style-properties
+        // BorderStyle, // border-style(<none> | hidden | dotted | dashed | solid | double | groove | ridge | inset | outset) | inherit
+        BorderTopStyle, // border-style(<none> | solid) | inherit -> We doesn't support all type because of implementation issues of Evas
+        BorderRightStyle, // border-style(<none> | solid) | inherit -> We doesn't support all type because of implementation issues of Evas
+        BorderBottomStyle, // border-style(<none> | solid) | inherit -> We doesn't support all type because of implementation issues of Evas
+        BorderLeftStyle, // border-style(<none> | solid) | inherit -> We doesn't support all type because of implementation issues of Evas
+        // https://www.w3.org/TR/CSS21/box.html#border-width-properties
+        // BorderWidth, // border-width(thin | <medium> | thick | length) | inherit
+        BorderTopWidth, // border-width(thin | <medium> | thick | length) | inherit
+        BorderRightWidth, // border-width(thin | <medium> | thick | length) | inherit
+        BorderBottomWidth, // border-width(thin | <medium> | thick | length) | inherit
+        BorderLeftWidth, // border-width(thin | <medium> | thick | length) | inherit
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-bottom
         MarginBottom, // length | percentage | auto | inherit // <0>
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-left
@@ -160,12 +183,6 @@ public:
         //Overflow, // visible | hidden | scroll | auto | inherit // Initial value -> visible
         OverflowX, // visible | hidden | scroll | auto | inherit // Initial value -> visible
         OverflowY, // visible | hidden | scroll | auto | inherit // Initial value -> visible
-        // https://www.w3.org/TR/CSS21/box.html#value-def-border-width
-        // BorderWidth, // border-width(thin | <medium> | thick | length) | inherit
-        BorderTopWidth, // border-width(thin | <medium> | thick | length) | inherit
-        BorderRightWidth, // border-width(thin | <medium> | thick | length) | inherit
-        BorderBottomWidth, // border-width(thin | <medium> | thick | length) | inherit
-        BorderLeftWidth, // border-width(thin | <medium> | thick | length) | inherit
     };
 
     enum ValueKind {
@@ -196,6 +213,10 @@ public:
 
         LargerFontSize,
         SmallerFontSize,
+
+        // border-style
+        BorderNone,
+        BorderSolid,
 
         // border-width
         BorderThin,

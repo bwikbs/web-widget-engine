@@ -440,6 +440,42 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
             ret.m_value.m_stringValue = String::fromUTF8(value);
         }
+    } else if (strcmp(key, "border-top-style") == 0) {
+        // border-style(<none> | solid) | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderTopStyle;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("solid")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
+        }
+    } else if (strcmp(key, "border-right-style") == 0) {
+        // border-style(<none> | solid) | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderRightStyle;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("solid")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
+        }
+    } else if (strcmp(key, "border-bottom-style") == 0) {
+        // border-style(<none> | solid) | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderBottomStyle;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("solid")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
+        }
+    } else if (strcmp(key, "border-left-style") == 0) {
+        // border-style(<none> | solid) | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderLeftStyle;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("solid")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
+        }
     } else if (strcmp(key, "border-top-width") == 0) {
         // border-width | inherit // initial value -> medium ('thin' <='medium' <= 'thick')
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderTopWidth;
@@ -867,8 +903,56 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_borderImageSource = cssValues[k].stringValue();
                 }
                 break;
+            case CSSStyleValuePair::KeyKind::BorderTopStyle:
+                // border-style(<none> | solid) | inherit
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setBorderTopStyle(parentStyle->borderTopStyle());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderNone) {
+                    style->setBorderTopStyle(BorderStyleValue::BNone);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderSolid) {
+                    style->setBorderTopStyle(BorderStyleValue::BSolid);
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderRightStyle:
+                // border-style(<none> | solid) | inherit
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setBorderRightStyle(parentStyle->borderRightStyle());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderNone) {
+                    style->setBorderRightStyle(BorderStyleValue::BNone);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderSolid) {
+                    style->setBorderRightStyle(BorderStyleValue::BSolid);
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderBottomStyle:
+                // border-style(<none> | solid) | inherit
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setBorderBottomStyle(parentStyle->borderBottomStyle());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderNone) {
+                    style->setBorderBottomStyle(BorderStyleValue::BNone);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderSolid) {
+                    style->setBorderBottomStyle(BorderStyleValue::BSolid);
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderLeftStyle:
+                // border-style(<none> | solid) | inherit
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setBorderLeftStyle(parentStyle->borderLeftStyle());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderNone) {
+                    style->setBorderLeftStyle(BorderStyleValue::BNone);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderSolid) {
+                    style->setBorderLeftStyle(BorderStyleValue::BSolid);
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
             case CSSStyleValuePair::KeyKind::BorderTopWidth:
-                // 'thin' <='medium' <= 'thick'
+                // border-width(thin | <medium> | thick | length) | inherit
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBorderTopWidth(parentStyle->borderTopWidth());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
@@ -884,7 +968,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderRightWidth:
-                // 'thin' <='medium' <= 'thick'
+                // border-width(thin | <medium> | thick | length) | inherit
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBorderRightWidth(parentStyle->borderRightWidth());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
@@ -900,7 +984,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderBottomWidth:
-                // 'thin' <='medium' <= 'thick'
+                // border-width(thin | <medium> | thick | length) | inherit
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBorderBottomWidth(parentStyle->borderBottomWidth());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
@@ -916,7 +1000,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderLeftWidth:
-                // 'thin' <='medium' <= 'thick'
+                // border-width(thin | <medium> | thick | length) | inherit
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBorderLeftWidth(parentStyle->borderLeftWidth());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {

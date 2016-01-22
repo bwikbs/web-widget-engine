@@ -3,6 +3,7 @@
 
 #include "style/Style.h"
 #include "style/StyleBackgroundData.h"
+#include "style/StyleSurroundData.h"
 #include "style/DefaultStyle.h"
 
 namespace StarFish {
@@ -215,6 +216,42 @@ public:
         return m_background;
     }
 
+    BorderStyleValue borderTopStyle()
+    {
+        if (m_surround == nullptr) {
+            return BorderStyleValue::BNone;
+        } else {
+            return m_surround->border.top().style();
+        }
+    }
+
+    BorderStyleValue borderRightStyle()
+    {
+        if (m_surround == nullptr) {
+            return BorderStyleValue::BNone;
+        } else {
+            return m_surround->border.right().style();
+        }
+    }
+
+    BorderStyleValue borderBottomStyle()
+    {
+        if (m_surround == nullptr) {
+            return BorderStyleValue::BNone;
+        } else {
+            return m_surround->border.bottom().style();
+        }
+    }
+
+    BorderStyleValue borderLeftStyle()
+    {
+        if (m_surround == nullptr) {
+            return BorderStyleValue::BNone;
+        } else {
+            return m_surround->border.left().style();
+        }
+    }
+
     Length borderTopWidth()
     {
         if (m_surround == nullptr) {
@@ -249,6 +286,26 @@ public:
         } else {
             return m_surround->border.left().width();
         }
+    }
+
+    void setBorderTopStyle(BorderStyleValue style)
+    {
+        surround()->border.top().setStyle(style);
+    }
+
+    void setBorderRightStyle(BorderStyleValue style)
+    {
+        surround()->border.right().setStyle(style);
+    }
+
+    void setBorderBottomStyle(BorderStyleValue style)
+    {
+        surround()->border.bottom().setStyle(style);
+    }
+
+    void setBorderLeftStyle(BorderStyleValue style)
+    {
+        surround()->border.left().setStyle(style);
     }
 
     void setBorderTopWidth(Length width)
@@ -337,6 +394,7 @@ public:
     StyleSurroundData* surround() {
         if (m_surround == nullptr) {
             m_surround = new StyleSurroundData();
+            BorderValue();
             m_surround->border.borderImageRepeatInitialize();
             m_surround->border.borderImageSliceInitialize();
         }

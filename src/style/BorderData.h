@@ -5,13 +5,6 @@
 
 namespace StarFish {
 
-enum BorderImageRepeatValue {
-    StretchValue,
-    RepeatValue,
-    RoundValue,
-    SpaceValue,
-};
-
 class BorderData {
 public:
     BorderData()

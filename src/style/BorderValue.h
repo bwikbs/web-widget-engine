@@ -8,13 +8,24 @@ namespace StarFish {
 class BorderValue {
 public:
     BorderValue()
-        : m_width(Length(Length::Fixed, 3))
+        : m_style(BorderStyleValue::BNone)
+        , m_width(Length(Length::Fixed, 3))
     {
+    }
+
+    BorderStyleValue style()
+    {
+        return m_style;
     }
 
     Length width()
     {
         return m_width;
+    }
+
+    void setStyle(BorderStyleValue style)
+    {
+        m_style = style;
     }
 
     void setWidth(Length length)
@@ -23,6 +34,7 @@ public:
     }
 
 protected:
+    BorderStyleValue m_style;
     Length m_width;
 };
 
