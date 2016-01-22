@@ -197,15 +197,6 @@ public:
         return m_borderImageSource;
     }
 
-    Length marginBottom()
-    {
-        return m_marginBottom;
-    }
-
-    Length marginLeft() {
-        return m_marginLeft;
-    }
-
     float opacity()
     {
         return m_opacity;
@@ -481,9 +472,33 @@ public:
         m_marginRight = r;
     }
 
+    void setPaddingBottom(Length r)
+    {
+        m_paddingBottom = r;
+    }
+
+    Length marginBottom()
+    {
+        return m_marginBottom;
+    }
+
+    Length marginLeft() {
+        return m_marginLeft;
+    }
+
     Length marginRight()
     {
         return m_marginRight;
+    }
+
+    Length paddingBottom()
+    {
+        return m_paddingBottom;
+    }
+
+    float fontSize()
+    {
+        return m_inheritedStyles.m_fontSize;
     }
 
 protected:
@@ -493,6 +508,7 @@ protected:
         m_marginBottom = Length(Length::Fixed, 0);
         m_marginLeft = Length(Length::Fixed, 0);
         m_marginRight = Length(Length::Fixed, 0);
+        m_paddingBottom = Length(Length::Fixed, 0);
         m_opacity = 1;
         m_background = NULL;
     }
@@ -535,10 +551,11 @@ protected:
 
     StyleSurroundData* m_surround;
 
-    //TODO: margin data should be moved to StyleSurroundData
+    //TODO: margin/padding data should be moved to StyleSurroundData
     Length m_marginBottom;
     Length m_marginLeft;
     Length m_marginRight;
+    Length m_paddingBottom;
 };
 
 ComputedStyleDamage compareStyle(ComputedStyle* oldStyle, ComputedStyle* newStyle);

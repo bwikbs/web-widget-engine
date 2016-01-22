@@ -33,6 +33,49 @@ bool endsWith(const char* base, const char* str)
 #define VALUE_IS_NONE() \
     VALUE_IS_STRING("none")
 
+void parseLength(CSSStyleValuePair& ret, const char* value)
+{
+    float f;
+    if (endsWith(value, "px")) {
+        sscanf(value, "%fpx", &f);
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
+        ret.m_value.m_length = CSSLength(f);
+    } else if (endsWith(value, "em")) {
+        sscanf(value, "%fem", &f);
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
+        ret.m_value.m_length = CSSLength(CSSLength::Kind::EM, f);
+    } else if (endsWith(value, "ex")) {
+        sscanf(value, "%fex", &f);
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
+        ret.m_value.m_length = CSSLength(CSSLength::Kind::EX, f);
+    } else if (endsWith(value, "in")) {
+        sscanf(value, "%fin", &f);
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
+        ret.m_value.m_length = CSSLength(CSSLength::Kind::IN, f);
+    } else if (endsWith(value, "cm")) {
+        sscanf(value, "%fcm", &f);
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
+        ret.m_value.m_length = CSSLength(CSSLength::Kind::CM, f);
+    } else if (endsWith(value, "mm")) {
+        sscanf(value, "%fmm", &f);
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
+        ret.m_value.m_length = CSSLength(CSSLength::Kind::MM, f);
+    } else if (endsWith(value, "pt")) {
+        sscanf(value, "%fpt", &f);
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
+        ret.m_value.m_length = CSSLength(CSSLength::Kind::PT, f);
+    } else if (endsWith(value, "pc")) {
+        sscanf(value, "%fpc", &f);
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
+        ret.m_value.m_length = CSSLength(CSSLength::Kind::PC, f);
+    } else if (strcmp(value, "0")) {
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
+        ret.m_value.m_length = CSSLength(0.0);
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
 {
     if (endsWith(value, "%")) {
@@ -41,25 +84,8 @@ void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Percentage;
         f = f / 100.f;
         ret.m_value.m_floatValue = f;
-    } else if (endsWith(value, "px")) {
-        float f;
-        sscanf(value, "%fpx", &f);
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
-        ret.m_value.m_length = CSSLength(f);
     } else {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
-void parseLength(CSSStyleValuePair& ret, const char* value)
-{
-    if (endsWith(value, "px")) {
-        float f;
-        sscanf(value, "%fpx", &f);
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Length;
-        ret.m_value.m_length = CSSLength(f);
-    } else {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        parseLength(ret, value);
     }
 }
 
@@ -578,34 +604,49 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             parseLength(ret, value);
         }
     } else if (strcmp(key, "margin-bottom") == 0) {
-        // length | percentage | <auto> | inherit
+        // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginBottom;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
 
-        if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
+        if (VALUE_IS_STRING("auto")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
         } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
         } else {
             parsePercentageOrLength(ret, value);
         }
     } else if (strcmp(key, "margin-left") == 0) {
-        // length | percentage | <auto> | inherit
+        // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginLeft;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
 
-        if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
+        if (VALUE_IS_STRING("auto")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
         } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
         } else {
             parsePercentageOrLength(ret, value);
         }
     } else if (strcmp(key, "margin-right") == 0) {
         // length | percentage | auto | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginRight;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
 
         if (VALUE_IS_STRING("auto")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
         } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
+    } else if (strcmp(key, "padding-bottom") == 0) {
+        // length | percentage | inherit  <0>
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingBottom;
+
+        if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else if (VALUE_IS_INITIAL()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
@@ -1134,6 +1175,17 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                                     cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length ||
                                     cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage);
                     style->setMarginRight(convertValueToLength(cssValues[k].valueKind(), cssValues[k].value()));
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::PaddingBottom:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setPaddingBottom(parentStyle->paddingBottom());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->setPaddingBottom(Length(Length::Fixed, 0));
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length ||
+                                    cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage);
+                    style->setPaddingBottom(convertValueToLength(cssValues[k].valueKind(), cssValues[k].value()));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::Opacity:

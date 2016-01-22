@@ -6,6 +6,7 @@
 #include "style/Length.h"
 #include "platform/canvas/font/Font.h"
 #include "style/DefaultStyle.h"
+#include "style/UnitHelper.h"
 
 namespace StarFish {
 
@@ -23,18 +24,24 @@ class CSSLength {
 public:
     enum Kind {
         PX,
-        //em
-        //ex
-        //in
-        //cm
-        //mm
-        //pt
-        //pc
+        EM,
+        EX,
+        IN,
+        CM,
+        MM,
+        PT,
+        PC
     };
 
     CSSLength(float f)
     {
         m_kind = PX;
+        m_value = f;
+    }
+
+    CSSLength(Kind kind, float f)
+    {
+        m_kind = kind;
         m_value = f;
     }
 
@@ -50,8 +57,26 @@ public:
 
     Length toLength(/* parentValue */)
     {
+        // absolute length
         if (m_kind == PX)
             return Length(Length::Fixed, m_value);
+        else if (m_kind == CM)
+            return Length(Length::Fixed, convertFromCmToPx(m_value));
+        else if (m_kind == MM)
+            return Length(Length::Fixed, convertFromMmToPx(m_value));
+        else if (m_kind == IN)
+            return Length(Length::Fixed, convertFromInToPx(m_value));
+        else if (m_kind == PC)
+            return Length(Length::Fixed, convertFromPcToPx(m_value));
+        else if (m_kind == PT)
+            return Length(Length::Fixed, convertFromPtToPx(m_value));
+
+        // font-relative length
+        else if (m_kind == EM)
+            return Length(Length::EmToBeFixed, m_value);
+        else if (m_kind == EX)
+            return Length(Length::ExToBeFixed, m_value);
+
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 protected:
@@ -183,6 +208,8 @@ public:
         MarginLeft, // length | percentage | auto | inherit // Initial value -> 0
         // https://www.w3.org/TR/CSS2/box.html#propdef-margin-right
         MarginRight, // length | percentage | auto | inherit // Initial value -> 0
+        // https://www.w3.org/TR/CSS21/box.html#propdef-padding-bottom
+        PaddingBottom, // length | percentage | inherit // Initial value -> 0
         // https://www.w3.org/TR/css3-color/#transparency
         Opacity, // alphavalue | inherit // <1>
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/visufx.html#propdef-overflow

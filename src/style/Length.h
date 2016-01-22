@@ -9,6 +9,10 @@ public:
         Auto,
         Percent,
         Fixed,
+
+        //After finishing resolveStyle, ex/em values should be changed to Fixed
+        ExToBeFixed,
+        EmToBeFixed
     };
 
     Length(Type type = Auto, float data = 0.f)
@@ -18,10 +22,22 @@ public:
 
     }
 
+    void changeToFixedIfNeeded(float fontSize, Font* font) {
+        if(!isComputed()) {
+            if (m_type == EmToBeFixed) {
+                m_data = fontSize * m_data;
+                m_type = Fixed;
+            } else if (m_type == ExToBeFixed) {
+                // TODO: calculate ex (x-height of font)
+            }
+        }
+    }
+
     bool isSpecified() const { return isFixed() || isPercent(); }
     bool isAuto() const { return m_type == Auto; }
     bool isFixed() const { return m_type == Fixed; }
     bool isPercent() const { return m_type == Percent; }
+    bool isComputed() const { return isFixed() || isPercent() || isAuto(); }
     Type type() const { return m_type; }
 
     float percent() const
