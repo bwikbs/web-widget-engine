@@ -13,6 +13,8 @@ public:
         initScriptWrappable(this);
     }
 
+    /* 4.4 Interface Node */
+
     virtual NodeType nodeType()
     {
         return Node::TEXT_NODE;
@@ -41,6 +43,12 @@ public:
     {
         return new Text(document(), data());
     }
+
+    /* 4.10 Interface Text */
+
+    Text* splitText(unsigned long offset);
+
+    String* wholeText();
 
 protected:
 };

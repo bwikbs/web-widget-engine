@@ -906,6 +906,15 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(Text, CharacterDataFunction->protoType());
     fetchData(this)->m_text = TextFunction;
 
+    /* 4.10 Interface Text */
+
+    TextFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("wholeText"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        String* text = ((Text *)originalObj)->wholeText();
+        return toJSString(text);
+    }, NULL, false, false, false);
+
     DEFINE_FUNCTION(Comment, CharacterDataFunction->protoType());
     fetchData(this)->m_comment = CommentFunction;
 

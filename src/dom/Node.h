@@ -328,6 +328,11 @@ public:
         return false;
     }
 
+    virtual bool isText()
+    {
+        return false;
+    }
+
     CharacterData* asCharacterData()
     {
         STARFISH_ASSERT(isCharacterData());
@@ -350,6 +355,12 @@ public:
     {
         STARFISH_ASSERT(isDocumentType());
         return (DocumentType*)this;
+    }
+
+    Text* asText()
+    {
+        STARFISH_ASSERT(isText());
+        return (Text*)this;
     }
 
     void setFirstChild(Node* s)

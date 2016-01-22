@@ -2,11 +2,12 @@
 #define __StarFishTraverse__
 
 namespace StarFish {
-
 class Traverse {
-  Traverse(){}
+    Traverse(){}
 
 public:
+  typedef std::vector<Node*, gc_allocator<Node*>> NodeCollection;
+
   template<typename Func>
   static Node* findDescendant(Node* parent, Func matchingRule)
   {
@@ -88,6 +89,32 @@ public:
       }
       return nullptr;
   }
+
+    template<typename Func>
+    static NodeCollection* nextSiblings(Node* start, Func matchingRule)
+    {
+        auto siblings = new NodeCollection();
+        for(Node* sibling = start->nextSibling(); sibling; sibling = sibling -> nextSibling()) {
+            if(matchingRule(sibling)) {
+                siblings->push_back(sibling);
+            }
+        }
+        return siblings;
+    }
+
+    template<typename Func>
+    static NodeCollection* previousSiblings(Node* start, Func matchingRule)
+    {
+        auto siblings = new NodeCollection();
+        for(Node* sibling = start->previousSibling(); sibling; sibling = sibling -> previousSibling()) {
+            if(matchingRule(sibling)) {
+                siblings->push_back(sibling);
+            }
+        }
+        std::reverse(siblings->begin(), siblings->end());
+        return siblings;
+    }
+
 
   template<typename Func>
   static unsigned long childCount(Node* parent, Func matchingRule)
