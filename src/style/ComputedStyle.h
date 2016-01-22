@@ -522,6 +522,20 @@ protected:
         if (position() == AbsolutePositionValue || position() == FixedPositionValue) {
             m_display = DisplayValue::BlockDisplayValue;
         }
+
+        m_width.changeToFixedIfNeeded(fontSize(), font());
+        m_height.changeToFixedIfNeeded(fontSize(), font());
+        m_bottom.changeToFixedIfNeeded(fontSize(), font());
+        m_left.changeToFixedIfNeeded(fontSize(), font());
+        m_marginBottom.changeToFixedIfNeeded(fontSize(), font());
+        m_marginLeft.changeToFixedIfNeeded(fontSize(), font());
+        m_marginRight.changeToFixedIfNeeded(fontSize(), font());
+        m_paddingBottom.changeToFixedIfNeeded(fontSize(), font());
+
+        if(m_background)
+            m_background->checkComputed(fontSize(), font());
+
+        //TODO: should check surround / ...
     }
     void loadResources(StarFish* sf);
 

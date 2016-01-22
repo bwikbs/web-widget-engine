@@ -92,6 +92,12 @@ public:
         return m_sizeValue;
     }
 
+    void checkComputed(float fontSize, Font* font)
+    {
+        if(m_sizeValue)
+            m_sizeValue->checkComputed(fontSize, font);
+    }
+
 private:
     Color m_color;
 

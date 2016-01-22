@@ -112,6 +112,12 @@ public:
         return m_height;
     }
 
+    void checkComputed(float fontSize, Font* font)
+    {
+        m_width.changeToFixedIfNeeded(fontSize, font);
+        m_height.changeToFixedIfNeeded(fontSize, font);
+    }
+
     Length m_width;
     Length m_height;
 };
