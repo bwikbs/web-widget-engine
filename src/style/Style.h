@@ -153,6 +153,12 @@ public:
         Bottom, // length | percentage | <auto> | inherit
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-left
         Left, // length | percentage | <auto> | inherit
+        // https://www.w3.org/TR/CSS21/box.html#border-color-properties
+        // BorderColor // color | transparent | inherit
+        BorderTopColor, // color | transparent | inherit // initial value -> the value of 'color' property
+        BorderRightColor, // color | transparent | inherit // initial value -> the value of 'color' property
+        BorderBottomColor, // color | transparent | inherit // initial value -> the value of 'color' property
+        BorderLeftColor, // color | transparent | inherit // initial value -> the value of 'color' property
         // https://www.w3.org/TR/css3-background/#the-border-image-repeat
         BorderImageRepeat, // <stretch> | repeat | round | space {1,2}
         // https://www.w3.org/TR/css3-background/#border-image-slice

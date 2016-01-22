@@ -432,6 +432,12 @@ void Node::dumpStyle()
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 
+    // border-color
+    printf("border-top-color: (%d,%d,%d,%d), ", m_style->borderTopColor().r(), m_style->borderTopColor().g(), m_style->borderTopColor().b(), m_style->borderTopColor().a());
+    printf("border-right-color: (%d,%d,%d,%d), ", m_style->borderRightColor().r(), m_style->borderRightColor().g(), m_style->borderRightColor().b(), m_style->borderRightColor().a());
+    printf("border-bottom-color: (%d,%d,%d,%d), ", m_style->borderBottomColor().r(), m_style->borderBottomColor().g(), m_style->borderBottomColor().b(), m_style->borderBottomColor().a());
+    printf("border-left-color: (%d,%d,%d,%d), ", m_style->borderLeftColor().r(), m_style->borderLeftColor().g(), m_style->borderLeftColor().b(), m_style->borderLeftColor().a());
+
     // border-image-slice
     if (m_style->borderImageOffsetTop().isPercent()) printf("border-image-slice: (%.1fp, ", m_style->borderImageOffsetTop().percent());
     else printf("border-image-slice: (%.1f, ", m_style->borderImageOffsetTop().fixed());
@@ -448,7 +454,7 @@ void Node::dumpStyle()
         printf("border-image-source: %s, ", m_style->borderImageSource()->utf8Data());
 
     // border-style
-    printf("border-style(t,r,b,l) : (");
+    printf("border-style(t,r,b,l): (");
     if (m_style->borderTopStyle() == BorderStyleValue::BNone) {
         printf("none,");
     } else if (m_style->borderTopStyle() == BorderStyleValue::BSolid) {
@@ -471,7 +477,7 @@ void Node::dumpStyle()
     }
 
     // border-width
-    printf("border-width(t,r,b,l) : (%.0f,%.0f,%.0f,%.0f), ", m_style->borderTopWidth().fixed(), m_style->borderRightWidth().fixed(),
+    printf("border-width(t,r,b,l): (%.0f,%.0f,%.0f,%.0f), ", m_style->borderTopWidth().fixed(), m_style->borderRightWidth().fixed(),
             m_style->borderBottomWidth().fixed(), m_style->borderLeftWidth().fixed());
 
     // background-repeat-x

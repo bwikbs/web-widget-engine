@@ -216,6 +216,42 @@ public:
         return m_background;
     }
 
+    Color borderTopColor()
+    {
+        if (m_surround == nullptr) {
+            return m_inheritedStyles.m_color;
+        } else {
+            return m_surround->border.top().color();
+        }
+    }
+
+    Color borderRightColor()
+    {
+        if (m_surround == nullptr) {
+            return m_inheritedStyles.m_color;
+        } else {
+            return m_surround->border.right().color();
+        }
+    }
+
+    Color borderBottomColor()
+    {
+        if (m_surround == nullptr) {
+            return m_inheritedStyles.m_color;
+        } else {
+            return m_surround->border.bottom().color();
+        }
+    }
+
+    Color borderLeftColor()
+    {
+        if (m_surround == nullptr) {
+            return m_inheritedStyles.m_color;
+        } else {
+            return m_surround->border.left().color();
+        }
+    }
+
     BorderStyleValue borderTopStyle()
     {
         if (m_surround == nullptr) {
@@ -286,6 +322,26 @@ public:
         } else {
             return m_surround->border.left().width();
         }
+    }
+
+    void setBorderTopColor(Color color)
+    {
+        surround()->border.top().setColor(color);
+    }
+
+    void setBorderRightColor(Color color)
+    {
+        surround()->border.right().setColor(color);
+    }
+
+    void setBorderBottomColor(Color color)
+    {
+        surround()->border.bottom().setColor(color);
+    }
+
+    void setBorderLeftColor(Color color)
+    {
+        surround()->border.left().setColor(color);
     }
 
     void setBorderTopStyle(BorderStyleValue style)
@@ -394,7 +450,6 @@ public:
     StyleSurroundData* surround() {
         if (m_surround == nullptr) {
             m_surround = new StyleSurroundData();
-            BorderValue();
             m_surround->border.borderImageRepeatInitialize();
             m_surround->border.borderImageSliceInitialize();
         }

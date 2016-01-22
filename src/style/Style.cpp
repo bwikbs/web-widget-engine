@@ -365,6 +365,51 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             parsePercentageOrLength(ret, value);
         }
+    } else if (strcmp(key, "border-top-color") == 0) {
+        // color | transparent | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderTopColor;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("transparent")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Transparent;
+        } else {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+            ret.m_value.m_stringValue = String::fromUTF8(value);
+        }
+    } else if (strcmp(key, "border-right-color") == 0) {
+        // color | transparent | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderRightColor;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("transparent")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Transparent;
+        } else {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+            ret.m_value.m_stringValue = String::fromUTF8(value);
+        }
+    } else if (strcmp(key, "border-bottom-color") == 0) {
+        // color | transparent | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderBottomColor;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("transparent")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Transparent;
+        } else {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+            ret.m_value.m_stringValue = String::fromUTF8(value);
+        }
+    } else if (strcmp(key, "border-left-color") == 0) {
+        // color | transparent | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderLeftColor;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("transparent")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Transparent;
+        } else {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+            ret.m_value.m_stringValue = String::fromUTF8(value);
+        }
+
     } else if (strcmp(key, "border-image-repeat") == 0) {
         // <stretch> | repeat | round | space {1,2}
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageRepeat;
@@ -849,6 +894,46 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_left = Length(Length::Percent, cssValues[k].percentageValue());
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderTopColor:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setBorderTopColor(parentStyle->borderTopColor());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
+                    style->setBorderTopColor(Color(0, 0, 0, 0));
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::StringValueKind);
+                    style->setBorderTopColor(parseColor(cssValues[k].stringValue()));
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderRightColor:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setBorderRightColor(parentStyle->borderRightColor());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
+                    style->setBorderRightColor(Color(0, 0, 0, 0));
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::StringValueKind);
+                    style->setBorderRightColor(parseColor(cssValues[k].stringValue()));
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderBottomColor:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setBorderBottomColor(parentStyle->borderBottomColor());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
+                    style->setBorderBottomColor(Color(0, 0, 0, 0));
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::StringValueKind);
+                    style->setBorderBottomColor(parseColor(cssValues[k].stringValue()));
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderLeftColor:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setBorderLeftColor(parentStyle->borderLeftColor());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
+                    style->setBorderLeftColor(Color(0, 0, 0, 0));
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::StringValueKind);
+                    style->setBorderLeftColor(parseColor(cssValues[k].stringValue()));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageRepeat:
