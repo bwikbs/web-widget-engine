@@ -450,6 +450,8 @@ public:
     StyleSurroundData* surround() {
         if (m_surround == nullptr) {
             m_surround = new StyleSurroundData();
+            // FIXME: Default border color should be setted the vaule of element's color
+            BorderValue();
             m_surround->border.borderImageRepeatInitialize();
             m_surround->border.borderImageSliceInitialize();
         }
