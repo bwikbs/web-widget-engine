@@ -39,6 +39,11 @@ public:
         m_image = img;
     }
 
+    void setBgImageData(ImageData* data)
+    {
+        m_imageData = data;
+    }
+
     void setRepeatX(BackgroundRepeatValue repeat)
     {
         m_repeatX = repeat;
@@ -87,6 +92,7 @@ public:
         return m_sizeValue;
     }
 
+private:
     Color m_color;
 
     String* m_image;

@@ -333,10 +333,11 @@ public:
         OverflowValue m_overflowY;
     };
 
-    ValueData value()
+    ValueData& value()
     {
         return m_value;
     }
+
 protected:
     KeyKind m_keyKind;
     ValueKind m_valueKind;

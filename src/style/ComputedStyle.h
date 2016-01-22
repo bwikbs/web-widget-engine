@@ -94,6 +94,12 @@ public:
         m_background->setBgImage(img);
     }
 
+    void setBgImageData(ImageData* imgdata)
+    {
+        setBackgroundIfNeeded();
+        m_background->setBgImageData(imgdata);
+    }
+
     void setBackgroundRepeatX(BackgroundRepeatValue repeat)
     {
         setBackgroundIfNeeded();
@@ -136,7 +142,7 @@ public:
     {
         if (m_background == NULL)
             return NULL;
-        return m_background->m_imageData;
+        return m_background->bgImageData();
     }
 
     BackgroundRepeatValue backgroundRepeatX()
@@ -392,19 +398,22 @@ protected:
     Length m_bottom;
     Length m_left;
 
-    Font* m_font;
-    StyleBackgroundData* m_background;
-
     String* m_borderImageSource;
     OverflowValue m_overflowX;
     OverflowValue m_overflowY;
 
+    float m_opacity;
+
+protected:
+    Font* m_font;
+    StyleBackgroundData* m_background;
+
+    StyleSurroundData* m_surround;
+
+    //TODO: margin data should be moved to StyleSurroundData
     Length m_marginBottom;
     Length m_marginLeft;
     Length m_marginRight;
-    float m_opacity;
-
-    StyleSurroundData* m_surround;
 };
 
 ComputedStyleDamage compareStyle(ComputedStyle* oldStyle, ComputedStyle* newStyle);
