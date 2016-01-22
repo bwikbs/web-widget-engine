@@ -982,10 +982,10 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     // Use initialized value
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     // TODO: Prevent parentStyle->surround() from creating object for this
-                    style->surround()->border.borderImageRepeatInherit(parentStyle->surround()->border);
+                    style->borderImageRepeatInherit(parentStyle);
                 } else {
-                    style->surround()->border.setImageRepeatX(cssValues[k].multiValue()->getValueAtIndex(0).m_borderImageRepeat);
-                    style->surround()->border.setImageRepeatY(cssValues[k].multiValue()->getValueAtIndex(1).m_borderImageRepeat);
+                    style->setBorderImageRepeatX(cssValues[k].multiValue()->getValueAtIndex(0).m_borderImageRepeat);
+                    style->setBorderImageRepeatY(cssValues[k].multiValue()->getValueAtIndex(1).m_borderImageRepeat);
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageSlice:
@@ -993,32 +993,33 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     // Use initialized value
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     // TODO: Prevent parentStyle->surround() from creating object for this
-                    style->surround()->border.borderImageSliceInherit(parentStyle->surround()->border);
+                    style->borderImageSliceInherit(parentStyle);
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::ValueListKind);
-                    BorderData* b = &style->surround()->border;
+                    Length top, right, bottom, left;
                     ValueList* l = cssValues[k].multiValue();
                     unsigned int size = l->size();
                     if (l->getValueKindAtIndex(size - 1) == CSSStyleValuePair::ValueKind::StringValueKind) {
-                        b->setImageFill(true);
+                        style->setBorderImageSliceFill(true);
                         size--;
                     }
-                    b->setImageOffsetTop(convertPercentOrNumberToLength(l->getValueKindAtIndex(0), l->getValueAtIndex(0)));
+                    top = convertPercentOrNumberToLength(l->getValueKindAtIndex(0), l->getValueAtIndex(0));
                     if (size > 1) {
-                        b->setImageOffsetRight(convertPercentOrNumberToLength(l->getValueKindAtIndex(1), l->getValueAtIndex(1)));
+                        right = convertPercentOrNumberToLength(l->getValueKindAtIndex(1), l->getValueAtIndex(1));
                     } else {
-                        b->setImageOffsetRight(b->imageOffsetTop());
+                        right = top;
                     }
                     if (size > 2) {
-                        b->setImageOffsetBottom(convertPercentOrNumberToLength(l->getValueKindAtIndex(2), l->getValueAtIndex(2)));
+                        bottom = convertPercentOrNumberToLength(l->getValueKindAtIndex(2), l->getValueAtIndex(2));
                     } else {
-                        b->setImageOffsetBottom(b->imageOffsetTop());
+                        bottom = top;
                     }
                     if (size > 3) {
-                        b->setImageOffsetLeft(convertPercentOrNumberToLength(l->getValueKindAtIndex(3), l->getValueAtIndex(3)));
+                        left = convertPercentOrNumberToLength(l->getValueKindAtIndex(3), l->getValueAtIndex(3));
                     } else {
-                        b->setImageOffsetLeft(b->imageOffsetRight());
+                        left = right;
                     }
+                    style->setBorderImageSlices(LengthBox(top, right, bottom, left));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageSource:

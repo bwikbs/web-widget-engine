@@ -122,6 +122,57 @@ public:
     Length m_height;
 };
 
+class LengthBox {
+public:
+    LengthBox()
+    {
+    }
+
+    LengthBox(float v)
+        : m_left(Length(Length::Fixed, v))
+        , m_right(Length(Length::Fixed, v))
+        , m_top(Length(Length::Fixed, v))
+        , m_bottom(Length(Length::Fixed, v))
+    {
+    }
+
+    LengthBox(const Length& t, const Length& r, const Length& b, const Length& l)
+        : m_left(l)
+        , m_right(r)
+        , m_top(t)
+        , m_bottom(b)
+    {
+    }
+
+    LengthBox(float t, float r, float b, float l)
+        : m_left(Length(Length::Fixed, l))
+        , m_right(Length(Length::Fixed, r))
+        , m_top(Length(Length::Fixed, t))
+        , m_bottom(Length(Length::Fixed, b))
+    {
+    }
+
+    bool operator==(const LengthBox& o)
+    {
+        return this->m_left == o.m_left && this->m_right == o.m_right && this->m_top == o.m_top && this->m_bottom == o.m_bottom;
+    }
+
+    bool operator!=(const LengthBox& o)
+    {
+        return !operator ==(o);
+    }
+
+    const Length& left() const { return m_left; }
+    const Length& right() const { return m_right; }
+    const Length& top() const { return m_top; }
+    const Length& bottom() const { return m_bottom; }
+
+    Length m_left;
+    Length m_right;
+    Length m_top;
+    Length m_bottom;
+};
+
 }
 
 #endif

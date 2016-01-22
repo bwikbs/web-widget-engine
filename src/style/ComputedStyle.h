@@ -375,67 +375,25 @@ public:
         surround()->border.left().setWidth(width);
     }
 
-    Length borderImageOffsetTop()
-    {
-        if (m_surround == nullptr) {
-            return Length(Length::Percent, 1);
-        } else {
-            return m_surround->border.imageOffsetTop();
-        }
-    }
+    LengthBox borderImageSlices() { return surround()->border.image().slices(); }
+    bool borderImageSliceFill() { return surround()->border.image().sliceFill(); }
+    BorderImageRepeatValue borderImageRepeatX() { return surround()->border.image().repeatX(); }
+    BorderImageRepeatValue borderImageRepeatY() { return surround()->border.image().repeatY(); }
 
-    Length borderImageOffsetRight()
-    {
-        if (m_surround == nullptr) {
-            return Length(Length::Percent, 1);
-        } else {
-            return m_surround->border.imageOffsetRight();
-        }
-    }
+    void setBorderImageSlices(LengthBox slices) { surround()->border.image().setSlices(slices); }
+    void setBorderImageSliceFill(bool fill) { surround()->border.image().setSliceFill(fill); }
+    void setBorderImageRepeatX(BorderImageRepeatValue value) { surround()->border.image().setRepeatX(value); }
+    void setBorderImageRepeatY(BorderImageRepeatValue value) { surround()->border.image().setRepeatY(value); }
 
-    Length borderImageOffsetBottom()
+    void borderImageSliceInherit(ComputedStyle* parent)
     {
-        if (m_surround == nullptr) {
-            return Length(Length::Percent, 1);
-        } else {
-            return m_surround->border.imageOffsetBottom();
-        }
+        setBorderImageSlices(parent->borderImageSlices());
+        setBorderImageSliceFill(parent->borderImageSliceFill());
     }
-
-    Length borderImageOffsetLeft()
+    void borderImageRepeatInherit(ComputedStyle* parent)
     {
-        if (m_surround == nullptr) {
-            return Length(Length::Percent, 1);
-        } else {
-            return m_surround->border.imageOffsetLeft();
-        }
-    }
-
-    bool borderImageFill()
-    {
-        if (m_surround == nullptr) {
-            return false;
-        } else {
-            return m_surround->border.imageFill();
-        }
-    }
-
-    BorderImageRepeatValue borderImageRepeatX()
-    {
-        if (m_surround == nullptr) {
-            return BorderImageRepeatValue::StretchValue;
-        } else {
-            return m_surround->border.imageRepeatX();
-        }
-    }
-
-    BorderImageRepeatValue borderImageRepeatY()
-    {
-        if (m_surround == nullptr) {
-            return BorderImageRepeatValue::StretchValue;
-        } else {
-            return m_surround->border.imageRepeatY();
-        }
+        setBorderImageRepeatX(parent->borderImageRepeatX());
+        setBorderImageRepeatY(parent->borderImageRepeatY());
     }
 
     StyleSurroundData* surround() {
@@ -443,8 +401,6 @@ public:
             m_surround = new StyleSurroundData();
             // FIXME: Default border color should be setted the vaule of element's color
             BorderValue();
-            m_surround->border.borderImageRepeatInitialize();
-            m_surround->border.borderImageSliceInitialize();
         }
         return m_surround;
     }

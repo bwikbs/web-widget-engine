@@ -439,15 +439,16 @@ void Node::dumpStyle()
     printf("border-left-color: (%d,%d,%d,%d), ", m_style->borderLeftColor().r(), m_style->borderLeftColor().g(), m_style->borderLeftColor().b(), m_style->borderLeftColor().a());
 
     // border-image-slice
-    if (m_style->borderImageOffsetTop().isPercent()) printf("border-image-slice: (%.1fp, ", m_style->borderImageOffsetTop().percent());
-    else printf("border-image-slice: (%.1f, ", m_style->borderImageOffsetTop().fixed());
-    if (m_style->borderImageOffsetRight().isPercent()) printf("%.1fp, ", m_style->borderImageOffsetRight().percent());
-    else printf("%.1f, ", m_style->borderImageOffsetRight().fixed());
-    if (m_style->borderImageOffsetBottom().isPercent()) printf("%.1fp, ", m_style->borderImageOffsetBottom().percent());
-    else printf("%.1f, ", m_style->borderImageOffsetBottom().fixed());
-    if (m_style->borderImageOffsetLeft().isPercent()) printf("%.1fp, ", m_style->borderImageOffsetLeft().percent());
-    else printf("%.1f, ", m_style->borderImageOffsetLeft().fixed());
-    printf("%d), ", m_style->borderImageFill());
+    LengthBox l = m_style->borderImageSlices();
+    if (l.top().isPercent()) printf("border-image-slice: (%.1fp, ", l.top().percent());
+    else printf("border-image-slice: (%.1f, ", l.top().fixed());
+    if (l.right().isPercent()) printf("%.1fp, ", l.right().percent());
+    else printf("%.1f, ", l.right().fixed());
+    if (l.bottom().isPercent()) printf("%.1fp, ", l.bottom().percent());
+    else printf("%.1f, ", l.bottom().fixed());
+    if (l.left().isPercent()) printf("%.1fp, ", l.left().percent());
+    else printf("%.1f, ", l.left().fixed());
+    printf("%d), ", m_style->borderImageSliceFill());
 
     // border-image-source
     if(!m_style->borderImageSource()->equals(String::emptyString))
