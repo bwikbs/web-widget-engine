@@ -40,6 +40,11 @@ public:
         return m_display;
     }
 
+    PositionValue position()
+    {
+        return m_position;
+    }
+
     Length width()
     {
         return m_width;

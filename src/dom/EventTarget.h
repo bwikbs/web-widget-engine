@@ -36,7 +36,7 @@ public:
         return (Window*)this;
     }
 
-    virtual bool isNode()
+    virtual bool isNode() const
     {
         return false;
     }

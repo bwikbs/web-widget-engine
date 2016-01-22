@@ -325,8 +325,19 @@ void Node::dumpStyle()
         printf("display: inline, ");
     } else if (m_style->display() == BlockDisplayValue) {
         printf("display: block, ");
+    } else if (m_style->display() == InlineBlockDisplayValue) {
+        printf("display: inline-block, ");
     } else if (m_style->display() == NoneDisplayValue) {
         printf("display: none, ");
+    }
+
+    // position
+    if (m_style->position() == StaticPositionValue) {
+        printf("position: static, ");
+    } else if (m_style->position() == RelativePositionValue) {
+        printf("position: relative, ");
+    } else if (m_style->position() == AbsolutePositionValue) {
+        printf("position: absolute, ");
     }
 
     // width
