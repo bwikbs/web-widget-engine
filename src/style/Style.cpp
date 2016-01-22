@@ -1024,10 +1024,10 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageSource:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_borderImageSource = parentStyle->m_borderImageSource;
+                    style->setBorderImageSource(parentStyle->borderImageSource());
                 } else {
                     //STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
-                    style->m_borderImageSource = cssValues[k].stringValue();
+                    style->setBorderImageSource(cssValues[k].stringValue());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderTopStyle:
