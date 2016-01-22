@@ -134,15 +134,36 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         ret.m_valueKind = CSSStyleValuePair::ValueKind::DisplayValueKind;
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if(VALUE_IS_INITIAL()) {
+            ret.m_value.m_display = DisplayValue::InlineDisplayValue;
         } else if (VALUE_IS_STRING("block")) {
             ret.m_value.m_display = DisplayValue::BlockDisplayValue;
         } else if (VALUE_IS_STRING("inline")) {
             ret.m_value.m_display = DisplayValue::InlineDisplayValue;
+        } else if (VALUE_IS_STRING("inline-block")) {
+            ret.m_value.m_display = DisplayValue::InlineBlockDisplayValue;
         } else if (VALUE_IS_STRING("none")) {
             ret.m_value.m_display = DisplayValue::NoneDisplayValue;
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
+    } else if (strcmp(key, "position") == 0) {
+        // <static> | relative | absolute | fixed | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::Position;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::PositionValueKind;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_value.m_position = PositionValue::StaticPositionValue;
+        } else if (VALUE_IS_STRING("relative")) {
+            ret.m_value.m_position = PositionValue::RelativePositionValue;
+        } else if (VALUE_IS_STRING("absolute")) {
+            ret.m_value.m_position = PositionValue::AbsolutePositionValue;
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
+
     } else if (strcmp(key, "width") == 0) {
         // length | percentage | <auto> | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Width;
@@ -165,6 +186,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             parsePercentageOrLength(ret, value);
         }
     } else if (strcmp(key, "font-size") == 0) {
+        // TODO add initial
         // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
         //        O      |       O       |   O    |    O       |    O
         ret.m_keyKind = CSSStyleValuePair::KeyKind::FontSize;
@@ -196,6 +218,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "color") == 0) {
         // color | inherit // initial value -> depends on user agent
+        // TODO add initial
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Color;
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
@@ -206,6 +229,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "background-color") == 0) {
         // color | <transparent> | inherit
+        // TODO add initial
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundColor;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Transparent;
         if (VALUE_IS_INHERIT()) {
@@ -230,6 +254,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "text-align") == 0) {
         // left | right | center | justify | <inherit>
+        // TODO add initial
         ret.m_keyKind = CSSStyleValuePair::KeyKind::TextAlign;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         if (VALUE_IS_INHERIT()) {
@@ -248,6 +273,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "direction") == 0) {
         // <ltr> | rtl | inherit
+        // TODO add initial
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Direction;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::DirectionValueKind;
         if (VALUE_IS_STRING("ltr")) {
@@ -261,6 +287,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "background-size") == 0) {
         // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
+        // TODO add initial
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundSize;
         if (VALUE_IS_STRING("contain")) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Contain;
@@ -287,31 +314,33 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_value.m_multiValue = values;
         }
     } else if (strcmp(key, "background-repeat-x") == 0) {
-    	// repeat | no-repeat | initial | inherit // initial value -> repeat
-    	ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatX;
-    	ret.m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
+        // repeat | no-repeat | initial | inherit // initial value -> repeat
+        // TODO add initial
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatX;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
 
-    	if (VALUE_IS_INHERIT()) {
-    		ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-    	} else if (VALUE_IS_STRING("no-repeat")) {
-    		ret.m_value.m_backgroundRepeatX = BackgroundRepeatValue::NoRepeatRepeatValue;
-    	} else if (VALUE_IS_STRING("repeat") || VALUE_IS_INITIAL()) {
-    		ret.m_value.m_backgroundRepeatX = BackgroundRepeatValue::RepeatRepeatValue;
-    	} else {
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("no-repeat")) {
+            ret.m_value.m_backgroundRepeatX = BackgroundRepeatValue::NoRepeatRepeatValue;
+        } else if (VALUE_IS_STRING("repeat") || VALUE_IS_INITIAL()) {
+            ret.m_value.m_backgroundRepeatX = BackgroundRepeatValue::RepeatRepeatValue;
+        } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "background-repeat-y") == 0) {
-    	// repeat | no-repeat | initial | inherit // initial value -> repeat
-    	ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatY;
-    	ret.m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
+        // repeat | no-repeat | initial | inherit // initial value -> repeat
+        // TODO add initial
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatY;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
 
-    	if (VALUE_IS_INHERIT()) {
-    		ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-    	} else if (VALUE_IS_STRING("no-repeat")) {
-    		ret.m_value.m_backgroundRepeatY = BackgroundRepeatValue::NoRepeatRepeatValue;
-    	} else if (VALUE_IS_STRING("repeat") || VALUE_IS_INITIAL()) {
-    		ret.m_value.m_backgroundRepeatY = BackgroundRepeatValue::RepeatRepeatValue;
-    	} else {
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("no-repeat")) {
+            ret.m_value.m_backgroundRepeatY = BackgroundRepeatValue::NoRepeatRepeatValue;
+        } else if (VALUE_IS_STRING("repeat") || VALUE_IS_INITIAL()) {
+            ret.m_value.m_backgroundRepeatY = BackgroundRepeatValue::RepeatRepeatValue;
+        } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "bottom") == 0) {
@@ -618,6 +647,14 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     STARFISH_ASSERT(CSSStyleValuePair::ValueKind::DisplayValueKind == cssValues[k].valueKind());
                     style->m_display = cssValues[k].displayValue();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::Position:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_position = parentStyle->m_position;
+                } else {
+                    STARFISH_ASSERT(CSSStyleValuePair::ValueKind::PositionValueKind == cssValues[k].valueKind());
+                    style->m_position = cssValues[k].positionValue();
                 }
                 break;
             case CSSStyleValuePair::KeyKind::Width:

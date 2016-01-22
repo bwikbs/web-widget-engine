@@ -64,7 +64,15 @@ protected:
 enum DisplayValue {
     InlineDisplayValue, //initial value
     BlockDisplayValue,
+    InlineBlockDisplayValue,
     NoneDisplayValue,
+};
+
+enum PositionValue {
+    StaticPositionValue,
+    RelativePositionValue,
+    AbsolutePositionValue,
+    // FixedPositionValue, // TODO
 };
 
 enum TextAlignValue {
@@ -106,6 +114,8 @@ public:
         // <name> <- initial value
         // http://www.w3.org/TR/CSS21/visuren.html#propdef-display
         Display, // <inline> | block | list-item | inline-block | table | inline-table | table-row-group | table-header-group | table-footer-group | table-row | table-column-group | table-column | table-cell | table-caption | none | inherit
+        // http://www.w3.org/TR/CSS21/visuren.html#choose-position
+        Position, // <static> | relative | absolute | fixed | inherit
         // https://www.w3.org/TR/CSS21/visudet.html#the-width-property
         Width, // length | percentage | <auto> | inherit
         // https://www.w3.org/TR/CSS21/visudet.html#the-height-property
@@ -167,6 +177,7 @@ public:
         StringValueKind,
 
         DisplayValueKind,
+        PositionValueKind,
         TextAlignValueKind,
         DirectionValueKind,
 
@@ -222,6 +233,12 @@ public:
     {
         STARFISH_ASSERT(m_valueKind == DisplayValueKind);
         return m_value.m_display;
+    }
+
+    PositionValue positionValue()
+    {
+        STARFISH_ASSERT(m_valueKind == PositionValueKind);
+        return m_value.m_position;
     }
 
     TextAlignValue textAlignValue()
@@ -301,6 +318,7 @@ public:
     union ValueData {
         float m_floatValue;
         DisplayValue m_display;
+        PositionValue m_position;
         TextAlignValue m_textAlign;
         DirectionValue m_direction;
         CSSLength m_length;

@@ -360,6 +360,7 @@ protected:
     } m_inheritedStyles;
 
     DisplayValue m_display;
+    PositionValue m_position;
     Length m_width;
     Length m_height;
     Length m_bottom;
