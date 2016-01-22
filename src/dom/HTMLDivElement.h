@@ -18,7 +18,7 @@ public:
         return document()->window()->starFish()->staticStrings()->m_divLocalName;
     }
 
-    virtual bool isHTMLDivElement()
+    virtual bool isHTMLDivElement() const
     {
         return true;
     }

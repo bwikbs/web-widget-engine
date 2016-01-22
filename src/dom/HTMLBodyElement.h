@@ -18,7 +18,7 @@ public:
         return document()->window()->starFish()->staticStrings()->m_bodyLocalName;
     }
 
-    virtual bool isHTMLBodyElement()
+    virtual bool isHTMLBodyElement() const
     {
         return true;
     }

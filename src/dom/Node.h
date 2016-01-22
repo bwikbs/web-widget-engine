@@ -298,12 +298,12 @@ public:
         NodeStateActive,
     };
 
-    virtual bool isNode()
+    virtual bool isNode() const
     {
         return true;
     }
 
-    virtual bool isElement()
+    virtual bool isElement() const
     {
         return false;
     }
@@ -313,17 +313,17 @@ public:
         return false;
     }
 
-    virtual bool isCharacterData()
+    virtual bool isCharacterData() const
     {
         return false;
     }
 
-    virtual bool isDocumentType()
+    virtual bool isDocumentType() const
     {
         return false;
     }
 
-    virtual bool isComment()
+    virtual bool isComment() const
     {
         return false;
     }

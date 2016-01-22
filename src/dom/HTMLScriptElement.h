@@ -13,7 +13,7 @@ public:
         initScriptWrappable(this);
     }
 
-    virtual bool isHTMLScriptElement()
+    virtual bool isHTMLScriptElement() const
     {
         return true;
     }

@@ -52,7 +52,7 @@ public:
 
     /* Other methods */
 
-    virtual bool isDocument()
+    virtual bool isDocument() const
     {
         return true;
     }

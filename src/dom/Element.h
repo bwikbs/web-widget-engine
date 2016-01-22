@@ -62,12 +62,12 @@ public:
 
     /* Other methods (not in Node interface) */
 
-    virtual bool isElement()
+    virtual bool isElement() const
     {
         return true;
     }
 
-    virtual bool isHTMLElement()
+    virtual bool isHTMLElement() const
     {
         return false;
     }

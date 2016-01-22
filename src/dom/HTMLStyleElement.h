@@ -13,7 +13,7 @@ public:
         initScriptWrappable(this);
     }
 
-    virtual bool isHTMLStyleElement()
+    virtual bool isHTMLStyleElement() const
     {
         return true;
     }

@@ -51,12 +51,12 @@ public:
         return m_data->length();
     }
 
-    virtual bool isCharacterData()
+    virtual bool isCharacterData() const
     {
         return true;
     }
 
-    virtual bool isText()
+    virtual bool isText() const
     {
         return false;
     }

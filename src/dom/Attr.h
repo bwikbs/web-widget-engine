@@ -9,20 +9,24 @@ class Element;
 class Attr : public ScriptWrappable {
 public:
     Attr(ScriptBindingInstance* instance, Element* element, String* name)
-    : m_element(element), m_name(name), m_standAloneValue(nullptr) {
+    : m_element(element), m_name(name), m_standAloneValue(nullptr)
+    {
         initScriptWrappable(this, instance);
     }
 
     Attr(ScriptBindingInstance* instance, String* name)
-    : m_element(nullptr), m_name(name), m_standAloneValue(nullptr) {
+    : m_element(nullptr), m_name(name), m_standAloneValue(nullptr)
+    {
         initScriptWrappable(this, instance);
     }
 
-    String* name() {
+    String* name()
+    {
         return m_name;
     }
 
-    String* value() {
+    String* value()
+    {
         return m_element->getAttribute(m_name);
     }
 
@@ -37,7 +41,8 @@ public:
         return value();
     }
 
-    void setNodeValue(String* value) {
+    void setNodeValue(String* value)
+    {
         setValue(value);
     }
 
@@ -45,7 +50,8 @@ public:
         return value();
     }
 
-    void setTextContext(String* value) {
+    void setTextContext(String* value)
+    {
         setValue(value);
     }
 

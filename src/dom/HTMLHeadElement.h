@@ -18,7 +18,7 @@ public:
         return document()->window()->starFish()->staticStrings()->m_headLocalName;
     }
 
-    virtual bool isHTMLHeadElement()
+    virtual bool isHTMLHeadElement() const
     {
         return true;
     }

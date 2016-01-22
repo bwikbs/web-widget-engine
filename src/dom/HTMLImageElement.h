@@ -18,7 +18,7 @@ public:
         return document()->window()->starFish()->staticStrings()->m_imageLocalName;
     }
 
-    virtual bool isHTMLImageElement()
+    virtual bool isHTMLImageElement() const
     {
         return true;
     }

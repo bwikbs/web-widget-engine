@@ -13,7 +13,7 @@ public:
         initScriptWrappable(this);
     }
 
-    virtual bool isComment()
+    virtual bool isComment() const
     {
         return true;
     }

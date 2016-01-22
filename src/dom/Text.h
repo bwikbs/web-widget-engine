@@ -18,7 +18,7 @@ public:
         return Node::TEXT_NODE;
     }
 
-    virtual bool isText()
+    virtual bool isText() const
     {
         return true;
     }

@@ -17,7 +17,7 @@ namespace StarFish {
 #define FORWRAD_DECLARE_NAME(kind) class HTML##kind##Element;
 
 #define IS_KIND_ELEMENT(kind) \
-    virtual bool isHTML##kind##Element() { return false; } \
+    virtual bool isHTML##kind##Element() const { return false; } \
     virtual HTML##kind##Element* asHTML##kind##Element() \
     { \
         STARFISH_ASSERT(isHTML##kind##Element()); \
@@ -41,7 +41,7 @@ public:
         return localName()->toUpper();
     }
 
-    virtual bool isHTMLElement()
+    virtual bool isHTMLElement() const
     {
         return true;
     }

@@ -10,7 +10,8 @@ class Element;
 class DOMTokenList : public ScriptWrappable {
 public:
     DOMTokenList(ScriptBindingInstance* instance, Element* element, String* localName)
-    : m_element(element), m_localName(localName) {
+    : m_element(element), m_localName(localName)
+    {
         initScriptWrappable(this, instance);
     }
     static void tokenize(std::vector<String*, gc_allocator<String*>>* tokens, String* src);
