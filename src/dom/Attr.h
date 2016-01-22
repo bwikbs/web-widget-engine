@@ -20,14 +20,19 @@ public:
         initScriptWrappable(this, instance);
     }
 
-    String* name()
-    {
+    Attr(ScriptBindingInstance* instance, String* name, String* value)
+    : m_element(nullptr), m_name(name), m_standAloneValue(value) {
+        initScriptWrappable(this, instance);
+    }
+
+    String* name() {
         return m_name;
     }
 
-    String* value()
-    {
-        return m_element->getAttribute(m_name);
+    String* value() {
+        if (m_element)
+            return m_element->getAttribute(m_name);
+        return m_standAloneValue;
     }
 
     void setValue(String* value) {
@@ -35,24 +40,6 @@ public:
             m_element->setAttribute(m_name, value);
         else
             m_standAloneValue = value;
-    }
-
-    String* nodeValue() {
-        return value();
-    }
-
-    void setNodeValue(String* value)
-    {
-        setValue(value);
-    }
-
-    String* textContent() {
-        return value();
-    }
-
-    void setTextContext(String* value)
-    {
-        setValue(value);
     }
 
     Element* ownerElement() { return m_element; }

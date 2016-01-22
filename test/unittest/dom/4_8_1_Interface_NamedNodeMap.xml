@@ -87,9 +87,32 @@
 			print(document.firstElementChild.lastElementChild.children.item(1));
 			print(document.firstElementChild.lastElementChild.children.item(1).attributes);
 			var len = document.firstElementChild.lastElementChild.children.item(1).attributes.length;
+
+			print("<NamedNodeMap::item>")
 			for (var i = 0; i <= len; i++) {
+				print("<i = " + i + ">");
 				print(document.firstElementChild.lastElementChild.children.item(1).attributes.item(i));
+				if (document.firstElementChild.lastElementChild.children.item(1).attributes.item(i) != null) {
+					print(document.firstElementChild.lastElementChild.children.item(1).attributes.item(i).name);
+					print(document.firstElementChild.lastElementChild.children.item(1).attributes.item(i).value);
+				}
 			}
+			
+			print("<NamedNodeMap::getNamedItem>")
+			print(document.firstElementChild.lastElementChild.children.item(1).attributes.getNamedItem("class"));
+			print(document.firstElementChild.lastElementChild.children.item(1).attributes.getNamedItem("class").value);
+
+			print("<NamedNodeMap::setNamedItem>")
+			var attr1 = document.createAttribute("class");
+			attr1.value = "c3"
+			print(document.firstElementChild.lastElementChild.children.item(1).attributes.setNamedItem(attr1).value);
+			print(document.firstElementChild.lastElementChild.children.item(1).attributes.getNamedItem("class").value);
+
+			print("<NamedNodeMap::removeNamedItem>")
+			print(document.firstElementChild.lastElementChild.children.item(1).attributes.removeNamedItem("class").value);
+			print(document.firstElementChild.lastElementChild.children.item(1).attributes.getNamedItem("class"));
+
+
 
 			print("<End>")
             return 1<2;

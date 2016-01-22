@@ -1151,6 +1151,56 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     }, escargot::ESString::create("item"), 1, false);
     NamedNodeMapFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("item"), false, false, false, NamedNodeMapItemFunction);
 
+    escargot::ESFunctionObject* NamedNodeMapGetNamedItemFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+       escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+       CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NamedNodeMapObject);
+
+       escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+       if (argValue.isESString()) {
+           Attr* elem = ((NamedNodeMap*) thisValue.asESPointer()->asESObject())->getNamedItem(String::fromUTF8(argValue.asESString()->utf8Data()));
+           if (elem != nullptr)
+               return escargot::ESValue((escargot::ESObject *)elem);
+       } else {
+           THROW_ILLEGAL_INVOCATION()
+       }
+       return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("getNamedItem"), 1, false);
+    NamedNodeMapFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("getNamedItem"), false, false, false, NamedNodeMapGetNamedItemFunction);
+
+    escargot::ESFunctionObject* NamedNodeMapSetNamedItemFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+       escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+       CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NamedNodeMapObject);
+
+       escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+       CHECK_TYPEOF(argValue, ScriptWrappable::Type::AttrObject);
+
+       Attr* old = ((NamedNodeMap*) thisValue.asESPointer()->asESObject())->getNamedItem(((Attr*) argValue.asESPointer()->asESObject())->name());
+       Attr* toReturn = new Attr(((NamedNodeMap*) thisValue.asESPointer()->asESObject())->striptBindingInstance(), old->name(), old->value());
+       ((NamedNodeMap*) thisValue.asESPointer()->asESObject())->setNamedItem((Attr*) argValue.asESPointer()->asESObject());
+       if (toReturn != nullptr)
+           return escargot::ESValue((escargot::ESObject *)toReturn);
+       return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("setNamedItem"), 1, false);
+    NamedNodeMapFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("setNamedItem"), false, false, false, NamedNodeMapSetNamedItemFunction);
+
+    escargot::ESFunctionObject* NamedNodeMapRemoveNamedItemFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+       escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+       CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NamedNodeMapObject);
+
+       escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+       if (argValue.isESString()) {
+           String* name = String::fromUTF8(argValue.asESString()->utf8Data());
+           Attr* old = ((NamedNodeMap*) thisValue.asESPointer()->asESObject())->getNamedItem(name);
+           Attr* toReturn = new Attr(((NamedNodeMap*) thisValue.asESPointer()->asESObject())->striptBindingInstance(), name, old->value());
+           ((NamedNodeMap*) thisValue.asESPointer()->asESObject())->removeNamedItem(name);
+           if (toReturn != nullptr)
+               return escargot::ESValue((escargot::ESObject *)toReturn);
+       } else
+           THROW_ILLEGAL_INVOCATION()
+       return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("removeNamedItem"), 1, false);
+    NamedNodeMapFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("removeNamedItem"), false, false, false, NamedNodeMapRemoveNamedItemFunction);
+
     DEFINE_FUNCTION(Attr, fetchData(this)->m_instance->globalObject()->objectPrototype());
     fetchData(this)->m_attr = AttrFunction;
 
