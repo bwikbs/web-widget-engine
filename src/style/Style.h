@@ -152,6 +152,8 @@ public:
         MarginBottom, // length | percentage | auto | inherit // <0>
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-left
         MarginLeft, // length | percentage | auto | inherit // Initial value -> 0
+        // https://www.w3.org/TR/CSS2/box.html#propdef-margin-right
+        MarginRight, // length | percentage | auto | inherit // Initial value -> 0
         // https://www.w3.org/TR/css3-color/#transparency
         Opacity, // alphavalue | inherit // <1>
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/visufx.html#propdef-overflow
@@ -330,6 +332,11 @@ public:
         OverflowValue m_overflowX;
         OverflowValue m_overflowY;
     };
+
+    ValueData value()
+    {
+        return m_value;
+    }
 protected:
     KeyKind m_keyKind;
     ValueKind m_valueKind;
@@ -365,7 +372,7 @@ public:
         return m_valueKinds[idx];
     }
 
-    CSSStyleValuePair::ValueData getValueAtIndex(int idx)
+    CSSStyleValuePair::ValueData& getValueAtIndex(int idx)
     {
         return m_values[idx];
     }

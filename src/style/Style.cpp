@@ -510,11 +510,24 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "margin-left") == 0) {
         // length | percentage | <auto> | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginLeft;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
 
         if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
         } else if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
+    } else if (strcmp(key, "margin-right") == 0) {
+        // length | percentage | auto | inherit  <0>
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginRight;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+
+        if (VALUE_IS_STRING("auto")) {
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
         } else {
             parsePercentageOrLength(ret, value);
         }
@@ -920,26 +933,41 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::MarginBottom:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_marginBottom = parentStyle->m_marginBottom;
+                    style->setMarginBottom(parentStyle->m_marginBottom);
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
-                    style->m_marginBottom = Length();
+                    style->setMarginBottom(Length());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
-                    style->m_marginBottom = cssValues[k].lengthValue().toLength();
+                    style->setMarginBottom(cssValues[k].lengthValue().toLength());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
-                    style->m_marginBottom = Length(Length::Percent, cssValues[k].percentageValue());
+                    style->setMarginBottom(Length(Length::Percent, cssValues[k].percentageValue()));
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
                 break;
             case CSSStyleValuePair::KeyKind::MarginLeft:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_marginLeft = parentStyle->m_marginLeft;
+                    style->setMarginLeft(parentStyle->m_marginLeft);
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
-                    style->m_marginLeft = Length();
+                    style->setMarginLeft(Length());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
-                    style->m_marginLeft = cssValues[k].lengthValue().toLength();
+                    style->setMarginLeft(cssValues[k].lengthValue().toLength());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
-                    style->m_marginLeft = Length(Length::Percent, cssValues[k].percentageValue());
+                    style->setMarginLeft(Length(Length::Percent, cssValues[k].percentageValue()));
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::MarginRight:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setMarginRight(parentStyle->marginRight());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->setMarginRight(Length(Length::Fixed, 0));
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
+                    style->setMarginRight(Length());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->setMarginRight(cssValues[k].lengthValue().toLength());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
+                    style->setMarginRight(Length(Length::Percent, cssValues[k].percentageValue()));
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }

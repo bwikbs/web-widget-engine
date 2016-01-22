@@ -345,12 +345,33 @@ public:
         return m_overflowY;
     }
 
+    void setMarginBottom(Length r)
+    {
+        m_marginBottom = r;
+    }
+
+    void setMarginLeft(Length r)
+    {
+        m_marginLeft = r;
+    }
+
+    void setMarginRight(Length r)
+    {
+        m_marginRight = r;
+    }
+
+    Length marginRight()
+    {
+        return m_marginRight;
+    }
+
 protected:
     void initNonInheritedStyles()
     {
         m_display = DisplayValue::InlineDisplayValue;
         m_marginBottom = Length(Length::Fixed, 0);
         m_marginLeft = Length(Length::Fixed, 0);
+        m_marginRight = Length(Length::Fixed, 0);
         m_opacity = 1;
         m_background = NULL;
     }
@@ -380,6 +401,7 @@ protected:
 
     Length m_marginBottom;
     Length m_marginLeft;
+    Length m_marginRight;
     float m_opacity;
 
     StyleSurroundData* m_surround;
