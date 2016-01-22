@@ -89,6 +89,9 @@
                                 print(test);
                                 print(test.textContent);
 
+                                print("<Document-docType Test>");
+                                print(document.doctype);
+
                                 return true;
         					}
 							test();

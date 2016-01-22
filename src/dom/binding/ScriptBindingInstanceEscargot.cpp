@@ -725,6 +725,23 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     }, escargot::ESString::create("getElementById"), 1, false);
     DocumentFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("getElementById"), false, false, false, getElementByIdFunction);
 
+    escargot::ESFunctionObject* getDoctypeFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+        Node* obj = (Node*)thisValue.asESPointer()->asESObject();
+
+        if (obj->isDocument()) {
+            Node* docTypeNode = obj->firstChild();
+            if(docTypeNode->isDocumentType()){
+                return escargot::ESValue((escargot::ESObject *)docTypeNode);
+            }
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("doctype"), 1, false);
+    DocumentFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("doctype"), false, false, false, getDoctypeFunction);
+
     escargot::ESFunctionObject* createElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
         CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
