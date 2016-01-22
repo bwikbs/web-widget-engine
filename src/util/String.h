@@ -17,7 +17,7 @@ public:
     static String* fromUTF8(const char* src, size_t len);
     static String* createASCIIString(const char* src);
 
-    ASCIIString* asASCIIString()
+    ASCIIString* asASCIIString() const
     {
         STARFISH_ASSERT(m_isASCIIString);
         return (ASCIIString*)((size_t)this + sizeof(size_t));
@@ -31,7 +31,7 @@ public:
 
     const char* utf8Data();
 
-    bool equals(String* str)
+    bool equals(const String* str) const
     {
         if (*asASCIIString() == *str->asASCIIString()) {
             return true;

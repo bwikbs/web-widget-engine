@@ -18,7 +18,7 @@ NodeList* Node::childNodes()
     return list;
 }
 
-Node* Node::cloneNode(bool deep = false)
+Node* Node::cloneNode(bool deep)
 {
     Node* newNode = clone();
     STARFISH_ASSERT(newNode);
@@ -167,7 +167,7 @@ unsigned long Node::childElementCount()
     });
 }
 
-bool isPreceding(Node* node, Node* isPrec, Node* refNode)
+bool isPreceding(const Node* node, const Node* isPrec, const Node* refNode)
 {
     if(node == isPrec) {
         return true;
@@ -183,7 +183,7 @@ bool isPreceding(Node* node, Node* isPrec, Node* refNode)
     return false;
 }
 
-unsigned short Node::compareDocumentPosition(Node* other)
+unsigned short Node::compareDocumentPosition(const Node* other)
 {
     // spec does not say what to do when other is nullptr
     if(!other) {
@@ -221,7 +221,7 @@ unsigned short Node::compareDocumentPosition(Node* other)
     }
 }
 
-String* Node::lookupNamespacePrefix(String* namespaceUri, Element* element)
+String* Node::lookupNamespacePrefix(const String* namespaceUri, Element* element)
 {
     if(namespaceUri == nullptr) {
         return nullptr;
@@ -233,7 +233,7 @@ String* Node::lookupNamespacePrefix(String* namespaceUri, Element* element)
     return nullptr;
 }
 
-String* Node::lookupPrefix(String* namespaceUri)
+String* Node::lookupPrefix(const String* namespaceUri)
 {
     if(!namespaceUri) {
         return nullptr;

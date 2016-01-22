@@ -103,12 +103,12 @@ public:
 
     virtual String* nodeName() = 0;
 
-    String* baseURI()
+    virtual String* baseURI()
     {
         return m_baseUri;
     }
 
-    virtual Document* ownerDocument()
+    virtual Document* ownerDocument() const
     {
         if(isDocument()) {
             return nullptr;
@@ -117,7 +117,7 @@ public:
         }
     }
 
-    Node* parentNode()
+    Node* parentNode() const
     {
         return m_parentNode;
     }
@@ -129,29 +129,29 @@ public:
         return nullptr;
     }
 
-    bool hasChildNodes()
+    bool hasChildNodes() const
     {
         return firstChild();
     }
 
-    virtual NodeList* childNodes();
+    NodeList* childNodes();
 
-    Node* firstChild()
+    Node* firstChild() const
     {
         return m_firstChild;
     }
 
-    Node* lastChild()
+    Node* lastChild() const
     {
         return m_lastChild;
     }
 
-    Node* previousSibling()
+    Node* previousSibling() const
     {
         return m_previousSibling;
     }
 
-    Node* nextSibling()
+    Node* nextSibling() const
     {
         return m_nextSibling;
     }
@@ -160,13 +160,13 @@ public:
 
     virtual String* textContent() = 0;
 
-    virtual bool isEqualNode(Node* other);
+    bool isEqualNode(Node* other);
 
-    virtual Node* cloneNode(bool deep);
+    virtual Node* cloneNode(bool deep = false);
 
-    virtual unsigned short compareDocumentPosition(Node* other);
+    virtual unsigned short compareDocumentPosition(const Node* other);
 
-    virtual bool contains(Node* other)
+    virtual bool contains(const Node* other) const
     {
         if(other == nullptr) {
             return false;
@@ -182,9 +182,9 @@ public:
         return false;
     }
 
-    virtual String* lookupPrefix(String* namespaceUri);
+    virtual String* lookupPrefix(const String* namespaceUri);
 
-    virtual String* lookupNamespaceURI(String* prefix)
+    virtual String* lookupNamespaceURI(const String* prefix) const
     {
         if(prefix == nullptr) {
             return nullptr;
@@ -195,7 +195,7 @@ public:
         // Impl here
         return nullptr;
     }
-    virtual bool isDefaultNamespace(String* namespace_)
+    virtual bool isDefaultNamespace(const String* namespaceUri)
     {
         // Impl here
         return false;
@@ -279,11 +279,6 @@ public:
         return child;
     }
 
-    void remove() {
-        if (m_parentNode)
-            m_parentNode->removeChild(this);
-    }
-
     Node* replaceChild(Node* child, Node* childToRemove)
     {
         STARFISH_ASSERT(child);
@@ -295,22 +290,6 @@ public:
         Node* n = removeChild(childToRemove);
         setNeedsStyleRecalc();
         return n;
-    }
-
-    template <typename T>
-    Node* childMatchedBy(Node* parent, T fn)
-    {
-        Node* child = parent->firstChild();
-        while (child) {
-            if (fn(child)) {
-                return child;
-            }
-            Node* matchedDescendant = childMatchedBy(child, fn);
-            if (matchedDescendant)
-                return matchedDescendant;
-            child = child->nextSibling();
-        }
-        return nullptr;
     }
 
     /* Other methods (not in Node Interface) */
@@ -329,7 +308,7 @@ public:
         return false;
     }
 
-    virtual bool isDocument()
+    virtual bool isDocument() const
     {
         return false;
     }
@@ -391,6 +370,27 @@ public:
     void setParentNode(Node* s)
     {
         m_parentNode = s;
+    }
+
+    void remove() {
+        if (m_parentNode)
+            m_parentNode->removeChild(this);
+    }
+
+    template <typename T>
+    Node* childMatchedBy(Node* parent, T fn)
+    {
+        Node* child = parent->firstChild();
+        while (child) {
+            if (fn(child)) {
+                return child;
+            }
+            Node* matchedDescendant = childMatchedBy(child, fn);
+            if (matchedDescendant)
+                return matchedDescendant;
+            child = child->nextSibling();
+        }
+        return nullptr;
     }
 
     Document* document()
@@ -470,7 +470,7 @@ public:
 private:
     inline void setNeedsRendering();
 
-    String* lookupNamespacePrefix(String* namespaceUri, Element* element);
+    String* lookupNamespacePrefix(const String* namespaceUri, Element* element);
     virtual String* prefix()
     {
         // For nodes other than elements and attributes, the prefix is always null
