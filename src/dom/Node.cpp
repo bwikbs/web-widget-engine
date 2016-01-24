@@ -221,25 +221,25 @@ unsigned short Node::compareDocumentPosition(const Node* other)
     }
 }
 
-String* Node::lookupNamespacePrefix(const String* namespaceUri, Element* element)
+String* Node::lookupNamespacePrefix(String* namespaceUri, Element* element)
 {
     if(namespaceUri == nullptr) {
-        return nullptr;
+        return String::emptyString;
     }
     if(element->lookupNamespaceURI(prefix())->equals(namespaceUri)) {
         return prefix();
     }
     // Impl here
-    return nullptr;
+    return String::emptyString;
 }
 
-String* Node::lookupPrefix(const String* namespaceUri)
+String* Node::lookupPrefix(String* namespaceUri)
 {
     if(!namespaceUri) {
-        return nullptr;
+        return String::emptyString;
     }
     if(namespaceUri->equals(String::emptyString)) {
-        return nullptr;
+        return String::emptyString;
     }
 
     switch(nodeType()) {
@@ -250,22 +250,22 @@ String* Node::lookupPrefix(const String* namespaceUri)
             if(documentElement) {
                 return documentElement->lookupPrefix(namespaceUri);
             } else {
-                return nullptr;
+                return String::emptyString;
             }
         }
         case DOCUMENT_TYPE_NODE:
         case DOCUMENT_FRAGMENT_NODE:
-            return nullptr;
+            return String::emptyString;
         default: {
             Node* parent = parentNode();
             if(parent) {
                 parent->lookupPrefix(namespaceUri);
             } else {
-                return nullptr;
+                return String::emptyString;
             }
         }
     }
-    return nullptr;
+    return String::emptyString;
 }
 
 HTMLCollection* Node::children()

@@ -103,12 +103,12 @@ public:
 
     virtual String* nodeName() = 0;
 
-    virtual String* baseURI()
+    String* baseURI()
     {
         return m_baseUri;
     }
 
-    virtual Document* ownerDocument() const
+    Document* ownerDocument() const
     {
         if(isDocument()) {
             return nullptr;
@@ -164,9 +164,9 @@ public:
 
     virtual Node* cloneNode(bool deep = false);
 
-    virtual unsigned short compareDocumentPosition(const Node* other);
+    unsigned short compareDocumentPosition(const Node* other);
 
-    virtual bool contains(const Node* other) const
+    bool contains(const Node* other) const
     {
         if(other == nullptr) {
             return false;
@@ -182,20 +182,20 @@ public:
         return false;
     }
 
-    virtual String* lookupPrefix(const String* namespaceUri);
+    String* lookupPrefix(String* namespaceUri);
 
-    virtual String* lookupNamespaceURI(const String* prefix) const
+    String* lookupNamespaceURI(String* prefix) const
     {
         if(prefix == nullptr) {
-            return nullptr;
+            return String::emptyString;
         }
         if(prefix->equals(String::emptyString)) {
-            return nullptr;
+            return String::emptyString;
         }
         // Impl here
-        return nullptr;
+        return String::emptyString;
     }
-    virtual bool isDefaultNamespace(const String* namespaceUri)
+    bool isDefaultNamespace(String* namespaceUri)
     {
         // Impl here
         return false;
@@ -481,7 +481,7 @@ public:
 private:
     inline void setNeedsRendering();
 
-    String* lookupNamespacePrefix(const String* namespaceUri, Element* element);
+    String* lookupNamespacePrefix(String* namespaceUri, Element* element);
     virtual String* prefix()
     {
         // For nodes other than elements and attributes, the prefix is always null
