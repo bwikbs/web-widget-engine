@@ -216,6 +216,15 @@ public:
         }
     }
 
+    bool hasBorderStyle()
+    {
+        if (m_surround == nullptr) {
+            return false;
+        } else {
+            return m_surround->border.hasBorderStyle();
+        }
+    }
+
     Color borderTopColor()
     {
         if (m_surround == nullptr) {
@@ -429,19 +438,19 @@ public:
         return surround()->margin.setTop(top);
     }
 
-    void setMarginBottom(Length r)
+    void setMarginBottom(Length bottom)
     {
-        m_marginBottom = r;
+        return surround()->margin.setBottom(bottom);
     }
 
-    void setMarginLeft(Length r)
+    void setMarginRight(Length right)
     {
-        m_marginLeft = r;
+        return surround()->margin.setRight(right);
     }
 
-    void setMarginRight(Length r)
+    void setMarginLeft(Length left)
     {
-        m_marginRight = r;
+        return surround()->margin.setLeft(left);
     }
 
     void setPaddingTop(Length r)
@@ -463,18 +472,31 @@ public:
         }
     }
 
-    Length marginBottom()
-    {
-        return m_marginBottom;
-    }
-
-    Length marginLeft() {
-        return m_marginLeft;
-    }
-
     Length marginRight()
     {
-        return m_marginRight;
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->margin.right();
+        }
+    }
+
+    Length marginBottom()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->margin.bottom();
+        }
+    }
+
+    Length marginLeft()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->margin.left();
+        }
     }
 
     Length paddingTop()
@@ -496,9 +518,6 @@ protected:
     void initNonInheritedStyles()
     {
         m_display = DisplayValue::InlineDisplayValue;
-        m_marginBottom = Length(Length::Fixed, 0);
-        m_marginLeft = Length(Length::Fixed, 0);
-        m_marginRight = Length(Length::Fixed, 0);
         m_paddingBottom = Length(Length::Fixed, 0);
         m_opacity = 1;
         m_zIndex = 0;
@@ -509,8 +528,8 @@ protected:
     {
         // if float: left, right
         // display-> block
-        // https://developer.mozilla.org/en-US/docs/Web/CSS/float
 
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/float
         if (position() == AbsolutePositionValue || position() == FixedPositionValue) {
             m_display = DisplayValue::BlockDisplayValue;
         }
@@ -519,10 +538,27 @@ protected:
         m_height.changeToFixedIfNeeded(fontSize(), font());
         m_bottom.changeToFixedIfNeeded(fontSize(), font());
         m_left.changeToFixedIfNeeded(fontSize(), font());
-        m_marginBottom.changeToFixedIfNeeded(fontSize(), font());
-        m_marginLeft.changeToFixedIfNeeded(fontSize(), font());
-        m_marginRight.changeToFixedIfNeeded(fontSize(), font());
-        m_paddingBottom.changeToFixedIfNeeded(fontSize(), font());
+
+        if (m_surround) {
+            m_surround->margin.top().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->margin.right().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->margin.bottom().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->margin.left().changeToFixedIfNeeded(fontSize(), font());
+
+            if (hasBorderStyle() && !hasBorderColor()) {
+                // If an element's border color is not specified with a border property,
+                // user agents must use the value of the element's 'color' property as the computed value for the border color.
+                setBorderTopColor(m_inheritedStyles.m_color);
+                setBorderRightColor(m_inheritedStyles.m_color);
+                setBorderBottomColor(m_inheritedStyles.m_color);
+                setBorderLeftColor(m_inheritedStyles.m_color);
+
+                setBorderTopWidth(Length(Length::Fixed, 3));
+                setBorderRightWidth(Length(Length::Fixed, 3));
+                setBorderBottomWidth(Length(Length::Fixed, 3));
+                setBorderLeftWidth(Length(Length::Fixed, 3));
+            }
+        }
 
         if(m_background)
             m_background->checkComputed(fontSize(), font());
