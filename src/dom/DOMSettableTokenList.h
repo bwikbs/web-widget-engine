@@ -14,11 +14,15 @@ public:
         initScriptWrappable(this, instance);
     }
 
+    /* 7.2. Interface DOMSettableTokenList */
+
+    // FIXME:mh.byun(wrong behavior)
     String* value()
     {
         return m_value;
     }
 
+    // FIXME:mh.byun(wrong behavior)
     void setValue(String* value)
     {
         m_value = value;

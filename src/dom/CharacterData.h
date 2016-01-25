@@ -39,6 +39,8 @@ public:
         return m_data;
     }
 
+    /* 4.9. Interface CharacterData */
+
     void setData(String* data)
     {
         STARFISH_ASSERT(data);

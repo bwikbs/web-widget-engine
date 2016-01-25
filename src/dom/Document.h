@@ -20,7 +20,18 @@ protected:
     }
 
 public:
+    /* 4.2.2. Interface NonElementParentNode */
+    Element* getElementById(String* id);
+
     /* 4.5. Interface Document */
+    Element* createElement(String* localName);
+    Text*    createTextNode(String* data);
+    Comment* createComment(String* data);
+    HTMLCollection* getElementsByTagName(String* qualifiedName);
+    HTMLCollection* getElementsByClassName(String* classNames);
+    Attr* createAttribute(String* localName);
+
+    /* Other methods */
     virtual NodeType nodeType()
     {
         return DOCUMENT_NODE;
@@ -50,8 +61,6 @@ public:
         }
     }
 
-    /* Other methods */
-
     virtual bool isDocument() const
     {
         return true;
@@ -74,13 +83,6 @@ public:
         return m_scriptBindingInstance;
     }
 
-    Element* getElementById(String* id);
-    Element* createElement(String* localName);
-    Text*    createTextNode(String* data);
-    Comment* createComment(String* data);
-    HTMLCollection* getElementsByTagName(String* qualifiedName);
-    HTMLCollection* getElementsByClassName(String* classNames);
-    Attr* createAttribute(String* localName);
 
 protected:
     Window* m_window;
