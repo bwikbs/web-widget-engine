@@ -534,10 +534,17 @@ void Node::dumpStyle()
         printf("padding-top: %f, ", m_style->paddingTop().fixed());
     } else if (m_style->paddingTop().isPercent()) {
         printf("padding-top: %f, ", m_style->paddingTop().percent());
-    } else if (m_style->paddingTop().isAuto()) {
-        printf("padding-top: auto, ");
     } else {
         printf("padding-top: not computed yet,");
+    }
+
+    // padding-right
+    if (m_style->paddingRight().isFixed()) {
+        printf("padding-right: %f, ", m_style->paddingRight().fixed());
+    } else if (m_style->paddingRight().isPercent()) {
+        printf("padding-right: %f, ", m_style->paddingRight().percent());
+    } else {
+        printf("padding-right: not computed yet,");
     }
 
     // padding-bottom
@@ -545,10 +552,17 @@ void Node::dumpStyle()
         printf("padding-bottom: %f, ", m_style->paddingBottom().fixed());
     } else if (m_style->paddingBottom().isPercent()) {
         printf("padding-bottom: %f, ", m_style->paddingBottom().percent());
-    } else if (m_style->paddingBottom().isAuto()) {
-        printf("padding-bottom: auto, ");
     } else {
         printf("padding-bottom: not computed yet,");
+    }
+
+    // padding-left
+    if (m_style->paddingLeft().isFixed()) {
+        printf("padding-left: %f, ", m_style->paddingLeft().fixed());
+    } else if (m_style->paddingLeft().isPercent()) {
+        printf("padding-left: %f, ", m_style->paddingLeft().percent());
+    } else {
+        printf("padding-left: not computed yet,");
     }
 
     // opacity

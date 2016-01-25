@@ -666,9 +666,31 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             parsePercentageOrLength(ret, value);
         }
+    } else if (strcmp(key, "padding-right") == 0) {
+        // length | percentage | inherit  <0>
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingRight;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
     } else if (strcmp(key, "padding-bottom") == 0) {
         // length | percentage | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingBottom;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
+    } else if (strcmp(key, "padding-left") == 0) {
+        // length | percentage | inherit  <0>
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingLeft;
 
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
@@ -1240,6 +1262,17 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->setPaddingTop(convertValueToLength(cssValues[k].valueKind(), cssValues[k].value()));
                 }
                 break;
+            case CSSStyleValuePair::KeyKind::PaddingRight:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setPaddingRight(parentStyle->paddingRight());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->setPaddingRight(Length(Length::Fixed, 0));
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length ||
+                                    cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage);
+                    style->setPaddingRight(convertValueToLength(cssValues[k].valueKind(), cssValues[k].value()));
+                }
+                break;
             case CSSStyleValuePair::KeyKind::PaddingBottom:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setPaddingBottom(parentStyle->paddingBottom());
@@ -1249,6 +1282,17 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length ||
                                     cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage);
                     style->setPaddingBottom(convertValueToLength(cssValues[k].valueKind(), cssValues[k].value()));
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::PaddingLeft:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setPaddingLeft(parentStyle->paddingLeft());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->setPaddingLeft(Length(Length::Fixed, 0));
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length ||
+                                    cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage);
+                    style->setPaddingLeft(convertValueToLength(cssValues[k].valueKind(), cssValues[k].value()));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::Opacity:

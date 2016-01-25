@@ -435,32 +435,42 @@ public:
 
     void setMarginTop(Length top)
     {
-        return surround()->margin.setTop(top);
+        surround()->margin.setTop(top);
     }
 
     void setMarginBottom(Length bottom)
     {
-        return surround()->margin.setBottom(bottom);
+        surround()->margin.setBottom(bottom);
     }
 
     void setMarginRight(Length right)
     {
-        return surround()->margin.setRight(right);
+        surround()->margin.setRight(right);
     }
 
     void setMarginLeft(Length left)
     {
-        return surround()->margin.setLeft(left);
+        surround()->margin.setLeft(left);
     }
 
-    void setPaddingTop(Length r)
+    void setPaddingTop(Length top)
     {
-        m_paddingTop = r;
+        surround()->padding.setTop(top);
     }
 
-    void setPaddingBottom(Length r)
+    void setPaddingRight(Length right)
     {
-        m_paddingBottom = r;
+        surround()->padding.setRight(right);
+    }
+
+    void setPaddingBottom(Length bottom)
+    {
+        surround()->padding.setBottom(bottom);
+    }
+
+    void setPaddingLeft(Length left)
+    {
+        surround()->padding.setLeft(left);
     }
 
     Length marginTop()
@@ -501,12 +511,38 @@ public:
 
     Length paddingTop()
     {
-        return m_paddingTop;
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->padding.top();
+        }
+    }
+
+    Length paddingRight()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->padding.right();
+        }
     }
 
     Length paddingBottom()
     {
-        return m_paddingBottom;
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->padding.bottom();
+        }
+    }
+
+    Length paddingLeft()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->padding.left();
+        }
     }
 
     float fontSize()
@@ -518,7 +554,6 @@ protected:
     void initNonInheritedStyles()
     {
         m_display = DisplayValue::InlineDisplayValue;
-        m_paddingBottom = Length(Length::Fixed, 0);
         m_opacity = 1;
         m_zIndex = 0;
         m_background = NULL;
@@ -544,6 +579,11 @@ protected:
             m_surround->margin.right().changeToFixedIfNeeded(fontSize(), font());
             m_surround->margin.bottom().changeToFixedIfNeeded(fontSize(), font());
             m_surround->margin.left().changeToFixedIfNeeded(fontSize(), font());
+
+            m_surround->padding.top().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->padding.right().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->padding.bottom().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->padding.left().changeToFixedIfNeeded(fontSize(), font());
 
             if (hasBorderStyle() && !hasBorderColor()) {
                 // If an element's border color is not specified with a border property,
@@ -590,15 +630,7 @@ protected:
 protected:
     Font* m_font;
     StyleBackgroundData* m_background;
-
     StyleSurroundData* m_surround;
-
-    //TODO: margin/padding data should be moved to StyleSurroundData
-    Length m_marginBottom;
-    Length m_marginLeft;
-    Length m_marginRight;
-    Length m_paddingBottom;
-    Length m_paddingTop;
 };
 
 ComputedStyleDamage compareStyle(ComputedStyle* oldStyle, ComputedStyle* newStyle);

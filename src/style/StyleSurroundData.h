@@ -18,6 +18,7 @@ public:
 
     BorderData border;
     LengthData margin;
+    LengthData padding;
 };
 
 } /* namespace StarFish */
