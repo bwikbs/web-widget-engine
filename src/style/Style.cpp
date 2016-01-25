@@ -800,9 +800,9 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else if (VALUE_IS_STRING("auto") || VALUE_IS_STRING("scroll")) {
             // Not Supported!!
         } else if (VALUE_IS_STRING("visible") || VALUE_IS_INITIAL()) {
-            ret.m_value.m_overflowX = OverflowValue::Visible;
+            ret.m_value.m_overflowX = OverflowValue::VisibleOverflow;
         } else if (VALUE_IS_STRING("hidden")){
-            ret.m_value.m_overflowX = OverflowValue::Hidden;
+            ret.m_value.m_overflowX = OverflowValue::HiddenOverflow;
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
@@ -816,9 +816,25 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else if (VALUE_IS_STRING("auto") || VALUE_IS_STRING("scroll")) {
             // Not Supported!!
         } else if (VALUE_IS_STRING("visible") || VALUE_IS_INITIAL()) {
-            ret.m_value.m_overflowY = OverflowValue::Visible;
+            ret.m_value.m_overflowY = OverflowValue::VisibleOverflow;
         } else if (VALUE_IS_STRING("hidden")){
-            ret.m_value.m_overflowY = OverflowValue::Hidden;
+            ret.m_value.m_overflowY = OverflowValue::HiddenOverflow;
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
+    } else if (strcmp(key, "visibility") == 0) {
+        // visible | hidden | collapse | inherit // initial value -> visible
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::Visibility;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::VisibilityKind;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else if (VALUE_IS_STRING("visible")) {
+            ret.m_value.m_visibility = VisibilityValue::VisibleVisibilityValue;
+        } else if (VALUE_IS_STRING("hidden")){
+            ret.m_value.m_visibility = VisibilityValue::HiddenVisibilityValue;
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
@@ -1475,6 +1491,15 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_overflowY = parentStyle->m_overflowY;
                 } else {
                     style->m_overflowY = cssValues[k].overflowValueY();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::Visibility:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_inheritedStyles.m_visibility = parentStyle->visibility();
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->m_inheritedStyles.m_visibility = VisibilityValue::VisibleVisibilityValue;
+                } else {
+                    style->m_inheritedStyles.m_visibility = cssValues[k].visibility();
                 }
                 break;
             case CSSStyleValuePair::KeyKind::ZIndex:

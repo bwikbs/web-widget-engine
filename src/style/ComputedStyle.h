@@ -25,6 +25,8 @@ public:
         m_inheritedStyles.m_color = Color(0, 0, 0, 255);
         m_inheritedStyles.m_fontSize = DEFAULT_FONT_SIZE;
 
+        m_inheritedStyles.m_visibility = VisibilityValue::VisibleVisibilityValue;
+
         initNonInheritedStyles();
     }
 
@@ -616,6 +618,11 @@ public:
         return m_textOverflow;
     }
 
+    VisibilityValue visibility()
+    {
+        return m_inheritedStyles.m_visibility;
+    }
+
     FontStyleValue fontStyle()
     {
         return m_inheritedStyles.m_fontStyle;
@@ -628,8 +635,8 @@ protected:
         m_opacity = 1;
         m_zIndex = 0;
         m_background = NULL;
-        m_overflowX = OverflowValue::Visible;
-        m_overflowY = OverflowValue::Visible;
+        m_overflowX = OverflowValue::VisibleOverflow;
+        m_overflowY = OverflowValue::VisibleOverflow;
         m_textDecoration = TextDecorationValue::None;
     }
 
@@ -689,6 +696,7 @@ protected:
         FontStyleValue m_fontStyle;
         TextAlignValue m_textAlign;
         DirectionValue m_direction;
+        VisibilityValue m_visibility;
     } m_inheritedStyles;
 
     DisplayValue m_display;

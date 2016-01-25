@@ -616,16 +616,22 @@ void Node::dumpStyle()
     printf("opacity: %.1f, ", m_style->opacity());
 
     // overflow-x
-    if(m_style->overflowX() == OverflowValue::Visible)
+    if(m_style->overflowX() == OverflowValue::VisibleOverflow)
         printf("overflow-x: visible, ");
     else
         printf("overflow-x: hidden, ");
 
     // overflow-y
-    if(m_style->overflowY() == OverflowValue::Visible)
+    if(m_style->overflowY() == OverflowValue::VisibleOverflow)
         printf("overflow-y: visible, ");
     else
         printf("overflow-y: hidden, ");
+
+    // visibility
+    if(m_style->visibility() == VisibilityValue::VisibleVisibilityValue)
+        printf("visibility: visible, ");
+    else
+        printf("visibility: hidden, ");
 
     printf("z-index : %d, ",(int) m_style->zIndex());
 

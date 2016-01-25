@@ -126,8 +126,8 @@ enum BackgroundRepeatValue {
 
 // Widget Engine will support only visible and hidden values.
 enum OverflowValue {
-    Visible,
-    Hidden,
+    VisibleOverflow,
+    HiddenOverflow,
 };
 
 enum BorderImageRepeatValue {
@@ -160,6 +160,11 @@ enum FontStyleValue {
 enum TextOverflowValue {
     ClipTextOverflowValue,
     EllipsisTextOverflowValue,
+};
+
+enum VisibilityValue {
+    VisibleVisibilityValue,
+    HiddenVisibilityValue,
 };
 
 class ValueList;
@@ -255,6 +260,8 @@ public:
         //Overflow, // visible | hidden | scroll | auto | inherit // Initial value -> visible
         OverflowX, // visible | hidden | scroll | auto | inherit // Initial value -> visible
         OverflowY, // visible | hidden | scroll | auto | inherit // Initial value -> visible
+        // https://www.w3.org/TR/CSS2/visufx.html#visibility
+        Visibility,  // visible | hidden | collapse | inherit // Initial value -> visible
         // http://www.w3.org/TR/CSS2/visuren.html#z-index
         ZIndex, //  <auto> | integer | inherit
     };
@@ -302,6 +309,7 @@ public:
 
         OverflowValueKind,
         TextDecorationKind,
+        VisibilityKind,
     };
 
     CSSStyleValuePair()
@@ -438,6 +446,12 @@ public:
         return m_value.m_overflowY;
     }
 
+    VisibilityValue visibility()
+    {
+        STARFISH_ASSERT(m_valueKind == VisibilityKind);
+        return m_value.m_visibility;
+    }
+
     TextDecorationValue textDecoration() {
         return m_value.m_textDecoration;
     }
@@ -464,6 +478,7 @@ public:
         ValueList* m_multiValue;
         OverflowValue m_overflowX;
         OverflowValue m_overflowY;
+        VisibilityValue m_visibility;
         TextDecorationValue m_textDecoration;
     };
 
