@@ -158,7 +158,11 @@ public:
 
     virtual String* nodeValue() = 0;
 
+    virtual void setNodeValue(String* val) {};
+
     virtual String* textContent() = 0;
+
+    virtual void setTextContent(String* val) {};
 
     bool isEqualNode(Node* other);
 

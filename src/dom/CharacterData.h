@@ -51,6 +51,19 @@ public:
         return m_data->length();
     }
 
+    virtual void setNodeValue(String* val)
+    {
+        String* d = val;
+        if(d == nullptr) {
+            d = String::emptyString;
+        }
+        setData(d);
+    }
+
+    virtual void setTextContent(String* val) {
+        setNodeValue(val);
+    }
+
     virtual bool isCharacterData() const
     {
         return true;

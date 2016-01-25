@@ -60,6 +60,8 @@ public:
         return str;
     }
 
+    virtual void setTextContent(String* text);
+
     /* Other methods (not in Node interface) */
 
     virtual bool isElement() const

@@ -1,5 +1,6 @@
 #include "StarFishConfig.h"
 #include "Element.h"
+#include "Text.h"
 
 #include "Document.h"
 
@@ -62,6 +63,23 @@ void Element::didAttributeChanged(String* name, String* old, String* value)
         DOMTokenList::tokenize(&m_classNames, value);
         setNeedsStyleRecalc();
     }
+}
+
+void Element::setTextContent(String* text)
+{
+    if(text == nullptr) {
+        text = String::emptyString;
+    }
+    Text* newNode = new Text(document(), text);
+    std::vector<Node*> children;
+    for(Node* child=firstChild(); child; child = child->nextSibling()) {
+        children.push_back(child);
+    }
+    std::for_each(children.begin(), children.end(), [&](Node* child) {
+        removeChild(child);
+        // how to remove child from document?
+    });
+    appendChild(newNode);
 }
 
 Node* Element::clone()

@@ -48,6 +48,12 @@
     var htmlNode = document.firstChild.nextSibling;
     print("testing textContent");
     print("abc == " + htmlNode.lastChild.firstChild.textContent);
+
+    htmlNode.lastChild.firstChild.textContent = "def";
+    print("def == " + htmlNode.lastChild.firstChild.textContent);
+
+    htmlNode.lastChild.textContent = "xyz";
+    print("xyz == " + htmlNode.lastChild.textContent);
     print("done");
   }
   run();
