@@ -71,6 +71,16 @@ public:
         return m_inheritedStyles.m_textAlign;
     }
 
+    TextDecorationValue textDecoration()
+    {
+        return m_textDecoration;
+    }
+
+    void setTextDecoration(TextDecorationValue decoration)
+    {
+        m_textDecoration = decoration;
+    }
+
     DirectionValue direction()
     {
         return m_inheritedStyles.m_direction;
@@ -557,6 +567,9 @@ protected:
         m_opacity = 1;
         m_zIndex = 0;
         m_background = NULL;
+        m_overflowX = OverflowValue::Visible;
+        m_overflowY = OverflowValue::Visible;
+        m_textDecoration = TextDecorationValue::None;
     }
 
     void arrangeStyleValues()
@@ -631,6 +644,7 @@ protected:
     Font* m_font;
     StyleBackgroundData* m_background;
     StyleSurroundData* m_surround;
+    TextDecorationValue m_textDecoration;
 };
 
 ComputedStyleDamage compareStyle(ComputedStyle* oldStyle, ComputedStyle* newStyle);

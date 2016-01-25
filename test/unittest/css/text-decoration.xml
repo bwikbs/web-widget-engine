@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+	<node nodeType="9" localName="document">
+		<node nodeType="10" localName="documentType">
+		</node>
+		<node nodeType="1" localName="html">
+			<node nodeType="1" localName="head">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="style">
+					<style selectorText=".one" text-decoration="underline"/>
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+.one {
+    text-decoration: underline;
+}
+]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+			</node>
+			<node nodeType="3" localName="text">
+				<text><![CDATA[
+]]></text>
+			</node>
+			<node nodeType="1" localName="body">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" class="one">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[This paragraph has a text underlined.]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+
+]]></text>
+				</node>
+			</node>
+		</node>
+	</node>
+</HTMLDocument>

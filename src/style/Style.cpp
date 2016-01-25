@@ -297,6 +297,27 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
+    } else if (strcmp(key, "text-decoration") == 0) {
+        // none | [ underline || overline || line-through || blink ] | inherit // Initial value -> none
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::TextDecoration;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::TextDecorationKind;
+
+        if(VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL() || VALUE_IS_NONE()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::None;
+            ret.m_value.m_textDecoration = TextDecorationValue::None;
+        } else if (VALUE_IS_STRING("underline")) {
+            ret.m_value.m_textDecoration = TextDecorationValue::UnderLine;
+        } else if (VALUE_IS_STRING("overline")) {
+            ret.m_value.m_textDecoration = TextDecorationValue::OverLine;
+        } else if (VALUE_IS_STRING("line-through")) {
+            ret.m_value.m_textDecoration = TextDecorationValue::LineThrough;
+        } else if (VALUE_IS_STRING("blink")) {
+            ret.m_value.m_textDecoration = TextDecorationValue::Blink;
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
     } else if (strcmp(key, "direction") == 0) {
         // <ltr> | rtl | inherit
         // TODO add initial
@@ -905,6 +926,16 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::TextAlignValueKind);
                     style->m_inheritedStyles.m_textAlign = cssValues[k].textAlignValue();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::TextDecoration:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setTextDecoration(parentStyle->textDecoration());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::None){
+                    style->setTextDecoration(cssValues[k].textDecoration());
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::TextDecorationKind);
+                    style->setTextDecoration(cssValues[k].textDecoration());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::Direction:

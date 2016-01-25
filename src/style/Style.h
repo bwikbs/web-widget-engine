@@ -141,6 +141,14 @@ enum BorderStyleValue {
     BSolid,
 };
 
+enum TextDecorationValue {
+    None,
+    UnderLine,
+    OverLine,
+    LineThrough,
+    Blink,
+};
+
 class ValueList;
 
 class CSSStyleValuePair : public gc {
@@ -162,6 +170,8 @@ public:
         FontSize, // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
         // https://www.w3.org/TR/CSS21/text.html#propdef-text-align
         TextAlign, // left | right | center | justify | <inherit>
+        // https://www.w3.org/TR/CSS2/text.html#propdef-text-decoration
+        TextDecoration,  // none | [ underline || overline || line-through || blink ] | inherit // Initial value -> none
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-direction
         Direction, // <ltr> | rtl | inherit
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/colors.html#background-properties
@@ -267,6 +277,7 @@ public:
         BorderThick,
 
         OverflowValueKind,
+        TextDecorationKind,
     };
 
     CSSStyleValuePair()
@@ -375,6 +386,10 @@ public:
         return m_value.m_overflowY;
     }
 
+    TextDecorationValue textDecoration() {
+        return m_value.m_textDecoration;
+    }
+
     friend void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value);
     friend void parseLength(CSSStyleValuePair& ret, const char* value);
     friend void parseUrl(CSSStyleValuePair& ret, const char* value);
@@ -395,6 +410,7 @@ public:
         ValueList* m_multiValue;
         OverflowValue m_overflowX;
         OverflowValue m_overflowY;
+        TextDecorationValue m_textDecoration;
     };
 
     ValueData& value()

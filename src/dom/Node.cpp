@@ -358,6 +358,19 @@ void Node::dumpStyle()
         printf("height: auto, ");
     }
 
+    // text-decoration
+    if (m_style->textDecoration() == TextDecorationValue::UnderLine) {
+        printf("text-decoration: underline, ");
+    } else if (m_style->textDecoration() == TextDecorationValue::OverLine) {
+        printf("text-decoration: overline, ");
+    } else if (m_style->textDecoration() == TextDecorationValue::LineThrough) {
+        printf("text-decoration: line-through, ");
+    } else if (m_style->textDecoration() == TextDecorationValue::Blink) {
+        printf("text-decoration: blink, ");
+    } else if (m_style->textDecoration() == TextDecorationValue::None) {
+        printf("text-decoration: none, ");
+    }
+
     // direction
     if (m_style->direction() == DirectionValue::LtrDirectionValue)
         printf("direction: ltr, ");
