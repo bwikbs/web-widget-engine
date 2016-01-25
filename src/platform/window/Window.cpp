@@ -229,64 +229,64 @@ Window::Window(StarFish* starFish)
 {
     STARFISH_ASSERT(m_starFish->scriptBindingInstance());
 
-    CSSStyleSheet* userAgentStyleSheet = new CSSStyleSheet;
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("html"), CSSStyleRule::PseudoClass::None);
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("head"), CSSStyleRule::PseudoClass::None);
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("style"), CSSStyleRule::PseudoClass::None);
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("script"), CSSStyleRule::PseudoClass::None);
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("body"), CSSStyleRule::PseudoClass::None);
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("div"), CSSStyleRule::PseudoClass::None);
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("img"), CSSStyleRule::PseudoClass::None);
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "inline"));
-        userAgentStyleSheet->addRule(rule);
-    }
-
-    m_styleResolver.addSheet(userAgentStyleSheet);
-
     m_document = new HTMLDocument(this, m_starFish->scriptBindingInstance(), m_styleResolver.resolveDocumentStyle(m_starFish));
-
-    if (m_starFish->startUpFlag() & StarFishStartUpFlag::enableBlackTheme) {
-        m_document->style()->setColor(Color(255, 255, 255, 255));
-    }
-
     initScriptWrappableWindow(this);
     m_document->initScriptWrappable(m_document);
     m_timeoutCounter = 0;
     m_needsRendering = false;
     m_isRunning = true;
     m_activeNodeWithTouchDown = nullptr;
+
+    CSSStyleSheet* userAgentStyleSheet = new CSSStyleSheet;
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("html"), CSSStyleRule::PseudoClass::None, document());
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("head"), CSSStyleRule::PseudoClass::None, document());
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("style"), CSSStyleRule::PseudoClass::None, document());
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("script"), CSSStyleRule::PseudoClass::None, document());
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("body"), CSSStyleRule::PseudoClass::None, document());
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("div"), CSSStyleRule::PseudoClass::None, document());
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("img"), CSSStyleRule::PseudoClass::None, document());
+        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "inline"));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    m_styleResolver.addSheet(userAgentStyleSheet);
+
+    if (m_starFish->startUpFlag() & StarFishStartUpFlag::enableBlackTheme) {
+        m_document->style()->setColor(Color(255, 255, 255, 255));
+    }
+
     setNeedsRendering();
 }
 

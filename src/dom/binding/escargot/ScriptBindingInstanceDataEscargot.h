@@ -35,6 +35,8 @@ public:
     escargot::ESFunctionObject* m_domSettableTokenList;
     escargot::ESFunctionObject* m_namedNodeMap;
     escargot::ESFunctionObject* m_attr;
+    escargot::ESFunctionObject* m_cssStyleDeclaration;
+    escargot::ESFunctionObject* m_cssStyleRule;
 };
 
 }

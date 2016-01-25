@@ -7,13 +7,14 @@
 #include "platform/canvas/font/Font.h"
 #include "style/DefaultStyle.h"
 #include "style/UnitHelper.h"
+#include "dom/EventTarget.h"
+
 
 namespace StarFish {
 
 class ComputedStyle;
 class Element;
 class Document;
-
 // FIXME
 // for support javascript CSSStyleSheet Object
 // we should store style rules that way(like CSSStyleSheet object)
@@ -468,18 +469,31 @@ protected:
     std::vector<CSSStyleValuePair::ValueData, gc_allocator<CSSStyleValuePair::ValueData>> m_values;
 };
 
-class CSSStyleDeclaration : public gc {
+class CSSStyleDeclaration : public EventTarget<ScriptWrappable> {
     friend class StyleResolver;
 public:
+    CSSStyleDeclaration(Document* document)
+        : m_document(document)
+    {
+        initScriptWrappable(this);
+    }
+
     void addValuePair(CSSStyleValuePair p)
     {
         m_cssValues.push_back(p);
     }
+
+    Document* document()
+    {
+        return m_document;
+    }
+
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;
+    Document* m_document;
 };
 
-class CSSStyleRule : public gc {
+class CSSStyleRule : public EventTarget<ScriptWrappable> {
     friend class StyleResolver;
 public:
     enum Kind {
@@ -494,12 +508,14 @@ public:
         Active
     };
 
-    CSSStyleRule(Kind kind, String* ruleText, PseudoClass pc)
+    CSSStyleRule(Kind kind, String* ruleText, PseudoClass pc, Document* document)
+        : m_document(document)
     {
         m_kind = kind;
         m_ruleText = ruleText;
-        m_styleDeclaration = new CSSStyleDeclaration();
         m_pseudoClass = pc;
+        initScriptWrappable(this);
+        m_styleDeclaration = new CSSStyleDeclaration(document);
     }
 
     CSSStyleDeclaration* styleDeclaration()
@@ -507,11 +523,17 @@ public:
         return m_styleDeclaration;
     }
 
+    Document* document()
+    {
+        return m_document;
+    }
+
 protected:
     Kind m_kind;
     String* m_ruleText;
     PseudoClass m_pseudoClass;
     CSSStyleDeclaration* m_styleDeclaration;
+    Document* m_document;
 };
 
 class CSSStyleSheet : public gc {
@@ -522,7 +544,7 @@ public:
         m_rules.push_back(rule);
     }
 protected:
-    std::vector<CSSStyleRule, gc_allocator<CSSStyleRule>> m_rules;
+    std::vector<CSSStyleRule> m_rules;
 };
 
 class StyleResolver {

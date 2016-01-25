@@ -602,6 +602,20 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     }, escargot::ESString::create("remove"), 0, false);
     ElementFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("remove"), false, false, false, removeFunction);
 
+    auto styleGetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        if(!((Node*)originalObj)->isElement()) {
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        }
+        CSSStyleDeclaration* s = ((Element *)originalObj)->inlineStyle();
+        if(s == nullptr) {
+            return escargot::ESValue(escargot::ESValue::ESNull);
+        } else {
+            return escargot::ESValue((escargot::ESObject *)s);
+        }
+    };
+    ElementFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("style"), styleGetter, NULL, false, false, false);
+
     DEFINE_FUNCTION(DocumentType, NodeFunction->protoType());
     fetchData(this)->m_documentType = DocumentTypeFunction;
 
@@ -1400,6 +1414,17 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(MouseEvent, UIEventFunction->protoType());
     fetchData(this)->m_mouseEvent = MouseEventFunction;
+
+    DEFINE_FUNCTION(CSSStyleDeclaration, CSSStyleDeclarationFunction->protoType());
+    fetchData(this)->m_cssStyleDeclaration = CSSStyleDeclarationFunction;
+
+    DEFINE_FUNCTION(CSSStyleRule, CSSStyleRuleFunction->protoType());
+    fetchData(this)->m_cssStyleRule = CSSStyleRuleFunction;
+
+
+    /* style-related getter/setter start here */
+
+
 }
 
 void ScriptBindingInstance::evaluate(String* str)

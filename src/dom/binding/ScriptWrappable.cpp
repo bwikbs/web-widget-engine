@@ -296,4 +296,18 @@ void ScriptWrappable::initScriptWrappable(Attr* ptr, ScriptBindingInstance* inst
     ((escargot::ESObject *)this)->setExtraData(AttrObject);
 }
 
+void ScriptWrappable::initScriptWrappable(CSSStyleDeclaration* ptr)
+{
+    auto data = fetchData(ptr->document()->scriptBindingInstance());
+    ((escargot::ESObject *)this)->set__proto__(data->m_cssStyleDeclaration->protoType());
+    ((escargot::ESObject *)this)->setExtraData(CSSStyleDeclarationObject);
+}
+
+void ScriptWrappable::initScriptWrappable(CSSStyleRule* ptr)
+{
+    auto data = fetchData(ptr->document()->scriptBindingInstance());
+    ((escargot::ESObject *)this)->set__proto__(data->m_cssStyleRule->protoType());
+    ((escargot::ESObject *)this)->setExtraData(CSSStyleRuleObject);
+}
+
 }

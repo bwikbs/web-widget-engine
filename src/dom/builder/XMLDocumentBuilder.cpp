@@ -101,7 +101,7 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                             }
                         }
 
-                        CSSStyleRule rule(kind, st, pc);
+                        CSSStyleRule rule(kind, st, pc, document);
                         const tinyxml2::XMLAttribute* attr = e->FirstAttribute();
                         while (attr) {
                             if (strcmp(attr->Name(), "selectorText") != 0) {

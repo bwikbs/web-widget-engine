@@ -34,6 +34,8 @@ class DOMTokenList;
 class DOMSettableTokenList;
 class NamedNodeMap;
 class Attr;
+class CSSStyleDeclaration;
+class CSSStyleRule;
 
 class ScriptBindingInstance;
 
@@ -44,12 +46,15 @@ public:
         WindowObject,
         NodeObject,
         EventObject,
+        ElementObject,
         HTMLCollectionObject,
         NodeListObject,
         DOMTokenListObject,
         DOMSettableTokenListObject,
         NamedNodeMapObject,
         AttrObject,
+        CSSStyleDeclarationObject,
+        CSSStyleRuleObject,
     };
     ScriptWrappable();
 
@@ -92,6 +97,8 @@ public:
     void initScriptWrappable(DOMSettableTokenList* ptr, ScriptBindingInstance*);
     void initScriptWrappable(NamedNodeMap* ptr, ScriptBindingInstance*);
     void initScriptWrappable(Attr* ptr, ScriptBindingInstance*);
+    void initScriptWrappable(CSSStyleDeclaration* ptr);
+    void initScriptWrappable(CSSStyleRule* ptr);
 
     bool hasProperty(String* name);
 

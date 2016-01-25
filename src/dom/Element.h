@@ -7,6 +7,7 @@
 namespace StarFish {
 
 class HTMLElement;
+class CSSStyleDeclaration;
 
 class Element : public Node {
 public:
@@ -17,6 +18,7 @@ public:
         m_id = String::emptyString;
         m_namespace = String::emptyString;
         m_namespacePrefix = String::emptyString;
+        m_style = new CSSStyleDeclaration(document);
     }
 
     Element(Document* document)
@@ -24,6 +26,7 @@ public:
     {
         initScriptWrappable(this);
         m_id = String::emptyString;
+        m_style = new CSSStyleDeclaration(document);
     }
 
     /* 4.4 Interface Node */
@@ -94,6 +97,11 @@ public:
         return m_namespacePrefix;
     }
 
+    CSSStyleDeclaration* inlineStyle() // style() is taken
+    {
+        return m_style;
+    }
+
     // DO NOT MODIFY THIS VECTOR
     const std::vector<String*, gc_allocator<String*>>& classNames()
     {
@@ -147,6 +155,8 @@ protected:
     std::vector<String*, gc_allocator<String*>> m_classNames;
     String* m_namespace;
     String* m_namespacePrefix;
+
+    CSSStyleDeclaration* m_style;
 };
 
 

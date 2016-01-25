@@ -4,6 +4,8 @@
 
 #include "Document.h"
 
+#include "style/Style.h"
+
 #include "HTMLHtmlElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLBodyElement.h"
