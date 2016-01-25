@@ -16,10 +16,10 @@ String* Text::localName()
     return document()->window()->starFish()->staticStrings()->m_textLocalName;
 }
 
-Text* Text::splitText(unsigned long offset)
-{
-    return nullptr;
-}
+//Text* Text::splitText(unsigned long offset)
+//{
+//    return nullptr;
+//}
 
 String* Text::wholeText()
 {

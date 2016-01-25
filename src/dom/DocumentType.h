@@ -17,6 +17,8 @@ public:
         m_systemId = String::emptyString;
     }
 
+    /* 4.4 Interface Node */
+
     virtual NodeType nodeType() {
         return DOCUMENT_TYPE_NODE;
     }
@@ -41,12 +43,6 @@ public:
         return nullptr;
     }
 
-    /* Other methods */
-    virtual bool isDocumentType()
-    {
-        return true;
-    }
-
     virtual Node* clone()
     {
         DocumentType* n = new DocumentType(document());
@@ -56,6 +52,8 @@ public:
         return n;
     }
 
+    /* 4.7 Interface DocumentType */
+
     String* publicId()
     {
         return m_publicId;
@@ -64,6 +62,12 @@ public:
     String* systemId()
     {
         return m_systemId;
+    }
+
+    /* Other methods (not in DOM API) */
+    virtual bool isDocumentType()
+    {
+        return true;
     }
 
 protected:

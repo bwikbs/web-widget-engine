@@ -20,11 +20,6 @@ public:
         return Node::TEXT_NODE;
     }
 
-    virtual bool isText() const
-    {
-        return true;
-    }
-
     virtual String* nodeName();
 
     virtual String* localName();
@@ -46,13 +41,19 @@ public:
 
     /* 4.10 Interface Text */
 
-    Text* splitText(unsigned long offset);
+    //Text* splitText(unsigned long offset);
 
     String* wholeText();
 
+    /* Other methods (not in DOM API) */
+
+    virtual bool isText() const
+    {
+        return true;
+    }
+
 protected:
 };
-
 
 }
 
