@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+    <node nodeType="9" localName="document">
+        <node nodeType="10" localName="documentType">
+        </node>
+        <node nodeType="1" localName="html">
+            <node nodeType="1" localName="head">
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+]]></text>
+                </node>
+                <node nodeType="1" localName="style">
+                    <style selectorText=".normal" font-style="normal"/>
+                    <style selectorText=".italic" font-style="italic"/>
+                    <style selectorText=".oblique" font-style="oblique"/>
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+.normal {
+    font-style: normal;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.oblique {
+    font-style: oblique;
+}
+]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+]]></text>
+                </node>
+            </node>
+            <node nodeType="3" localName="text">
+                <text><![CDATA[
+]]></text>
+            </node>
+            <node nodeType="1" localName="body">
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+
+]]></text>
+                </node>
+                <node nodeType="1" localName="div" class="normal">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[This is a paragraph in normal style.]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+]]></text>
+                </node>
+                <node nodeType="1" localName="div" class="italic">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[This is a paragraph in italic style.]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+]]></text>
+                </node>
+                <node nodeType="1" localName="div" class="oblique">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[This is a paragraph in oblique style.]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+
+
+]]></text>
+                </node>
+            </node>
+        </node>
+    </node>
+</HTMLDocument>

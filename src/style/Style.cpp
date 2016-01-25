@@ -315,6 +315,42 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_value.m_textDecoration = TextDecorationValue::LineThrough;
         } else if (VALUE_IS_STRING("blink")) {
             ret.m_value.m_textDecoration = TextDecorationValue::Blink;
+        }
+    } else if (strcmp(key, "text-overflow") == 0) {
+        // <clip> | ellipsis | string
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::TextOverflow;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else if (VALUE_IS_STRING("clip")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::TextOverflowValueKind;
+            ret.m_value.m_textOverflow = TextOverflowValue::ClipTextOverflowValue;
+        } else if (VALUE_IS_STRING("ellipsis")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::TextOverflowValueKind;
+            ret.m_value.m_textOverflow = TextOverflowValue::EllipsisTextOverflowValue;
+        } else {
+            // string: not supported
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        }
+    } else if (strcmp(key, "white-space") == 0) {
+        //TODO
+    } else if (strcmp(key, "font-style") == 0) {
+        // <normal> | italic | oblique | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::FontStyle;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else if (VALUE_IS_STRING("normal")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::FontStyleValueKind;
+            ret.m_value.m_fontStyle = FontStyleValue::NormalFontStyleValue;
+        } else if (VALUE_IS_STRING("italic")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::FontStyleValueKind;
+            ret.m_value.m_fontStyle = FontStyleValue::ItalicFontStyleValue;
+        } else if (VALUE_IS_STRING("oblique")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::FontStyleValueKind;
+            ret.m_value.m_fontStyle = FontStyleValue::ObliqueFontStyleValue;
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
@@ -918,6 +954,26 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length);
                     style->m_inheritedStyles.m_fontSize = cssValues[k].lengthValue().toLength().fixed();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::FontStyle:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_inheritedStyles.m_fontStyle = parentStyle->m_inheritedStyles.m_fontStyle;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->m_inheritedStyles.m_fontStyle = FontStyleValue::NormalFontStyleValue;
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::FontStyleValueKind);
+                    style->m_inheritedStyles.m_fontStyle = cssValues[k].fontStyleValue();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::TextOverflow:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setTextOverflow(parentStyle->textOverflow());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->setTextOverflow(TextOverflowValue::ClipTextOverflowValue);
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::TextOverflowValueKind);
+                    style->setTextOverflow(cssValues[k].textOverflowValue());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::TextAlign:

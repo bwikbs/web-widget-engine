@@ -150,6 +150,18 @@ enum TextDecorationValue {
     Blink,
 };
 
+enum FontStyleValue {
+    NormalFontStyleValue,
+    ItalicFontStyleValue,
+    ObliqueFontStyleValue,
+};
+
+// Widget Engine will support only clip and ellipsis values.
+enum TextOverflowValue {
+    ClipTextOverflowValue,
+    EllipsisTextOverflowValue,
+};
+
 class ValueList;
 
 class CSSStyleValuePair : public gc {
@@ -169,10 +181,14 @@ public:
         Color, // color | inherit // initial value -> depends on user agent
         // https://www.w3.org/TR/CSS21/fonts.html#font-size-props
         FontSize, // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
+        // https://www.w3.org/TR/CSS2/fonts.html#propdef-font-style
+        FontStyle, // <normal> | italic | oblique | inherit
         // https://www.w3.org/TR/CSS21/text.html#propdef-text-align
         TextAlign, // left | right | center | justify | <inherit>
         // https://www.w3.org/TR/CSS2/text.html#propdef-text-decoration
         TextDecoration,  // none | [ underline || overline || line-through || blink ] | inherit // Initial value -> none
+        // https://www.w3.org/TR/2010/WD-css3-text-20101005/#text-overflow0
+        TextOverflow, // <clip> | ellipsis | string
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-direction
         Direction, // <ltr> | rtl | inherit
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/colors.html#background-properties
@@ -268,6 +284,9 @@ public:
         LargerFontSize,
         SmallerFontSize,
 
+        FontStyleValueKind,
+        TextOverflowValueKind,
+
         // border-style
         BorderNone,
         BorderSolid,
@@ -323,6 +342,18 @@ public:
     {
         STARFISH_ASSERT(m_valueKind == TextAlignValueKind);
         return m_value.m_textAlign;
+    }
+
+    TextOverflowValue textOverflowValue()
+    {
+        STARFISH_ASSERT(m_valueKind == TextOverflowValueKind);
+        return m_value.m_textOverflow;
+    }
+
+    FontStyleValue fontStyleValue()
+    {
+        STARFISH_ASSERT(m_valueKind == FontStyleValueKind);
+        return m_value.m_fontStyle;
     }
 
     DirectionValue directionValue()
@@ -401,6 +432,8 @@ public:
         float m_floatValue;
         DisplayValue m_display;
         PositionValue m_position;
+        FontStyleValue m_fontStyle;
+        TextOverflowValue m_textOverflow;
         TextAlignValue m_textAlign;
         DirectionValue m_direction;
         CSSLength m_length;

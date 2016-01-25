@@ -560,6 +560,21 @@ public:
         return m_inheritedStyles.m_fontSize;
     }
 
+    void setTextOverflow(TextOverflowValue val)
+    {
+        m_textOverflow = val;
+    }
+
+    TextOverflowValue textOverflow()
+    {
+        return m_textOverflow;
+    }
+
+    FontStyleValue fontStyle()
+    {
+        return m_inheritedStyles.m_fontStyle;
+    }
+
 protected:
     void initNonInheritedStyles()
     {
@@ -623,12 +638,14 @@ protected:
     struct InheritedStyles {
         Color m_color;
         float m_fontSize;
+        FontStyleValue m_fontStyle;
         TextAlignValue m_textAlign;
         DirectionValue m_direction;
     } m_inheritedStyles;
 
     DisplayValue m_display;
     PositionValue m_position;
+    TextOverflowValue m_textOverflow;
     Length m_width;
     Length m_height;
     Length m_bottom;

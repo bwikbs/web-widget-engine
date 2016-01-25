@@ -380,6 +380,22 @@ void Node::dumpStyle()
     // font-size
     printf("font-size: %.0f, ", m_style->font()->size());
 
+    // font-style
+    printf("font-style: ");
+    if (m_style->fontStyle() == FontStyleValue::NormalFontStyleValue)
+        printf("normal, ");
+    else if (m_style->fontStyle() == FontStyleValue::ItalicFontStyleValue)
+        printf("italic, ");
+    else if (m_style->fontStyle() == FontStyleValue::ObliqueFontStyleValue)
+        printf("oblique, ");
+
+    // text-overflow
+    printf("text-overflow: ");
+    if (m_style->textOverflow() == TextOverflowValue::ClipTextOverflowValue)
+        printf("clip, ");
+    else if (m_style->textOverflow() == TextOverflowValue::EllipsisTextOverflowValue)
+        printf("ellipsis, ");
+
     // color
     printf("color: (%d,%d,%d,%d), ", m_style->color().r(), m_style->color().g(), m_style->color().b(), m_style->color().a());
 
