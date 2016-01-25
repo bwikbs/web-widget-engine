@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+	<node nodeType="9" localName="document">
+		<node nodeType="10" localName="documentType">
+		</node>
+		<node nodeType="1" localName="html">
+			<node nodeType="1" localName="head">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="style">
+					<style selectorText=".one" background-color="yellow" padding-top="50px" padding-bottom="50px"/>
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+.one {
+    background-color: yellow;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+			</node>
+			<node nodeType="3" localName="text">
+				<text><![CDATA[
+]]></text>
+			</node>
+			<node nodeType="1" localName="body">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" class="one">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[This paragraph has a top and bottom padding of 50px, a left padding of 80px, and a right padding of 30px.]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+
+
+]]></text>
+				</node>
+			</node>
+		</node>
+	</node>
+</HTMLDocument>

@@ -529,6 +529,17 @@ void Node::dumpStyle()
         printf("margin-right: auto, ");
     }
 
+    // padding-top
+    if (m_style->paddingTop().isFixed()) {
+        printf("padding-top: %f, ", m_style->paddingTop().fixed());
+    } else if (m_style->paddingTop().isPercent()) {
+        printf("padding-top: %f, ", m_style->paddingTop().percent());
+    } else if (m_style->paddingTop().isAuto()) {
+        printf("padding-top: auto, ");
+    } else {
+        printf("padding-top: not computed yet,");
+    }
+
     // padding-bottom
     if (m_style->paddingBottom().isFixed()) {
         printf("padding-bottom: %f, ", m_style->paddingBottom().fixed());

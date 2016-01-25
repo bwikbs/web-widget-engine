@@ -212,6 +212,8 @@ public:
         MarginRight, // length | percentage | auto | inherit // Initial value -> 0
         // https://www.w3.org/TR/CSS21/box.html#propdef-padding-bottom
         PaddingBottom, // length | percentage | inherit // Initial value -> 0
+        // https://www.w3.org/TR/CSS21/box.html#propdef-padding-top
+        PaddingTop, // length | percentage | inherit // Initial value -> 0
         // https://www.w3.org/TR/css3-color/#transparency
         Opacity, // alphavalue | inherit // <1>
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/visufx.html#propdef-overflow

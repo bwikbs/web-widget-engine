@@ -439,6 +439,11 @@ public:
         m_marginRight = r;
     }
 
+    void setPaddingTop(Length r)
+    {
+        m_paddingTop = r;
+    }
+
     void setPaddingBottom(Length r)
     {
         m_paddingBottom = r;
@@ -465,6 +470,11 @@ public:
     Length marginRight()
     {
         return m_marginRight;
+    }
+
+    Length paddingTop()
+    {
+        return m_paddingTop;
     }
 
     Length paddingBottom()
@@ -545,6 +555,7 @@ protected:
     Length m_marginLeft;
     Length m_marginRight;
     Length m_paddingBottom;
+    Length m_paddingTop;
 };
 
 ComputedStyleDamage compareStyle(ComputedStyle* oldStyle, ComputedStyle* newStyle);

@@ -655,6 +655,17 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             parsePercentageOrLength(ret, value);
         }
+    } else if (strcmp(key, "padding-top") == 0) {
+        // length | percentage | inherit  <0>
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingTop;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
     } else if (strcmp(key, "padding-bottom") == 0) {
         // length | percentage | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingBottom;
@@ -1210,6 +1221,17 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                                     cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length ||
                                     cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage);
                     style->setMarginRight(convertValueToLength(cssValues[k].valueKind(), cssValues[k].value()));
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::PaddingTop:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setPaddingTop(parentStyle->paddingTop());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->setPaddingTop(Length(Length::Fixed, 0));
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length ||
+                                    cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage);
+                    style->setPaddingTop(convertValueToLength(cssValues[k].valueKind(), cssValues[k].value()));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::PaddingBottom:
