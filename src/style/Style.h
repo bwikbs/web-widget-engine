@@ -559,6 +559,8 @@ public:
     String* color();
     void setColor(String* color);
 
+    String* direction();
+
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;
     Document* m_document;

@@ -1415,6 +1415,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(MouseEvent, UIEventFunction->protoType());
     fetchData(this)->m_mouseEvent = MouseEventFunction;
 
+    /* style-related getter/setter start here */
+
     DEFINE_FUNCTION(CSSStyleDeclaration, CSSStyleDeclarationFunction->protoType());
     fetchData(this)->m_cssStyleDeclaration = CSSStyleDeclarationFunction;
 
@@ -1435,12 +1437,21 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         }
     }, false, false, false);
 
+    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("direction"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
+        String* d = ((CSSStyleDeclaration*)originalObj)->direction();
+        STARFISH_ASSERT(d);
+        return toJSString(d);
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
+        if (v.isESString()) {
+            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("direction", v.asESString()->utf8Data()));
+        }
+    }, false, false, false);
+
     DEFINE_FUNCTION(CSSStyleRule, CSSStyleRuleFunction->protoType());
     fetchData(this)->m_cssStyleRule = CSSStyleRuleFunction;
-
-    /* style-related getter/setter start here */
-
-
 }
 
 void ScriptBindingInstance::evaluate(String* str)

@@ -944,6 +944,21 @@ void CSSStyleDeclaration::setColor(String* value) {
     m_cssValues.push_back(ret);
 }
 
+String* CSSStyleDeclaration::direction()
+{
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
+        CSSStyleValuePair v = *itr;
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::Direction) {
+            if(v.directionValue() == LtrDirectionValue) {
+                return String::createASCIIString("ltr");
+            } else if(v.directionValue() == RtlDirectionValue) {
+                return String::createASCIIString("rtl");
+            }
+        }
+    }
+    return String::emptyString;
+}
+
 ComputedStyle* StyleResolver::resolveDocumentStyle(StarFish* sf)
 {
     ComputedStyle* ret = new ComputedStyle();
