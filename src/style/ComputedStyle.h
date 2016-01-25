@@ -419,6 +419,11 @@ public:
         return m_overflowY;
     }
 
+    void setMarginTop(Length top)
+    {
+        return surround()->margin.setTop(top);
+    }
+
     void setMarginBottom(Length r)
     {
         m_marginBottom = r;
@@ -437,6 +442,15 @@ public:
     void setPaddingBottom(Length r)
     {
         m_paddingBottom = r;
+    }
+
+    Length marginTop()
+    {
+        if (m_surround == nullptr) {
+            return Length(Length::Fixed, 0);
+        } else {
+            return m_surround->margin.top();
+        }
     }
 
     Length marginBottom()

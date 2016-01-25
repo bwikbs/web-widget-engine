@@ -202,8 +202,10 @@ public:
         BorderRightWidth, // border-width(thin | <medium> | thick | length) | inherit
         BorderBottomWidth, // border-width(thin | <medium> | thick | length) | inherit
         BorderLeftWidth, // border-width(thin | <medium> | thick | length) | inherit
+        // https://www.w3.org/TR/2011/REC-CSS2-20110607/box.html#propdef-margin-top
+        MarginTop, // length | percentage | auto | inherit // Initial value -> 0
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-bottom
-        MarginBottom, // length | percentage | auto | inherit // <0>
+        MarginBottom, // length | percentage | auto | inherit // Initial value -> 0
         // https://www.w3.org/TR/CSS21/box.html#propdef-margin-left
         MarginLeft, // length | percentage | auto | inherit // Initial value -> 0
         // https://www.w3.org/TR/CSS2/box.html#propdef-margin-right

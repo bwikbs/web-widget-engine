@@ -603,6 +603,19 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             parseLength(ret, value);
         }
+    } else if (strcmp(key, "margin-top") == 0) {
+        // length | percentage | auto | inherit <0>
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginTop;
+
+        if (VALUE_IS_STRING("auto")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
     } else if (strcmp(key, "margin-bottom") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginBottom;
@@ -1149,6 +1162,18 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->setBorderLeftWidth(Length(Length::Fixed, 5));
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::MarginTop:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setMarginTop(parentStyle->marginTop());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->setMarginTop(Length(Length::Fixed, 0));
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto ||
+                                    cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length ||
+                                    cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage);
+                    style->setMarginTop(convertValueToLength(cssValues[k].valueKind(), cssValues[k].value()));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::MarginBottom:

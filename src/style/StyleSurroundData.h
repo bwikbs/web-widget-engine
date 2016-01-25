@@ -2,6 +2,7 @@
 #define __StarFishStyleSurroundData__
 
 #include "style/BorderData.h"
+#include "style/LengthData.h"
 
 namespace StarFish {
 
@@ -16,6 +17,7 @@ public:
     }
 
     BorderData border;
+    LengthData margin;
 };
 
 } /* namespace StarFish */

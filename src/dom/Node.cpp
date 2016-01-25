@@ -493,6 +493,15 @@ void Node::dumpStyle()
     else
         printf("background-repeat-y: no-repeat, ");
 
+    // margin-top
+    if (m_style->marginTop().isFixed()) {
+        printf("margin-top: %f, ", m_style->marginTop().fixed());
+    } else if (m_style->marginTop().isPercent()) {
+        printf("margin-top: %f, ", m_style->marginTop().percent());
+    } else if (m_style->marginTop().isAuto()) {
+        printf("margin-top: auto, ");
+    }
+
     // margin-bottom
     if (m_style->marginBottom().isFixed()) {
         printf("margin-bottom: %f, ", m_style->marginBottom().fixed());
