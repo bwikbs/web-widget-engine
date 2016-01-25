@@ -25,7 +25,6 @@ public:
         printf(" frameRect(%g,%g,%g,%g) ", x(), y(), width(), height());
     }
 
-
     float x() const { return m_frameRect.x(); }
     float y() const { return m_frameRect.y(); }
     float width() const { return m_frameRect.width(); }
@@ -206,6 +205,19 @@ public:
         }
         return nullptr;
     }
+
+    Location absolutePoint(FrameBox* top)
+    {
+        Location l(0, 0);
+        Frame* p = this;
+        while (top != p) {
+            l.setX(l.x() + p->asFrameBox()->x());
+            l.setY(l.y() + p->asFrameBox()->y());
+            p = p->parent();
+        }
+        return l;
+    }
+
 protected:
     // content + padding + border
     Rect m_frameRect;

@@ -98,14 +98,39 @@ void textDividerForLayout(String* txt, fn f)
     }
 }
 
+class LineFormattingContext {
+public:
+    LineFormattingContext(FrameBlockBox& block, LayoutContext& ctx)
+        : m_block(block)
+        , m_layoutContext(ctx)
+    {
+        m_block.m_lineBoxes.clear();
+        // m_block.m_lineBoxes.shrink_to_fit();
+        m_block.m_lineBoxes.push_back(LineBox(&m_block));
+        m_currentLine = 0;
+        m_currentLineWidth = 0;
+        m_layoutContext.setLastLineBox(&m_block.m_lineBoxes.back());
+    }
+
+
+    void breakLine()
+    {
+        m_block.m_lineBoxes.push_back(LineBox(&m_block));
+        m_currentLine++;
+        m_currentLineWidth = 0;
+        m_layoutContext.setLastLineBox(&m_block.m_lineBoxes.back());
+    }
+
+    float m_currentLineWidth;
+    size_t m_currentLine;
+    FrameBlockBox& m_block;
+    LayoutContext& m_layoutContext;
+};
+
 
 void FrameBlockBox::layoutInline(LayoutContext& ctx)
 {
-    m_lineBoxes.clear();
-    // m_lineBoxes.shrink_to_fit();
-
     float inlineContentWidth;
-
     if (style()->display() == DisplayValue::InlineBlockDisplayValue) {
         float parentContentWidth = ctx.parentContentWidth(this);
         if (style()->width().isSpecified()) {
@@ -122,15 +147,13 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
         setContentWidth(inlineContentWidth);
     }
 
-
-    m_lineBoxes.push_back(LineBox());
+    LineFormattingContext lineFormattingContext(*this, ctx);
 
     // we dont need gc_allocator here. because frame-tree-item is referenced by its parent
     std::vector<Frame*> result;
     // NOTE this function collect only normal-flow child!
     collectInlineBox(result, this, this);
-    float nowLineWidth = 0;
-    size_t nowLine = 0;
+
     for (unsigned i = 0; i < result.size(); i ++) {
         Frame* f = result[i];
         if (f->isFrameText()) {
@@ -144,7 +167,7 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
 
             textDividerForLayout(txt, [&](size_t offset, size_t nextOffset, bool isWhiteSpace) {
                 textAppendRetry:
-                if(nowLineWidth == 0 && isWhiteSpace) {
+                if(lineFormattingContext.m_currentLineWidth == 0 && isWhiteSpace) {
                     return;
                 }
 
@@ -160,19 +183,18 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
                     textWidth = f->style()->font()->measureText(ss);
                 }
 
-                if(textWidth <= inlineContentWidth - nowLineWidth || nowLineWidth == 0) {
-                    nowLineWidth += textWidth;
+                if(textWidth <= inlineContentWidth - lineFormattingContext.m_currentLineWidth || lineFormattingContext.m_currentLineWidth == 0) {
+                    lineFormattingContext.m_currentLineWidth += textWidth;
                 } else {
                     // try this at nextline
-                    m_lineBoxes.push_back(LineBox());
-                    nowLine++;
-                    nowLineWidth = 0;
+                    m_lineBoxes.push_back(LineBox(this));
+                    lineFormattingContext.breakLine();
                     goto textAppendRetry;
                 }
 
-                m_lineBoxes[nowLine].m_boxes.push_back(new InlineTextBox(f->node(), f->style(), resultString));
-                m_lineBoxes[nowLine].m_boxes.back()->setWidth(textWidth);
-                m_lineBoxes[nowLine].m_boxes.back()->setHeight(f->style()->font()->metrics().m_fontHeight);
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.push_back(new InlineTextBox(f->node(), f->style(), &m_lineBoxes[lineFormattingContext.m_currentLine], resultString));
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setWidth(textWidth);
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setHeight(f->style()->font()->metrics().m_fontHeight);
             });
 
         } else if (f->isFrameReplaced()) {
@@ -180,36 +202,37 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
             r->layout(ctx);
 
             insertReplacedBox:
-            if (r->width() < (inlineContentWidth - nowLineWidth) || nowLineWidth == 0) {
-                m_lineBoxes[nowLine].m_boxes.push_back(new InlineReplacedBox(f->node(), f->style(), r));
-                m_lineBoxes[nowLine].m_boxes.back()->setWidth(r->width());
-                m_lineBoxes[nowLine].m_boxes.back()->setHeight(r->height());
-                nowLineWidth += r->width();
+            if (r->width() < (inlineContentWidth - lineFormattingContext.m_currentLineWidth) || lineFormattingContext.m_currentLineWidth == 0) {
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.push_back(new InlineReplacedBox(f->node(), f->style(), &m_lineBoxes[lineFormattingContext.m_currentLine], r));
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setWidth(r->width());
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setHeight(r->height());
+                lineFormattingContext.m_currentLineWidth += r->width();
             } else {
-                m_lineBoxes.push_back(LineBox());
-                nowLine++;
-                nowLineWidth = 0;
+                lineFormattingContext.breakLine();
                 goto insertReplacedBox;
             }
         } else if (f->isFrameBlockBox()){
             FrameBlockBox* r = f->asFrameBlockBox();
             f->layout(ctx);
+            float ascender = 0;
+            if (ctx.lastLineBox() && r->isAncestorOf(ctx.lastLineBox())) {
+                // TODO consider margin, border, padding
+                float topToLineBox = ctx.lastLineBox()->absolutePoint(r).y();
+                ascender = topToLineBox + ctx.lastLineBox()->m_ascender;
+            }
+
             insertBlockBox:
-            if (r->width() < (inlineContentWidth - nowLineWidth) || nowLineWidth == 0) {
-                m_lineBoxes[nowLine].m_boxes.push_back(new InlineBlockBox(f->node(), f->style(), r));
-                m_lineBoxes[nowLine].m_boxes.back()->setWidth(r->width());
-                m_lineBoxes[nowLine].m_boxes.back()->setHeight(r->height());
-                nowLineWidth += r->width();
+            if (r->width() < (inlineContentWidth - lineFormattingContext.m_currentLineWidth) || lineFormattingContext.m_currentLineWidth == 0) {
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.push_back(new InlineBlockBox(f->node(), f->style(), &m_lineBoxes[lineFormattingContext.m_currentLine], r, ascender));
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setWidth(r->width());
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setHeight(r->height());
+                lineFormattingContext.m_currentLineWidth += r->width();
             } else {
-                m_lineBoxes.push_back(LineBox());
-                nowLine++;
-                nowLineWidth = 0;
+                lineFormattingContext.breakLine();
                 goto insertBlockBox;
             }
         } else if (f->isFrameLineBreak()) {
-            m_lineBoxes.push_back(LineBox());
-            nowLine++;
-            nowLineWidth = 0;
+            lineFormattingContext.breakLine();
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
@@ -259,12 +282,16 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
             } else if (ib->isInlineReplacedBox()) {
                 maxAscender = std::max(b.m_boxes[j]->height(), maxAscender);
             } else if (ib->isInlineBlockBox()) {
-                // TODO implement align with root linebox
-                maxAscender = std::max(b.m_boxes[j]->height(), maxAscender);
+                float dec = -(b.m_boxes[j]->height() - b.m_boxes[j]->asInlineBlockBox()->m_ascender);
+                maxAscender = std::max(b.m_boxes[j]->asInlineBlockBox()->m_ascender, maxAscender);
+                maxDecender = std::min(dec, dec);
             } else {
                 STARFISH_RELEASE_ASSERT_NOT_REACHED();
             }
         }
+
+        b.m_ascender = maxAscender;
+        b.m_decender = maxDecender;
 
         float height = maxAscender - maxDecender;
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
@@ -273,6 +300,9 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
                 ib->setY(height + maxDecender - ib->height() - ib->asInlineTextBox()->style()->font()->metrics().m_descender);
             } else if (ib->isInlineReplacedBox()) {
                 ib->setY(height + maxDecender - ib->height());
+            } else if (ib->isInlineBlockBox()) {
+                float dec = -(b.m_boxes[j]->height() - b.m_boxes[j]->asInlineBlockBox()->m_ascender);
+                ib->setY(height + maxDecender - ib->height() - dec);
             }
         }
 

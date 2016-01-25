@@ -35,14 +35,32 @@ enum HitTestStage
     HitTestStageEnd,
 };
 
+class LineBox;
+
 class LayoutContext
 {
 public:
+    LayoutContext()
+    {
+        m_lastLineBox = nullptr;
+    }
+
     float parentContentWidth(Frame* currentFrame);
     bool parentHasFixedHeight(Frame* currentFrame);
     float parentFixedHeight(Frame* currentFrame);
     Frame* blockContainer(Frame* currentFrame);
+
+    void setLastLineBox(LineBox* l)
+    {
+        m_lastLineBox = l;
+    }
+
+    LineBox* lastLineBox()
+    {
+        return m_lastLineBox;
+    }
 private:
+    LineBox* m_lastLineBox;
 };
 
 class ComputePreferredWidthContext
@@ -98,7 +116,7 @@ public:
         // TODO add condition
         m_flags.m_isPositionedElement = false;
 
-        if (m_style->width().isAuto()) {
+        if (m_style && m_style->width().isAuto()) {
            if (m_style->display() == InlineBlockDisplayValue) {
                m_flags.m_shouldComputePreferredWidth = true;
            } else if (m_style->position() == AbsolutePositionValue) {
@@ -280,6 +298,16 @@ public:
     virtual Frame* hitTest(float x, float y, HitTestStage stage = HitTestStackingContext)
     {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    bool isAncestorOf(Frame* f)
+    {
+        while (f) {
+            if (f == this)
+                return true;
+            f = f->parent();
+        }
+        return false;
     }
 
     bool isEstablishesBlockFormattingContext()

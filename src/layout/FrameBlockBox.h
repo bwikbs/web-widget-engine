@@ -12,10 +12,10 @@ class InlineBlockBox;
 
 class InlineBox : public FrameBox {
 public:
-    InlineBox(Node* node, ComputedStyle* style)
+    InlineBox(Node* node, ComputedStyle* style, Frame* parent)
         : FrameBox(node, style)
     {
-
+        setParent(parent);
     }
 
     virtual bool isInlineTextBox() const { return false; }
@@ -27,12 +27,18 @@ public:
         STARFISH_ASSERT(isInlineTextBox());
         return (InlineTextBox*)this;
     }
+
+    InlineBlockBox* asInlineBlockBox()
+    {
+        STARFISH_ASSERT(isInlineBlockBox());
+        return (InlineBlockBox*)this;
+    }
 };
 
 class InlineTextBox : public InlineBox {
 public:
-    InlineTextBox(Node* node, ComputedStyle* style, String* str)
-        : InlineBox(node, style)
+    InlineTextBox(Node* node, ComputedStyle* style, Frame* parent, String* str)
+        : InlineBox(node, style, parent)
     {
         m_text = str;
     }
@@ -59,8 +65,8 @@ protected:
 
 class InlineReplacedBox : public InlineBox {
 public:
-    InlineReplacedBox(Node* node, ComputedStyle* style, FrameReplaced* f)
-        : InlineBox(node, style)
+    InlineReplacedBox(Node* node, ComputedStyle* style, Frame* parent, FrameReplaced* f)
+        : InlineBox(node, style, parent)
     {
         m_frameReplaced = f;
     }
@@ -84,11 +90,13 @@ protected:
 };
 
 class InlineBlockBox : public InlineBox {
+    friend FrameBlockBox;
 public:
-    InlineBlockBox(Node* node, ComputedStyle* style, FrameBlockBox* f)
-        : InlineBox(node, style)
+    InlineBlockBox(Node* node, ComputedStyle* style, Frame* parent, FrameBlockBox* f, float ascender)
+        : InlineBox(node, style, parent)
     {
         m_frameBlockBox = f;
+        m_ascender = ascender;
     }
 
     virtual bool isInlineBlockBox() const { return true; }
@@ -99,24 +107,44 @@ public:
     {
         return "InlineBlockBox";
     }
+
 protected:
+    float m_ascender;
     FrameBlockBox* m_frameBlockBox;
 };
 
-class LineBox : public gc {
+class LineBox : public FrameBox {
     friend class FrameBlockBox;
 public:
-    LineBox()
-        : m_frameRect(0, 0, 0, 0)
+    LineBox(Frame* parent)
+        : FrameBox(nullptr, nullptr)
     {
-
+        setParent(parent);
+        m_decender = m_ascender = 0;
     }
+
+    float ascender()
+    {
+        return m_ascender;
+    }
+
+    float decender()
+    {
+        return m_decender;
+    }
+
 protected:
-    Rect m_frameRect;
+    // FIXME
+    // we use these value only for vertical-align of inline-block
+    // in layout, we use only 'ascender'
+    // should we delete m_decender?
+    float m_ascender;
+    float m_decender;
     std::vector<InlineBox*, gc_allocator<InlineBox*>> m_boxes;
 };
 
 class FrameBlockBox : public FrameBox {
+    friend class LineFormattingContext;
 public:
     FrameBlockBox(Node* node, ComputedStyle* style)
         : FrameBox(node, style)
