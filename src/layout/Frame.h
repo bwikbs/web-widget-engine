@@ -82,6 +82,7 @@ private:
 
 class Frame: public gc
 {
+    friend class LayoutContext;
 public:
     Frame(Node* node, ComputedStyle* style) :
             m_node(node), m_style(style)
@@ -96,6 +97,18 @@ public:
         m_flags.m_isEstablishesStackingContext = isRootElement;
         // TODO add condition
         m_flags.m_isPositionedElement = false;
+
+        if (m_style->width().isAuto()) {
+           if (m_style->display() == InlineBlockDisplayValue) {
+               m_flags.m_shouldComputePreferredWidth = true;
+           } else if (m_style->position() == AbsolutePositionValue) {
+               m_flags.m_shouldComputePreferredWidth = true;
+           } else {
+               m_flags.m_shouldComputePreferredWidth = false;
+           }
+        } else {
+            m_flags.m_shouldComputePreferredWidth = false;
+        }
     }
 
     virtual ~Frame()
@@ -296,6 +309,8 @@ protected:
         // 9.3.2
         // An element is said to be positioned if its 'position' property has a value other than 'static'. Positioned elements generate positioned boxes, laid out according to four properties:
         bool m_isPositionedElement;
+
+        bool m_shouldComputePreferredWidth;
     } m_flags;
 
     Node* m_node;

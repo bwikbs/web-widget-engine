@@ -6,18 +6,17 @@ namespace StarFish {
 
 void FrameBlockBox::layoutBlock(LayoutContext& ctx)
 {
-    // TODO Determine horizontal margins of this object.
     float parentContentWidth = ctx.parentContentWidth(this);
+    // TODO Determine horizontal margins of this object.
 
     // https://www.w3.org/TR/CSS2/visudet.html#the-width-property
     if (m_style->width().isAuto()) {
-        if (m_style->display() == DisplayValue::BlockDisplayValue)
-            setContentWidth(parentContentWidth);
-        else {
-            STARFISH_ASSERT(m_style->display() == DisplayValue::InlineBlockDisplayValue);
+        if (m_flags.m_shouldComputePreferredWidth) {
             ComputePreferredWidthContext p(ctx, parentContentWidth);
             computePreferredWidth(p);
             setContentWidth(p.result());
+        } else {
+            setContentWidth(parentContentWidth);
         }
     } else if (m_style->width().isFixed()) {
         setContentWidth(m_style->width().fixed());
@@ -67,22 +66,60 @@ void collectInlineBox(std::vector<Frame*>& result, Frame* current, Frame* top)
     }
 }
 
+template <typename fn>
+void textDividerForLayout(String* txt, fn f)
+{
+    // TODO consider white-space
+    // TODO consider letter-spacing
+    unsigned offset = 0;
+    while(true) {
+        if(offset>=txt->length())
+            break;
+        bool isWhiteSpace = false;
+        if(String::isSpaceOrNewline(txt->charAt(offset))) {
+            isWhiteSpace = true;
+        }
+
+        // find next space
+        unsigned nextOffset = offset+1;
+        if(isWhiteSpace) {
+            while(nextOffset < txt->length() && String::isSpaceOrNewline((*txt)[nextOffset])) {
+                nextOffset++;
+            }
+        }
+        else {
+            while(nextOffset < txt->length() && !String::isSpaceOrNewline((*txt)[nextOffset])) {
+                nextOffset++;
+            }
+        }
+
+        f(offset, nextOffset, isWhiteSpace);
+        offset = nextOffset;
+    }
+}
+
+
 void FrameBlockBox::layoutInline(LayoutContext& ctx)
 {
     m_lineBoxes.clear();
     // m_lineBoxes.shrink_to_fit();
 
-    float parentContentWidth = ctx.parentContentWidth(this);
+    float inlineContentWidth;
+
     if (style()->display() == DisplayValue::InlineBlockDisplayValue) {
+        float parentContentWidth = ctx.parentContentWidth(this);
         if (style()->width().isSpecified()) {
-            setContentWidth(style()->width().specifiedValue(parentContentWidth));
+            inlineContentWidth = style()->width().specifiedValue(parentContentWidth);
+            setContentWidth(inlineContentWidth);
         } else {
             ComputePreferredWidthContext p(ctx, parentContentWidth);
             computePreferredWidth(p);
             setContentWidth(p.result());
+            inlineContentWidth = p.result();
         }
     } else {
-        setContentWidth(parentContentWidth);
+        inlineContentWidth = ctx.parentContentWidth(this);
+        setContentWidth(inlineContentWidth);
     }
 
 
@@ -101,35 +138,14 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
             //fast path
             if (f == lastChild()) {
                 if (txt->containsOnlyWhitespace()) {
-                    f = f->next();
                     continue;
                 }
             }
-            unsigned offset = 0;
-            while(true) {
-                if(offset>=txt->length())
-                    break;
-                bool isWhiteSpace = false;
-                if(String::isSpaceOrNewline(txt->charAt(offset))) {
-                    isWhiteSpace = true;
-                }
 
-                // find next space
-                unsigned nextOffset = offset+1;
-                if(isWhiteSpace) {
-                    while(nextOffset < txt->length() && String::isSpaceOrNewline((*txt)[nextOffset])) {
-                        nextOffset++;
-                    }
-                }
-                else {
-                    while(nextOffset < txt->length() && !String::isSpaceOrNewline((*txt)[nextOffset])) {
-                        nextOffset++;
-                    }
-                }
-
+            textDividerForLayout(txt, [&](size_t offset, size_t nextOffset, bool isWhiteSpace) {
+                textAppendRetry:
                 if(nowLineWidth == 0 && isWhiteSpace) {
-                    offset = nextOffset;
-                    continue;
+                    return;
                 }
 
                 float textWidth;
@@ -139,32 +155,32 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
                     textWidth = f->style()->font()->measureText(String::spaceString);
                 }
                 else {
-                    String* ss = txt->substring(offset,nextOffset-offset);
+                    String* ss = txt->substring(offset,nextOffset - offset);
                     resultString = ss;
                     textWidth = f->style()->font()->measureText(ss);
                 }
 
-                if(textWidth <= parentContentWidth - nowLineWidth || nowLineWidth == 0) {
+                if(textWidth <= inlineContentWidth - nowLineWidth || nowLineWidth == 0) {
                     nowLineWidth += textWidth;
                 } else {
                     // try this at nextline
                     m_lineBoxes.push_back(LineBox());
                     nowLine++;
                     nowLineWidth = 0;
-                    continue;
+                    goto textAppendRetry;
                 }
 
                 m_lineBoxes[nowLine].m_boxes.push_back(new InlineTextBox(f->node(), f->style(), resultString));
                 m_lineBoxes[nowLine].m_boxes.back()->setWidth(textWidth);
                 m_lineBoxes[nowLine].m_boxes.back()->setHeight(f->style()->font()->metrics().m_fontHeight);
-                offset = nextOffset;
-            }
+            });
+
         } else if (f->isFrameReplaced()) {
             FrameReplaced* r = f->asFrameReplaced();
             r->layout(ctx);
 
             insertReplacedBox:
-            if (r->width() < (parentContentWidth - nowLineWidth) || nowLineWidth == 0) {
+            if (r->width() < (inlineContentWidth - nowLineWidth) || nowLineWidth == 0) {
                 m_lineBoxes[nowLine].m_boxes.push_back(new InlineReplacedBox(f->node(), f->style(), r));
                 m_lineBoxes[nowLine].m_boxes.back()->setWidth(r->width());
                 m_lineBoxes[nowLine].m_boxes.back()->setHeight(r->height());
@@ -179,7 +195,7 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
             FrameBlockBox* r = f->asFrameBlockBox();
             f->layout(ctx);
             insertBlockBox:
-            if (r->width() < (parentContentWidth - nowLineWidth) || nowLineWidth == 0) {
+            if (r->width() < (inlineContentWidth - nowLineWidth) || nowLineWidth == 0) {
                 m_lineBoxes[nowLine].m_boxes.push_back(new InlineBlockBox(f->node(), f->style(), r));
                 m_lineBoxes[nowLine].m_boxes.back()->setWidth(r->width());
                 m_lineBoxes[nowLine].m_boxes.back()->setHeight(r->height());
@@ -219,7 +235,7 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
             }
         } else {
             STARFISH_ASSERT(style()->textAlign() == TextAlignValue::CenterTextAlignValue);
-            float diff = (parentContentWidth - x) / 2;
+            float diff = (inlineContentWidth - x) / 2;
             for (size_t j = 0; j < b.m_boxes.size(); j ++) {
                 InlineBox* box = b.m_boxes[j];
                 box->setX(box->x() + diff);
@@ -254,7 +270,7 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
             }
         }
 
-        b.m_frameRect.setWidth(parentContentWidth);
+        b.m_frameRect.setWidth(inlineContentWidth);
         b.m_frameRect.setHeight(height);
         contentHeight += b.m_frameRect.height();
     }
@@ -274,6 +290,7 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
 void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)
 {
     if (hasBlockFlow()) {
+        // TODO add margin - border - padding
         if (style()->width().isFixed()) {
             ctx.setResult(style()->width().fixed());
         } else {
@@ -294,49 +311,33 @@ void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)
         for (unsigned i = 0; i < result.size(); i ++) {
             Frame* f = result[i];
             if (f->isFrameText()) {
-                // TODO consider white-space
-                // TODO consider letter-spacing
                 String* s = f->asFrameText()->text();
-
-                size_t start = 0;
-                for (size_t i = 0; i < s->length(); i ++) {
-                    if (!String::isSpaceOrNewline(s->charAt(i))) {
-                        start = i;
-                        break;
-                    }
-                }
-
-                #define ADD_TO_LINE(w)\
-                    if (currentLineWidth + w < ctx.lastKnownWidth()) {\
-                        currentLineWidth += w;\
-                    } else {\
-                        ctx.setResult(currentLineWidth);\
-                        currentLineWidth = 0;\
-                    }\
-                    if (w > ctx.lastKnownWidth()) {\
-                        ctx.setResult(currentLineWidth);\
-                        currentLineWidth = 0;\
+                textDividerForLayout(s, [&](size_t offset, size_t nextOffset, bool isWhiteSpace){
+                    if (currentLineWidth == 0 && isWhiteSpace) {
+                        return;
                     }
 
-                bool isWhiteSpaceMode = false;
-                size_t nonWhiteSpaceStart = start;
-                for (size_t i = start; i < s->length(); i ++) {
-                    if (!isWhiteSpaceMode && String::isSpaceOrNewline(s->charAt(i))) {
-                        ADD_TO_LINE(style()->font()->measureText(s->substring(nonWhiteSpaceStart, i - nonWhiteSpaceStart)));
-                        isWhiteSpaceMode = true;
-                    } else if (isWhiteSpaceMode && String::isSpaceOrNewline(s->charAt(i))) {
-
-                    } else if (isWhiteSpaceMode && !String::isSpaceOrNewline(s->charAt(i))) {
-                        nonWhiteSpaceStart = i;
-                        isWhiteSpaceMode = false;
+                    float w = 0;
+                    if (isWhiteSpace) {
+                        w = f->style()->font()->measureText(String::spaceString);
                     } else {
-
+                        w = f->style()->font()->measureText(s->substring(offset, nextOffset - offset));
                     }
-                }
 
-                if (!isWhiteSpaceMode) {
-                    ADD_TO_LINE(style()->font()->measureText(s->substring(nonWhiteSpaceStart, s->length() - nonWhiteSpaceStart - 1)));
-                }
+                    if (currentLineWidth + w < ctx.lastKnownWidth()) {
+                        currentLineWidth += w;
+                    } else {
+                        // CHECK THIS
+                        // ctx.setResult(currentLineWidth);
+                        ctx.setResult(ctx.lastKnownWidth());
+                        currentLineWidth = 0;
+                    }
+
+                    if (w > ctx.lastKnownWidth()) {
+                        ctx.setResult(currentLineWidth);
+                        currentLineWidth = 0;
+                    }
+                });
 
             } else if (f->isFrameBlockBox()) {
                 f->computePreferredWidth(ctx);
