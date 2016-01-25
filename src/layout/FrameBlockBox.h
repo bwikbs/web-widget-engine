@@ -18,6 +18,15 @@ public:
         setParent(parent);
     }
 
+
+    Frame* hitTest(float x, float y, HitTestStage stage)
+    {
+        if (stage == HitTestStage::HitTestNormalFlowInline) {
+            return FrameBox::hitTest(x, y, stage);
+        }
+        return nullptr;
+    }
+
     virtual bool isInlineTextBox() const { return false; }
     virtual bool isInlineReplacedBox() const { return false; }
     virtual bool isInlineBlockBox() const { return false; }
@@ -177,16 +186,17 @@ public:
     virtual void paint(Canvas* canvas, PaintingStage stage);
     virtual Frame* hitTest(float x, float y,HitTestStage stage);
 
-protected:
-    void layoutBlock(LayoutContext& ctx);
-    void layoutInline(LayoutContext& ctx);
-
     bool hasBlockFlow()
     {
         return !m_firstChild || m_firstChild->isFrameBlockBox();
     }
+protected:
+    void layoutBlock(LayoutContext& ctx);
+    void layoutInline(LayoutContext& ctx);
 
     std::vector<LineBox, gc_allocator<LineBox>> m_lineBoxes;
+
+    static void paintChildrenWith(FrameBlockBox* block, Canvas* canvas, PaintingStage stage);
 };
 
 }

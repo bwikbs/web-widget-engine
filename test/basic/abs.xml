@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+	<node nodeType="9" localName="document">
+		<node nodeType="10" localName="documentType">
+		</node>
+		<node nodeType="1" localName="html">
+			<node nodeType="1" localName="head">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+		]]></text>
+				</node>
+				<node nodeType="1" localName="style" type="text/css">
+					<style selectorText=".f1" font-size="24px"/>
+					<style selectorText=".f2" position="absolute" font-size="18px" background-color="red"/>
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+.f1 {
+font-size: 24px;
+}
+
+.f2 {
+position: absolute;
+font-size:18px;
+background-color:red;
+}
+
+		]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+	]]></text>
+				</node>
+			</node>
+			<node nodeType="3" localName="text">
+				<text><![CDATA[
+	]]></text>
+			</node>
+			<node nodeType="1" localName="body">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" class="f1">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+Kpfxg
+]]></text>
+					</node>
+					<node nodeType="1" localName="div" class="f2">
+						<node nodeType="3" localName="text">
+							<text><![CDATA[
+abs]]></text>
+						</node>
+						<node nodeType="1" localName="br">
+						</node>
+						<node nodeType="3" localName="text">
+							<text><![CDATA[block
+]]></text>
+						</node>
+					</node>
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+abs after
+]]></text>
+					</node>
+					<node nodeType="1" localName="img" src="test/starfish.png">
+					</node>
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+]]></text>
+					</node>
+					<node nodeType="1" localName="div">
+						<node nodeType="3" localName="text">
+							<text><![CDATA[
+asdfasdf
+]]></text>
+						</node>
+					</node>
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+        
+
+			]]></text>
+				</node>
+			</node>
+		</node>
+	</node>
+</HTMLDocument>

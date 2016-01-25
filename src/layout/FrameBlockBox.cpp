@@ -34,7 +34,8 @@ void FrameBlockBox::layoutBlock(LayoutContext& ctx)
         child->asFrameBox()->setX(0);
         child->asFrameBox()->setY(normalFlowHeight);
 
-        normalFlowHeight += child->asFrameBox()->height();
+        if (child->isNormalFlow())
+            normalFlowHeight += child->asFrameBox()->height();
 
         child = child->next();
     }
@@ -131,19 +132,21 @@ public:
 void FrameBlockBox::layoutInline(LayoutContext& ctx)
 {
     float inlineContentWidth;
-    if (style()->display() == DisplayValue::InlineBlockDisplayValue) {
-        float parentContentWidth = ctx.parentContentWidth(this);
-        if (style()->width().isSpecified()) {
-            inlineContentWidth = style()->width().specifiedValue(parentContentWidth);
-            setContentWidth(inlineContentWidth);
-        } else {
+    float parentContentWidth = ctx.parentContentWidth(this);
+
+    if (style()->width().isAuto()) {
+        if (m_flags.m_shouldComputePreferredWidth) {
             ComputePreferredWidthContext p(ctx, parentContentWidth);
             computePreferredWidth(p);
             setContentWidth(p.result());
             inlineContentWidth = p.result();
+        } else {
+            inlineContentWidth = ctx.parentContentWidth(this);
+            setContentWidth(inlineContentWidth);
         }
     } else {
-        inlineContentWidth = ctx.parentContentWidth(this);
+        STARFISH_ASSERT(style()->width().isSpecified());
+        inlineContentWidth = style()->width().specifiedValue(parentContentWidth);
         setContentWidth(inlineContentWidth);
     }
 
@@ -317,10 +320,13 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
     // compute object height
     if (style()->height().isAuto())
         setContentHeight(contentHeight);
-    else {
-        // TODO percentage height
-        if (style()->height().isSpecified()) {
-            setContentHeight(style()->height().fixed());
+    else if (style()->height().isFixed()) {
+        setContentHeight(style()->height().fixed());
+    } else {
+        if (ctx.parentHasFixedHeight(this)) {
+            setContentHeight(style()->height().percent() * ctx.parentFixedHeight(this));
+        } else {
+            setContentHeight(contentHeight);
         }
     }
 }
@@ -414,6 +420,33 @@ void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)
     }
 }
 
+void FrameBlockBox::paintChildrenWith(FrameBlockBox* block, Canvas* canvas, PaintingStage stage)
+{
+    if (block->hasBlockFlow()) {
+        Frame* child = block->firstChild();
+        while (child) {
+            canvas->save();
+            canvas->translate(child->asFrameBox()->x(), child->asFrameBox()->y());
+            child->paint(canvas, stage);
+            canvas->restore();
+            child = child->next();
+        }
+    } else {
+        for (size_t i = 0; i < block->m_lineBoxes.size(); i ++) {
+            canvas->save();
+            LineBox& b = block->m_lineBoxes[i];
+            canvas->translate(b.frameRect().x(), b.frameRect().y());
+            for (size_t j = 0; j < b.m_boxes.size(); j ++) {
+                canvas->save();
+                canvas->translate(b.m_boxes[j]->x(), b.m_boxes[j]->y());
+                b.m_boxes[j]->paint(canvas, stage);
+                canvas->restore();
+            }
+            canvas->restore();
+        }
+    }
+}
+
 void FrameBlockBox::paint(Canvas* canvas, PaintingStage stage)
 {
     if (isEstablishesStackingContext()) {
@@ -458,8 +491,7 @@ void FrameBlockBox::paint(Canvas* canvas, PaintingStage stage)
             child = child->next();
         }
 
-        // TODO the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
-        /*
+        // the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
         child = firstChild();
         while (child) {
             canvas->save();
@@ -468,60 +500,23 @@ void FrameBlockBox::paint(Canvas* canvas, PaintingStage stage)
             canvas->restore();
             child = child->next();
         }
-        */
 
         // TODO the child stacking contexts with positive stack levels (least positive first).
+    } else if(isPositionedElement()) {
+        if (stage == PaintingPositionedElements) {
+            paintBackgroundAndBorders(canvas);
+            PaintingStage s = PaintingStage::PaintingStackingContext;
+            while (s != PaintingStageEnd) {
+                paintChildrenWith(this, canvas, s);
+                s = (PaintingStage)(s + 1);
+            }
+        }
     } else {
         if (stage == PaintingNormalFlowBlock) {
-            if (hasBlockFlow()) {
-                paintBackgroundAndBorders(canvas);
-                Frame* child = firstChild();
-                while (child) {
-                    canvas->save();
-                    canvas->translate(child->asFrameBox()->x(), child->asFrameBox()->y());
-                    child->paint(canvas, stage);
-                    canvas->restore();
-                    child = child->next();
-                }
-            } else {
-                paintBackgroundAndBorders(canvas);
-                for (size_t i = 0; i < m_lineBoxes.size(); i ++) {
-                    canvas->save();
-                    LineBox& b = m_lineBoxes[i];
-                    canvas->translate(b.m_frameRect.x(), b.m_frameRect.y());
-                    for (size_t j = 0; j < b.m_boxes.size(); j ++) {
-                        canvas->save();
-                        canvas->translate(b.m_boxes[j]->x(), b.m_boxes[j]->y());
-                        b.m_boxes[j]->paint(canvas, stage);
-                        canvas->restore();
-                    }
-                    canvas->restore();
-                }
-            }
-        } else if (stage == PaintingNormalFlowInline) {
-            if (!hasBlockFlow()) {
-                for (size_t i = 0; i < m_lineBoxes.size(); i ++) {
-                    canvas->save();
-                    LineBox& b = m_lineBoxes[i];
-                    canvas->translate(b.m_frameRect.x(), b.m_frameRect.y());
-                    for (size_t j = 0; j < b.m_boxes.size(); j ++) {
-                        canvas->save();
-                        canvas->translate(b.m_boxes[j]->x(), b.m_boxes[j]->y());
-                        b.m_boxes[j]->paint(canvas, stage);
-                        canvas->restore();
-                    }
-                    canvas->restore();
-                }
-            } else {
-                Frame* child = firstChild();
-                while (child) {
-                    canvas->save();
-                    canvas->translate(child->asFrameBox()->x(), child->asFrameBox()->y());
-                    child->paint(canvas, stage);
-                    canvas->restore();
-                    child = child->next();
-                }
-            }
+            paintBackgroundAndBorders(canvas);
+            paintChildrenWith(this, canvas, stage);
+        } else {
+            paintChildrenWith(this, canvas, stage);
         }
     }
 }
@@ -534,7 +529,16 @@ Frame* FrameBlockBox::hitTest(float x, float y,HitTestStage stage)
         Frame* child;
         // TODO the child stacking contexts with positive stack levels (least positive first).
 
-        // TODO the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
+        // the child stacking contexts with stack level 0 and the positioned descendants with stack level 0.
+        child = lastChild();
+        while (child) {
+            float cx = x - child->asFrameBox()->x();
+            float cy = y - child->asFrameBox()->y();
+            result = child->hitTest(cx ,cy , HitTestPositionedElements);
+            if (result)
+                return result;
+            child = child->previous();
+        }
 
         // the in-flow, inline-level, non-positioned descendants, including inline tables and inline blocks.
         child = lastChild();
@@ -568,6 +572,39 @@ Frame* FrameBlockBox::hitTest(float x, float y,HitTestStage stage)
 
         // TODO the child stacking contexts with negative stack levels (most negative first).
         return nullptr;
+    } else if(isPositionedElement() && stage == HitTestPositionedElements) {
+        Frame* result = nullptr;
+        HitTestStage s = HitTestStage::HitTestPositionedElements;
+        while (s != HitTestStageEnd) {
+            if (hasBlockFlow()) {
+                Frame* child = lastChild();
+                while (child) {
+                    float cx = x - child->asFrameBox()->x();
+                    float cy = y - child->asFrameBox()->y();
+                    result = child->hitTest(cx ,cy , s);
+                    if (result)
+                        return result;
+                    child = child->previous();
+                }
+            } else {
+                for (size_t i = 0; i < m_lineBoxes.size(); i ++) {
+                    LineBox& b = m_lineBoxes[i];
+                    float cx = x - b.m_frameRect.x();
+                    float cy = y - b.m_frameRect.y();
+
+                    for (size_t j = 0; j < b.m_boxes.size(); j ++) {
+                        float cx2 = cx - b.m_boxes[j]->x();
+                        float cy2 = cy - b.m_boxes[j]->y();
+                        result = b.m_boxes[j]->hitTest(cx2, cy2, s);
+                        if (result)
+                            return result;
+                    }
+                }
+            }
+            s = (HitTestStage)(s + 1);
+        }
+
+        return result;
     } else {
         if (stage == HitTestNormalFlowBlock) {
             if (hasBlockFlow()) {
@@ -586,7 +623,7 @@ Frame* FrameBlockBox::hitTest(float x, float y,HitTestStage stage)
             } else {
                 return FrameBox::hitTest(x, y, stage);
             }
-        } else if (stage == HitTestNormalFlowInline) {
+        } else {
             if (!hasBlockFlow()) {
                 Frame* result = nullptr;
                 for (size_t i = 0; i < m_lineBoxes.size(); i ++) {
@@ -638,7 +675,7 @@ Frame* InlineBlockBox::hitTest(float x, float y, HitTestStage stage)
 {
     if (stage == HitTestStage::HitTestNormalFlowInline) {
         Frame* result = nullptr;
-        HitTestStage s = HitTestStage::HitTestNonPositionedFloats;
+        HitTestStage s = HitTestStage::HitTestPositionedElements;
         while (s != HitTestStageEnd) {
             result = m_frameBlockBox->hitTest(x, y, s);
             if (result)

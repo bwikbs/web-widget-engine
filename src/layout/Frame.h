@@ -27,11 +27,11 @@ enum PaintingStage
 
 enum HitTestStage
 {
-    HitTestStackingContext,
-    HitTestNormalFlowBlock,
-    HitTestNonPositionedFloats,
-    HitTestNormalFlowInline,
     HitTestPositionedElements,
+    HitTestNormalFlowInline,
+    HitTestNonPositionedFloats,
+    HitTestNormalFlowBlock,
+    HitTestStackingContext,
     HitTestStageEnd,
 };
 
@@ -127,6 +127,13 @@ public:
         } else {
             m_flags.m_shouldComputePreferredWidth = false;
         }
+
+        if (m_style && m_style->position() == PositionValue::AbsolutePositionValue) {
+            m_flags.m_isNormalFlow = false;
+        } else {
+            m_flags.m_isNormalFlow = true;
+        }
+
     }
 
     virtual ~Frame()
@@ -325,6 +332,11 @@ public:
         return m_flags.m_isPositionedElement;
     }
 
+    bool isNormalFlow()
+    {
+        return m_flags.m_isNormalFlow;
+    }
+
 protected:
     struct
     {
@@ -341,9 +353,10 @@ protected:
         // https://www.w3.org/TR/CSS21/visuren.html#positioning-scheme
         // 9.3.2
         // An element is said to be positioned if its 'position' property has a value other than 'static'. Positioned elements generate positioned boxes, laid out according to four properties:
-        bool m_isPositionedElement;
+        bool m_isPositionedElement :1;
 
-        bool m_shouldComputePreferredWidth;
+        bool m_shouldComputePreferredWidth :1;
+        bool m_isNormalFlow :1;
     } m_flags;
 
     Node* m_node;

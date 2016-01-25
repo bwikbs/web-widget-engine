@@ -25,6 +25,8 @@ public:
         printf(" frameRect(%g,%g,%g,%g) ", x(), y(), width(), height());
     }
 
+    const Rect& frameRect() { return m_frameRect; }
+
     float x() const { return m_frameRect.x(); }
     float y() const { return m_frameRect.y(); }
     float width() const { return m_frameRect.width(); }

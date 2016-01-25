@@ -75,9 +75,19 @@ void buildTree(Node* current, Frame* parent)
                     // Block... + Inline case
                     Frame* last = parent->lastChild();
                     STARFISH_ASSERT(last->style()->display() == BlockDisplayValue);
-                    if (last->node()) {
-                        last = new FrameBlockBox(nullptr, parent->style());
-                        parent->appendChild(last);
+
+                    if (last->isNormalFlow()) {
+                        if (last->node()) {
+                            last = new FrameBlockBox(nullptr, parent->style());
+                            parent->appendChild(last);
+                        }
+                    } else {
+                        if (last->previous() && last->previous()->isFrameBlockBox() && !last->previous()->asFrameBlockBox()->hasBlockFlow()) {
+                            last = last->previous();
+                        } else {
+                            last = new FrameBlockBox(nullptr, parent->style());
+                            parent->appendChild(last);
+                        }
                     }
 
                     last->appendChild(currentFrame);
