@@ -806,7 +806,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
-    } else if (strcmp(key, "overflow-y") == 0) {
+/*    } else if (strcmp(key, "overflow-y") == 0) {
         // visible | hidden | scroll(X) | auto(X) | inherit // initial value -> visible
         ret.m_keyKind = CSSStyleValuePair::KeyKind::OverflowY;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::OverflowValueKind;
@@ -822,6 +822,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
+*/
     } else if (strcmp(key, "visibility") == 0) {
         // visible | hidden | collapse | inherit // initial value -> visible
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Visibility;
@@ -1486,13 +1487,14 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_overflowX = cssValues[k].overflowValueX();
                 }
                 break;
-            case CSSStyleValuePair::KeyKind::OverflowY:
+/*            case CSSStyleValuePair::KeyKind::OverflowY:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->m_overflowY = parentStyle->m_overflowY;
                 } else {
                     style->m_overflowY = cssValues[k].overflowValueY();
                 }
                 break;
+*/
             case CSSStyleValuePair::KeyKind::Visibility:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->m_inheritedStyles.m_visibility = parentStyle->visibility();

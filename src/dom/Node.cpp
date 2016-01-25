@@ -622,11 +622,11 @@ void Node::dumpStyle()
         printf("overflow-x: hidden, ");
 
     // overflow-y
-    if(m_style->overflowY() == OverflowValue::VisibleOverflow)
+/*    if(m_style->overflowY() == OverflowValue::VisibleOverflow)
         printf("overflow-y: visible, ");
     else
         printf("overflow-y: hidden, ");
-
+*/
     // visibility
     if(m_style->visibility() == VisibilityValue::VisibleVisibilityValue)
         printf("visibility: visible, ");

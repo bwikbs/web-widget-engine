@@ -259,7 +259,7 @@ public:
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/visufx.html#propdef-overflow
         //Overflow, // visible | hidden | scroll | auto | inherit // Initial value -> visible
         OverflowX, // visible | hidden | scroll | auto | inherit // Initial value -> visible
-        OverflowY, // visible | hidden | scroll | auto | inherit // Initial value -> visible
+        //OverflowY, // visible | hidden | scroll | auto | inherit // Initial value -> visible
         // https://www.w3.org/TR/CSS2/visufx.html#visibility
         Visibility,  // visible | hidden | collapse | inherit // Initial value -> visible
         // http://www.w3.org/TR/CSS2/visuren.html#z-index
@@ -441,11 +441,11 @@ public:
         return m_value.m_overflowX;
     }
 
-    OverflowValue overflowValueY() {
+/*    OverflowValue overflowValueY() {
         STARFISH_ASSERT(m_valueKind == OverflowValueKind);
         return m_value.m_overflowY;
     }
-
+*/
     VisibilityValue visibility()
     {
         STARFISH_ASSERT(m_valueKind == VisibilityKind);
@@ -477,7 +477,7 @@ public:
         BorderImageRepeatValue m_borderImageRepeat;
         ValueList* m_multiValue;
         OverflowValue m_overflowX;
-        OverflowValue m_overflowY;
+//        OverflowValue m_overflowY;
         VisibilityValue m_visibility;
         TextDecorationValue m_textDecoration;
     };

@@ -431,10 +431,10 @@ public:
         return m_overflowX;
     }
 
-    OverflowValue overflowY() {
+/*    OverflowValue overflowY() {
         return m_overflowY;
     }
-
+*/
     void setTop(Length top)
     {
         surround()->offset.setTop(top);
@@ -636,7 +636,7 @@ protected:
         m_zIndex = 0;
         m_background = NULL;
         m_overflowX = OverflowValue::VisibleOverflow;
-        m_overflowY = OverflowValue::VisibleOverflow;
+//        m_overflowY = OverflowValue::VisibleOverflow;
         m_textDecoration = TextDecorationValue::None;
     }
 
@@ -708,7 +708,7 @@ protected:
     Length m_left;
 
     OverflowValue m_overflowX;
-    OverflowValue m_overflowY;
+//    OverflowValue m_overflowY;
 
     float m_opacity;
     int32_t m_zIndex;
