@@ -220,6 +220,8 @@ public:
         //Overflow, // visible | hidden | scroll | auto | inherit // Initial value -> visible
         OverflowX, // visible | hidden | scroll | auto | inherit // Initial value -> visible
         OverflowY, // visible | hidden | scroll | auto | inherit // Initial value -> visible
+        // http://www.w3.org/TR/CSS2/visuren.html#z-index
+        ZIndex, //  <auto> | integer | inherit
     };
 
     enum ValueKind {

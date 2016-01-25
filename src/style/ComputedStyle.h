@@ -197,6 +197,11 @@ public:
         return m_opacity;
     }
 
+    int32_t zIndex()
+    {
+        return m_zIndex;
+    }
+
     StyleBackgroundData* background()
     {
         return m_background;
@@ -496,6 +501,7 @@ protected:
         m_marginRight = Length(Length::Fixed, 0);
         m_paddingBottom = Length(Length::Fixed, 0);
         m_opacity = 1;
+        m_zIndex = 0;
         m_background = NULL;
     }
 
@@ -543,6 +549,7 @@ protected:
     OverflowValue m_overflowY;
 
     float m_opacity;
+    int32_t m_zIndex;
 
 protected:
     Font* m_font;

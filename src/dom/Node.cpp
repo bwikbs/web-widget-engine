@@ -566,6 +566,8 @@ void Node::dumpStyle()
     else
         printf("overflow-y: hidden, ");
 
+    printf("z-index : %d, ",(int) m_style->zIndex());
+
     printf("}");
 }
 

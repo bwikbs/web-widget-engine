@@ -721,6 +721,21 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
+    } else if (strcmp(key, "z-index") == 0) {
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::ZIndex;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+        } else {
+            char* pEnd;
+            double d = strtod (value, &pEnd);
+            STARFISH_ASSERT(pEnd == value + strlen(value));
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Number;
+            ret.m_value.m_floatValue = d;
+        }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -1267,6 +1282,15 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_overflowY = parentStyle->m_overflowY;
                 } else {
                     style->m_overflowY = cssValues[k].overflowValueY();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::ZIndex:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_zIndex = parentStyle->m_zIndex;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
+                    style->m_zIndex = 0;
+                } else {
+                    style->m_zIndex = cssValues[k].numberValue();
                 }
                 break;
             }

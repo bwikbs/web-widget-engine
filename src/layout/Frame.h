@@ -112,9 +112,9 @@ public:
         // TODO add condition
         m_flags.m_isEstablishesBlockFormattingContext = isRootElement;
         // TODO add condition
-        m_flags.m_isEstablishesStackingContext = isRootElement;
+        m_flags.m_isPositionedElement = m_style && m_style->position() != PositionValue::StaticPositionValue;
         // TODO add condition
-        m_flags.m_isPositionedElement = false;
+        m_flags.m_isEstablishesStackingContext = isRootElement;
 
         if (m_style && m_style->width().isAuto()) {
            if (m_style->display() == InlineBlockDisplayValue) {
