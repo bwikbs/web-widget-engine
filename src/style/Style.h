@@ -315,9 +315,19 @@ public:
         return m_keyKind;
     }
 
+    void setKeyKind(KeyKind kind)
+    {
+        m_keyKind = kind;
+    }
+
     ValueKind valueKind()
     {
         return m_valueKind;
+    }
+
+    void setValueKind(ValueKind kind)
+    {
+        m_valueKind = kind;
     }
 
     bool isAuto()
@@ -388,6 +398,12 @@ public:
     {
         STARFISH_ASSERT(m_valueKind == StringValueKind);
         return m_value.m_stringValue;
+    }
+
+    void setStringValue(String* value)
+    {
+        STARFISH_ASSERT(m_valueKind == StringValueKind);
+        m_value.m_stringValue = value;
     }
 
     BackgroundRepeatValue backgroundRepeatXValue()
@@ -524,6 +540,9 @@ public:
     {
         return m_document;
     }
+
+    String* color();
+    void setColor(String* color);
 
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;

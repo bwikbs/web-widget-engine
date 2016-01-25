@@ -845,6 +845,29 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     return ret;
 }
 
+String* CSSStyleDeclaration::color() {
+    for (unsigned i = 0; i < m_cssValues.size(); i++) {
+        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::Color
+                && m_cssValues.at(i).valueKind() == CSSStyleValuePair::ValueKind::StringValueKind)
+            return m_cssValues.at(i).stringValue();
+    }
+    return String::emptyString;
+}
+
+void CSSStyleDeclaration::setColor(String* value) {
+    for (unsigned i = 0; i < m_cssValues.size(); i++) {
+        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::Color
+                && m_cssValues.at(i).valueKind() == CSSStyleValuePair::ValueKind::StringValueKind) {
+            m_cssValues.at(i).setStringValue(value);
+        }
+    }
+    CSSStyleValuePair ret;
+    ret.setKeyKind(CSSStyleValuePair::KeyKind::Color);
+    ret.setValueKind(CSSStyleValuePair::ValueKind::StringValueKind);
+    ret.setStringValue(value);
+    m_cssValues.push_back(ret);
+}
+
 ComputedStyle* StyleResolver::resolveDocumentStyle(StarFish* sf)
 {
     ComputedStyle* ret = new ComputedStyle();

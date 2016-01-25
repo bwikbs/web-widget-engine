@@ -1418,9 +1418,25 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(CSSStyleDeclaration, CSSStyleDeclarationFunction->protoType());
     fetchData(this)->m_cssStyleDeclaration = CSSStyleDeclarationFunction;
 
+    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("color"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
+
+        String* c = ((CSSStyleDeclaration*) originalObj)->color();
+        if (c != nullptr)
+            return escargot::ESString::create(c->utf8Data());
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
+        if (v.isESString()) {
+            ((CSSStyleDeclaration*) originalObj)->setColor(String::fromUTF8(v.asESString()->utf8Data()));
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+    }, false, false, false);
+
     DEFINE_FUNCTION(CSSStyleRule, CSSStyleRuleFunction->protoType());
     fetchData(this)->m_cssStyleRule = CSSStyleRuleFunction;
-
 
     /* style-related getter/setter start here */
 
