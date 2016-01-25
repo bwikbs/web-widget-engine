@@ -186,6 +186,8 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
                 if(textWidth <= inlineContentWidth - lineFormattingContext.m_currentLineWidth || lineFormattingContext.m_currentLineWidth == 0) {
                     lineFormattingContext.m_currentLineWidth += textWidth;
                 } else {
+                    if (isWhiteSpace)
+                        return;
                     // try this at nextline
                     m_lineBoxes.push_back(LineBox(this));
                     lineFormattingContext.breakLine();

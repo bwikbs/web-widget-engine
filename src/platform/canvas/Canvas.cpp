@@ -399,6 +399,7 @@ public:
 
     virtual void drawText(const float x,const float y,String* text)
     {
+        /*
         Evas_Object* eo = evas_object_textblock_add(m_canvas);
         if(m_objList) m_objList->push_back(eo);
         Size sz(lastState().m_font->measureText(text), lastState().m_font->metrics().m_fontHeight);
@@ -433,8 +434,7 @@ public:
         }
         evas_object_show(eo);
         evas_textblock_style_free(st);
-
-        /*
+        */
         Evas_Object* eo = evas_object_text_add(m_canvas);
         if(m_objList) m_objList->push_back(eo);
         Size sz(lastState().m_font->measureText(text), lastState().m_font->metrics().m_fontHeight);
@@ -448,7 +448,8 @@ public:
         if(!shouldApplyEvasMap())
             lastState().m_matrix.mapRect(&sss);
 
-        evas_object_text_font_set(eo,lastState().m_font->familyName()->utf8Data(),lastState().m_font->size());
+        float ptSize = lastState().m_font->size() * 12.f / 16.f;
+        evas_object_text_font_set(eo,lastState().m_font->familyName()->utf8Data(),ptSize);
         evas_object_color_set(eo, lastState().m_color.r(),lastState().m_color.g(),lastState().m_color.b(),lastState().m_color.a());
         evas_object_text_text_set(eo, text->utf8Data());
 
@@ -459,7 +460,6 @@ public:
            applyEvasMapIfNeeded(eo, rt);
         }
         evas_object_show(eo);
-        */
     }
 
     Evas_Object* findPrevDrawnData(ImageData* data)
