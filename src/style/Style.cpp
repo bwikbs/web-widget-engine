@@ -426,6 +426,28 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
+    } else if (strcmp(key, "top") == 0) {
+        // length | percentage | <auto> | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::Top;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+        if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
+    } else if (strcmp(key, "right") == 0) {
+        // length | percentage | <auto> | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::Right;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+        if (VALUE_IS_STRING("auto") || VALUE_IS_INITIAL()) {
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
     } else if (strcmp(key, "bottom") == 0) {
         // length | percentage | <auto> | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Bottom;
@@ -1059,28 +1081,54 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->setBackgroundRepeatY(cssValues[k].backgroundRepeatYValue());
                 }
                 break;
+            case CSSStyleValuePair::KeyKind::Top:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setTop(parentStyle->top());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
+                    style->setTop(Length());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->setTop(cssValues[k].lengthValue().toLength());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
+                    style->setTop(Length(Length::Percent, cssValues[k].percentageValue()));
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::Right:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setRight(parentStyle->right());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
+                    style->setRight(Length());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->setRight(cssValues[k].lengthValue().toLength());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
+                    style->setRight(Length(Length::Percent, cssValues[k].percentageValue()));
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
             case CSSStyleValuePair::KeyKind::Bottom:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_bottom = parentStyle->m_bottom;
+                    style->setBottom(parentStyle->bottom());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
-                    style->m_bottom = Length();
+                    style->setBottom(Length());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
-                    style->m_bottom = cssValues[k].lengthValue().toLength();
+                    style->setBottom(cssValues[k].lengthValue().toLength());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
-                    style->m_bottom = Length(Length::Percent, cssValues[k].percentageValue());
+                    style->setBottom(Length(Length::Percent, cssValues[k].percentageValue()));
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
                 break;
             case CSSStyleValuePair::KeyKind::Left:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_left = parentStyle->m_left;
+                    style->setLeft(parentStyle->left());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Auto) {
-                    style->m_left = Length();
+                    style->setLeft(Length());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
-                    style->m_left = cssValues[k].lengthValue().toLength();
+                    style->setLeft(cssValues[k].lengthValue().toLength());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
-                    style->m_left = Length(Length::Percent, cssValues[k].percentageValue());
+                    style->setLeft(Length(Length::Percent, cssValues[k].percentageValue()));
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }

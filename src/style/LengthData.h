@@ -13,6 +13,14 @@ public:
     {
     }
 
+    LengthData(Length length)
+        : m_top(length)
+        , m_right(length)
+        , m_bottom(length)
+        , m_left(length)
+    {
+    }
+
     Length top()
     {
         return m_top;

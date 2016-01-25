@@ -192,16 +192,6 @@ public:
         return m_font;
     }
 
-    Length bottom()
-    {
-        return m_bottom;
-    }
-
-    Length left()
-    {
-        return m_left;
-    }
-
     float opacity()
     {
         return m_opacity;
@@ -443,6 +433,26 @@ public:
         return m_overflowY;
     }
 
+    void setTop(Length top)
+    {
+        surround()->offset.setTop(top);
+    }
+
+    void setRight(Length right)
+    {
+        surround()->offset.setRight(right);
+    }
+
+    void setBottom(Length bottom)
+    {
+        surround()->offset.setBottom(bottom);
+    }
+
+    void setLeft(Length left)
+    {
+        surround()->offset.setLeft(left);
+    }
+
     void setMarginTop(Length top)
     {
         surround()->margin.setTop(top);
@@ -481,6 +491,42 @@ public:
     void setPaddingLeft(Length left)
     {
         surround()->padding.setLeft(left);
+    }
+
+    Length top()
+    {
+        if (m_surround == nullptr) {
+            return Length();
+        } else {
+            return m_surround->offset.top();
+        }
+    }
+
+    Length right()
+    {
+        if (m_surround == nullptr) {
+            return Length();
+        } else {
+            return m_surround->offset.right();
+        }
+    }
+
+    Length bottom()
+    {
+        if (m_surround == nullptr) {
+            return Length();
+        } else {
+            return m_surround->offset.bottom();
+        }
+    }
+
+    Length left()
+    {
+        if (m_surround == nullptr) {
+            return Length();
+        } else {
+            return m_surround->offset.left();
+        }
     }
 
     Length marginTop()
@@ -599,8 +645,6 @@ protected:
 
         m_width.changeToFixedIfNeeded(fontSize(), font());
         m_height.changeToFixedIfNeeded(fontSize(), font());
-        m_bottom.changeToFixedIfNeeded(fontSize(), font());
-        m_left.changeToFixedIfNeeded(fontSize(), font());
 
         if (m_surround) {
             m_surround->margin.top().changeToFixedIfNeeded(fontSize(), font());
@@ -612,6 +656,11 @@ protected:
             m_surround->padding.right().changeToFixedIfNeeded(fontSize(), font());
             m_surround->padding.bottom().changeToFixedIfNeeded(fontSize(), font());
             m_surround->padding.left().changeToFixedIfNeeded(fontSize(), font());
+
+            m_surround->offset.top().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->offset.right().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->offset.bottom().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->offset.left().changeToFixedIfNeeded(fontSize(), font());
 
             if (hasBorderStyle() && !hasBorderColor()) {
                 // If an element's border color is not specified with a border property,
@@ -630,9 +679,8 @@ protected:
 
         if(m_background)
             m_background->checkComputed(fontSize(), font());
-
-        //TODO: should check surround / ...
     }
+
     void loadResources(StarFish* sf);
 
     struct InheritedStyles {

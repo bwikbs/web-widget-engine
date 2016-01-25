@@ -419,7 +419,25 @@ void Node::dumpStyle()
                                              m_style->bgSizeValue()->height().dumpString()->utf8Data());
     }
 
-    // bottom
+    // box offsets: top
+    if (m_style->top().isFixed()) {
+        printf("top: %f, ", m_style->top().fixed());
+    } else if (m_style->top().isPercent()) {
+        printf("top: %f, ", m_style->top().percent());
+    } else if (m_style->top().isAuto()) {
+        printf("top: auto, ");
+    }
+
+    // box offsets: right
+    if (m_style->right().isFixed()) {
+        printf("right: %f, ", m_style->right().fixed());
+    } else if (m_style->right().isPercent()) {
+        printf("right: %f, ", m_style->right().percent());
+    } else if (m_style->right().isAuto()) {
+        printf("right: auto, ");
+    }
+
+    // box offsets: bottom
     if (m_style->bottom().isFixed()) {
         printf("bottom: %f, ", m_style->bottom().fixed());
     } else if (m_style->bottom().isPercent()) {
@@ -428,7 +446,7 @@ void Node::dumpStyle()
         printf("bottom: auto, ");
     }
 
-    // left
+    // box offsets: left
     if (m_style->left().isFixed()) {
         printf("left: %f, ", m_style->left().fixed());
     } else if (m_style->left().isPercent()) {

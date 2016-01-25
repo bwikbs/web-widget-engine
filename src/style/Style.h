@@ -201,6 +201,10 @@ public:
         //BackgroundRepeat, // repeat | repeat-x | repeat-y | no-repeat | initial | inherit
         BackgroundRepeatX, // repeat | no-repeat | initial | inherit
         BackgroundRepeatY, // repeat | no-repeat | initial | inherit
+        // https://www.w3.org/TR/CSS21/visuren.html#propdef-top
+        Top, // length | percentage | <auto> | inherit
+        // https://www.w3.org/TR/CSS21/visuren.html#propdef-right
+        Right, // length | percentage | <auto> | inherit
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-bottom
         Bottom, // length | percentage | <auto> | inherit
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-left
