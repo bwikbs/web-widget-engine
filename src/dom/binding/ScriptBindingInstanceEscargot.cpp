@@ -1124,6 +1124,133 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     }, escargot::ESString::create("toggle"), 1, false);
     DOMTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("toggle"), false, false, false, domTokenListToggleFunction);
 
+    DEFINE_FUNCTION(DOMSettableTokenList, fetchData(this)->m_instance->globalObject()->objectPrototype());
+    fetchData(this)->m_domSettableTokenList = DOMSettableTokenListFunction;
+
+    DOMSettableTokenListFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("length"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::DOMSettableTokenListObject);
+
+        uint32_t len = ((DOMTokenList *)originalObj)->length();
+        return escargot::ESValue(len);
+    }, NULL, false, false, false);
+
+    escargot::ESFunctionObject* domSettableTokenListItemFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::DOMSettableTokenListObject);
+
+        escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+        if (argValue.isUInt32()) {
+            String* elem = ((DOMTokenList*) thisValue.asESPointer()->asESObject())->item(argValue.asUInt32());
+            if (elem != nullptr)
+                return escargot::ESString::create(elem->utf8Data());
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("item"), 1, false);
+    DOMSettableTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("item"), false, false, false, domSettableTokenListItemFunction);
+
+    escargot::ESFunctionObject* domSettableTokenListContainsFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::DOMSettableTokenListObject);
+
+        escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+        if (argValue.isESString()) {
+            bool res = ((DOMTokenList*) thisValue.asESPointer()->asESObject())->contains(String::fromUTF8(argValue.asESString()->utf8Data()));
+            return escargot::ESValue(res);
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+    }, escargot::ESString::create("contains"), 1, false);
+    DOMSettableTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("contains"), false, false, false, domSettableTokenListContainsFunction);
+
+    escargot::ESFunctionObject* domSettableTokenListAddFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::DOMSettableTokenListObject);
+
+        std::vector<String*, gc_allocator<String*>> tokens;
+        int argCount = instance->currentExecutionContext()->argumentCount();
+        for (int i = 0; i < argCount; i++) {
+            escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(i);
+            if (argValue.isESString()) {
+                String* aa = String::fromUTF8(argValue.asESString()->utf8Data());
+                tokens.push_back(aa);
+            } else {
+                THROW_ILLEGAL_INVOCATION()
+            }
+        }
+        if (argCount > 0)
+            ((DOMTokenList*) thisValue.asESPointer()->asESObject())->add(&tokens);
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("add"), 1, false);
+    DOMSettableTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("add"), false, false, false, domSettableTokenListAddFunction);
+
+    escargot::ESFunctionObject* domSettableTokenListRemoveFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::DOMSettableTokenListObject);
+
+        std::vector<String*, gc_allocator<String*>> tokens;
+        int argCount = instance->currentExecutionContext()->argumentCount();
+        for (int i = 0; i < argCount; i++) {
+            escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(i);
+            if (argValue.isESString()) {
+                String* aa = String::fromUTF8(argValue.asESString()->utf8Data());
+                tokens.push_back(aa);
+            } else {
+                THROW_ILLEGAL_INVOCATION()
+            }
+        }
+        if (argCount > 0)
+            ((DOMTokenList*) thisValue.asESPointer()->asESObject())->remove(&tokens);
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("remove"), 1, false);
+    DOMSettableTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("remove"), false, false, false, domSettableTokenListRemoveFunction);
+
+    escargot::ESFunctionObject* domSettableTokenListToggleFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
+        CHECK_TYPEOF(thisValue, ScriptWrappable::Type::DOMSettableTokenListObject);
+
+        int argCount = instance->currentExecutionContext()->argumentCount();
+        escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
+        escargot::ESValue forceValue;
+        if (argCount >= 2)
+            forceValue = instance->currentExecutionContext()->readArgument(1);
+        if (argCount > 0 && argValue.isESString()) {
+            bool didAdd;
+            if (argCount == 1) {
+                didAdd = ((DOMTokenList*) thisValue.asESPointer()->asESObject())->toggle(String::fromUTF8(argValue.asESString()->utf8Data()), false, false);
+            } else {
+                ASSERT(forceValue.isBoolean());
+                didAdd = ((DOMTokenList*) thisValue.asESPointer()->asESObject())->toggle(String::fromUTF8(argValue.asESString()->utf8Data()), true, forceValue.asBoolean());
+              }
+            return escargot::ESValue(didAdd);
+        } else {
+            THROW_ILLEGAL_INVOCATION()
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("toggle"), 1, false);
+    DOMSettableTokenListFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("toggle"), false, false, false, domSettableTokenListToggleFunction);
+
+    auto DOMSettableTokenListValueGetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::DOMSettableTokenListObject);
+
+        String* value = ((DOMSettableTokenList*) originalObj)->value();
+        if (value != nullptr)
+            return escargot::ESString::create(value->utf8Data());
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    };
+
+    auto DOMSettableTokenListValueSetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::DOMSettableTokenListObject);
+
+        ((DOMSettableTokenList*) originalObj)->setValue(toBrowserString(v));
+    };
+
+    DOMSettableTokenListFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("value"), DOMSettableTokenListValueGetter, DOMSettableTokenListValueSetter, false, false, false);
+
+
+
     DEFINE_FUNCTION(NamedNodeMap, fetchData(this)->m_instance->globalObject()->objectPrototype());
     fetchData(this)->m_namedNodeMap = NamedNodeMapFunction;
 
