@@ -23,6 +23,7 @@ class HTMLBodyElement;
 class HTMLScriptElement;
 class HTMLDivElement;
 class HTMLImageElement;
+class HTMLBRElement;
 class HTMLUnknownElement;
 class Event;
 class UIEvent;
@@ -78,6 +79,7 @@ public:
     void initScriptWrappable(HTMLBodyElement* ptr);
     void initScriptWrappable(HTMLScriptElement* ptr);
     void initScriptWrappable(HTMLImageElement* ptr);
+    void initScriptWrappable(HTMLBRElement* ptr);
     void initScriptWrappable(HTMLDivElement* ptr);
     void initScriptWrappable(HTMLUnknownElement* ptr);
 

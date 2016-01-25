@@ -10,6 +10,7 @@
 #include "FrameDocument.h"
 #include "FrameReplaced.h"
 #include "FrameReplacedImage.h"
+#include "FrameLineBreak.h"
 
 namespace StarFish {
 
@@ -35,6 +36,8 @@ void buildTree(Node* current, Frame* parent)
         if (current->isElement() && current->asElement()->isHTMLElement() && current->asElement()->asHTMLElement()->isHTMLImageElement()) {
             auto element = current->asElement()->asHTMLElement()->asHTMLImageElement();
             currentFrame = new FrameReplacedImage(current, current->style(), element->src());
+        } else if (current->isElement() && current->asElement()->isHTMLElement() && current->asElement()->asHTMLElement()->isHTMLBRElement()) {
+            currentFrame = new FrameLineBreak(current, current->style());
         } else {
             currentFrame = new FrameBlockBox(current, current->style());
         }
@@ -48,6 +51,8 @@ void buildTree(Node* current, Frame* parent)
         } else if (current->isElement() && current->asElement()->isHTMLElement() && current->asElement()->asHTMLElement()->isHTMLImageElement()) {
             auto element = current->asElement()->asHTMLElement()->asHTMLImageElement();
             currentFrame = new FrameReplacedImage(current, current->style(), element->src());
+        } else if (current->isElement() && current->asElement()->isHTMLElement() && current->asElement()->asHTMLElement()->isHTMLBRElement()) {
+            currentFrame = new FrameLineBreak(current, current->style());
         } else {
             currentFrame = new FrameInline(current, current->style());
         }

@@ -19,6 +19,7 @@
 #include "dom/HTMLBodyElement.h"
 #include "dom/HTMLDivElement.h"
 #include "dom/HTMLImageElement.h"
+#include "dom/HTMLBRElement.h"
 #include "dom/HTMLCollection.h"
 #include "dom/HTMLUnknownElement.h"
 #include "dom/DOMTokenList.h"

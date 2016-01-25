@@ -978,6 +978,9 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         THROW_ILLEGAL_INVOCATION();
     } , true, true, false);
 
+    DEFINE_FUNCTION(HTMLBRElement, HTMLElementFunction->protoType());
+    fetchData(this)->m_htmlBrElement = HTMLBRElementFunction;
+
     DEFINE_FUNCTION(HTMLCollection, fetchData(this)->m_instance->globalObject()->objectPrototype());
     fetchData(this)->m_htmlCollection = HTMLCollectionFunction;
 

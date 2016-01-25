@@ -25,6 +25,7 @@ public:
     String* m_bodyLocalName;
     String* m_divLocalName;
     String* m_imageLocalName;
+    String* m_brLocalName;
 
     // Attribute Names
     String* m_id;

@@ -126,6 +126,8 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                 newNode = new HTMLDivElement(document);
             } else if (strcmp(name, "img") == 0) {
                 newNode = new HTMLImageElement(document);
+            } else if (strcmp(name, "br") == 0) {
+                newNode = new HTMLBRElement(document);
             } else {
                 puts(name);
                 STARFISH_RELEASE_ASSERT_NOT_REACHED();

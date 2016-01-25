@@ -46,7 +46,7 @@ void FrameBlockBox::layoutBlock(LayoutContext& ctx)
 
 bool isInlineBox(Frame* f)
 {
-    return f->isFrameText() || f->isFrameReplaced() || f->isFrameBlockBox();
+    return f->isFrameText() || f->isFrameReplaced() || f->isFrameBlockBox() || f->isFrameLineBreak();
 }
 
 // NOTE this function collect only normal-flow child!
@@ -206,6 +206,12 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
                 nowLineWidth = 0;
                 goto insertBlockBox;
             }
+        } else if (f->isFrameLineBreak()) {
+            m_lineBoxes.push_back(LineBox());
+            nowLine++;
+            nowLineWidth = 0;
+        } else {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
@@ -344,6 +350,10 @@ void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)
                 if (f->style()->width().isFixed()) {
                     ctx.setResult(f->style()->width().fixed());
                 }
+            } else if (f->isFrameLineBreak()) {
+                // linebreaks
+                ctx.setResult(currentLineWidth);
+                currentLineWidth = 0;
             } else {
                 STARFISH_ASSERT(f->isFrameReplaced());
                 float w = f->asFrameReplaced()->intrinsicSize().width();

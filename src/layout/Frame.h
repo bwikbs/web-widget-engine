@@ -136,6 +136,11 @@ public:
         return false;
     }
 
+    virtual bool isFrameLineBreak()
+    {
+        return false;
+    }
+
     virtual bool isFrameReplaced()
     {
         return false;

@@ -12,7 +12,8 @@ namespace StarFish {
         F(Style) \
         F(Body) \
         F(Div) \
-        F(Image)
+        F(Image) \
+        F(BR)
 
 #define FORWRAD_DECLARE_NAME(kind) class HTML##kind##Element;
 

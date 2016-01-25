@@ -83,6 +83,7 @@ StaticStrings::StaticStrings()
     m_bodyLocalName = String::createASCIIString("body");
     m_divLocalName = String::createASCIIString("div");
     m_imageLocalName = String::createASCIIString("img");
+    m_brLocalName = String::createASCIIString("br");
 
     m_id = String::createASCIIString("id");
     m_class = String::createASCIIString("class");
