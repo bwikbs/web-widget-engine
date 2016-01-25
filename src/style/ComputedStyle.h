@@ -202,6 +202,15 @@ public:
         return m_background;
     }
 
+    bool hasBorderColor()
+    {
+        if (m_surround == nullptr) {
+            return false;
+        } else {
+            return m_surround->border.hasBorderColor();
+        }
+    }
+
     Color borderTopColor()
     {
         if (m_surround == nullptr) {
@@ -396,7 +405,7 @@ public:
     StyleSurroundData* surround() {
         if (m_surround == nullptr) {
             m_surround = new StyleSurroundData();
-            // FIXME: Default border color should be setted the vaule of element's color
+            // FIXME: need to cleanup
             BorderValue();
         }
         return m_surround;

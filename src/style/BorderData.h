@@ -12,6 +12,11 @@ public:
     {
     }
 
+    bool hasBorderColor()
+    {
+        return m_top.hasBorderColor() || m_right.hasBorderColor() || m_bottom.hasBorderColor() || m_left.hasBorderColor();
+    }
+
     BorderValue& top()
     {
         return m_top;

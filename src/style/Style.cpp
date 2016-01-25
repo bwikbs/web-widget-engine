@@ -825,6 +825,15 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::StringValueKind);
                     style->m_inheritedStyles.m_color = parseColor(cssValues[k].stringValue());
                 }
+
+                // If an element's border color is not specified with a border property,
+                // user agents must use the value of the element's 'color' property as the computed value for the border color.
+                if (!style->hasBorderColor()) {
+                    style->setBorderTopColor(style->m_inheritedStyles.m_color);
+                    style->setBorderRightColor(style->m_inheritedStyles.m_color);
+                    style->setBorderBottomColor(style->m_inheritedStyles.m_color);
+                    style->setBorderLeftColor(style->m_inheritedStyles.m_color);
+                }
                 break;
             case CSSStyleValuePair::KeyKind::FontSize:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {

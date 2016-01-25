@@ -11,6 +11,7 @@ public:
         : m_style(BorderStyleValue::BNone)
         , m_width(Length(Length::Fixed, 3))
         , m_color(Color(0, 0, 0, 255))
+        , m_hasBorderColor(false)
     {
     }
 
@@ -42,12 +43,19 @@ public:
     void setColor(Color color)
     {
         m_color = color;
+        m_hasBorderColor = true;
+    }
+
+    bool hasBorderColor()
+    {
+        return m_hasBorderColor;
     }
 
 protected:
     BorderStyleValue m_style;
     Length m_width;
     Color m_color;
+    bool m_hasBorderColor;
 };
 
 } /* namespace StarFish */
