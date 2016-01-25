@@ -249,23 +249,31 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         return escargot::ESValue((escargot::ESObject *)nd);
     }, NULL, false, false, false);
 
-    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("nodeValue"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+    auto nodeValueGetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         String* s = ((Node *)originalObj)->nodeValue();
         if (s == nullptr)
             return escargot::ESValue(escargot::ESValue::ESNull);
         return toJSString(s);
-    }, NULL, false, false, false);
+    };
+    auto nodeValueSetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        ((Node*)originalObj)->setNodeValue(toBrowserString(v));
+    };
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("nodeValue"), nodeValueGetter, nodeValueSetter, false, false, false);
 
-    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("textContent"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+    auto textContentGetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         String* s = ((Node *)originalObj)->textContent();
         if (s == nullptr)
             return escargot::ESValue(escargot::ESValue::ESNull);
         return toJSString(s);
-    }, NULL, false, false, false);
+    };
+    auto textContentSetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
+        ((Node *)originalObj)->setTextContent(toBrowserString(v));
+    };
+    NodeFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("textContent"), textContentGetter, textContentSetter, false, false, false);
 
     NodeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("cloneNode"), false, false, false,
         escargot::ESFunctionObject::create(nullptr, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
