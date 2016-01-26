@@ -11,7 +11,7 @@
 				</node>
 				<node nodeType="1" localName="style" type="text/css">
 					<style selectorText="body" text-align="center"/>
-					<style selectorText="#topSpacer" height="100px" width="30px"/>
+					<style selectorText="#topSpacer" height="40px" width="30px"/>
 					<style selectorText="#time" font-size="28px"/>
 					<style selectorText="#place" font-size="28px"/>
 					<style selectorText="#spot" width="25px"/>

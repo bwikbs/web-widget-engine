@@ -39,7 +39,7 @@ public:
     {
         // TODO A computed value of 'auto' for 'margin-left' or 'margin-right' becomes a used value of '0'.
         Size s = intrinsicSize();
-        if (s.width() == 0 || s.height() == 0) {
+        if ((s.width() == 0 || s.height() == 0) && (style()->width().isAuto() || style()->height().isAuto())) {
             setContentWidth(0);
             setContentHeight(0);
             return;
@@ -64,7 +64,16 @@ public:
                 setContentHeight(s.height());
             }
         } else {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+            STARFISH_ASSERT(style()->width().isSpecified() && style()->height().isSpecified());
+            setContentWidth(style()->width().specifiedValue(ctx.parentContentWidth(this)));
+            if (style()->height().isFixed()) {
+                setContentHeight(style()->height().fixed());
+            } else {
+                if (ctx.parentHasFixedHeight(this))
+                    setContentHeight(style()->height().percent() * ctx.parentFixedHeight(this));
+                else
+                    setContentHeight(s.height());
+            }
         }
     }
 

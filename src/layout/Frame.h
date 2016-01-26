@@ -45,10 +45,16 @@ public:
         m_lastLineBox = nullptr;
     }
 
+    ~LayoutContext()
+    {
+        STARFISH_ASSERT(m_absolutePositionedFrames.size() == 0);
+    }
+
     float parentContentWidth(Frame* currentFrame);
     bool parentHasFixedHeight(Frame* currentFrame);
     float parentFixedHeight(Frame* currentFrame);
     Frame* blockContainer(Frame* currentFrame);
+    Frame* containingBlock(Frame* currentFrame);
 
     void setLastLineBox(LineBox* l)
     {
@@ -59,8 +65,31 @@ public:
     {
         return m_lastLineBox;
     }
+
+    void registerAbsolutePositionedFrames(Frame* frm)
+    {
+        Frame* cb = containingBlock(frm);
+        m_absolutePositionedFrames.insert(std::make_pair(cb, std::vector<Frame*>()));
+        std::vector<Frame*>& vec = m_absolutePositionedFrames[cb];
+        vec.push_back(frm);
+    }
+
+    template <typename Fn>
+    void layoutRegisteredAbsolutePositionedFrames(Frame* containgBlock, Fn f)
+    {
+        auto iter = m_absolutePositionedFrames.find(containgBlock);
+        if (iter == m_absolutePositionedFrames.end()) {
+            return;
+        } else {
+            f(iter->second);
+            m_absolutePositionedFrames.erase(iter);
+        }
+    }
+
 private:
     LineBox* m_lastLineBox;
+    // NOTE. we dont need gc_allocator here. because, FrameTree already has referenece for Frames
+    std::map<Frame*, std::vector<Frame*>> m_absolutePositionedFrames;
 };
 
 class ComputePreferredWidthContext
@@ -147,6 +176,11 @@ public:
     }
 
     virtual bool isFrameBlockBox()
+    {
+        return false;
+    }
+
+    virtual bool isFrameDocument()
     {
         return false;
     }

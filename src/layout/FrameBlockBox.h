@@ -171,15 +171,7 @@ public:
         return "FrameBlockBox";
     }
 
-    virtual void layout(LayoutContext& ctx)
-    {
-        if (hasBlockFlow()) {
-            layoutBlock(ctx);
-        } else {
-            layoutInline(ctx);
-        }
-    }
-
+    virtual void layout(LayoutContext& ctx);
     virtual void computePreferredWidth(ComputePreferredWidthContext& ctx);
 
     virtual void dump(int depth);
@@ -191,8 +183,8 @@ public:
         return !m_firstChild || m_firstChild->isFrameBlockBox();
     }
 protected:
-    void layoutBlock(LayoutContext& ctx);
-    void layoutInline(LayoutContext& ctx);
+    float layoutBlock(LayoutContext& ctx);
+    float layoutInline(LayoutContext& ctx);
 
     std::vector<LineBox, gc_allocator<LineBox>> m_lineBoxes;
 

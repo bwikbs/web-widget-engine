@@ -78,14 +78,18 @@ void buildTree(Node* current, Frame* parent)
 
                     if (last->isNormalFlow()) {
                         if (last->node()) {
-                            last = new FrameBlockBox(nullptr, parent->style());
+                            ComputedStyle* newStyle = new ComputedStyle(parent->style());
+                            newStyle->setDisplay(DisplayValue::BlockDisplayValue);
+                            last = new FrameBlockBox(nullptr, newStyle);
                             parent->appendChild(last);
                         }
                     } else {
                         if (last->previous() && last->previous()->isFrameBlockBox() && !last->previous()->asFrameBlockBox()->hasBlockFlow()) {
                             last = last->previous();
                         } else {
-                            last = new FrameBlockBox(nullptr, parent->style());
+                            ComputedStyle* newStyle = new ComputedStyle(parent->style());
+                            newStyle->setDisplay(DisplayValue::BlockDisplayValue);
+                            last = new FrameBlockBox(nullptr, newStyle);
                             parent->appendChild(last);
                         }
                     }
@@ -102,7 +106,9 @@ void buildTree(Node* current, Frame* parent)
                         parent->removeChild(parent->firstChild());
                     }
 
-                    FrameBlockBox* blockBox = new FrameBlockBox(nullptr, parent->style());
+                    ComputedStyle* newStyle = new ComputedStyle(parent->style());
+                    newStyle->setDisplay(DisplayValue::BlockDisplayValue);
+                    FrameBlockBox* blockBox = new FrameBlockBox(nullptr, newStyle);
                     for(unsigned i = 0; i < backup.size(); i ++) {
                         blockBox->appendChild(backup[i]);
                     }

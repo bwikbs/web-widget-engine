@@ -18,6 +18,11 @@ public:
         return "FrameDocument";
     }
 
+    virtual bool isFrameDocument()
+    {
+        return true;
+    }
+
     virtual void layout(LayoutContext& ctx);
     virtual void paint(Canvas* canvas, PaintingStage stage)
     {

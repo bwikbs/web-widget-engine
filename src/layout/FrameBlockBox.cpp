@@ -4,31 +4,201 @@
 
 namespace StarFish {
 
-void FrameBlockBox::layoutBlock(LayoutContext& ctx)
+void FrameBlockBox::layout(LayoutContext& ctx)
 {
-    float parentContentWidth = ctx.parentContentWidth(this);
-    // TODO Determine horizontal margins of this object.
+    if (isNormalFlow()) {
+        float parentContentWidth = ctx.parentContentWidth(this);
+        // TODO Determine horizontal margins of this object.
 
-    // https://www.w3.org/TR/CSS2/visudet.html#the-width-property
-    if (m_style->width().isAuto()) {
-        if (m_flags.m_shouldComputePreferredWidth) {
-            ComputePreferredWidthContext p(ctx, parentContentWidth);
-            computePreferredWidth(p);
-            setContentWidth(p.result());
-        } else {
-            setContentWidth(parentContentWidth);
+        // https://www.w3.org/TR/CSS2/visudet.html#the-width-property
+        if (m_style->width().isAuto()) {
+            if (m_flags.m_shouldComputePreferredWidth) {
+                ComputePreferredWidthContext p(ctx, parentContentWidth);
+                computePreferredWidth(p);
+                setContentWidth(p.result());
+            } else {
+                setContentWidth(parentContentWidth);
+            }
+        } else if (m_style->width().isFixed()) {
+            setContentWidth(m_style->width().fixed());
+        } else if (m_style->width().isPercent()) {
+            setContentWidth(parentContentWidth * m_style->width().percent());
         }
-    } else if (m_style->width().isFixed()) {
-        setContentWidth(m_style->width().fixed());
-    } else if (m_style->width().isPercent()) {
-        setContentWidth(parentContentWidth * m_style->width().percent());
+    } else {
+        STARFISH_ASSERT(node() != nullptr);
+        FrameBox* cb = ctx.containingBlock(this)->asFrameBox();
+        FrameBox* parent = m_parent->asFrameBox();
+        auto absLoc = parent->absolutePoint(cb);
+        float absX = absLoc.x();
+        float absY = absLoc.y();
+        auto setAbsX = [&](float x) {
+            setX(absX + x);
+        };
+
+        auto setAbsY = [&](float y) {
+            setY(absY + y);
+        };
+
+        auto getPreferredWidth = [&](float parentWidth) -> float {
+            STARFISH_ASSERT(style()->width().isAuto());
+            ComputePreferredWidthContext p(ctx, parentWidth);
+            computePreferredWidth(p);
+            return p.result();
+        };
+
+        // TODO Determine horizontal margins of this object.
+
+        // 10.3.7 Absolutely positioned, non-replaced elements
+        // The constraint that determines the used values for these elements is:
+        // 'left' + 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' + 'right' = width of containing block
+
+        // Then, if the 'direction' property of the element establishing the static-position containing block is 'ltr' set 'left' to the static position and apply rule number three below;
+        // otherwise, set 'right' to the static position and apply rule number one below.
+
+        Length marginLeft = style()->marginLeft();
+        Length marginRight = style()->marginRight();
+        Length left = style()->left();
+        Length right = style()->right();
+        Length width = style()->width();
+
+        float parentWidth = cb->width() + cb->paddingWidth();
+
+        if (left.isAuto() && width.isAuto() && right.isAuto()) {
+            // If all three of 'left', 'width', and 'right' are 'auto':
+
+            // First set any 'auto' values for 'margin-left' and 'margin-right' to 0.
+            if (marginLeft.isAuto()) {
+                marginLeft = Length(Length::Fixed, 0);
+            }
+
+            if (marginRight.isAuto()) {
+                marginRight = Length(Length::Fixed, 0);
+            }
+        } else if (!left.isAuto() && !width.isAuto() && !right.isAuto()) {
+            // If none of the three is 'auto':
+
+            // If both 'margin-left' and 'margin-right' are 'auto',
+            if (marginLeft.isAuto() && marginRight.isAuto()) {
+                // solve the equation under the extra constraint that the two margins get equal values,
+                // unless this would make them negative, in which case when direction of the containing block is 'ltr' ('rtl'),
+                // set 'margin-left' ('margin-right') to zero and solve for 'margin-right' ('margin-left').
+                // TODO direction == rtl
+                if (style()->direction() == DirectionValue::LtrDirectionValue) {
+                    float computedLeft = left.specifiedValue(parentWidth);
+                    setAbsX(computedLeft);
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+
+            } else if (style()->direction() == DirectionValue::LtrDirectionValue) {
+                // If one of 'margin-left' or 'margin-right' is 'auto', solve the equation for that value.
+                // If the values are over-constrained, ignore the value for 'left'
+                // (in case the 'direction' property of the containing block is 'rtl') or 'right' (in case 'direction' is 'ltr') and solve for that value.
+                if (!marginLeft.isAuto()) {
+                    if (style()->direction() == DirectionValue::LtrDirectionValue) {
+                        float computedLeft = left.specifiedValue(parentWidth);
+                        computedLeft += marginLeft.specifiedValue(parentWidth);
+                        setAbsX(computedLeft);
+                    }
+                }
+            } else {
+                STARFISH_ASSERT(style()->direction() == DirectionValue::RtlDirectionValue);
+                STARFISH_RELEASE_ASSERT_NOT_REACHED();
+            }
+        } else {
+            // Otherwise, set 'auto' values for 'margin-left' and 'margin-right' to 0, and pick the one of the following six rules that applies.
+            marginLeft = Length(Length::Fixed, 0);
+            marginRight = Length(Length::Fixed, 0);
+
+            if (left.isAuto() && width.isAuto() && !right.isAuto()) {
+                // 'left' and 'width' are 'auto' and 'right' is not 'auto', then the width is shrink-to-fit. Then solve for 'left'
+                float w = getPreferredWidth(parentWidth);
+                width = Length(Length::Fixed, w);
+                setAbsX(parentWidth - right.specifiedValue(parentWidth) - w - paddingLeft() - borderLeft());
+            } else if(left.isAuto() && right.isAuto() && !width.isAuto()) {
+                // 'left' and 'right' are 'auto' and 'width' is not 'auto',
+                // then if the 'direction' property of the element establishing the static-position containing block is 'ltr' set 'left' to the static position,
+                // otherwise set 'right' to the static position. Then solve for 'left' (if 'direction is 'rtl') or 'right' (if 'direction' is 'ltr').
+            } else if(width.isAuto() && right.isAuto() && !left.isAuto()) {
+                // 'width' and 'right' are 'auto' and 'left' is not 'auto', then the width is shrink-to-fit . Then solve for 'right'
+                float w = getPreferredWidth(parentWidth);
+                width = Length(Length::Fixed, w);
+                setAbsX(left.specifiedValue(parentWidth));
+            } else if(left.isAuto() && !width.isAuto() && !right.isAuto()) {
+                // 'left' is 'auto', 'width' and 'right' are not 'auto', then solve for 'left'
+                float w = width.specifiedValue(parentWidth);
+                setAbsX(parentWidth - right.specifiedValue(parentWidth) - w - paddingLeft() - borderLeft());
+            } else if(width.isAuto() && !left.isAuto() && !right.isAuto()) {
+                // 'width' is 'auto', 'left' and 'right' are not 'auto', then solve for 'width'
+                float l = left.specifiedValue(parentWidth);
+                float r = right.specifiedValue(parentWidth);
+                float w = l - r + parentWidth;
+                w = w - paddingWidth() - borderWidth();
+                width = Length(Length::Fixed, w);
+            } else {
+                // 'right' is 'auto', 'left' and 'width' are not 'auto', then solve for 'right'
+                STARFISH_ASSERT(right.isAuto() && !left.isAuto() && !width.isAuto());
+                setAbsX(left.specifiedValue(parentWidth));
+            }
+        }
+
+        if (width.isAuto()) {
+            if (m_flags.m_shouldComputePreferredWidth) {
+                ComputePreferredWidthContext p(ctx, parentWidth);
+                computePreferredWidth(p);
+                setContentWidth(p.result());
+            } else {
+                setContentWidth(parentWidth);
+            }
+        } else if (width.isFixed()) {
+            setContentWidth(width.fixed());
+        } else if (width.isPercent()) {
+            setContentWidth(parentWidth * width.percent());
+        }
     }
 
+    float contentHeight;
+    if (hasBlockFlow()) {
+        contentHeight = layoutBlock(ctx);
+    } else {
+        contentHeight = layoutInline(ctx);
+    }
+
+    // Now the intrinsic height of the object is known because the children are placed
+
+    // Determine the final height
+    if (isNormalFlow()) {
+        if (style()->height().isAuto()) {
+            setContentHeight(contentHeight);
+        } else if (style()->height().isFixed()) {
+            setContentHeight(style()->height().fixed());
+        } else {
+            if (ctx.parentHasFixedHeight(this)) {
+                setContentHeight(style()->height().percent() * ctx.parentFixedHeight(this));
+            } else {
+                setContentHeight(contentHeight);
+            }
+        }
+    } else {
+        if (style()->height().isAuto()) {
+            setContentHeight(contentHeight);
+        } else if (style()->height().isFixed()) {
+            setContentHeight(style()->height().fixed());
+        } else {
+            Frame* cb = ctx.containingBlock(this);
+            setContentHeight(style()->height().percent() * (cb->asFrameBox()->contentHeight() + cb->asFrameBox()->paddingHeight()));
+        }
+    }
+}
+
+float FrameBlockBox::layoutBlock(LayoutContext& ctx)
+{
     float normalFlowHeight = 0;
     Frame* child = firstChild();
     while (child) {
         // Lay out the child
-        child->layout(ctx);
+        if (child->isNormalFlow())
+            child->layout(ctx);
 
         // TODO Place the child.
         child->asFrameBox()->setX(0);
@@ -36,13 +206,21 @@ void FrameBlockBox::layoutBlock(LayoutContext& ctx)
 
         if (child->isNormalFlow())
             normalFlowHeight += child->asFrameBox()->height();
+        else
+            ctx.registerAbsolutePositionedFrames(child);
 
         child = child->next();
     }
 
-    // Now the intrinsic height of the object is known because the children are placed
-    // TODO Determine the final height
-    setContentHeight(normalFlowHeight);
+    // layout absolute positioned blocks
+    ctx.layoutRegisteredAbsolutePositionedFrames(this, [&](const std::vector<Frame*>& frames) {
+        for (size_t i = 0; i < frames.size(); i ++) {
+            Frame* f = frames[i];
+            f->layout(ctx);
+        }
+    });
+
+    return normalFlowHeight;
 }
 
 bool isInlineBox(Frame* f)
@@ -129,27 +307,9 @@ public:
 };
 
 
-void FrameBlockBox::layoutInline(LayoutContext& ctx)
+float FrameBlockBox::layoutInline(LayoutContext& ctx)
 {
-    float inlineContentWidth;
-    float parentContentWidth = ctx.parentContentWidth(this);
-
-    if (style()->width().isAuto()) {
-        if (m_flags.m_shouldComputePreferredWidth) {
-            ComputePreferredWidthContext p(ctx, parentContentWidth);
-            computePreferredWidth(p);
-            setContentWidth(p.result());
-            inlineContentWidth = p.result();
-        } else {
-            inlineContentWidth = ctx.parentContentWidth(this);
-            setContentWidth(inlineContentWidth);
-        }
-    } else {
-        STARFISH_ASSERT(style()->width().isSpecified());
-        inlineContentWidth = style()->width().specifiedValue(parentContentWidth);
-        setContentWidth(inlineContentWidth);
-    }
-
+    float inlineContentWidth = contentWidth();
     LineFormattingContext lineFormattingContext(*this, ctx);
 
     // we dont need gc_allocator here. because frame-tree-item is referenced by its parent
@@ -316,19 +476,7 @@ void FrameBlockBox::layoutInline(LayoutContext& ctx)
         contentHeight += b.m_frameRect.height();
     }
 
-
-    // compute object height
-    if (style()->height().isAuto())
-        setContentHeight(contentHeight);
-    else if (style()->height().isFixed()) {
-        setContentHeight(style()->height().fixed());
-    } else {
-        if (ctx.parentHasFixedHeight(this)) {
-            setContentHeight(style()->height().percent() * ctx.parentFixedHeight(this));
-        } else {
-            setContentHeight(contentHeight);
-        }
-    }
+    return contentHeight;
 }
 
 void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)

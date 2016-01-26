@@ -8,10 +8,10 @@ void FrameDocument::layout(LayoutContext& ctx)
     int w = node()->asDocument()->window()->width();
     int h = node()->asDocument()->window()->height();
 
-    m_frameRect.setWidth(w);
-    m_frameRect.setHeight(h);
+    style()->setWidth(Length(Length::Fixed, w));
+    style()->setHeight(Length(Length::Fixed, h));
 
-    m_firstChild->layout(ctx);
+    FrameBlockBox::layout(ctx);
 }
 
 }

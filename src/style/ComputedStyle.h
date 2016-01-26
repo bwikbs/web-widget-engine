@@ -44,6 +44,11 @@ public:
         return m_display;
     }
 
+    void setDisplay(DisplayValue v)
+    {
+        m_display = v;
+    }
+
     PositionValue position()
     {
         return m_position;
@@ -54,9 +59,19 @@ public:
         return m_width;
     }
 
+    void setWidth(const Length& l)
+    {
+        m_width = l;
+    }
+
     Length height()
     {
         return m_height;
+    }
+
+    void setHeight(const Length& l)
+    {
+        m_height = l;
     }
 
     void setColor(Color r)

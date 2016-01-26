@@ -8,11 +8,28 @@ Frame* LayoutContext::blockContainer(Frame* currentFrame)
 {
     Frame* f = currentFrame->parent();
 
+    if (!f)
+        return currentFrame;
+
     while (true) {
         if (f->isFrameBlockBox() && f->node() != nullptr) {
             return f;
         }
         f = f->parent();
+    }
+}
+
+Frame* LayoutContext::containingBlock(Frame* currentFrame)
+{
+    // https://www.w3.org/TR/2011/REC-CSS2-20110607/visudet.html#containing-block-details
+    Frame* block = blockContainer(currentFrame);
+    if (currentFrame->style()->position() == AbsolutePositionValue) {
+        while (!block->isFrameDocument() && block->style()->position() != AbsolutePositionValue) {
+            block = blockContainer(block);
+        }
+        return block;
+    } else {
+        return block;
     }
 }
 
