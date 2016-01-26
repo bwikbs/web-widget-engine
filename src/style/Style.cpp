@@ -904,7 +904,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
 
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
+        } else if (VALUE_IS_INITIAL() || VALUE_IS_STRING("auto")) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
         } else {
             char* pEnd;
