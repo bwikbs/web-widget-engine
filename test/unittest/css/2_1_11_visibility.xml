@@ -39,7 +39,7 @@
 
 ]]></text>
 				</node>
-				<node nodeType="1" localName="div" class="visible" id="idText">
+				<node nodeType="1" localName="div" class="visible">
 					<node nodeType="3" localName="text">
 						<text><![CDATA[This is a visible heading]]></text>
 					</node>
@@ -64,15 +64,6 @@
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-						        function test() {
-												var a = document.getElementById("idText");
-												print(a.style.visibility);
-												a.style.visibility='hidden'
-												print(a.style.visibility);
-												print("<End>");
-						        }
-								test();
-
 ]]></text>
 				</node>
 			</node>
