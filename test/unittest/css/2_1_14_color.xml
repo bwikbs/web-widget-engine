@@ -7,68 +7,74 @@
 			<node nodeType="1" localName="head">
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-		]]></text>
+]]></text>
 				</node>
-				<node nodeType="1" localName="style" type="text/css">
-					<style selectorText="#idText" font-size="20px" color="fuchsia"/>
-					<style selectorText=".classText" font-size="12px"/>
-					<style selectorText="div" border-image-source="url(&quot;border.png&quot;)"/>
+				<node nodeType="1" localName="style">
+					<style selectorText="body" color="red"/>
+					<style selectorText="#hex" color="rgb(0, 255, 0)"/>
+					<style selectorText="#rgb" color="rgb(0, 0, 255)"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
-			#idText {
-				font-size: 20px;				
-				color: fuchsia;
-			}
-			.classText {
-				font-size: 12px;
-				text-align: 16px;
-			}
-			div {
-				border-image-source: url(border.png);
-			}
-		]]></text>
+body {
+    color: red;
+}
+
+#hex {
+    color: #00ff00;
+}
+
+#rgb {
+    color: rgb(0,0,255);
+}
+]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-	]]></text>
+]]></text>
 				</node>
 			</node>
 			<node nodeType="3" localName="text">
 				<text><![CDATA[
-	]]></text>
+]]></text>
 			</node>
 			<node nodeType="1" localName="body">
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-	test
-		]]></text>
+
+]]></text>
 				</node>
-				<node nodeType="1" localName="div" id="idText">
+				<node nodeType="1" localName="div" id="hex">
 					<node nodeType="3" localName="text">
-						<text><![CDATA[
-			text2
-		]]></text>
-					</node>
-				</node>
-				<node nodeType="3" localName="text">
-					<text><![CDATA[
-	
-	]]></text>
-				</node>
-				<node nodeType="1" localName="script" type="text/javascript">
-					<node nodeType="3" localName="text">
-						<text><![CDATA[
-		function test() {
-			return 1<2;
-		}
-	]]></text>
+						<text><![CDATA[This is heading 1]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
 
-			]]></text>
+]]></text>
+				</node>
+				<node nodeType="1" localName="div">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[This is an ordinary paragraph. Notice that this text is red. The default text-color for a page is defined in the body selector.]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" id="rgb">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[This is a paragraph with id="rgb". This text is blue.]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+
+
+]]></text>
 				</node>
 			</node>
 		</node>
