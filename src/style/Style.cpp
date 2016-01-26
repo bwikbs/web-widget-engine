@@ -1137,6 +1137,23 @@ void CSSStyleDeclaration::setMargin(const char* value)
             setMarginLeft(tokens[3]->utf8Data());
 }
 
+String* CSSStyleDeclaration::overflow()
+{
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
+        CSSStyleValuePair v = *itr;
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::OverflowX) {
+            switch(v.overflowValueX()) {
+                case OverflowValue::VisibleOverflow:
+                    return String::fromUTF8("visible");
+                case OverflowValue::HiddenOverflow:
+                return String::fromUTF8("hidden");
+                default: break;
+            }
+        }
+    }
+    return String::emptyString;
+}
+
 String* CSSStyleDeclaration::position()
 {
     for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
