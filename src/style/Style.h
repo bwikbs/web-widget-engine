@@ -610,6 +610,7 @@ public:
     void setMarginRight(const char* value);
     String* margin();
     void setMargin(const char* value);
+    String* width();
 
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;

@@ -1106,6 +1106,23 @@ void CSSStyleDeclaration::setMargin(const char* value)
             setMarginLeft(tokens[3]->utf8Data());
 }
 
+String* CSSStyleDeclaration::width()
+{
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
+        CSSStyleValuePair v = *itr;
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::Width) {
+            switch(v.valueKind()) {
+                case CSSStyleValuePair::ValueKind::Length:
+                    return v.lengthValue().toString();
+                case CSSStyleValuePair::ValueKind::Percentage:
+                    return v.lengthValue().toString();
+                default: break;
+            }
+        }
+    }
+    return String::emptyString;
+}
+
 ComputedStyle* StyleResolver::resolveDocumentStyle(StarFish* sf)
 {
     ComputedStyle* ret = new ComputedStyle();
