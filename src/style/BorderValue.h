@@ -22,6 +22,8 @@ public:
 
     Length width()
     {
+        if (style() == BorderStyleValue::BNone)
+            return Length(Length::Fixed, 0);
         return m_width;
     }
 
