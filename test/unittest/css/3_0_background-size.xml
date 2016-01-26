@@ -7,93 +7,37 @@
             <node nodeType="1" localName="head">
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
-        ]]></text>
+]]></text>
                 </node>
-                <node nodeType="1" localName="style" type="text/css">
-                    <style selectorText="#idText" font-size="20px" color="red" background-size="100px 50%"/>
-                    <style selectorText=".classText" font-size="12px" background-size="150px"/>
-                    <style selectorText="div" display="block" background-size="contain"/>
+                <node nodeType="1" localName="style">
+                    <style selectorText="body" background-image="url(&quot;paper.gif&quot;)" background-size="80px 160%"/>
                     <node nodeType="3" localName="text">
-                        <text><![CDATA[
-            #idText {
-                font-size: 20px;                
-                color: red;
-                                background-size: 100px 50%;
-            }
-            .classText {
-                font-size: 12px;
-                text-align: 16px;
-                                background-size: 150px;
-            }
-            div {
-                display: block;
-                                background-size: cover
-            }
-        ]]></text>
+                        <text><![CDATA[ 
+body {
+    background-image: url("paper.gif");
+    background-size: 80px 160%;
+    background-repeat-x: no-repeat;
+}
+]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
-    ]]></text>
+]]></text>
                 </node>
             </node>
             <node nodeType="3" localName="text">
                 <text><![CDATA[
-    ]]></text>
+]]></text>
             </node>
             <node nodeType="1" localName="body">
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
-    test
-        ]]></text>
-                </node>
-                <node nodeType="1" localName="div" id="idText">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-            text2
-        ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
-        ]]></text>
-                </node>
-                <node nodeType="1" localName="div" class="classText">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-            tttttt
-        ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
-                ]]></text>
-                </node>
-                <node nodeType="1" localName="div">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-abcde
-                ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
-    
-    ]]></text>
-                </node>
-                <node nodeType="1" localName="script" type="text/javascript">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-        function test() {
-            return 1<2;
-        }
-    ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
 
-            ]]></text>
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+
+
+]]></text>
                 </node>
             </node>
         </node>

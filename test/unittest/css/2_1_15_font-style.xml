@@ -10,11 +10,14 @@
 ]]></text>
                 </node>
                 <node nodeType="1" localName="style">
-                    <style selectorText=".normal" font-style="normal"/>
                     <style selectorText=".italic" font-style="italic"/>
                     <style selectorText=".oblique" font-style="oblique"/>
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+<style>
 .normal {
     font-style: normal;
 }
@@ -46,7 +49,7 @@
                 </node>
                 <node nodeType="1" localName="div" class="normal">
                     <node nodeType="3" localName="text">
-                        <text><![CDATA[This is a paragraph in normal style.]]></text>
+                        <text><![CDATA[This is a paragraph, normal.]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
@@ -55,7 +58,7 @@
                 </node>
                 <node nodeType="1" localName="div" class="italic">
                     <node nodeType="3" localName="text">
-                        <text><![CDATA[This is a paragraph in italic style.]]></text>
+                        <text><![CDATA[This is a paragraph, italic.]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
@@ -64,7 +67,7 @@
                 </node>
                 <node nodeType="1" localName="div" class="oblique">
                     <node nodeType="3" localName="text">
-                        <text><![CDATA[This is a paragraph in oblique style.]]></text>
+                        <text><![CDATA[This is a paragraph, oblique.]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
