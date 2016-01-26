@@ -408,15 +408,15 @@ public:
     void setBorderImageRepeatX(BorderImageRepeatValue value) { surround()->border.image().setRepeatX(value); }
     void setBorderImageRepeatY(BorderImageRepeatValue value) { surround()->border.image().setRepeatY(value); }
 
-    void borderImageSliceInherit(ComputedStyle* parent)
+    void setBorderImageSliceFromOther(ComputedStyle* other)
     {
-        setBorderImageSlices(parent->borderImageSlices());
-        setBorderImageSliceFill(parent->borderImageSliceFill());
+        setBorderImageSlices(other->borderImageSlices());
+        setBorderImageSliceFill(other->borderImageSliceFill());
     }
-    void borderImageRepeatInherit(ComputedStyle* parent)
+    void setBorderImageRepeatFromOther(ComputedStyle* other)
     {
-        setBorderImageRepeatX(parent->borderImageRepeatX());
-        setBorderImageRepeatY(parent->borderImageRepeatY());
+        setBorderImageRepeatX(other->borderImageRepeatX());
+        setBorderImageRepeatY(other->borderImageRepeatY());
     }
 
     StyleSurroundData* surround() {
@@ -638,6 +638,14 @@ public:
     {
         return m_inheritedStyles.m_letterSpacing;
     }
+
+    static Length initialPadding() { return Length(Length::Fixed, 0); } 
+    static Length initialMargin() { return Length(Length::Fixed, 0); }
+    static String* initialBgImage() { return String::emptyString; }
+    static String* initialBorderImageSource() { return String::emptyString; }
+    static LengthBox initialBorderImageSlices() { return LengthBox(Length(Length::Percent, 1.f), Length(Length::Percent, 1.f), Length(Length::Percent, 1.f), Length(Length::Percent, 1.f)); }
+    static bool initialBorderImageSliceFill() { return false; }
+    static BorderImageRepeatValue initialBorderImageRepeat() { return BorderImageRepeatValue::StretchValue; }
 
 protected:
     void initNonInheritedStyles()
