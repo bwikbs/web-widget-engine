@@ -1761,6 +1761,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->setBorderImageSource(parentStyle->borderImageSource());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
                     style->setBorderImageSource(String::emptyString);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::None) {
+                    style->setBorderImageSource(String::emptyString);
                 } else {
                     //STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
                     style->setBorderImageSource(cssValues[k].stringValue());
