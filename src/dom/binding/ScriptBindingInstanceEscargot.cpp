@@ -1463,98 +1463,37 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     FOR_EACH_STYLE_ATTRIBUTE(DEFINE_ACCESSOR_PROPERTY)
 #undef FOR_EACH_STYLE_ATTRIBUTE
 
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("direction"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        String* d = ((CSSStyleDeclaration*)originalObj)->direction();
-        STARFISH_ASSERT(d);
-        return toJSString(d);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("direction", v.asESString()->utf8Data()));
-        }
+
+    /* Use css attribute binding template to define css attributes */
+#define FOR_EACH_STYLE_ATTRIBUTE(F)\
+    F(direction, direction) \
+    F(height, height) \
+    F(overflow, overflow-x) \
+    F(position, position) \
+    F(textAlign, text-align) \
+    F(textDecoration, text-decoration) \
+    F(visibility, visibility) \
+    F(width, width)
+
+#define DEFINE_CSS_PROPERTY(jsprop, cssprop) \
+    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create(#jsprop), \
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue { \
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject); \
+        String* d = ((CSSStyleDeclaration*)originalObj)->jsprop(); \
+        STARFISH_ASSERT(d); \
+        return toJSString(d); \
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) { \
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject); \
+        if (v.isESString()) { \
+            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString(#cssprop, v.asESString()->utf8Data())); \
+        } \
     }, false, false, false);
 
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("height"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        String* d = ((CSSStyleDeclaration*)originalObj)->height();
-        STARFISH_ASSERT(d);
-        return toJSString(d);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("height", v.asESString()->utf8Data()));
-        }
-    }, false, false, false);
+    FOR_EACH_STYLE_ATTRIBUTE(DEFINE_CSS_PROPERTY)
+#undef FOR_EACH_STYLE_ATTRIBUTE
+#undef DEFINE_CSS_PROPERTY
 
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("overflow"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        String* d = ((CSSStyleDeclaration*)originalObj)->overflow();
-        STARFISH_ASSERT(d);
-        return toJSString(d);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("overflow-x", v.asESString()->utf8Data()));
-        }
-    }, false, false, false);
-
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("position"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        String* d = ((CSSStyleDeclaration*)originalObj)->position();
-        STARFISH_ASSERT(d);
-        return toJSString(d);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("position", v.asESString()->utf8Data()));
-        }
-    }, false, false, false);
-
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("textDecoration"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        String* d = ((CSSStyleDeclaration*)originalObj)->textDecoration();
-        STARFISH_ASSERT(d);
-        return toJSString(d);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("text-decoration", v.asESString()->utf8Data()));
-        }
-    }, false, false, false);
-
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("width"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        String* d = ((CSSStyleDeclaration*)originalObj)->width();
-        STARFISH_ASSERT(d);
-        return toJSString(d);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("width", v.asESString()->utf8Data()));
-        }
-    }, false, false, false);
-
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("visibility"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-
-        String* c = ((CSSStyleDeclaration*) originalObj)->visibility();
-        if (c != nullptr)
-            return escargot::ESString::create(c->utf8Data());
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("visibility", v.asESString()->utf8Data()));
-        }
-    }, false, false, false);
+    /* Define css attributes that cannot use the template above */
 
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("opacity"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
@@ -1571,20 +1510,6 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
                 ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("opacity", std::to_string(v.toNumber()).c_str()));
             else
                 ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("opacity", "1.0"));
-        }
-    }, false, false, false);
-
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("textAlign"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        String* c = ((CSSStyleDeclaration*) originalObj)->textAlign();
-        if (c != nullptr)
-            return escargot::ESString::create(c->utf8Data());
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("text-align", v.asESString()->utf8Data()));
         }
     }, false, false, false);
 
