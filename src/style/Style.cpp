@@ -904,7 +904,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
 
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
+        } else if (VALUE_IS_INITIAL() || VALUE_IS_STRING("auto")) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
         } else {
             char* pEnd;
@@ -1113,8 +1113,9 @@ String* CSSStyleDeclaration::width()
         if(v.keyKind() == CSSStyleValuePair::KeyKind::Width) {
             switch(v.valueKind()) {
                 case CSSStyleValuePair::ValueKind::Length:
+                    return v.lengthValue().toString();
                 case CSSStyleValuePair::ValueKind::Percentage:
-                    return v.lengthOrPercentageToString();
+                    return String::fromUTF8(std::to_string(v.percentageValue()).append("%").c_str());
                 default: break;
             }
         }
@@ -1943,6 +1944,12 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
             }
         }
     }
+
+    //inline style
+
+    auto inline_cssValues = element->inlineStyle()->m_cssValues;
+    if(inline_cssValues.size()>0)
+        apply(inline_cssValues, ret, parent);
 
     ret->loadResources(element->document()->window()->starFish());
     ret->arrangeStyleValues();
