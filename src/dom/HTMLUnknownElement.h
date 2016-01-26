@@ -14,6 +14,8 @@ public:
         m_localName = localName;
     }
 
+    /* 4.4 Interface Node */
+
     virtual String* localName()
     {
         return m_localName;

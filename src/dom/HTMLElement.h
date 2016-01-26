@@ -37,10 +37,14 @@ public:
         m_className = String::emptyString;
     }
 
+    /* 4.4 Interface Node */
+
     virtual String* nodeName()
     {
         return localName()->toUpper();
     }
+
+    /* Other methods (not in DOM API) */
 
     virtual bool isHTMLElement() const
     {

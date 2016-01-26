@@ -13,14 +13,18 @@ public:
         initScriptWrappable(this);
     }
 
-    virtual bool isHTMLScriptElement() const
-    {
-        return true;
-    }
+    /* 4.4 Interface Node */
 
     virtual String* localName()
     {
         return document()->window()->starFish()->staticStrings()->m_scriptLocalName;
+    }
+
+    /* Other methods (not in DOM API) */
+
+    virtual bool isHTMLScriptElement() const
+    {
+        return true;
     }
 
 protected:

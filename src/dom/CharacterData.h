@@ -16,41 +16,13 @@ public:
         m_data = data;
     }
 
-    virtual NodeType nodeType() = 0;
+    /* 4.4 Interface Node */
 
-    virtual Node* clone() = 0;
+    virtual NodeType nodeType() = 0;
 
     virtual Element* parentElement()
     {
         return nullptr;
-    }
-
-    virtual void paint(Canvas* canvas)
-    {
-    }
-
-    virtual Node* hitTest(float x, float y)
-    {
-        return NULL;
-    }
-
-    String* data()
-    {
-        return m_data;
-    }
-
-    /* 4.9. Interface CharacterData */
-
-    void setData(String* data)
-    {
-        STARFISH_ASSERT(data);
-        m_data = data;
-        setNeedsStyleRecalc();
-    }
-
-    size_t length()
-    {
-        return m_data->length();
     }
 
     virtual void setNodeValue(String* val)
@@ -66,6 +38,27 @@ public:
         setNodeValue(val);
     }
 
+    /* 4.9. Interface CharacterData */
+
+    String* data()
+    {
+        return m_data;
+    }
+
+    void setData(String* data)
+    {
+        STARFISH_ASSERT(data);
+        m_data = data;
+        setNeedsStyleRecalc();
+    }
+
+    size_t length()
+    {
+        return m_data->length();
+    }
+
+    /* Other methods (not in DOM API) */
+
     virtual bool isCharacterData() const
     {
         return true;
@@ -80,6 +73,17 @@ public:
     {
         STARFISH_ASSERT(isText());
         return (Text*)this;
+    }
+
+    virtual Node* clone() = 0;
+
+    virtual void paint(Canvas* canvas)
+    {
+    }
+
+    virtual Node* hitTest(float x, float y)
+    {
+        return NULL;
     }
 
     static std::string replaceAll(const std::string &str, const std::string &pattern, const std::string &replace)

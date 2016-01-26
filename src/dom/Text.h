@@ -34,11 +34,6 @@ public:
         return data();
     }
 
-    virtual Node* clone()
-    {
-        return new Text(document(), data());
-    }
-
     /* 4.10 Interface Text */
 
     //Text* splitText(unsigned long offset);
@@ -50,6 +45,11 @@ public:
     virtual bool isText() const
     {
         return true;
+    }
+
+    virtual Node* clone()
+    {
+        return new Text(document(), data());
     }
 
 protected:
