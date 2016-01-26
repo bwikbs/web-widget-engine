@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style> 
+#borderimg1 { 
+    border: 15px solid transparent;
+    padding: 15px;
+    border-image-source: url(test/unittest/css/border.png);
+    border-image-repeat: repeat;
+    border-image-slice: 30;
+}
+
+#borderimg2 { 
+    border: 15px solid transparent;
+    padding: 15px;
+    border-image-source: url(test/unittest/css/border.png);
+    border-image-repeat: round;
+    border-image-slice: 30;
+}
+
+#borderimg3 { 
+    border: 15px solid transparent;
+    padding: 15px;
+    border-image-source: url(test/unittest/css/border.png);
+    border-image-repeat: stretch;    
+    border-image-slice: 30;
+}
+</style>
+</head>
+<body>
+
+<div id="borderimg1">border-image-repeat: repeat;</div>
+<div id="borderimg2">border-image-repeat: round;</div>
+<div id="borderimg3">border-image-repeat: stretched;</div>
+
+</body>
+</html>

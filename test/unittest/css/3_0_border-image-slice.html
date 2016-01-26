@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#borderimg1 {
+    border: 10px solid transparent;
+    padding: 15px;
+    border-image-source: url(test/unittest/css/border.png);
+    border-image-slice: 50;
+}
+
+#borderimg2 {
+    border: 10px solid transparent;
+    padding: 15px;
+    border-image-source: url(test/unittest/css/border.png);
+    border-image-slice: 20%;
+}
+
+#borderimg3 {
+    border: 10px solid transparent;
+    padding: 15px;
+    border-image-source: url(test/unittest/css/border.png);
+    border-image-slice: 30%;
+}
+</style>
+</head>
+<body>
+
+<div id="borderimg1">border-image-slice: 50;</div>
+<div id="borderimg2">border-image-slice: 20%;</div>
+<div id="borderimg3">border-image-slice: 30%;</div>
+
+</body>
+</html>

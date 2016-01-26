@@ -10,11 +10,11 @@
 ]]></text>
 				</node>
 				<node nodeType="1" localName="style">
-					<style selectorText="#div1" margin-bottom="50px"/>
+					<style selectorText=".ex1" margin-bottom="2cm"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
-#div1 {
-    margin-bottom: 50px;
+.ex1 {
+    margin-bottom: 2cm;
 }
 ]]></text>
 					</node>
@@ -34,9 +34,18 @@
 
 ]]></text>
 				</node>
-				<node nodeType="1" localName="div" id="div1">
+				<node nodeType="1" localName="div">
 					<node nodeType="3" localName="text">
-						<text><![CDATA[DIV 1]]></text>
+						<text><![CDATA[A div with no margins specified.]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" class="ex1">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[A div with a 2cm bottom margin.]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">
@@ -45,7 +54,7 @@
 				</node>
 				<node nodeType="1" localName="div">
 					<node nodeType="3" localName="text">
-						<text><![CDATA[DIV 2]]></text>
+						<text><![CDATA[A div with no margins specified.]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">

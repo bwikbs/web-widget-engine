@@ -7,126 +7,76 @@
             <node nodeType="1" localName="head">
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
-        ]]></text>
+]]></text>
                 </node>
-                <node nodeType="1" localName="style" type="text/css">
-                    <style selectorText="#div1" color="red"/>
-                    <style selectorText="#div2" color="green" padding-right="10px"/>
-                    <style selectorText="#div3" color="blue" padding-right="20%"/>
-                    <style selectorText="#divParent" color="black" padding-right="10px"/>
-                    <style selectorText="#divChild1" color="fuchsia" padding-right="5px"/>
-                    <style selectorText="#divChild2" color="orange" padding-right="inherit"/>
-                    <style selectorText="div" width="200px" font-size="16px"/>
+                <node nodeType="1" localName="style">
+                    <style selectorText="#box1" background-color="maroon" color="white"/>
+                    <style selectorText="#box2" background-color="navy" color="white" padding-right="50px"/>
+                    <style selectorText="#box3" background-color="orange" padding-right="60%"/>
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            #div1 { color: red; }
-            #div2 { color: green; padding-right: 10px; }
-            #div3 { color: blue; padding-right: 20%; }
-            #divParent { color: black; padding-right: 10px; }
-            #divChild1 { color: fuchsia; padding-right: 5px; }
-            #divChild2 { color: orange; padding-right: inherit; }
-            div {
-                width: 200px;
-                font-size: 16px;
-            }
-        ]]></text>
+#box1 {
+    background-color: maroon;
+    color: white;
+}
+#box2 {
+    background-color: navy;
+    color: white;
+    padding-right: 50px;
+}
+
+#box3 {
+    background-color: orange;
+    padding-right: 60%;
+}
+]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
-    ]]></text>
+]]></text>
                 </node>
             </node>
             <node nodeType="3" localName="text">
                 <text><![CDATA[
-    ]]></text>
+]]></text>
             </node>
             <node nodeType="1" localName="body">
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
-        ]]></text>
+
+]]></text>
                 </node>
-                <node nodeType="1" localName="div" id="div1">
+                <node nodeType="1" localName="div" id="box1">
                     <node nodeType="3" localName="text">
-                        <text><![CDATA[
-            padding-right: default
-        ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
-        ]]></text>
-                </node>
-                <node nodeType="1" localName="div" id="div2">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-            padding-right: 10px
-        ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
-        ]]></text>
-                </node>
-                <node nodeType="1" localName="div" id="div3">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-            padding-right: 20%
-        ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
-        ]]></text>
-                </node>
-                <node nodeType="1" localName="div" id="divParent">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-            padding-right: 10px
-            ]]></text>
-                    </node>
-                    <node nodeType="1" localName="div" id="divChild1">
-                        <node nodeType="3" localName="text">
-                            <text><![CDATA[
-                padding-right: 5px
-            ]]></text>
-                        </node>
-                    </node>
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-            ]]></text>
-                    </node>
-                    <node nodeType="1" localName="div" id="divChild2">
-                        <node nodeType="3" localName="text">
-                            <text><![CDATA[
-                padding-right: inherit
-            ]]></text>
-                        </node>
-                    </node>
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-        ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
-    
-    
-    ]]></text>
-                </node>
-                <node nodeType="1" localName="script" type="text/javascript">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-        function test() {
-            return 1<2;
-        }
-    ]]></text>
+                        <text><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
 
-            
+]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="box2">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+
+]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="box3">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+
+
+
 ]]></text>
                 </node>
             </node>

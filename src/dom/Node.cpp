@@ -351,9 +351,9 @@ void Node::dumpStyle()
 
     // height
     if (m_style->height().isFixed()) {
-        printf("height: %f, ", m_style->height().fixed());
+        printf("height: %.2f, ", m_style->height().fixed());
     } else if (m_style->height().isPercent()) {
-        printf("height: %f, ", m_style->height().percent());
+        printf("height: %.2fp, ", m_style->height().percent());
     } else if (m_style->height().isAuto()) {
         printf("height: auto, ");
     }
@@ -528,13 +528,13 @@ void Node::dumpStyle()
 
     // border-image-slice
     LengthBox l = m_style->borderImageSlices();
-    if (l.top().isPercent()) printf("border-image-slice: (%.1fp, ", l.top().percent());
-    else printf("border-image-slice: (%.1f, ", l.top().fixed());
-    if (l.right().isPercent()) printf("%.1fp, ", l.right().percent());
+    if (l.top().isPercent()) printf("border-image-slice: (%.2fp, ", l.top().percent());
+    else printf("border-image-slice: (%.2f, ", l.top().fixed());
+    if (l.right().isPercent()) printf("%.2fp, ", l.right().percent());
     else printf("%.1f, ", l.right().fixed());
-    if (l.bottom().isPercent()) printf("%.1fp, ", l.bottom().percent());
+    if (l.bottom().isPercent()) printf("%.2fp, ", l.bottom().percent());
     else printf("%.1f, ", l.bottom().fixed());
-    if (l.left().isPercent()) printf("%.1fp, ", l.left().percent());
+    if (l.left().isPercent()) printf("%.2fp, ", l.left().percent());
     else printf("%.1f, ", l.left().fixed());
     printf("%d), ", m_style->borderImageSliceFill());
 
@@ -592,9 +592,9 @@ void Node::dumpStyle()
 
     // margin-bottom
     if (m_style->marginBottom().isFixed()) {
-        printf("margin-bottom: %f, ", m_style->marginBottom().fixed());
+        printf("margin-bottom: %.2f, ", m_style->marginBottom().fixed());
     } else if (m_style->marginBottom().isPercent()) {
-        printf("margin-bottom: %f, ", m_style->marginBottom().percent());
+        printf("margin-bottom: %.2fp, ", m_style->marginBottom().percent());
     } else if (m_style->marginBottom().isAuto()) {
         printf("margin-bottom: auto, ");
     }
@@ -628,9 +628,9 @@ void Node::dumpStyle()
 
     // padding-right
     if (m_style->paddingRight().isFixed()) {
-        printf("padding-right: %f, ", m_style->paddingRight().fixed());
+        printf("padding-right: %.2f, ", m_style->paddingRight().fixed());
     } else if (m_style->paddingRight().isPercent()) {
-        printf("padding-right: %f, ", m_style->paddingRight().percent());
+        printf("padding-right: %.2fp, ", m_style->paddingRight().percent());
     } else {
         printf("padding-right: not computed yet,");
     }

@@ -10,15 +10,11 @@
 ]]></text>
 				</node>
 				<node nodeType="1" localName="style">
-					<style selectorText="#imgAuto" height="auto"/>
-					<style selectorText="#imgNormal" height="60px"/>
+					<style selectorText="body" background-image="url(&quot;test/starfish.png&quot;)"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
-#imgAuto {
-    height: auto;
-}
-#imgNormal {
-    height: 60px;
+body  {
+    background-image: url("test/starfish.png");
 }
 ]]></text>
 					</node>
@@ -38,17 +34,13 @@
 
 ]]></text>
 				</node>
-				<node nodeType="1" localName="img" id="imgAuto" src="test/starfish.png">
+				<node nodeType="1" localName="div">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[Hello World!]]></text>
+					</node>
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-]]></text>
-				</node>
-				<node nodeType="1" localName="img" id="imgNormal" src="test/starfish.png">
-				</node>
-				<node nodeType="3" localName="text">
-					<text><![CDATA[
-
 
 
 ]]></text>
