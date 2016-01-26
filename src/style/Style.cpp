@@ -1483,7 +1483,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBorderTopColor(parentStyle->borderTopColor());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
-                    // TODO : should assign initial value
+                    // This is done after resolve style (arrangeStyleValues function in ComputedStyle Class)
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
                     style->setBorderTopColor(Color(0, 0, 0, 0));
                 } else {
@@ -1495,7 +1495,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBorderRightColor(parentStyle->borderRightColor());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
-                    // TODO : should assign initial value
+                    // This is done after resolve style (arrangeStyleValues function in ComputedStyle Class)
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
                     style->setBorderRightColor(Color(0, 0, 0, 0));
                 } else {
@@ -1507,7 +1507,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBorderBottomColor(parentStyle->borderBottomColor());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
-                    // TODO : should assign initial value
+                    // This is done after resolve style (arrangeStyleValues function in ComputedStyle Class)
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
                     style->setBorderBottomColor(Color(0, 0, 0, 0));
                 } else {
@@ -1519,7 +1519,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBorderLeftColor(parentStyle->borderLeftColor());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
-                    // TODO : should assign initial value
+                    // This is done after resolve style (arrangeStyleValues function in ComputedStyle Class)
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Transparent) {
                     style->setBorderLeftColor(Color(0, 0, 0, 0));
                 } else {
