@@ -7,22 +7,48 @@ namespace StarFish {
 void FrameBlockBox::layout(LayoutContext& ctx)
 {
     if (isNormalFlow()) {
-        float parentContentWidth = ctx.parentContentWidth(this);
-        // TODO Determine horizontal margins of this object.
-
         // https://www.w3.org/TR/CSS2/visudet.html#the-width-property
+        // Determine horizontal margins and width of this object.
+
+        float parentContentWidth = ctx.parentContentWidth(this);
+        computeBorderMarginPadding(parentContentWidth);
+
+        // 'margin-left' + 'border-left-width' + 'padding-left' + 'width' + 'padding-right' + 'border-right-width' + 'margin-right' = width of containing block
         if (m_style->width().isAuto()) {
             if (m_flags.m_shouldComputePreferredWidth) {
                 ComputePreferredWidthContext p(ctx, parentContentWidth);
                 computePreferredWidth(p);
                 setContentWidth(p.result());
             } else {
-                setContentWidth(parentContentWidth);
+                float remainWidth = parentContentWidth;
+                remainWidth -= marginWidth();
+                remainWidth -= borderWidth();
+                remainWidth -= paddingWidth();
+                setContentWidth(remainWidth);
             }
-        } else if (m_style->width().isFixed()) {
-            setContentWidth(m_style->width().fixed());
-        } else if (m_style->width().isPercent()) {
-            setContentWidth(parentContentWidth * m_style->width().percent());
+            setX(marginLeft() + x());
+            // TODO implement margin-collapse
+            setY(marginTop() + y());
+        } else {
+            if (m_style->width().isFixed()) {
+                setContentWidth(m_style->width().fixed());
+            } else {
+                STARFISH_ASSERT(m_style->width().isPercent());
+                setContentWidth(parentContentWidth * m_style->width().percent());
+            }
+
+            if (style()->marginLeft().isAuto() && style()->marginRight().isAuto()) {
+                float remain = parentContentWidth;
+                remain -= contentWidth();
+                remain -= borderWidth();
+                remain -= paddingWidth();
+                setMarginLeft(remain / 2);
+                setMarginRight(remain / 2);
+            }
+
+            setX(marginLeft() + x());
+            // TODO implement margin-collapse
+            setY(marginTop() + y());
         }
     } else {
         STARFISH_ASSERT(node() != nullptr);
@@ -277,20 +303,21 @@ void FrameBlockBox::layout(LayoutContext& ctx)
 
 float FrameBlockBox::layoutBlock(LayoutContext& ctx)
 {
+    float top = paddingTop() + borderTop();
     float normalFlowHeight = 0;
     Frame* child = firstChild();
     while (child) {
+        // Place the child.
+        child->asFrameBox()->setX(paddingLeft() + borderLeft());
+        child->asFrameBox()->setY(normalFlowHeight + top);
         // Lay out the child
         if (child->isNormalFlow())
             child->layout(ctx);
 
-        // TODO Place the child.
-        child->asFrameBox()->setX(0);
-        child->asFrameBox()->setY(normalFlowHeight);
-
-        if (child->isNormalFlow())
-            normalFlowHeight += child->asFrameBox()->height();
-        else
+        if (child->isNormalFlow()) {
+            // TODO implement margin-collapse
+            normalFlowHeight = child->asFrameBox()->height() + child->asFrameBox()->y() + child->asFrameBox()->marginBottom() - top;
+        } else
             ctx.registerAbsolutePositionedFrames(child);
 
         child = child->next();
@@ -385,6 +412,8 @@ public:
 
 float FrameBlockBox::layoutInline(LayoutContext& ctx)
 {
+    float lineBoxX = paddingLeft() + borderLeft();
+    float lineBoxY = paddingTop() + borderTop();
     float inlineContentWidth = contentWidth();
     LineFormattingContext lineFormattingContext(*this, ctx);
 
@@ -406,7 +435,10 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
 
             textDividerForLayout(txt, [&](size_t offset, size_t nextOffset, bool isWhiteSpace) {
                 textAppendRetry:
-                if(lineFormattingContext.m_currentLineWidth == 0 && isWhiteSpace) {
+                if (lineFormattingContext.m_currentLineWidth == 0 && isWhiteSpace) {
+                    return;
+                }
+                if (offset != 0 && nextOffset == txt->length() && isWhiteSpace) {
                     return;
                 }
 
@@ -484,8 +516,8 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
     for (size_t i = 0; i < m_lineBoxes.size(); i ++) {
         LineBox& b = m_lineBoxes[i];
 
-        b.m_frameRect.setX(0);
-        b.m_frameRect.setY(contentHeight);
+        b.m_frameRect.setX(lineBoxX);
+        b.m_frameRect.setY(contentHeight + lineBoxY);
 
         // align boxes
         float x = 0;
@@ -557,14 +589,33 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
 
 void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)
 {
+    float remainWidth = ctx.lastKnownWidth();
+    float minWidth = 0;
+
+    if (style()->marginLeft().isFixed())
+        minWidth += style()->marginLeft().fixed();
+    if (style()->marginRight().isFixed())
+        minWidth += style()->marginRight().fixed();
+    if (style()->borderLeftWidth().isFixed())
+        minWidth += style()->borderLeftWidth().fixed();
+    if (style()->borderRightWidth().isFixed())
+        minWidth += style()->borderRightWidth().fixed();
+    if (style()->paddingLeft().isFixed())
+        minWidth += style()->paddingLeft().fixed();
+    if (style()->paddingRight().isFixed())
+        minWidth += style()->paddingRight().fixed();
+    ctx.setResult(minWidth);
+
     if (hasBlockFlow()) {
-        // TODO add margin - border - padding
         if (style()->width().isFixed()) {
-            ctx.setResult(style()->width().fixed());
-        } else {
+            minWidth += style()->width().fixed();
+            ctx.setResult(minWidth);
+        } else if (ctx.lastKnownWidth() - minWidth > 0) {
             Frame* child = firstChild();
             while (child) {
-                child->computePreferredWidth(ctx);
+                ComputePreferredWidthContext newCtx(ctx.layoutContext(), ctx.lastKnownWidth() - minWidth);
+                child->computePreferredWidth(newCtx);
+                ctx.setResult(newCtx.result() + minWidth);
                 child = child->next();
             }
         }
@@ -584,6 +635,9 @@ void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)
                     if (currentLineWidth == 0 && isWhiteSpace) {
                         return;
                     }
+                    if (offset != 0 && nextOffset == s->length() && isWhiteSpace) {
+                        return;
+                    }
 
                     float w = 0;
                     if (isWhiteSpace) {
@@ -592,26 +646,25 @@ void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)
                         w = f->style()->font()->measureText(s->substring(offset, nextOffset - offset));
                     }
 
-                    if (currentLineWidth + w < ctx.lastKnownWidth()) {
+                    if (currentLineWidth + w < remainWidth) {
                         currentLineWidth += w;
                     } else {
                         // CHECK THIS
                         // ctx.setResult(currentLineWidth);
-                        ctx.setResult(ctx.lastKnownWidth());
+                        ctx.setResult(remainWidth);
                         currentLineWidth = 0;
                     }
 
-                    if (w > ctx.lastKnownWidth()) {
+                    if (w > remainWidth) {
                         ctx.setResult(currentLineWidth);
                         currentLineWidth = 0;
                     }
                 });
 
             } else if (f->isFrameBlockBox()) {
-                f->computePreferredWidth(ctx);
-                if (f->style()->width().isFixed()) {
-                    ctx.setResult(f->style()->width().fixed());
-                }
+                ComputePreferredWidthContext newCtx(ctx.layoutContext(), remainWidth - minWidth);
+                f->computePreferredWidth(newCtx);
+                ctx.setResult(newCtx.result() + minWidth);
             } else if (f->isFrameLineBreak()) {
                 // linebreaks
                 ctx.setResult(currentLineWidth);
@@ -626,14 +679,14 @@ void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)
 
                 ctx.setResult(w);
 
-                if (currentLineWidth + w < ctx.lastKnownWidth()) {
+                if (currentLineWidth + w < remainWidth) {
                     currentLineWidth += w;
                 } else {
                     ctx.setResult(currentLineWidth);
                     currentLineWidth = w;
                 }
 
-                if (currentLineWidth > ctx.lastKnownWidth()) {
+                if (currentLineWidth > remainWidth) {
                     // linebreaks
                     ctx.setResult(currentLineWidth);
                     currentLineWidth = 0;

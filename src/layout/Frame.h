@@ -109,7 +109,7 @@ public:
 
     void setResult(float r)
     {
-        m_result = std::max(m_result, r);
+        m_result = std::min(std::max(m_result, r), m_lastKnownWidth);
     }
 
     float result()

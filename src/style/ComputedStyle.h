@@ -749,11 +749,6 @@ protected:
                 setBorderRightColor(m_inheritedStyles.m_color);
                 setBorderBottomColor(m_inheritedStyles.m_color);
                 setBorderLeftColor(m_inheritedStyles.m_color);
-
-                setBorderTopWidth(Length(Length::Fixed, 3));
-                setBorderRightWidth(Length(Length::Fixed, 3));
-                setBorderBottomWidth(Length(Length::Fixed, 3));
-                setBorderLeftWidth(Length(Length::Fixed, 3));
             }
         }
 

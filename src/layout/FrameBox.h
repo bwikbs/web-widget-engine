@@ -196,8 +196,27 @@ public:
             }
             canvas->restore();
         }
-        // TODO draw background image
-        // TODO draw border
+
+        // draw border
+        if (style()->hasBorderStyle()) {
+            // TODO border-join
+            canvas->save();
+
+            // top
+            canvas->setColor(style()->borderTopColor());
+            canvas->drawRect(Rect(0, 0, width(), borderTop()));
+            // right
+            canvas->setColor(style()->borderTopColor());
+            canvas->drawRect(Rect(width()-borderRight(), 0, borderRight(), height()));
+            // bottom
+            canvas->setColor(style()->borderTopColor());
+            canvas->drawRect(Rect(0, height()-borderBottom(), width(), borderBottom()));
+            // left
+            canvas->setColor(style()->borderTopColor());
+            canvas->drawRect(Rect(0, 0, borderLeft(), height()));
+
+            canvas->restore();
+        }
     }
 
     virtual Frame* hitTest(float x, float y,HitTestStage stage)
@@ -218,6 +237,53 @@ public:
             p = p->parent();
         }
         return l;
+    }
+
+    void computeBorderMarginPadding(float parentContentWidth)
+    {
+        // padding
+        if (style()->paddingLeft().isSpecified()) {
+            setPaddingLeft(style()->paddingLeft().specifiedValue(parentContentWidth));
+        }
+        if (style()->paddingTop().isSpecified()) {
+            setPaddingTop(style()->paddingTop().specifiedValue(parentContentWidth));
+        }
+        if (style()->paddingRight().isSpecified()) {
+            setPaddingRight(style()->paddingRight().specifiedValue(parentContentWidth));
+        }
+        if (style()->paddingBottom().isSpecified()) {
+            setPaddingBottom(style()->paddingBottom().specifiedValue(parentContentWidth));
+        }
+
+        // border
+        if (style()->hasBorderStyle()) {
+            if (style()->borderLeftWidth().isSpecified()) {
+                setBorderLeft(style()->borderLeftWidth().specifiedValue(parentContentWidth));
+            }
+            if (style()->borderTopWidth().isSpecified()) {
+                setBorderTop(style()->borderTopWidth().specifiedValue(parentContentWidth));
+            }
+            if (style()->borderRightWidth().isSpecified()) {
+                setBorderRight(style()->borderRightWidth().specifiedValue(parentContentWidth));
+            }
+            if (style()->borderBottomWidth().isSpecified()) {
+                setBorderBottom(style()->borderBottomWidth().specifiedValue(parentContentWidth));
+            }
+        }
+
+        // margin
+        if (style()->marginLeft().isSpecified()) {
+            setMarginLeft(style()->marginLeft().specifiedValue(parentContentWidth));
+        }
+        if (style()->marginTop().isSpecified()) {
+            setMarginTop(style()->marginTop().specifiedValue(parentContentWidth));
+        }
+        if (style()->marginRight().isSpecified()) {
+            setMarginRight(style()->marginRight().specifiedValue(parentContentWidth));
+        }
+        if (style()->marginBottom().isSpecified()) {
+            setMarginBottom(style()->marginBottom().specifiedValue(parentContentWidth));
+        }
     }
 
 protected:
