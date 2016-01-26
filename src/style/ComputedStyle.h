@@ -86,7 +86,17 @@ public:
 
     TextAlignValue textAlign()
     {
+        if (m_inheritedStyles.m_textAlign == TextAlignValue::NamelessTextAlignValue) {
+            if (m_inheritedStyles.m_direction == DirectionValue::RtlDirectionValue)
+                return TextAlignValue::RightTextAlignValue;
+            return TextAlignValue::LeftTextAlignValue;
+        }
         return m_inheritedStyles.m_textAlign;
+    }
+
+    void setTextAlign(TextAlignValue t)
+    {
+        m_inheritedStyles.m_textAlign = t;
     }
 
     TextDecorationValue textDecoration()
@@ -654,7 +664,8 @@ public:
         return m_inheritedStyles.m_letterSpacing;
     }
 
-    static Length initialPadding() { return Length(Length::Fixed, 0); } 
+    static TextAlignValue initialTextAlign() { return TextAlignValue::NamelessTextAlignValue; }
+    static Length initialPadding() { return Length(Length::Fixed, 0); }
     static Length initialMargin() { return Length(Length::Fixed, 0); }
     static String* initialBgImage() { return String::emptyString; }
     static String* initialBorderImageSource() { return String::emptyString; }

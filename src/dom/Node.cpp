@@ -358,6 +358,19 @@ void Node::dumpStyle()
         printf("height: auto, ");
     }
 
+    // text-align
+    if (m_style->textAlign() == TextAlignValue::LeftTextAlignValue) {
+        printf("text-align: left, ");
+    } else if (m_style->textAlign() == TextAlignValue::RightTextAlignValue) {
+        printf("text-align: right, ");
+    } else if (m_style->textAlign() == TextAlignValue::CenterTextAlignValue) {
+        printf("text-align: center, ");
+    } else if (m_style->textAlign() == TextAlignValue::JustifyTextAlignValue) {
+        printf("text-align: justify, ");
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
     // text-decoration
     if (m_style->textDecoration() == TextDecorationValue::UnderLine) {
         printf("text-decoration: underline, ");

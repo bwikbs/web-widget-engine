@@ -308,6 +308,9 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else if (VALUE_IS_STRING("right")) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::TextAlignValueKind;
             ret.m_value.m_textAlign = TextAlignValue::RightTextAlignValue;
+        } else if (VALUE_IS_STRING("justify")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::TextAlignValueKind;
+            ret.m_value.m_textAlign = TextAlignValue::JustifyTextAlignValue;
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
@@ -1386,12 +1389,15 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::TextAlign:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_inheritedStyles.m_textAlign = parentStyle->m_inheritedStyles.m_textAlign;
+                    // NOTICE: Do not use getter of parent's textAlign here.
+                    //         (to remove direction dependency)
+                    style->setTextAlign(parentStyle->m_inheritedStyles.m_textAlign);
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
-                    // TODO : should assign initial value
+                    // Initial: a nameless value that acts as 'left' if 'direction' is 'ltr', 'right' if 'direction' is 'rtl'
+                    style->setTextAlign(ComputedStyle::initialTextAlign());
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::TextAlignValueKind);
-                    style->m_inheritedStyles.m_textAlign = cssValues[k].textAlignValue();
+                    style->setTextAlign(cssValues[k].textAlignValue());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::TextDecoration:

@@ -127,10 +127,11 @@ enum PositionValue {
 };
 
 enum TextAlignValue {
+    NamelessTextAlignValue, // Depends on direction
     LeftTextAlignValue,
     RightTextAlignValue,
     CenterTextAlignValue,
-    // JustifyTextAlignValue,
+    JustifyTextAlignValue,
 };
 
 enum DirectionValue {
