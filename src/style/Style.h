@@ -633,6 +633,7 @@ public:
     void setMarginRight(const char* value);
     String* margin();
     void setMargin(const char* value);
+    String* position();
     String* width();
     String* visibility();
 

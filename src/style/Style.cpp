@@ -182,6 +182,8 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else if (VALUE_IS_INITIAL()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else if (VALUE_IS_STRING("static")) {
+            ret.m_value.m_position = PositionValue::StaticPositionValue;
         } else if (VALUE_IS_STRING("relative")) {
             ret.m_value.m_position = PositionValue::RelativePositionValue;
         } else if (VALUE_IS_STRING("absolute")) {
@@ -1116,6 +1118,27 @@ void CSSStyleDeclaration::setMargin(const char* value)
             setMarginBottom(tokens[2]->utf8Data());
     if (len > 3)
             setMarginLeft(tokens[3]->utf8Data());
+}
+
+String* CSSStyleDeclaration::position()
+{
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
+        CSSStyleValuePair v = *itr;
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::Position) {
+            switch(v.positionValue()) {
+                case PositionValue::StaticPositionValue:
+                    return String::fromUTF8("static");
+                case PositionValue::RelativePositionValue:
+                    return String::fromUTF8("relative");
+                case PositionValue::AbsolutePositionValue:
+                    return String::fromUTF8("absolute");
+                case PositionValue::FixedPositionValue:
+                    return String::fromUTF8("fixed");
+                default: break;
+            }
+        }
+    }
+    return String::emptyString;
 }
 
 String* CSSStyleDeclaration::width()
