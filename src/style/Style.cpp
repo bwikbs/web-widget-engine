@@ -115,18 +115,16 @@ static const float fontSizeFactors[8] = { 0.60f, 0.75f, 0.89f, 1.0f, 1.2f, 1.5f,
 const int fontSizeTableMax = 16;
 const int fontSizeTableMin = 9;
 
-void CSSStyleValuePair::parseFontSizeForKeyword(CSSStyleValuePair* ret, int col) {
+Length parseAbsoluteFontSize(int col) {
     int mediumSize = DEFAULT_FONT_SIZE;
     int row = -1;
     if (mediumSize >= fontSizeTableMin && mediumSize <= fontSizeTableMax)
         row =  mediumSize - fontSizeTableMin;
 
-    ret->m_valueKind = CSSStyleValuePair::ValueKind::Length;
-
     if (row >= 0)
-        ret->m_value.m_length = CSSLength(strictFontSizeTable[row][col]);
+        return Length(Length::Fixed, strictFontSizeTable[row][col]);
     else
-        ret->m_value.m_length = CSSLength(fontSizeFactors[col] * mediumSize);
+        return Length(Length::Fixed, fontSizeFactors[col] * mediumSize);
 }
 
 Length convertValueToLength(CSSStyleValuePair::ValueKind kind, CSSStyleValuePair::ValueData data)
@@ -225,33 +223,32 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         ret.m_keyKind = CSSStyleValuePair::KeyKind::FontSize;
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_STRING("xx-small")) {
-            parseFontSizeForKeyword(&ret, 0);
-        } else if (VALUE_IS_STRING("x-small")) {
-            parseFontSizeForKeyword(&ret, 1);
-        } else if (VALUE_IS_STRING("small")) {
-            parseFontSizeForKeyword(&ret, 2);
-        } else if (VALUE_IS_STRING("medium")) {
-            parseFontSizeForKeyword(&ret, 3);
-        } else if (VALUE_IS_STRING("large")) {
-            parseFontSizeForKeyword(&ret, 4);
-        } else if (VALUE_IS_STRING("x-large")) {
-            parseFontSizeForKeyword(&ret, 5);
-        } else if (VALUE_IS_STRING("xx-large")) {
-            parseFontSizeForKeyword(&ret, 6);
-        } else if (VALUE_IS_STRING("larger")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::LargerFontSize;
-        } else if (VALUE_IS_STRING("smaller")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::SmallerFontSize;
         } else if (VALUE_IS_INITIAL()) {
-            parseFontSizeForKeyword(&ret, 3);
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        }  else if (VALUE_IS_STRING("xx-small")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::XXSmallFontSizeValueKind;
+        } else if (VALUE_IS_STRING("x-small")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::XSmallFontSizeValueKind;
+        } else if (VALUE_IS_STRING("small")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::SmallFontSizeValueKind;
+        } else if (VALUE_IS_STRING("medium")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::MediumFontSizeValueKind;
+        } else if (VALUE_IS_STRING("large")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::LargeFontSizeValueKind;
+        } else if (VALUE_IS_STRING("x-large")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::XLargeFontSizeValueKind;
+        } else if (VALUE_IS_STRING("xx-large")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::XXLargeFontSizeValueKind;
+        } else if (VALUE_IS_STRING("larger")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::LargerFontSizeValueKind;
+        } else if (VALUE_IS_STRING("smaller")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::SmallerFontSizeValueKind;
         }
         else {
             parsePercentageOrLength(ret, value);
         }
     } else if (strcmp(key, "color") == 0) {
         // color | inherit // initial value -> depends on user agent
-        // TODO add initial
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Color;
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
@@ -433,7 +430,6 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "background-repeat-x") == 0) {
         // repeat | no-repeat | initial | inherit // initial value -> repeat
-        // TODO add initial
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatX;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
 
@@ -450,7 +446,6 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "background-repeat-y") == 0) {
         // repeat | no-repeat | initial | inherit // initial value -> repeat
-        // TODO add initial
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatY;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
 
@@ -634,18 +629,15 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "border-image-source") == 0) {
         // none | <image>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSource;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::None;
-
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else if (VALUE_IS_INITIAL()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
         } else if(VALUE_IS_STRING("none")) {
-            // Do nothing!!
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::None;
         } else {
-            // TODO: parse "url()"
             ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
-            ret.m_value.m_stringValue = String::fromUTF8(value);
+            parseUrl(ret, value);
         }
     } else if (strcmp(key, "border-top-style") == 0) {
         // border-style(<none> | solid) | inherit
@@ -1357,14 +1349,30 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->m_inheritedStyles.m_fontSize = parentStyle->m_inheritedStyles.m_fontSize;
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
-                    // TODO : should assign initial value
-                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::LargerFontSize) {
-                    style->m_inheritedStyles.m_fontSize = (parentStyle->m_inheritedStyles.m_fontSize) * 1.2;
-                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::SmallerFontSize) {
-                    style->m_inheritedStyles.m_fontSize = (parentStyle->m_inheritedStyles.m_fontSize) / 1.2;
+                    style->m_inheritedStyles.m_fontSize = parseAbsoluteFontSize(3);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::XXSmallFontSizeValueKind) {
+                    style->m_inheritedStyles.m_fontSize = parseAbsoluteFontSize(0);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::XSmallFontSizeValueKind) {
+                    style->m_inheritedStyles.m_fontSize = parseAbsoluteFontSize(1);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::SmallFontSizeValueKind) {
+                    style->m_inheritedStyles.m_fontSize = parseAbsoluteFontSize(2);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::MediumFontSizeValueKind) {
+                    style->m_inheritedStyles.m_fontSize = parseAbsoluteFontSize(3);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::LargeFontSizeValueKind) {
+                    style->m_inheritedStyles.m_fontSize = parseAbsoluteFontSize(4);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::XLargeFontSizeValueKind) {
+                    style->m_inheritedStyles.m_fontSize = parseAbsoluteFontSize(5);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::XXLargeFontSizeValueKind) {
+                    style->m_inheritedStyles.m_fontSize = parseAbsoluteFontSize(6);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::LargerFontSizeValueKind) {
+                    style->m_inheritedStyles.m_fontSize = Length(Length::Fixed, parentStyle->m_inheritedStyles.m_fontSize.fixed() * 1.2f);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::SmallerFontSizeValueKind) {
+                    style->m_inheritedStyles.m_fontSize = Length(Length::Fixed, parentStyle->m_inheritedStyles.m_fontSize.fixed() / 1.2f);
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
+                    style->m_inheritedStyles.m_fontSize = Length(Length::Percent, cssValues[k].percentageValue());
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length);
-                    style->m_inheritedStyles.m_fontSize = cssValues[k].lengthValue().toLength().fixed();
+                    style->m_inheritedStyles.m_fontSize = cssValues[k].lengthValue().toLength();
                 }
                 break;
             case CSSStyleValuePair::KeyKind::FontStyle:
@@ -1652,7 +1660,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBorderImageSource(parentStyle->borderImageSource());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
-                    // TODO : should assign initial value(none)
+                    style->setBorderImageSource(String::emptyString);
                 } else {
                     //STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
                     style->setBorderImageSource(cssValues[k].stringValue());

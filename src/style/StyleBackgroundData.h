@@ -92,7 +92,7 @@ public:
         return m_sizeValue;
     }
 
-    void checkComputed(float fontSize, Font* font)
+    void checkComputed(Length fontSize, Font* font)
     {
         if(m_sizeValue)
             m_sizeValue->checkComputed(fontSize, font);

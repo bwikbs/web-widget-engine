@@ -22,10 +22,10 @@ public:
 
     }
 
-    void changeToFixedIfNeeded(float fontSize, Font* font) {
+    void changeToFixedIfNeeded(Length fontSize, Font* font) {
         if(!isComputed()) {
             if (m_type == EmToBeFixed) {
-                m_data = fontSize * m_data;
+                m_data = fontSize.fixed() * m_data;
                 m_type = Fixed;
             } else if (m_type == ExToBeFixed) {
                 // TODO: calculate ex (x-height of font)
@@ -112,7 +112,7 @@ public:
         return m_height;
     }
 
-    void checkComputed(float fontSize, Font* font)
+    void checkComputed(Length fontSize, Font* font)
     {
         m_width.changeToFixedIfNeeded(fontSize, font);
         m_height.changeToFixedIfNeeded(fontSize, font);

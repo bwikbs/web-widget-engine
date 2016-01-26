@@ -322,8 +322,15 @@ public:
         BackgroundRepeatValueKind,
         BorderImageRepeatValueKind,
 
-        LargerFontSize,
-        SmallerFontSize,
+        XXSmallFontSizeValueKind,
+        XSmallFontSizeValueKind,
+        SmallFontSizeValueKind,
+        MediumFontSizeValueKind,
+        LargeFontSizeValueKind,
+        XLargeFontSizeValueKind,
+        XXLargeFontSizeValueKind,
+        LargerFontSizeValueKind,
+        SmallerFontSizeValueKind,
 
         FontStyleValueKind,
         TextOverflowValueKind,
@@ -490,7 +497,6 @@ public:
     friend void parseLength(CSSStyleValuePair& ret, const char* value);
     friend void parseUrl(CSSStyleValuePair& ret, const char* value);
     static CSSStyleValuePair fromString(const char* key, const char* value);
-    static void parseFontSizeForKeyword(CSSStyleValuePair* ret, int col);
 
     union ValueData {
         float m_floatValue;

@@ -23,7 +23,7 @@ public:
         m_font = nullptr;
 
         m_inheritedStyles.m_color = Color(0, 0, 0, 255);
-        m_inheritedStyles.m_fontSize = DEFAULT_FONT_SIZE;
+        m_inheritedStyles.m_fontSize = Length(Length::Fixed, DEFAULT_FONT_SIZE);
 
         m_inheritedStyles.m_visibility = VisibilityValue::VisibleVisibilityValue;
         m_inheritedStyles.m_letterSpacing = Length(Length::Fixed, 0);
@@ -629,7 +629,7 @@ public:
         }
     }
 
-    float fontSize()
+    Length fontSize()
     {
         return m_inheritedStyles.m_fontSize;
     }
@@ -737,7 +737,7 @@ protected:
 
     struct InheritedStyles {
         Color m_color;
-        float m_fontSize;
+        Length m_fontSize;
         FontStyleValue m_fontStyle;
         Length m_letterSpacing;
         TextAlignValue m_textAlign;
