@@ -10,10 +10,20 @@
 ]]></text>
 				</node>
 				<node nodeType="1" localName="style">
-					<style selectorText=".one" text-decoration="underline"/>
+					<style selectorText="#o" text-decoration="overline"/>
+					<style selectorText="#t" text-decoration="line-through"/>
+					<style selectorText="#u" text-decoration="underline"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
-.one {
+#o {
+    text-decoration: overline;
+}
+
+#t {
+    text-decoration: line-through;
+}
+
+#u {
     text-decoration: underline;
 }
 ]]></text>
@@ -31,15 +41,35 @@
 			<node nodeType="1" localName="body">
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
+
 ]]></text>
 				</node>
-				<node nodeType="1" localName="div" class="one">
+				<node nodeType="1" localName="div" id="o">
 					<node nodeType="3" localName="text">
-						<text><![CDATA[This paragraph has a text underlined.]]></text>
+						<text><![CDATA[This is overline]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" id="t">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[This is line-through]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" id="u">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[This is underline]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
 
 
 ]]></text>

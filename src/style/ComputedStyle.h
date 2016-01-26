@@ -682,7 +682,7 @@ protected:
         m_background = NULL;
         m_overflowX = OverflowValue::VisibleOverflow;
 //        m_overflowY = OverflowValue::VisibleOverflow;
-        m_textDecoration = TextDecorationValue::None;
+        m_textDecoration = TextDecorationValue::NoneTextDecorationValue;
     }
 
     void arrangeStyleValues()

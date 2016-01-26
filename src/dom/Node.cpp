@@ -372,15 +372,15 @@ void Node::dumpStyle()
     }
 
     // text-decoration
-    if (m_style->textDecoration() == TextDecorationValue::UnderLine) {
+    if (m_style->textDecoration() == TextDecorationValue::UnderLineTextDecorationValue) {
         printf("text-decoration: underline, ");
-    } else if (m_style->textDecoration() == TextDecorationValue::OverLine) {
+    } else if (m_style->textDecoration() == TextDecorationValue::OverLineTextDecorationValue) {
         printf("text-decoration: overline, ");
-    } else if (m_style->textDecoration() == TextDecorationValue::LineThrough) {
+    } else if (m_style->textDecoration() == TextDecorationValue::LineThroughTextDecorationValue) {
         printf("text-decoration: line-through, ");
-    } else if (m_style->textDecoration() == TextDecorationValue::Blink) {
+    } else if (m_style->textDecoration() == TextDecorationValue::BlinkTextDecorationValue) {
         printf("text-decoration: blink, ");
-    } else if (m_style->textDecoration() == TextDecorationValue::None) {
+    } else if (m_style->textDecoration() == TextDecorationValue::NoneTextDecorationValue) {
         printf("text-decoration: none, ");
     }
 

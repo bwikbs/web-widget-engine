@@ -322,15 +322,15 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
         } else if (VALUE_IS_NONE()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::None;
-            ret.m_value.m_textDecoration = TextDecorationValue::None;
+            ret.m_value.m_textDecoration = TextDecorationValue::NoneTextDecorationValue;
         } else if (VALUE_IS_STRING("underline")) {
-            ret.m_value.m_textDecoration = TextDecorationValue::UnderLine;
+            ret.m_value.m_textDecoration = TextDecorationValue::UnderLineTextDecorationValue;
         } else if (VALUE_IS_STRING("overline")) {
-            ret.m_value.m_textDecoration = TextDecorationValue::OverLine;
+            ret.m_value.m_textDecoration = TextDecorationValue::OverLineTextDecorationValue;
         } else if (VALUE_IS_STRING("line-through")) {
-            ret.m_value.m_textDecoration = TextDecorationValue::LineThrough;
+            ret.m_value.m_textDecoration = TextDecorationValue::LineThroughTextDecorationValue;
         } else if (VALUE_IS_STRING("blink")) {
-            ret.m_value.m_textDecoration = TextDecorationValue::Blink;
+            ret.m_value.m_textDecoration = TextDecorationValue::BlinkTextDecorationValue;
         }
     } else if (strcmp(key, "letter-spacing") == 0) {
         // normal | length | inherit
@@ -502,9 +502,9 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "left") == 0) {
         // length | percentage | <auto> | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Left;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
 
         if (VALUE_IS_STRING("auto")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
         } else if (VALUE_IS_INITIAL()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
         } else if (VALUE_IS_INHERIT()) {
@@ -1434,6 +1434,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
             case CSSStyleValuePair::KeyKind::TextDecoration:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setTextDecoration(parentStyle->textDecoration());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->setTextDecoration(TextDecorationValue::NoneTextDecorationValue);
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::None){
                     style->setTextDecoration(cssValues[k].textDecoration());
                 } else {
@@ -1919,7 +1921,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->m_overflowX = parentStyle->m_overflowX;
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
-                    // TODO : should assign initial value
+                    style->m_overflowX = OverflowValue::VisibleOverflow;
                 } else {
                     style->m_overflowX = cssValues[k].overflowValueX();
                 }

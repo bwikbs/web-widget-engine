@@ -170,11 +170,11 @@ enum BorderStyleValue {
 };
 
 enum TextDecorationValue {
-    None,
-    UnderLine,
-    OverLine,
-    LineThrough,
-    Blink,
+    NoneTextDecorationValue,
+    UnderLineTextDecorationValue,
+    OverLineTextDecorationValue,
+    LineThroughTextDecorationValue,
+    BlinkTextDecorationValue,
 };
 
 enum FontStyleValue {
