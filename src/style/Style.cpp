@@ -1945,6 +1945,12 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
         }
     }
 
+    //inline style
+
+    auto inline_cssValues = element->inlineStyle()->m_cssValues;
+    if(inline_cssValues.size()>0)
+        apply(inline_cssValues, ret, parent);
+
     ret->loadResources(element->document()->window()->starFish());
     ret->arrangeStyleValues();
     return ret;
