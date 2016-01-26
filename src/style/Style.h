@@ -661,13 +661,6 @@ protected:
     std::vector<CSSStyleValuePair::ValueData, gc_allocator<CSSStyleValuePair::ValueData>> m_values;
 };
 
-#define FOR_EACH_ATTRIBUTE(F) \
-    F(Color) \
-    F(MarginTop) \
-    F(MarginRight) \
-    F(MarginBottom) \
-    F(MarginLeft)
-
 class CSSStyleDeclaration : public EventTarget<ScriptWrappable> {
     friend class StyleResolver;
 public:
@@ -694,6 +687,13 @@ public:
         return m_document;
     }
 
+#define FOR_EACH_STYLE_ATTRIBUTE(F) \
+    F(Color) \
+    F(MarginTop) \
+    F(MarginRight) \
+    F(MarginBottom) \
+    F(MarginLeft)
+
 #define ATTRIBUTE_GETTER(name) \
     String* name () { \
         for (unsigned i = 0; i < m_cssValues.size(); i++) { \
@@ -703,7 +703,7 @@ public:
         return String::emptyString; \
     }
 
-    FOR_EACH_ATTRIBUTE(ATTRIBUTE_GETTER)
+    FOR_EACH_STYLE_ATTRIBUTE(ATTRIBUTE_GETTER)
 #undef ATTRIBUTE_GETTER
 
 #define ATTRIBUTE_SETTER(name) \
@@ -720,12 +720,14 @@ public:
         m_cssValues.push_back(ret); \
     }
 
-    FOR_EACH_ATTRIBUTE(ATTRIBUTE_SETTER)
+    FOR_EACH_STYLE_ATTRIBUTE(ATTRIBUTE_SETTER)
 #undef ATTRIBUTE_GETTER
+
+#undef FOR_EACH_STYLE_ATTRIBUTE
 
     String* direction();
     String* height();
-    String* margin();
+    String* Margin();
     void setMargin(const char* value);
     String* overflow();
     String* position();

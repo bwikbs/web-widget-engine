@@ -1434,22 +1434,34 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(CSSStyleDeclaration, CSSStyleDeclarationFunction->protoType());
     fetchData(this)->m_cssStyleDeclaration = CSSStyleDeclarationFunction;
 
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("color"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
+#define FOR_EACH_STYLE_ATTRIBUTE(F) \
+    F(Color, color) \
+    F(MarginTop, marginTop) \
+    F(MarginRight, marginRight) \
+    F(MarginBottom, marginBottom) \
+    F(MarginLeft, marginLeft) \
+    F(Margin, margin)
 
-        String* c = ((CSSStyleDeclaration*) originalObj)->Color();
-        if (c != nullptr)
-            return escargot::ESString::create(c->utf8Data());
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*) originalObj)->setColor(v.asESString()->utf8Data());
-        } else {
-            THROW_ILLEGAL_INVOCATION()
-        }
+#define DEFINE_ACCESSOR_PROPERTY(name, nameLower) \
+    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create(#nameLower), \
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue { \
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject); \
+ \
+        String* c = ((CSSStyleDeclaration*) originalObj)->name(); \
+        if (c != nullptr) \
+            return escargot::ESString::create(c->utf8Data()); \
+        return escargot::ESValue(escargot::ESValue::ESNull); \
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) { \
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject); \
+        if (v.isESString()) { \
+            ((CSSStyleDeclaration*) originalObj)->set##name(v.asESString()->utf8Data()); \
+        } else { \
+            THROW_ILLEGAL_INVOCATION() \
+        } \
     }, false, false, false);
+
+    FOR_EACH_STYLE_ATTRIBUTE(DEFINE_ACCESSOR_PROPERTY)
+#undef FOR_EACH_STYLE_ATTRIBUTE
 
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("direction"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
@@ -1474,91 +1486,6 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
         if (v.isESString()) {
             ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("height", v.asESString()->utf8Data()));
-        }
-    }, false, false, false);
-
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("marginTop"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-
-        String* c = ((CSSStyleDeclaration*) originalObj)->MarginTop();
-        if (c != nullptr)
-            return escargot::ESString::create(c->utf8Data());
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*) originalObj)->setMarginTop(v.asESString()->utf8Data());
-        } else {
-            THROW_ILLEGAL_INVOCATION()
-        }
-    }, false, false, false);
-
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("marginBottom"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-
-        String* c = ((CSSStyleDeclaration*) originalObj)->MarginBottom();
-        if (c != nullptr)
-            return escargot::ESString::create(c->utf8Data());
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*) originalObj)->setMarginBottom(v.asESString()->utf8Data());
-        } else {
-            THROW_ILLEGAL_INVOCATION()
-        }
-    }, false, false, false);
-
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("marginRight"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-
-        String* c = ((CSSStyleDeclaration*) originalObj)->MarginRight();
-        if (c != nullptr)
-            return escargot::ESString::create(c->utf8Data());
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*) originalObj)->setMarginRight(v.asESString()->utf8Data());
-        } else {
-            THROW_ILLEGAL_INVOCATION()
-        }
-    }, false, false, false);
-
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("marginLeft"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-
-        String* c = ((CSSStyleDeclaration*) originalObj)->MarginLeft();
-        if (c != nullptr)
-            return escargot::ESString::create(c->utf8Data());
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*) originalObj)->setMarginLeft(v.asESString()->utf8Data());
-        } else {
-            THROW_ILLEGAL_INVOCATION()
-        }
-    }, false, false, false);
-
-    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("margin"),
-            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-
-        String* c = ((CSSStyleDeclaration*) originalObj)->margin();
-        if (c != nullptr)
-            return escargot::ESString::create(c->utf8Data());
-        return escargot::ESValue(escargot::ESValue::ESNull);
-    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
-        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
-        if (v.isESString()) {
-            ((CSSStyleDeclaration*) originalObj)->setMargin(v.asESString()->utf8Data());
-        } else {
-            THROW_ILLEGAL_INVOCATION()
         }
     }, false, false, false);
 

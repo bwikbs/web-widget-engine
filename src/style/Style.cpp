@@ -1009,7 +1009,7 @@ void CSSStyleValuePair::setLengthValue(const char* value)
     }
 }
 
-String* CSSStyleDeclaration::margin()
+String* CSSStyleDeclaration::Margin()
 {
     String* sum;
     String* space = String::fromUTF8(" ");
