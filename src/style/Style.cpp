@@ -978,7 +978,7 @@ String* CSSStyleDeclaration::marginTop()
 {
     for (unsigned i = 0; i < m_cssValues.size(); i++) {
         if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginTop) {
-            return m_cssValues.at(i).lengthToString();
+            return m_cssValues.at(i).lengthOrPercentageToString();
         }
     }
     return String::emptyString;
@@ -1002,7 +1002,7 @@ String* CSSStyleDeclaration::marginBottom()
 {
     for (unsigned i = 0; i < m_cssValues.size(); i++) {
         if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginBottom) {
-            return m_cssValues.at(i).lengthToString();
+            return m_cssValues.at(i).lengthOrPercentageToString();
         }
     }
     return String::emptyString;
@@ -1026,7 +1026,7 @@ String* CSSStyleDeclaration::marginRight()
 {
     for (unsigned i = 0; i < m_cssValues.size(); i++) {
         if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginRight) {
-            return m_cssValues.at(i).lengthToString();
+            return m_cssValues.at(i).lengthOrPercentageToString();
         }
     }
     return String::emptyString;
@@ -1050,7 +1050,7 @@ String* CSSStyleDeclaration::marginLeft()
 {
     for (unsigned i = 0; i < m_cssValues.size(); i++) {
         if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginLeft) {
-            return m_cssValues.at(i).lengthToString();
+            return m_cssValues.at(i).lengthOrPercentageToString();
         }
     }
     return String::emptyString;

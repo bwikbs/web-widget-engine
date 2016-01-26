@@ -86,7 +86,7 @@
 			var a = document.getElementById("idText");
 			print(a);
 			print(a.style.marginTop);
-			a.style.marginTop = "10px";
+			a.style.marginTop = "10%";
 			print(a.style.marginTop);
 
 			print(a.style.marginBottom);
@@ -102,7 +102,7 @@
 			print(a.style.marginLeft);
 
 			print(a.style.margin);
-			a.style.margin = "11pt 10px 3pt 4px";
+			a.style.margin = "11pt 10px 3pt 4%";
 			print(a.style.margin);
 
 			print("<End>")

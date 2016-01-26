@@ -513,7 +513,16 @@ public:
         return m_value;
     }
 
-    String* lengthToString()
+    String* percentageToString(float f)
+    {
+        float v = f * 100.f;
+        if (v == std::floor(v))
+            return String::fromUTF8(std::to_string((int) std::floor(v)).append("%").c_str());
+
+        return String::fromUTF8(std::to_string(v).append("%").c_str());
+    }
+
+    String* lengthOrPercentageToString()
     {
         if (valueKind() == CSSStyleValuePair::ValueKind::Auto)
             return String::fromUTF8("auto");
@@ -521,8 +530,12 @@ public:
             return String::fromUTF8("Inherit");
         else if (valueKind() == CSSStyleValuePair::ValueKind::Initial)
             return String::fromUTF8("Initial");
-        else
+        else if (valueKind() == CSSStyleValuePair::ValueKind::Length)
             return lengthValue().toString();
+        else if (valueKind() == CSSStyleValuePair::ValueKind::Percentage)
+            return percentageToString(percentageValue());
+        else
+            return nullptr;
     }
 
 protected:
