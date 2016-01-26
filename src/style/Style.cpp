@@ -873,8 +873,8 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
-/*    } else if (strcmp(key, "overflow-y") == 0) {
-        // visible | hidden | scroll(X) | auto(X) | inherit // initial value -> visible
+    } else if (strcmp(key, "overflow-y") == 0) {
+/*        // visible | hidden | scroll(X) | auto(X) | inherit // initial value -> visible
         ret.m_keyKind = CSSStyleValuePair::KeyKind::OverflowY;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::OverflowValueKind;
 
@@ -1176,15 +1176,15 @@ String* CSSStyleDeclaration::textDecoration()
         CSSStyleValuePair v = *itr;
         if(v.keyKind() == CSSStyleValuePair::KeyKind::TextDecoration) {
             switch(v.textDecoration()) {
-                case TextDecorationValue::None:
+                case TextDecorationValue::NoneTextDecorationValue:
                     return String::fromUTF8("none");
-                case TextDecorationValue::UnderLine:
+                case TextDecorationValue::UnderLineTextDecorationValue:
                     return String::fromUTF8("underline");
-                case TextDecorationValue::OverLine:
+                case TextDecorationValue::OverLineTextDecorationValue:
                     return String::fromUTF8("overline");
-                case TextDecorationValue::LineThrough:
+                case TextDecorationValue::LineThroughTextDecorationValue:
                     return String::fromUTF8("line-through");
-                case TextDecorationValue::Blink:
+                case TextDecorationValue::BlinkTextDecorationValue:
                     return String::fromUTF8("blink");
                 default: break;
             }
@@ -1919,7 +1919,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 break;
             case CSSStyleValuePair::KeyKind::OverflowX:
                 if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
-                    style->m_overflowX = parentStyle->m_overflowX;
+                    style->m_overflowX = parentStyle->overflowX();
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
                     style->m_overflowX = OverflowValue::VisibleOverflow;
                 } else {
