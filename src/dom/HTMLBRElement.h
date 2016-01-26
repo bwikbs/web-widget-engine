@@ -13,10 +13,14 @@ public:
         initScriptWrappable(this);
     }
 
+    /* 4.4 Interface Node */
+
     virtual String* localName()
     {
         return document()->window()->starFish()->staticStrings()->m_brLocalName;
     }
+
+    /* Other methods (not in DOM API) */
 
     virtual bool isHTMLBRElement() const
     {
