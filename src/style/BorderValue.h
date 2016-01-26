@@ -9,7 +9,7 @@ class BorderValue {
 public:
     BorderValue()
         : m_style(BorderStyleValue::BNone)
-        , m_width(Length(Length::Fixed, 0))
+        , m_width(Length(Length::Fixed, 3))
         , m_color(Color(0, 0, 0, 255))
         , m_hasBorderColor(false)
     {
