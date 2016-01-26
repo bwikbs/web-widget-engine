@@ -1175,6 +1175,17 @@ String* CSSStyleDeclaration::visibility()
     return String::emptyString;
 }
 
+String* CSSStyleDeclaration::opacity()
+{
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
+        CSSStyleValuePair v = *itr;
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::Opacity && v.valueKind() == CSSStyleValuePair::ValueKind::Number) {
+            return String::fromUTF8(std::to_string(v.numberValue()).c_str());
+        }
+    }
+    return String::emptyString;
+}
+
 ComputedStyle* StyleResolver::resolveDocumentStyle(StarFish* sf)
 {
     ComputedStyle* ret = new ComputedStyle();

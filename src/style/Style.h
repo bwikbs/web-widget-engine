@@ -636,6 +636,7 @@ public:
     String* position();
     String* width();
     String* visibility();
+    String* opacity();
 
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;

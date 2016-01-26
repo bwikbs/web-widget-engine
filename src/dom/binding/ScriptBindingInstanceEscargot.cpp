@@ -1589,6 +1589,24 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         }
     }, false, false, false);
 
+    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("opacity"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
+
+        String* c = ((CSSStyleDeclaration*) originalObj)->opacity();
+        if (c != nullptr)
+            return escargot::ESString::create(c->utf8Data());
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
+        if (v.isNumber()) {
+            if(v.toNumber()<=1)
+                ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("opacity", std::to_string(v.toNumber()).c_str()));
+            else
+                ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("opacity", "1.0"));
+        }
+    }, false, false, false);
+
     DEFINE_FUNCTION(CSSStyleRule, CSSStyleRuleFunction->protoType());
     fetchData(this)->m_cssStyleRule = CSSStyleRuleFunction;
 }
