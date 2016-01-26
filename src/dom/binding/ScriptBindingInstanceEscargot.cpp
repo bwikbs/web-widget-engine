@@ -457,6 +457,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(Element, NodeFunction->protoType());
     fetchData(this)->m_element = ElementFunction;
 
+    /* 4.8 Interface Element */
+
     auto firstElementChildGetter = [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         Node* nd = ((Node *)originalObj)->firstElementChild();
@@ -647,6 +649,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(Document, NodeFunction->protoType());
     fetchData(this)->m_document = DocumentFunction;
+
+    /* 4.5 Interface Document */
 
     DocumentFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("body"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
@@ -899,6 +903,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(CharacterData, NodeFunction->protoType());
     fetchData(this)->m_characterData = CharacterDataFunction;
 
+    /* 4.9 Interface CharacterData */
+
     CharacterDataFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("data"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
@@ -998,6 +1004,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     DEFINE_FUNCTION(HTMLCollection, fetchData(this)->m_instance->globalObject()->objectPrototype());
     fetchData(this)->m_htmlCollection = HTMLCollectionFunction;
 
+    /* 4.2.7.2 Interface HTMLCollection */
+
     HTMLCollectionFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("length"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::HTMLCollectionObject);
@@ -1043,6 +1051,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(DOMTokenList, fetchData(this)->m_instance->globalObject()->objectPrototype());
     fetchData(this)->m_domTokenList = DOMTokenListFunction;
+
+    /* 7.1 Interface DOMTokenList */
 
     DOMTokenListFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("length"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
@@ -1151,6 +1161,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(DOMSettableTokenList, fetchData(this)->m_instance->globalObject()->objectPrototype());
     fetchData(this)->m_domSettableTokenList = DOMSettableTokenListFunction;
+
+    /* 7.2 Interface DOMSettableTokenList */
 
     DOMSettableTokenListFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("length"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
@@ -1274,10 +1286,10 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DOMSettableTokenListFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("value"), DOMSettableTokenListValueGetter, DOMSettableTokenListValueSetter, false, false, false);
 
-
-
     DEFINE_FUNCTION(NamedNodeMap, fetchData(this)->m_instance->globalObject()->objectPrototype());
     fetchData(this)->m_namedNodeMap = NamedNodeMapFunction;
+
+    /* 4.8.1 Interface NamedNodeMap */
 
     NamedNodeMapFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("length"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
@@ -1355,6 +1367,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(Attr, fetchData(this)->m_instance->globalObject()->objectPrototype());
     fetchData(this)->m_attr = AttrFunction;
+
+    /* 4.8.2 Interface Attr */
 
     AttrFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("name"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
