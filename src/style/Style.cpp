@@ -1122,6 +1122,23 @@ String* CSSStyleDeclaration::width()
     return String::emptyString;
 }
 
+String* CSSStyleDeclaration::visibility()
+{
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
+        CSSStyleValuePair v = *itr;
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::Visibility && v.valueKind() == CSSStyleValuePair::ValueKind::VisibilityKind) {
+            switch(v.visibility()) {
+                case VisibilityValue::VisibleVisibilityValue:
+                    return String::fromUTF8("visible");
+                case VisibilityValue::HiddenVisibilityValue:
+                    return String::fromUTF8("hidden");
+                default: break;
+            }
+        }
+    }
+    return String::emptyString;
+}
+
 ComputedStyle* StyleResolver::resolveDocumentStyle(StarFish* sf)
 {
     ComputedStyle* ret = new ComputedStyle();

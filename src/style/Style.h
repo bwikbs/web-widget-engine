@@ -631,6 +631,7 @@ public:
     String* margin();
     void setMargin(const char* value);
     String* width();
+    String* visibility();
 
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;
