@@ -781,6 +781,25 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else {
             parseLength(ret, value);
         }
+    } else if (strcmp(key, "line-height") == 0) {
+        // <normal> | number | length | percentage | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::LineHeight;
+        ret.m_valueKind = CSSStyleValuePair::ValueKind::Normal;
+
+        if (VALUE_IS_INITIAL() || VALUE_IS_STRING("normal")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Normal;
+        } else if (VALUE_IS_STRING("inherit")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            char* pEnd;
+            double d = strtod (value, &pEnd);
+            if (pEnd == value + strlen(value)) {
+                ret.m_valueKind = CSSStyleValuePair::ValueKind::Number;
+                ret.m_value.m_floatValue = d;
+            } else {
+                parsePercentageOrLength(ret, value);
+            }
+        }
     } else if (strcmp(key, "margin-top") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginTop;
@@ -1076,7 +1095,8 @@ String* CSSStyleDeclaration::position()
                     return String::fromUTF8("absolute");
                 case PositionValue::FixedPositionValue:
                     return String::fromUTF8("fixed");
-                default: break;
+                default:
+                    break;
             }
         }
     }
@@ -1764,6 +1784,22 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->setBorderLeftWidth(Length(Length::Fixed, 3));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::BorderThick) {
                     style->setBorderLeftWidth(Length(Length::Fixed, 5));
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::LineHeight:
+                // <normal> | number | length | percentage | inherit
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setLineHeight(parentStyle->lineHeight());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial ||
+                           cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Normal) {
+                    // The compute value is 'normal'. We use -100 to represent "normal" line height.
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Number) {
+                    // TODO: The computed value is the same as the specified value.
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length ||
+                           cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
+                    style->setLineHeight(convertValueToLength(cssValues[k].valueKind(), cssValues[k].value()));
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }

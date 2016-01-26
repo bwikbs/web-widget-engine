@@ -27,6 +27,7 @@ public:
 
         m_inheritedStyles.m_visibility = VisibilityValue::VisibleVisibilityValue;
         m_inheritedStyles.m_letterSpacing = Length(Length::Fixed, 0);
+        m_inheritedStyles.m_lineHeight = Length(Length::Percent, -100);
 
         initNonInheritedStyles();
     }
@@ -140,6 +141,11 @@ public:
         return m_inheritedStyles.m_direction;
     }
 
+    void setLineHeight(Length length)
+    {
+        m_inheritedStyles.m_lineHeight = length;
+    }
+
     void setBackgroundIfNeeded()
     {
         if (m_background == NULL) {
@@ -244,6 +250,12 @@ public:
     {
         STARFISH_ASSERT(m_font);
         return m_font;
+    }
+
+    Length lineHeight()
+    {
+        // -100% is used to represent "normal" line height.
+        return m_inheritedStyles.m_lineHeight;
     }
 
     float opacity()
@@ -726,6 +738,14 @@ protected:
         m_width.changeToFixedIfNeeded(fontSize(), font());
         m_height.changeToFixedIfNeeded(fontSize(), font());
 
+        if (lineHeight().isPercent() && lineHeight().percent() != -100) {
+            // The computed value of the property is this percentage multiplied by the element's computed font size. Negative values are illegal.
+            float lineHight = lineHeight().percent();
+            // FIXME: If the font size is percent type, how can calculate the computed value?
+            float multipliedSize = fontSize().isFixed() ? fontSize().fixed() : DEFAULT_FONT_SIZE;
+            setLineHeight(Length(Length::Fixed, lineHight * multipliedSize));
+        }
+
         if (m_surround) {
             m_surround->margin.top().changeToFixedIfNeeded(fontSize(), font());
             m_surround->margin.right().changeToFixedIfNeeded(fontSize(), font());
@@ -763,6 +783,7 @@ protected:
         Length m_fontSize;
         FontStyleValue m_fontStyle;
         Length m_letterSpacing;
+        Length m_lineHeight;
         TextAlignValue m_textAlign;
         DirectionValue m_direction;
         VisibilityValue m_visibility;

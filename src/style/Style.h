@@ -258,6 +258,8 @@ public:
         Bottom, // length | percentage | <auto> | inherit
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-left
         Left, // length | percentage | <auto> | inherit
+        // https://www.w3.org/TR/CSS21/visudet.html#line-height
+        LineHeight, // <normal> | number | length | percentage | inherit
         // https://www.w3.org/TR/CSS21/box.html#border-color-properties
         // BorderColor // color | transparent | inherit
         BorderTopColor, // color | transparent | inherit // initial value -> the value of 'color' property

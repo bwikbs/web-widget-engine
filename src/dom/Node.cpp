@@ -430,6 +430,15 @@ void Node::dumpStyle()
     // letter-spacing
     printf("letter-spacing: %f, ", m_style->letterSpacing().fixed());
 
+    // line-height
+    printf("line-height: ");
+    if (m_style->lineHeight().isPercent()) {
+        if (m_style->lineHeight().percent() == -100)
+            printf("normal, ");
+    } else if (m_style->lineHeight().isFixed()) {
+        printf("%f, ", m_style->lineHeight().fixed());
+    }
+
     // text-overflow
     printf("text-overflow: ");
     if (m_style->textOverflow() == TextOverflowValue::ClipTextOverflowValue)
