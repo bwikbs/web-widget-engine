@@ -1463,6 +1463,20 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("direction", v.asESString()->utf8Data()));
         }
     }, false, false, false);
+
+    CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("height"),
+            [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
+        String* d = ((CSSStyleDeclaration*)originalObj)->height();
+        STARFISH_ASSERT(d);
+        return toJSString(d);
+    }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
+        CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
+        if (v.isESString()) {
+            ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("height", v.asESString()->utf8Data()));
+        }
+    }, false, false, false);
+
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("marginTop"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);

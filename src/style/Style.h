@@ -623,6 +623,7 @@ public:
     void setColor(String* color);
 
     String* direction();
+    String* height();
     String* marginTop();
     void setMarginTop(const char* value);
     String* marginBottom();

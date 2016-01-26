@@ -976,6 +976,22 @@ String* CSSStyleDeclaration::direction()
     return String::emptyString;
 }
 
+String* CSSStyleDeclaration::height()
+{
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
+        CSSStyleValuePair v = *itr;
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::Height) {
+            switch(v.valueKind()) {
+                case CSSStyleValuePair::ValueKind::Length:
+                case CSSStyleValuePair::ValueKind::Percentage:
+                    return v.lengthOrPercentageToString();
+                default: break;
+            }
+        }
+    }
+    return String::emptyString;
+}
+
 void CSSStyleDeclaration::setLengthValue(CSSStyleValuePair* pair, const char* value)
 {
     if (VALUE_IS_STRING("auto")) {
