@@ -10,13 +10,16 @@
 ]]></text>
 				</node>
 				<node nodeType="1" localName="style">
-					<style selectorText=".one" background-color="yellow" padding-top="50px" padding-bottom="50px"/>
+					<style selectorText=".padding" padding-top="2cm"/>
+					<style selectorText=".padding2" padding-top="50%"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
-.one {
-    background-color: yellow;
-    padding-top: 50px;
-    padding-bottom: 50px;
+.padding {
+    padding-top: 2cm;
+}
+
+.padding2 {
+    padding-top: 50%;
 }
 ]]></text>
 					</node>
@@ -33,11 +36,32 @@
 			<node nodeType="1" localName="body">
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
+
 ]]></text>
 				</node>
-				<node nodeType="1" localName="div" class="one">
+				<node nodeType="1" localName="div">
 					<node nodeType="3" localName="text">
-						<text><![CDATA[This paragraph has a top and bottom padding of 50px, a left padding of 80px, and a right padding of 30px.]]></text>
+						<text><![CDATA[This is a text with no top padding. This is a text with no top padding. This is a text with no top padding.]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" class="padding">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[This text has a top padding of 2 cm. This text has a top padding of 2 cm. This text has a top padding of 2 cm.]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" class="padding2">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[This text has a top padding of 50%. This text has a top padding of 50%. This text has a top padding of 50%.]]></text>
 					</node>
 				</node>
 				<node nodeType="3" localName="text">
