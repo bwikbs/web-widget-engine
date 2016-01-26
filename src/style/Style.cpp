@@ -1113,9 +1113,8 @@ String* CSSStyleDeclaration::width()
         if(v.keyKind() == CSSStyleValuePair::KeyKind::Width) {
             switch(v.valueKind()) {
                 case CSSStyleValuePair::ValueKind::Length:
-                    return v.lengthValue().toString();
                 case CSSStyleValuePair::ValueKind::Percentage:
-                    return String::fromUTF8(std::to_string(v.percentageValue()).append("%").c_str());
+                    return v.lengthOrPercentageToString();
                 default: break;
             }
         }

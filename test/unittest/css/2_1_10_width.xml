@@ -48,10 +48,10 @@
     var htmlNode = document.firstChild.nextSibling;
     var s = htmlNode.style.width;
     print(s);
-    s = htmlNode.style.width = "100px";
-    print(s);
-    s = htmlNode.style.width = "50%";
-    print(s);
+    htmlNode.style.width = "100px";
+    print(htmlNode.style.width);
+    htmlNode.style.width = "50%";
+    print(htmlNode.style.width);
     print("done");
   }
   run();
