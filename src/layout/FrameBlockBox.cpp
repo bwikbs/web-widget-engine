@@ -29,14 +29,9 @@ void FrameBlockBox::layout(LayoutContext& ctx)
         FrameBox* cb = ctx.containingBlock(this)->asFrameBox();
         FrameBox* parent = m_parent->asFrameBox();
         auto absLoc = parent->absolutePoint(cb);
-        float absX = absLoc.x();
-        float absY = absLoc.y();
+        float absX = absLoc.x() + cb->borderLeft();
         auto setAbsX = [&](float x) {
-            setX(absX + x);
-        };
-
-        auto setAbsY = [&](float y) {
-            setY(absY + y);
+            setX(x - absX);
         };
 
         auto getPreferredWidth = [&](float parentWidth) -> float {
@@ -61,19 +56,10 @@ void FrameBlockBox::layout(LayoutContext& ctx)
         Length right = style()->right();
         Length width = style()->width();
 
-        float parentWidth = cb->width() + cb->paddingWidth();
+        float parentWidth = cb->contentWidth() + cb->paddingWidth();
 
         if (left.isAuto() && width.isAuto() && right.isAuto()) {
             // If all three of 'left', 'width', and 'right' are 'auto':
-
-            // First set any 'auto' values for 'margin-left' and 'margin-right' to 0.
-            if (marginLeft.isAuto()) {
-                marginLeft = Length(Length::Fixed, 0);
-            }
-
-            if (marginRight.isAuto()) {
-                marginRight = Length(Length::Fixed, 0);
-            }
         } else if (!left.isAuto() && !width.isAuto() && !right.isAuto()) {
             // If none of the three is 'auto':
 
@@ -107,14 +93,17 @@ void FrameBlockBox::layout(LayoutContext& ctx)
             }
         } else {
             // Otherwise, set 'auto' values for 'margin-left' and 'margin-right' to 0, and pick the one of the following six rules that applies.
-            marginLeft = Length(Length::Fixed, 0);
-            marginRight = Length(Length::Fixed, 0);
+            if (marginLeft.isAuto())
+                marginLeft = Length(Length::Fixed, 0);
+            if (marginRight.isAuto())
+                marginRight = Length(Length::Fixed, 0);
 
+            // TODO add margin-left, margin-right
             if (left.isAuto() && width.isAuto() && !right.isAuto()) {
                 // 'left' and 'width' are 'auto' and 'right' is not 'auto', then the width is shrink-to-fit. Then solve for 'left'
                 float w = getPreferredWidth(parentWidth);
                 width = Length(Length::Fixed, w);
-                setAbsX(parentWidth - right.specifiedValue(parentWidth) - w - paddingLeft() - borderLeft());
+                setAbsX(parentWidth - right.specifiedValue(parentWidth) - w - paddingWidth() - borderWidth());
             } else if(left.isAuto() && right.isAuto() && !width.isAuto()) {
                 // 'left' and 'right' are 'auto' and 'width' is not 'auto',
                 // then if the 'direction' property of the element establishing the static-position containing block is 'ltr' set 'left' to the static position,
@@ -127,7 +116,7 @@ void FrameBlockBox::layout(LayoutContext& ctx)
             } else if(left.isAuto() && !width.isAuto() && !right.isAuto()) {
                 // 'left' is 'auto', 'width' and 'right' are not 'auto', then solve for 'left'
                 float w = width.specifiedValue(parentWidth);
-                setAbsX(parentWidth - right.specifiedValue(parentWidth) - w - paddingLeft() - borderLeft());
+                setAbsX(parentWidth - right.specifiedValue(parentWidth) - w - paddingWidth() - borderWidth());
             } else if(width.isAuto() && !left.isAuto() && !right.isAuto()) {
                 // 'width' is 'auto', 'left' and 'right' are not 'auto', then solve for 'width'
                 float l = left.specifiedValue(parentWidth);
@@ -180,15 +169,110 @@ void FrameBlockBox::layout(LayoutContext& ctx)
             }
         }
     } else {
-        if (style()->height().isAuto()) {
+        FrameBox* cb = ctx.containingBlock(this)->asFrameBox();
+        FrameBox* parent = m_parent->asFrameBox();
+        auto absLoc = parent->absolutePoint(cb);
+        float absY = absLoc.y() + cb->borderTop();
+        auto setAbsY = [&](float y) {
+            setY(y - absY);
+        };
+        float parentHeight = cb->contentHeight() + cb->paddingHeight();
+
+        Length marginTop = style()->marginTop();
+        Length marginBottom = style()->marginBottom();
+        Length top = style()->top();
+        Length bottom = style()->bottom();
+        Length height = style()->height();
+
+        // 10.6.4 Absolutely positioned, non-replaced elements
+
+        // For absolutely positioned elements, the used values of the vertical dimensions must satisfy this constraint:
+        // 'top' + 'margin-top' + 'border-top-width' + 'padding-top' + 'height' + 'padding-bottom' + 'border-bottom-width' + 'margin-bottom' + 'bottom' = height of containing block
+
+        if (top.isAuto() && height.isAuto() && bottom.isAuto()) {
+            // If all three of 'top', 'height', and 'bottom' are auto, set 'top' to the static position and apply rule number three below.
+            // TODO add margin-top, margin-bottom
+        } else if(!top.isAuto() && !height.isAuto() && !bottom.isAuto()) {
+            // If none of the three are 'auto': If both 'margin-top' and 'margin-bottom' are 'auto',
+            // solve the equation under the extra constraint that the two margins get equal values.
+            // If one of 'margin-top' or 'margin-bottom' is 'auto', solve the equation for that value.
+            // If the values are over-constrained, ignore the value for 'bottom' and solve for that value.
+            // TODO add margin-top, margin-bottom
+            setAbsY(top.specifiedValue(parentHeight));
+        } else if(top.isAuto() && height.isAuto() && !bottom.isAuto()) {
+            // 'top' and 'height' are 'auto' and 'bottom' is not 'auto', then the height is based on the content per 10.6.7
+            // set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'top'
+            if (marginTop.isAuto())
+                marginTop = Length(Length::Fixed, 0);
+            if (marginBottom.isAuto())
+                marginBottom = Length(Length::Fixed, 0);
             setContentHeight(contentHeight);
-        } else if (style()->height().isFixed()) {
-            setContentHeight(style()->height().fixed());
+            // TODO add margin-top, margin-bottom
+            setAbsY(parentHeight - contentHeight - paddingHeight() - borderHeight() - bottom.specifiedValue(parentHeight));
+        } else if (top.isAuto() && bottom.isAuto() && !height.isAuto()) {
+            // 'top' and 'bottom' are 'auto' and 'height' is not 'auto', then set 'top' to the static position
+            // set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'bottom'
+            if (marginTop.isAuto())
+                marginTop = Length(Length::Fixed, 0);
+            if (marginBottom.isAuto())
+                marginBottom = Length(Length::Fixed, 0);
+        } else if (height.isAuto() && bottom.isAuto() && !top.isAuto()) {
+            // 'height' and 'bottom' are 'auto' and 'top' is not 'auto', then the height is based on the content per 10.6.7,
+            // set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'bottom'
+            if (marginTop.isAuto())
+                marginTop = Length(Length::Fixed, 0);
+            if (marginBottom.isAuto())
+                marginBottom = Length(Length::Fixed, 0);
+            // TODO add margin-top, margin-bottom
+            setY(top.specifiedValue(parentHeight));
+        } else if (top.isAuto() && !height.isAuto() && !bottom.isAuto()) {
+            // 'top' is 'auto', 'height' and 'bottom' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0, and solve for 'top'
+            if (marginTop.isAuto())
+                marginTop = Length(Length::Fixed, 0);
+            if (marginBottom.isAuto())
+                marginBottom = Length(Length::Fixed, 0);
+
+            // TODO add margin-top, margin-bottom
+            setAbsY(parentHeight - height.specifiedValue(parentHeight) - paddingHeight() - borderHeight() - bottom.specifiedValue(parentHeight));
+        } else if(height.isAuto() && !top.isAuto() && !bottom.isAuto()) {
+            // 'height' is 'auto', 'top' and 'bottom' are not 'auto', then 'auto' values for 'margin-top' and 'margin-bottom' are set to 0 and solve for 'height'
+            if (marginTop.isAuto())
+                marginTop = Length(Length::Fixed, 0);
+            if (marginBottom.isAuto())
+                marginBottom = Length(Length::Fixed, 0);
+
+            float t = top.specifiedValue(parentHeight);
+            float b = bottom.specifiedValue(parentHeight);
+            float h = t - b + parentHeight;
+            h = h - paddingHeight() - borderHeight();
+            height = Length(Length::Fixed, h);
+            // TODO add margin-top, margin-bottom
+            setAbsY(t);
         } else {
-            Frame* cb = ctx.containingBlock(this);
-            setContentHeight(style()->height().percent() * (cb->asFrameBox()->contentHeight() + cb->asFrameBox()->paddingHeight()));
+            // 'bottom' is 'auto', 'top' and 'height' are not 'auto', then set 'auto' values for 'margin-top' and 'margin-bottom' to 0 and solve for 'bottom'
+            STARFISH_ASSERT(bottom.isAuto() && !top.isAuto() && !height.isAuto());
+            if (marginTop.isAuto())
+                marginTop = Length(Length::Fixed, 0);
+            if (marginBottom.isAuto())
+                marginBottom = Length(Length::Fixed, 0);
+
+            setAbsY(top.specifiedValue(parentHeight));
+        }
+
+        if (height.isAuto()) {
+            setContentHeight(contentHeight);
+        } else {
+            setContentHeight(height.specifiedValue(parentHeight));
         }
     }
+
+    // layout absolute positioned blocks
+    ctx.layoutRegisteredAbsolutePositionedFrames(this, [&](const std::vector<Frame*>& frames) {
+        for (size_t i = 0; i < frames.size(); i ++) {
+            Frame* f = frames[i];
+            f->layout(ctx);
+        }
+    });
 }
 
 float FrameBlockBox::layoutBlock(LayoutContext& ctx)
@@ -211,14 +295,6 @@ float FrameBlockBox::layoutBlock(LayoutContext& ctx)
 
         child = child->next();
     }
-
-    // layout absolute positioned blocks
-    ctx.layoutRegisteredAbsolutePositionedFrames(this, [&](const std::vector<Frame*>& frames) {
-        for (size_t i = 0; i < frames.size(); i ++) {
-            Frame* f = frames[i];
-            f->layout(ctx);
-        }
-    });
 
     return normalFlowHeight;
 }
