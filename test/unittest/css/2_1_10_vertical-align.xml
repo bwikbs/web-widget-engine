@@ -11,7 +11,7 @@
 				</node>
 				<node nodeType="1" localName="style">
 					<style selectorText="#default" width="50px" height="50px"/>
-					<style selectorText="#top" vertical-align="50%" width="50px" height="50px"/>
+					<style selectorText="#top" vertical-align="text-top" width="50px" height="50px"/>
 					<style selectorText="#bottom" vertical-align="text-bottom" width="50px" height="50px"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
