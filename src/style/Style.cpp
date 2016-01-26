@@ -1333,6 +1333,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length);
                     style->m_inheritedStyles.m_fontSize = cssValues[k].lengthValue().toLength();
+                    style->m_inheritedStyles.m_fontSize.changeToFixedIfNeeded(parentStyle->fontSize(), parentStyle->font());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::FontStyle:
@@ -2057,7 +2058,7 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
         apply(inline_cssValues, ret, parent);
 
     ret->loadResources(element->document()->window()->starFish());
-    ret->arrangeStyleValues();
+    ret->arrangeStyleValues(parent);
     return ret;
 }
 
@@ -2082,7 +2083,7 @@ void resolveDOMStyleInner(StyleResolver* resolver, Element* element, ComputedSty
                 if (childStyle == nullptr) {
                     childStyle = new ComputedStyle(element->style());
                     childStyle->loadResources(element->document()->window()->starFish());
-                    childStyle->arrangeStyleValues();
+                    childStyle->arrangeStyleValues(element->style());
                 }
                 child->setStyle(childStyle);
             }

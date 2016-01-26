@@ -713,7 +713,7 @@ protected:
         m_verticalAlign = initialVerticalAlign();
     }
 
-    void arrangeStyleValues()
+    void arrangeStyleValues(ComputedStyle* parentStyle)
     {
         // if float: left, right
         // display-> block
