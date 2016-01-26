@@ -126,6 +126,18 @@ enum PositionValue {
     FixedPositionValue, // TODO
 };
 
+enum VerticalAlignValue {
+    BaselineVAlignValue,
+    SubVAlignValue,
+    SuperVAlignValue,
+    TopVAlignValue,
+    TextTopVAlignValue,
+    MiddleVAlignValue,
+    BottomVAlignValue,
+    TextBottomVAlignValue,
+    NumericVAlignValue,
+};
+
 enum TextAlignValue {
     NamelessTextAlignValue, // Depends on direction
     LeftTextAlignValue,
@@ -215,6 +227,8 @@ public:
         FontSize, // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
         // https://www.w3.org/TR/CSS2/fonts.html#propdef-font-style
         FontStyle, // <normal> | italic | oblique | inherit
+        // https://www.w3.org/TR/CSS21/visudet.html#propdef-vertical-align
+        VerticalAlign, // <baseline> | sub | super | top | text-top | middle | bottom | text-bottom | percentage | length | inherit
         // https://www.w3.org/TR/CSS21/text.html#propdef-text-align
         TextAlign, // left | right | center | justify | <inherit>
         // https://www.w3.org/TR/CSS2/text.html#propdef-text-decoration
@@ -308,6 +322,7 @@ public:
 
         DisplayValueKind,
         PositionValueKind,
+        VerticalAlignValueKind,
         TextAlignValueKind,
         DirectionValueKind,
 
@@ -395,6 +410,12 @@ public:
     {
         STARFISH_ASSERT(m_valueKind == PositionValueKind);
         return m_value.m_position;
+    }
+
+    VerticalAlignValue verticalAlignValue()
+    {
+        STARFISH_ASSERT(m_valueKind == VerticalAlignValueKind);
+        return m_value.m_verticalAlign;
     }
 
     TextAlignValue textAlignValue()
@@ -502,6 +523,7 @@ public:
         float m_floatValue;
         DisplayValue m_display;
         PositionValue m_position;
+        VerticalAlignValue m_verticalAlign;
         FontStyleValue m_fontStyle;
         TextOverflowValue m_textOverflow;
         TextAlignValue m_textAlign;

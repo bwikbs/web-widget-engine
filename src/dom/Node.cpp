@@ -358,6 +358,31 @@ void Node::dumpStyle()
         printf("height: auto, ");
     }
 
+    // vertical-align
+    if (m_style->verticalAlign() == VerticalAlignValue::BaselineVAlignValue) {
+        printf("vertical-align: baseline, ");
+    } else if (m_style->verticalAlign() == VerticalAlignValue::SubVAlignValue) {
+        printf("vertical-align: sub, ");
+    } else if (m_style->verticalAlign() == VerticalAlignValue::SuperVAlignValue) {
+        printf("vertical-align: super, ");
+    } else if (m_style->verticalAlign() == VerticalAlignValue::TopVAlignValue) {
+        printf("vertical-align: top, ");
+    } else if (m_style->verticalAlign() == VerticalAlignValue::TextTopVAlignValue) {
+        printf("vertical-align: text-top, ");
+    } else if (m_style->verticalAlign() == VerticalAlignValue::MiddleVAlignValue) {
+        printf("vertical-align: middle, ");
+    } else if (m_style->verticalAlign() == VerticalAlignValue::BottomVAlignValue) {
+        printf("vertical-align: bottom, ");
+    } else if (m_style->verticalAlign() == VerticalAlignValue::TextBottomVAlignValue) {
+        printf("vertical-align: text-bottom, ");
+    } else if (m_style->verticalAlignLength().isFixed()) {
+        printf("vertical-align: %f, ", m_style->verticalAlignLength().fixed());
+    } else if (m_style->verticalAlignLength().isPercent()) {
+        printf("vertical-align: %fp, ", m_style->verticalAlignLength().percent());
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
     // text-align
     if (m_style->textAlign() == TextAlignValue::LeftTextAlignValue) {
         printf("text-align: left, ");

@@ -287,6 +287,40 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
             parseUrl(ret, value);
         }
+    } else if (strcmp(key, "vertical-align") == 0) {
+        // <baseline> | sub | super | top | text-top | middle | bottom | text-bottom | percentage | length | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::VerticalAlign;
+        if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_STRING("baseline")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+            ret.m_value.m_verticalAlign = VerticalAlignValue::BaselineVAlignValue;
+        } else if (VALUE_IS_STRING("sub")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+            ret.m_value.m_verticalAlign = VerticalAlignValue::SubVAlignValue;
+        } else if (VALUE_IS_STRING("super")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+            ret.m_value.m_verticalAlign = VerticalAlignValue::SuperVAlignValue;
+        } else if (VALUE_IS_STRING("top")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+            ret.m_value.m_verticalAlign = VerticalAlignValue::TopVAlignValue;
+        } else if (VALUE_IS_STRING("text-top")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+            ret.m_value.m_verticalAlign = VerticalAlignValue::TextTopVAlignValue;
+        } else if (VALUE_IS_STRING("middle")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+            ret.m_value.m_verticalAlign = VerticalAlignValue::MiddleVAlignValue;
+        } else if (VALUE_IS_STRING("bottom")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+            ret.m_value.m_verticalAlign = VerticalAlignValue::BottomVAlignValue;
+        } else if (VALUE_IS_STRING("text-bottom")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+            ret.m_value.m_verticalAlign = VerticalAlignValue::TextBottomVAlignValue;
+        } else {
+            parsePercentageOrLength(ret, value);
+        }
     } else if (strcmp(key, "text-align") == 0) {
         // left | right | center | justify | <inherit>
         // TODO add initial
@@ -1440,6 +1474,23 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::TextOverflowValueKind);
                     style->setTextOverflow(cssValues[k].textOverflowValue());
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::VerticalAlign:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setVerticalAlign(parentStyle->verticalAlign());
+                    if (style->isNumericVerticalAlign()) style->setVerticalAlignLength(parentStyle->verticalAlignLength());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->setVerticalAlign(ComputedStyle::initialVerticalAlign());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length) {
+                    style->setVerticalAlignLength(cssValues[k].lengthValue().toLength());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
+                    style->setVerticalAlignLength(Length(Length::Percent, cssValues[k].percentageValue()));
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::VerticalAlignValueKind) {
+                    STARFISH_ASSERT(cssValues[k].verticalAlignValue() != VerticalAlignValue::NumericVAlignValue);
+                    style->setVerticalAlign(cssValues[k].verticalAlignValue());
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
                 break;
             case CSSStyleValuePair::KeyKind::TextAlign:

@@ -84,6 +84,32 @@ public:
         return m_inheritedStyles.m_color;
     }
 
+    VerticalAlignValue verticalAlign()
+    {
+        return m_verticalAlign;
+    }
+
+    void setVerticalAlign(VerticalAlignValue v)
+    {
+        m_verticalAlign = v;
+    }
+
+    Length verticalAlignLength()
+    {
+        return m_verticalAlignLength;
+    }
+
+    void setVerticalAlignLength(Length l)
+    {
+        setVerticalAlign(VerticalAlignValue::NumericVAlignValue);
+        m_verticalAlignLength = l;
+    }
+
+    bool isNumericVerticalAlign()
+    {
+        return (verticalAlign() == VerticalAlignValue::NumericVAlignValue);
+    }
+
     TextAlignValue textAlign()
     {
         if (m_inheritedStyles.m_textAlign == TextAlignValue::NamelessTextAlignValue) {
@@ -664,6 +690,7 @@ public:
         return m_inheritedStyles.m_letterSpacing;
     }
 
+    static VerticalAlignValue initialVerticalAlign() { return VerticalAlignValue::BaselineVAlignValue; }
     static TextAlignValue initialTextAlign() { return TextAlignValue::NamelessTextAlignValue; }
     static Length initialPadding() { return Length(Length::Fixed, 0); }
     static Length initialMargin() { return Length(Length::Fixed, 0); }
@@ -683,6 +710,7 @@ protected:
         m_overflowX = OverflowValue::VisibleOverflow;
 //        m_overflowY = OverflowValue::VisibleOverflow;
         m_textDecoration = TextDecorationValue::NoneTextDecorationValue;
+        m_verticalAlign = initialVerticalAlign();
     }
 
     void arrangeStyleValues()
@@ -752,6 +780,8 @@ protected:
     Length m_height;
     Length m_bottom;
     Length m_left;
+    VerticalAlignValue m_verticalAlign;
+    Length m_verticalAlignLength;
 
     OverflowValue m_overflowX;
 //    OverflowValue m_overflowY;
