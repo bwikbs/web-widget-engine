@@ -8,6 +8,7 @@
 #include "style/DefaultStyle.h"
 #include "style/UnitHelper.h"
 #include "dom/EventTarget.h"
+#include <sstream>
 
 
 namespace StarFish {
@@ -77,6 +78,31 @@ public:
             return Length(Length::EmToBeFixed, m_value);
         else if (m_kind == EX)
             return Length(Length::ExToBeFixed, m_value);
+
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    String* toString()
+    {
+        std::stringstream ss (std::stringstream::in | std::stringstream::out);
+        ss << m_value;
+        std::string stdStr = ss.str();
+        if (m_kind == PX)
+            return String::fromUTF8(stdStr.append("px").c_str());
+        else if (m_kind == CM)
+            return String::fromUTF8(stdStr.append("cm").c_str());
+        else if (m_kind == MM)
+            return String::fromUTF8(stdStr.append("mm").c_str());
+        else if (m_kind == IN)
+            return String::fromUTF8(stdStr.append("in").c_str());
+        else if (m_kind == PC)
+            return String::fromUTF8(stdStr.append("pc").c_str());
+        else if (m_kind == PT)
+            return String::fromUTF8(stdStr.append("pt").c_str());
+        else if (m_kind == EM)
+            return String::fromUTF8(stdStr.append("em").c_str());
+        else if (m_kind == EX)
+            return String::fromUTF8(stdStr.append("ex").c_str());
 
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
@@ -487,6 +513,18 @@ public:
         return m_value;
     }
 
+    String* lengthToString()
+    {
+        if (valueKind() == CSSStyleValuePair::ValueKind::Auto)
+            return String::fromUTF8("auto");
+        else if (valueKind() == CSSStyleValuePair::ValueKind::Inherit)
+            return String::fromUTF8("Inherit");
+        else if (valueKind() == CSSStyleValuePair::ValueKind::Initial)
+            return String::fromUTF8("Initial");
+        else
+            return lengthValue().toString();
+    }
+
 protected:
     KeyKind m_keyKind;
     ValueKind m_valueKind;
@@ -556,10 +594,22 @@ public:
         return m_document;
     }
 
+    void setLengthValue(CSSStyleValuePair* pair, const char* value);
+
     String* color();
     void setColor(String* color);
 
     String* direction();
+    String* marginTop();
+    void setMarginTop(const char* value);
+    String* marginBottom();
+    void setMarginBottom(const char* value);
+    String* marginLeft();
+    void setMarginLeft(const char* value);
+    String* marginRight();
+    void setMarginRight(const char* value);
+    String* margin();
+    void setMargin(const char* value);
 
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;
