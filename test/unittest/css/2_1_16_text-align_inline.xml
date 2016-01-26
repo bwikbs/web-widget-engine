@@ -73,6 +73,28 @@
           <text><![CDATA[
 
 
+  ]]></text>
+        </node>
+        <node nodeType="1" localName="script" type="text/javascript">
+          <node nodeType="3" localName="text">
+            <text><![CDATA[
+                        function test() {
+                          var a = document.getElementById("div1");
+                          print(a.style.textAlign);
+                          a.style.textAlign='right';
+                          print(a.style.textAlign);
+                          a.style.textAlign='left';
+                          print(a.style.textAlign);
+                          a.style.textAlign='center';
+                          print(a.style.textAlign);
+                          print("<End>");
+                    }
+                test();
+  ]]></text>
+          </node>
+        </node>
+        <node nodeType="3" localName="text">
+          <text><![CDATA[
 ]]></text>
         </node>
       </node>

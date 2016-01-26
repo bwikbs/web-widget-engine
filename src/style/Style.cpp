@@ -1237,6 +1237,30 @@ String* CSSStyleDeclaration::opacity()
     return String::emptyString;
 }
 
+String* CSSStyleDeclaration::textAlign()
+{
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
+        CSSStyleValuePair v = *itr;
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::TextAlign && v.valueKind() == CSSStyleValuePair::ValueKind::TextAlignValueKind) {
+            switch(v.textAlignValue()) {
+                //FIXME:mh.byun LTR case only
+                case TextAlignValue::NamelessTextAlignValue:
+                    return String::fromUTF8("left");
+                case TextAlignValue::LeftTextAlignValue:
+                    return String::fromUTF8("left");
+                case TextAlignValue::RightTextAlignValue:
+                    return String::fromUTF8("right");
+                case TextAlignValue::CenterTextAlignValue:
+                    return String::fromUTF8("center");
+                case TextAlignValue::JustifyTextAlignValue:
+                    return String::fromUTF8("justify");
+                default: break;
+            }
+        }
+    }
+    return String::emptyString;
+}
+
 ComputedStyle* StyleResolver::resolveDocumentStyle(StarFish* sf)
 {
     ComputedStyle* ret = new ComputedStyle();
