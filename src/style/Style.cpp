@@ -329,6 +329,18 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         } else if (VALUE_IS_STRING("blink")) {
             ret.m_value.m_textDecoration = TextDecorationValue::Blink;
         }
+    } else if (strcmp(key, "letter-spacing") == 0) {
+        // normal | length | inherit
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::LetterSpacing;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else if (VALUE_IS_STRING("normal")) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Normal;
+        } else {
+            parseLength(ret, value);
+        }
     } else if (strcmp(key, "text-overflow") == 0) {
         // <clip> | ellipsis | string
         ret.m_keyKind = CSSStyleValuePair::KeyKind::TextOverflow;
@@ -1322,6 +1334,17 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::TextDecorationKind);
                     style->setTextDecoration(cssValues[k].textDecoration());
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::LetterSpacing:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setLetterSpacing(parentStyle->letterSpacing());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial ||
+                           cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Normal) {
+                    style->setLetterSpacing(Length(Length::Fixed, 0));
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length);
+                    style->setLetterSpacing(cssValues[k].lengthValue().toLength());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::Direction:

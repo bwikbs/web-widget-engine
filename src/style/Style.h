@@ -220,6 +220,8 @@ public:
         TextDecoration,  // none | [ underline || overline || line-through || blink ] | inherit // Initial value -> none
         // https://www.w3.org/TR/2010/WD-css3-text-20101005/#text-overflow0
         TextOverflow, // <clip> | ellipsis | string
+        // https://www.w3.org/TR/CSS2/text.html#propdef-letter-spacing
+        LetterSpacing, //  normal | length | inherit // Initial -> normal
         // https://www.w3.org/TR/CSS21/visuren.html#propdef-direction
         Direction, // <ltr> | rtl | inherit
         // https://www.w3.org/TR/2011/REC-CSS2-20110607/colors.html#background-properties
@@ -300,6 +302,7 @@ public:
         Auto,
         None,
         Number, // real number values - https://www.w3.org/TR/CSS21/syndata.html#value-def-number
+        Normal,
         StringValueKind,
 
         DisplayValueKind,

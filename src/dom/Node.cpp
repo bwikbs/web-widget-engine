@@ -389,6 +389,9 @@ void Node::dumpStyle()
     else if (m_style->fontStyle() == FontStyleValue::ObliqueFontStyleValue)
         printf("oblique, ");
 
+    // letter-spacing
+    printf("letter-spacing: %f, ", m_style->letterSpacing().fixed());
+
     // text-overflow
     printf("text-overflow: ");
     if (m_style->textOverflow() == TextOverflowValue::ClipTextOverflowValue)

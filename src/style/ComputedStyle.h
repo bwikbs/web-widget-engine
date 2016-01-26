@@ -26,6 +26,7 @@ public:
         m_inheritedStyles.m_fontSize = DEFAULT_FONT_SIZE;
 
         m_inheritedStyles.m_visibility = VisibilityValue::VisibleVisibilityValue;
+        m_inheritedStyles.m_letterSpacing = Length(Length::Fixed, 0);
 
         initNonInheritedStyles();
     }
@@ -613,6 +614,11 @@ public:
         m_textOverflow = val;
     }
 
+    void setLetterSpacing(Length len)
+    {
+        m_inheritedStyles.m_letterSpacing = len;
+    }
+
     TextOverflowValue textOverflow()
     {
         return m_textOverflow;
@@ -626,6 +632,11 @@ public:
     FontStyleValue fontStyle()
     {
         return m_inheritedStyles.m_fontStyle;
+    }
+
+    Length letterSpacing()
+    {
+        return m_inheritedStyles.m_letterSpacing;
     }
 
 protected:
@@ -694,6 +705,7 @@ protected:
         Color m_color;
         float m_fontSize;
         FontStyleValue m_fontStyle;
+        Length m_letterSpacing;
         TextAlignValue m_textAlign;
         DirectionValue m_direction;
         VisibilityValue m_visibility;
