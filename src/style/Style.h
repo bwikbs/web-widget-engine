@@ -643,6 +643,7 @@ public:
     void setMargin(const char* value);
     String* overflow();
     String* position();
+    String* textDecoration();
     String* width();
     String* visibility();
     String* opacity();

@@ -1170,6 +1170,29 @@ String* CSSStyleDeclaration::position()
     return String::emptyString;
 }
 
+String* CSSStyleDeclaration::textDecoration()
+{
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
+        CSSStyleValuePair v = *itr;
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::TextDecoration) {
+            switch(v.textDecoration()) {
+                case TextDecorationValue::None:
+                    return String::fromUTF8("none");
+                case TextDecorationValue::UnderLine:
+                    return String::fromUTF8("underline");
+                case TextDecorationValue::OverLine:
+                    return String::fromUTF8("overline");
+                case TextDecorationValue::LineThrough:
+                    return String::fromUTF8("line-through");
+                case TextDecorationValue::Blink:
+                    return String::fromUTF8("blink");
+                default: break;
+            }
+        }
+    }
+    return String::emptyString;
+}
+
 String* CSSStyleDeclaration::width()
 {
     for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
