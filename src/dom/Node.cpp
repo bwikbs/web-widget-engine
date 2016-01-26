@@ -551,6 +551,10 @@ void Node::dumpStyle()
     if(!m_style->borderImageSource()->equals(String::emptyString))
         printf("border-image-source: %s, ", m_style->borderImageSource()->utf8Data());
 
+    // border-image-width
+    BorderImageLengthBox b = m_style->borderImageWidths();
+    printf("border-image-width: (%s, %s, %s, %s), ", b.top().dumpString()->utf8Data(), b.right().dumpString()->utf8Data(), b.bottom().dumpString()->utf8Data(), b.left().dumpString()->utf8Data());
+
     // border-style
     printf("border-style(t,r,b,l): (");
     if (m_style->borderTopStyle() == BorderStyleValue::BNone) {

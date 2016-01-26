@@ -21,6 +21,12 @@ bool endsWith(const char* base, const char* str)
     return (blen >= slen) && (0 == strcmp(base + blen - slen, str));
 }
 
+bool endsWithNumber(const char* str)
+{
+    const char* lastCh = (str + strlen(str) - 1);
+    return *lastCh >= '0' && *lastCh <= '9';
+}
+
 #define VALUE_IS_STRING(str) \
     (strcmp(value,str)) == 0
 
@@ -33,6 +39,39 @@ bool endsWith(const char* base, const char* str)
 #define VALUE_IS_NONE() \
     VALUE_IS_STRING("none")
 
+CSSLength parseCSSLength(const char* value)
+{
+    float f;
+    if (endsWith(value, "px")) {
+        sscanf(value, "%fpx", &f);
+        return CSSLength(f);
+    } else if (endsWith(value, "em")) {
+        sscanf(value, "%fem", &f);
+        return CSSLength(CSSLength::Kind::EM, f);
+    } else if (endsWith(value, "ex")) {
+        sscanf(value, "%fex", &f);
+        return CSSLength(CSSLength::Kind::EX, f);
+    } else if (endsWith(value, "in")) {
+        sscanf(value, "%fin", &f);
+        return CSSLength(CSSLength::Kind::IN, f);
+    } else if (endsWith(value, "cm")) {
+        sscanf(value, "%fcm", &f);
+        return CSSLength(CSSLength::Kind::CM, f);
+    } else if (endsWith(value, "mm")) {
+        sscanf(value, "%fmm", &f);
+        return CSSLength(CSSLength::Kind::MM, f);
+    } else if (endsWith(value, "pt")) {
+        sscanf(value, "%fpt", &f);
+        return CSSLength(CSSLength::Kind::PT, f);
+    } else if (endsWith(value, "pc")) {
+        sscanf(value, "%fpc", &f);
+        return CSSLength(CSSLength::Kind::PC, f);
+    } else if (strcmp(value, "0")) {
+        return CSSLength(0.0);
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
 void parseLength(CSSStyleValuePair& ret, const char* value)
 {
     float f;
@@ -85,6 +124,7 @@ void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
         f = f / 100.f;
         ret.m_value.m_floatValue = f;
     } else {
+        parseLength(ret, value);
         parseLength(ret, value);
     }
 }
@@ -631,6 +671,38 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             } else if (endsWith(value, "space")) {
                 ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = SpaceValue});
             }
+        }
+    } else if (strcmp(key, "border-image-width") == 0) {
+        // [length | percentage | number | auto] {1, 4}
+        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageWidth;
+        if (VALUE_IS_INHERIT()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else if (VALUE_IS_INITIAL()) {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else {
+            ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
+            ValueList* values = new ValueList();
+            std::vector<String*, gc_allocator<String*>> tokens;
+            DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+            for (unsigned int i = 0; i < tokens.size(); i++) {
+                const char* currentToken = tokens[i]->utf8Data();
+                if (strcmp(currentToken, "auto") == 0) {
+                    values->append(CSSStyleValuePair::ValueKind::Auto, {0});
+                } else if (endsWith(currentToken, "%")) {
+                    float f;
+                    sscanf(currentToken, "%f%%", &f);
+                    values->append(CSSStyleValuePair::ValueKind::Percentage, {.m_floatValue = (f / 100.f)});
+                } else if (endsWithNumber(currentToken)) {
+                    char* pEnd;
+                    double d = strtod (currentToken, &pEnd);
+                    STARFISH_ASSERT(pEnd == currentToken + tokens[i]->length());
+                    values->append(CSSStyleValuePair::ValueKind::Number, {.m_floatValue = (float)d});
+                } else {
+                    CSSStyleValuePair::ValueData data = {.m_length = parseCSSLength(currentToken)};
+                    values->append(CSSStyleValuePair::ValueKind::Length, data);
+                }
+            }
+            ret.m_value.m_multiValue = values;
         }
     } else if (strcmp(key, "border-image-slice") == 0) {
         // number | percentage {1,4} && fill?
@@ -1666,6 +1738,48 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else {
                     //STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
                     style->setBorderImageSource(cssValues[k].stringValue());
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::BorderImageWidth:
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->setBorderImageWidths(parentStyle->borderImageWidths());
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    BorderImageLengthBox box;
+                    style->setBorderImageWidths(box);
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::ValueListKind);
+                    BorderImageLength top, right, bottom, left;
+                    ValueList* l = cssValues[k].multiValue();
+                    unsigned int size = l->size();
+                    if (l->getValueKindAtIndex(0) == CSSStyleValuePair::ValueKind::Number)
+                        top.setValue(l->getValueAtIndex(0).m_floatValue);
+                    else
+                        top.setValue(convertValueToLength(l->getValueKindAtIndex(0), l->getValueAtIndex(0)));
+                    if (size > 1) {
+                        if (l->getValueKindAtIndex(1) == CSSStyleValuePair::ValueKind::Number)
+                            right.setValue(l->getValueAtIndex(1).m_floatValue);
+                        else
+                            right.setValue(convertValueToLength(l->getValueKindAtIndex(1), l->getValueAtIndex(1)));
+                    } else {
+                        right = top;
+                    }
+                    if (size > 2) {
+                        if (l->getValueKindAtIndex(2) == CSSStyleValuePair::ValueKind::Number)
+                            bottom.setValue(l->getValueAtIndex(2).m_floatValue);
+                        else
+                            bottom.setValue(convertValueToLength(l->getValueKindAtIndex(2), l->getValueAtIndex(2)));
+                    } else {
+                        bottom = top;
+                    }
+                    if (size > 3) {
+                        if (l->getValueKindAtIndex(3) == CSSStyleValuePair::ValueKind::Number)
+                            left.setValue(l->getValueAtIndex(3).m_floatValue);
+                        else
+                            left.setValue(convertValueToLength(l->getValueKindAtIndex(3), l->getValueAtIndex(3)));
+                    } else {
+                        left = right;
+                    }
+                    style->setBorderImageWidths(BorderImageLengthBox(top, right, bottom, left));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderTopStyle:

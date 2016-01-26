@@ -464,12 +464,14 @@ public:
     bool borderImageSliceFill() { return surround()->border.image().sliceFill(); }
     BorderImageRepeatValue borderImageRepeatX() { return surround()->border.image().repeatX(); }
     BorderImageRepeatValue borderImageRepeatY() { return surround()->border.image().repeatY(); }
+    BorderImageLengthBox borderImageWidths() { return surround()->border.image().widths(); }
 
     void setBorderImageSource(String* url) { surround()->border.image().setUrl(url); }
     void setBorderImageSlices(LengthBox slices) { surround()->border.image().setSlices(slices); }
     void setBorderImageSliceFill(bool fill) { surround()->border.image().setSliceFill(fill); }
     void setBorderImageRepeatX(BorderImageRepeatValue value) { surround()->border.image().setRepeatX(value); }
     void setBorderImageRepeatY(BorderImageRepeatValue value) { surround()->border.image().setRepeatY(value); }
+    void setBorderImageWidths(BorderImageLengthBox value) { surround()->border.image().setWidths(value); }
 
     void setBorderImageSliceFromOther(ComputedStyle* other)
     {
