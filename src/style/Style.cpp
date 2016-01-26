@@ -958,6 +958,7 @@ String* CSSStyleDeclaration::direction()
             }
         }
     }
+    return String::emptyString;
 }
 
 void CSSStyleDeclaration::setLengthValue(CSSStyleValuePair* pair, const char* value)

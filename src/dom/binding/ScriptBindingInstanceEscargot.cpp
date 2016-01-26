@@ -1437,7 +1437,6 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         }
     }, false, false, false);
 
-<<<<<<< HEAD
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("direction"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
@@ -1448,7 +1447,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
         if (v.isESString()) {
             ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("direction", v.asESString()->utf8Data()));
-=======
+        }
+    }, false, false, false);
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("marginTop"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
@@ -1531,7 +1531,6 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             ((CSSStyleDeclaration*) originalObj)->setMargin(v.asESString()->utf8Data());
         } else {
             THROW_ILLEGAL_INVOCATION()
->>>>>>> Bind marginTop, marginRight, marginBottom, marginLeft and margin
         }
     }, false, false, false);
 
