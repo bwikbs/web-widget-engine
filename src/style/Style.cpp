@@ -965,31 +965,6 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     return ret;
 }
 
-String* CSSStyleDeclaration::color()
-{
-    for (unsigned i = 0; i < m_cssValues.size(); i++) {
-        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::Color
-                && m_cssValues.at(i).valueKind() == CSSStyleValuePair::ValueKind::StringValueKind)
-            return m_cssValues.at(i).stringValue();
-    }
-    return String::emptyString;
-}
-
-void CSSStyleDeclaration::setColor(String* value)
-{
-    for (unsigned i = 0; i < m_cssValues.size(); i++) {
-        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::Color
-                && m_cssValues.at(i).valueKind() == CSSStyleValuePair::ValueKind::StringValueKind) {
-            m_cssValues.at(i).setStringValue(value);
-        }
-    }
-    CSSStyleValuePair ret;
-    ret.setKeyKind(CSSStyleValuePair::KeyKind::Color);
-    ret.setValueKind(CSSStyleValuePair::ValueKind::StringValueKind);
-    ret.setStringValue(value);
-    m_cssValues.push_back(ret);
-}
-
 String* CSSStyleDeclaration::direction()
 {
     for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
@@ -1021,126 +996,30 @@ String* CSSStyleDeclaration::height()
     return String::emptyString;
 }
 
-void CSSStyleDeclaration::setLengthValue(CSSStyleValuePair* pair, const char* value)
+void CSSStyleValuePair::setLengthValue(const char* value)
 {
     if (VALUE_IS_STRING("auto")) {
-        pair->setValueKind(CSSStyleValuePair::ValueKind::Auto);
+        setValueKind(CSSStyleValuePair::ValueKind::Auto);
     } else if (VALUE_IS_INHERIT()) {
-        pair->setValueKind(CSSStyleValuePair::ValueKind::Inherit);
+        setValueKind(CSSStyleValuePair::ValueKind::Inherit);
     } else if (VALUE_IS_INITIAL()) {
-        pair->setValueKind(CSSStyleValuePair::ValueKind::Initial);
+        setValueKind(CSSStyleValuePair::ValueKind::Initial);
     } else {
-        parsePercentageOrLength(*pair, value);
+        parsePercentageOrLength(*this, value);
     }
-}
-
-String* CSSStyleDeclaration::marginTop()
-{
-    for (unsigned i = 0; i < m_cssValues.size(); i++) {
-        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginTop) {
-            return m_cssValues.at(i).lengthOrPercentageToString();
-        }
-    }
-    return String::emptyString;
-}
-
-void CSSStyleDeclaration::setMarginTop(const char* value)
-{
-    for (unsigned i = 0; i < m_cssValues.size(); i++) {
-        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginTop) {
-            setLengthValue(&m_cssValues.at(i), value);
-            return;
-        }
-    }
-    CSSStyleValuePair ret;
-    ret.setKeyKind(CSSStyleValuePair::KeyKind::MarginTop);
-    setLengthValue(&ret, value);
-    m_cssValues.push_back(ret);
-}
-
-String* CSSStyleDeclaration::marginBottom()
-{
-    for (unsigned i = 0; i < m_cssValues.size(); i++) {
-        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginBottom) {
-            return m_cssValues.at(i).lengthOrPercentageToString();
-        }
-    }
-    return String::emptyString;
-}
-
-void CSSStyleDeclaration::setMarginBottom(const char* value)
-{
-    for (unsigned i = 0; i < m_cssValues.size(); i++) {
-        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginBottom) {
-            setLengthValue(&m_cssValues.at(i), value);
-            return;
-        }
-    }
-    CSSStyleValuePair ret;
-    ret.setKeyKind(CSSStyleValuePair::KeyKind::MarginBottom);
-    setLengthValue(&ret, value);
-    m_cssValues.push_back(ret);
-}
-
-String* CSSStyleDeclaration::marginRight()
-{
-    for (unsigned i = 0; i < m_cssValues.size(); i++) {
-        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginRight) {
-            return m_cssValues.at(i).lengthOrPercentageToString();
-        }
-    }
-    return String::emptyString;
-}
-
-void CSSStyleDeclaration::setMarginRight(const char* value)
-{
-    for (unsigned i = 0; i < m_cssValues.size(); i++) {
-        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginRight) {
-            setLengthValue(&m_cssValues.at(i), value);
-            return;
-        }
-    }
-    CSSStyleValuePair ret;
-    ret.setKeyKind(CSSStyleValuePair::KeyKind::MarginRight);
-    setLengthValue(&ret, value);
-    m_cssValues.push_back(ret);
-}
-
-String* CSSStyleDeclaration::marginLeft()
-{
-    for (unsigned i = 0; i < m_cssValues.size(); i++) {
-        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginLeft) {
-            return m_cssValues.at(i).lengthOrPercentageToString();
-        }
-    }
-    return String::emptyString;
-}
-
-void CSSStyleDeclaration::setMarginLeft(const char* value)
-{
-    for (unsigned i = 0; i < m_cssValues.size(); i++) {
-        if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::MarginLeft) {
-            setLengthValue(&m_cssValues.at(i), value);
-            return;
-        }
-    }
-    CSSStyleValuePair ret;
-    ret.setKeyKind(CSSStyleValuePair::KeyKind::MarginLeft);
-    setLengthValue(&ret, value);
-    m_cssValues.push_back(ret);
 }
 
 String* CSSStyleDeclaration::margin()
 {
     String* sum;
     String* space = String::fromUTF8(" ");
-    String* top = marginTop();
+    String* top = MarginTop();
     if (!top->equals(String::emptyString)) {
-        String* right = marginRight();
+        String* right = MarginRight();
         if (!right->equals(String::emptyString)) {
-            String* bottom = marginBottom();
+            String* bottom = MarginBottom();
             if (!bottom->equals(String::emptyString)) {
-                String* left = marginLeft();
+                String* left = MarginLeft();
                 if (!left->equals(String::emptyString)) {
                        sum = top;
                        return sum->concat(space)->concat(right)->concat(space)->concat(bottom)->concat(space)->concat(left);

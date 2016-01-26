@@ -207,6 +207,7 @@ enum VisibilityValue {
 };
 
 class ValueList;
+class CSSStyleDeclaration;
 
 class CSSStyleValuePair : public gc {
     friend class ValueList;
@@ -570,6 +571,46 @@ public:
             return nullptr;
     }
 
+    String* toString()
+    {
+        switch (keyKind()) {
+            case Color: {
+                if (m_valueKind == CSSStyleValuePair::ValueKind::StringValueKind)
+                    return stringValue();
+                break;
+            }
+            case MarginTop:
+            case MarginRight:
+            case MarginBottom:
+            case MarginLeft:
+                return lengthOrPercentageToString();
+            default:
+                return nullptr;
+        }
+        return nullptr;
+    }
+
+    void setLengthValue(const char* value);
+
+    void setValue(KeyKind kKind, const char* value)
+    {
+        switch (kKind) {
+            case Color: {
+                setValueKind(StringValueKind);
+                setStringValue(String::fromUTF8(value));
+                break;
+            }
+            case MarginTop:
+            case MarginRight:
+            case MarginBottom:
+            case MarginLeft:
+                setLengthValue(value);
+                break;
+            default:
+                printf("error");
+        }
+    }
+
 protected:
     KeyKind m_keyKind;
     ValueKind m_valueKind;
@@ -620,6 +661,13 @@ protected:
     std::vector<CSSStyleValuePair::ValueData, gc_allocator<CSSStyleValuePair::ValueData>> m_values;
 };
 
+#define FOR_EACH_ATTRIBUTE(F) \
+    F(Color) \
+    F(MarginTop) \
+    F(MarginRight) \
+    F(MarginBottom) \
+    F(MarginLeft)
+
 class CSSStyleDeclaration : public EventTarget<ScriptWrappable> {
     friend class StyleResolver;
 public:
@@ -646,21 +694,37 @@ public:
         return m_document;
     }
 
-    void setLengthValue(CSSStyleValuePair* pair, const char* value);
+#define ATTRIBUTE_GETTER(name) \
+    String* name () { \
+        for (unsigned i = 0; i < m_cssValues.size(); i++) { \
+            if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) \
+                return m_cssValues.at(i).toString(); \
+        } \
+        return String::emptyString; \
+    }
 
-    String* color();
-    void setColor(String* color);
+    FOR_EACH_ATTRIBUTE(ATTRIBUTE_GETTER)
+#undef ATTRIBUTE_GETTER
+
+#define ATTRIBUTE_SETTER(name) \
+    void set##name(const char* value) \
+    { \
+        for (unsigned i = 0; i < m_cssValues.size(); i++) { \
+            if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) { \
+                m_cssValues.at(i).setValue(CSSStyleValuePair::KeyKind::name, value); \
+            } \
+        } \
+        CSSStyleValuePair ret; \
+        ret.setKeyKind(CSSStyleValuePair::KeyKind::name); \
+        ret.setValue(CSSStyleValuePair::KeyKind::name, value); \
+        m_cssValues.push_back(ret); \
+    }
+
+    FOR_EACH_ATTRIBUTE(ATTRIBUTE_SETTER)
+#undef ATTRIBUTE_GETTER
 
     String* direction();
     String* height();
-    String* marginTop();
-    void setMarginTop(const char* value);
-    String* marginBottom();
-    void setMarginBottom(const char* value);
-    String* marginLeft();
-    void setMarginLeft(const char* value);
-    String* marginRight();
-    void setMarginRight(const char* value);
     String* margin();
     void setMargin(const char* value);
     String* overflow();

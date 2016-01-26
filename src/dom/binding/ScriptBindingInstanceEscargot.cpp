@@ -278,7 +278,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     NodeFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("cloneNode"), false, false, false,
         escargot::ESFunctionObject::create(nullptr, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
             escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
-            CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
+    CHECK_TYPEOF(thisValue, ScriptWrappable::Type::NodeObject);
             Node* obj = (Node*)thisValue.asESPointer()->asESObject();
             escargot::ESValue arg = instance->currentExecutionContext()->readArgument(0);
             bool deepClone = false;
@@ -1438,14 +1438,14 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
 
-        String* c = ((CSSStyleDeclaration*) originalObj)->color();
+        String* c = ((CSSStyleDeclaration*) originalObj)->Color();
         if (c != nullptr)
             return escargot::ESString::create(c->utf8Data());
         return escargot::ESValue(escargot::ESValue::ESNull);
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
         if (v.isESString()) {
-            ((CSSStyleDeclaration*) originalObj)->setColor(String::fromUTF8(v.asESString()->utf8Data()));
+            ((CSSStyleDeclaration*) originalObj)->setColor(v.asESString()->utf8Data());
         } else {
             THROW_ILLEGAL_INVOCATION()
         }
@@ -1481,7 +1481,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
 
-        String* c = ((CSSStyleDeclaration*) originalObj)->marginTop();
+        String* c = ((CSSStyleDeclaration*) originalObj)->MarginTop();
         if (c != nullptr)
             return escargot::ESString::create(c->utf8Data());
         return escargot::ESValue(escargot::ESValue::ESNull);
@@ -1498,7 +1498,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
 
-        String* c = ((CSSStyleDeclaration*) originalObj)->marginBottom();
+        String* c = ((CSSStyleDeclaration*) originalObj)->MarginBottom();
         if (c != nullptr)
             return escargot::ESString::create(c->utf8Data());
         return escargot::ESValue(escargot::ESValue::ESNull);
@@ -1515,7 +1515,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
 
-        String* c = ((CSSStyleDeclaration*) originalObj)->marginRight();
+        String* c = ((CSSStyleDeclaration*) originalObj)->MarginRight();
         if (c != nullptr)
             return escargot::ESString::create(c->utf8Data());
         return escargot::ESValue(escargot::ESValue::ESNull);
@@ -1532,7 +1532,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
 
-        String* c = ((CSSStyleDeclaration*) originalObj)->marginLeft();
+        String* c = ((CSSStyleDeclaration*) originalObj)->MarginLeft();
         if (c != nullptr)
             return escargot::ESString::create(c->utf8Data());
         return escargot::ESValue(escargot::ESValue::ESNull);
