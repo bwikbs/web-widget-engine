@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            #div1 { }
+            #div2 { display: inline; }
+            #div3 { display: block; }
+            #div4 { display: inline-block; }
+            #divParent { display: block; border-color: black; }
+            #divChild1 { display: inline; }
+            #divChild2 { display: block; }
+            div {
+                color: red;
+                font-size: 20px;                
+                border-style: solid;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="div1">
+           display: default
+        </div>
+        text
+        <div id="div2">
+           display: inline
+        </div>
+        text
+        <div id="div3">
+           display: block
+        </div>
+        text
+        <div id="div4">
+           display: inline-block
+        </div>
+        text
+        <div id="divParent">
+           display: block
+            <div id="divChild1">
+               display: inline
+            </div>
+            <div id="divChild2">
+               display: block
+            </div>
+        </div>
+    </body>
+    </body>
+    <script type="text/javascript">
+        function test() {
+            return 1<2;
+        }
+    </script>
+</html>
+            

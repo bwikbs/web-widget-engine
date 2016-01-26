@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            #div1 { color: red; }
+            #div2 { color: green; padding-left: 10px; }
+            #div3 { color: blue; padding-left: 20%; }
+            #divParent { color: black; padding-left: 10px; }
+            #divChild1 { color: fuchsia; padding-left: 5px; }
+            #divChild2 { color: orange; padding-left: inherit; }
+            div {
+                width: 200px;
+                font-size: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="div1">
+            padding-left: default
+        </div>
+        <div id="div2">
+            padding-left: 10px
+        </div>
+        <div id="div3">
+            padding-left: 20%
+        </div>
+        <div id="divParent">
+            padding-left: 10px
+            <div id="divChild1">
+                padding-left: 5px
+            </div>
+            <div id="divChild2">
+                padding-left: inherit
+            </div>
+        </div>
+    </body>
+    </body>
+    <script type="text/javascript">
+        function test() {
+            return 1<2;
+        }
+    </script>
+</html>
+            

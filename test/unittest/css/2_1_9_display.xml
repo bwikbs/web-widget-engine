@@ -10,31 +10,28 @@
         ]]></text>
                 </node>
                 <node nodeType="1" localName="style" type="text/css">
-                    <style selectorText="div" width="200px" font-size="14px"/>
                     <style selectorText="#div1"/>
-                    <style selectorText="#div2" background-color="red"/>
-                    <style selectorText="#div3" background-color="green"/>
-                    <style selectorText="#div4" background-color="blue"/>
-                    <style selectorText="#div5" background-color="rgb(0, 255, 255)"/>
-                    <style selectorText="#div6" background-color="transparent"/>
-                    <style selectorText="#divParent" background-color="gray"/>
-                    <style selectorText="#divChild1" background-color="transparent"/>
-                    <style selectorText="#divChild2" background-color="inherit"/>
+                    <style selectorText="#div2" display="inline"/>
+                    <style selectorText="#div3" display="block"/>
+                    <style selectorText="#div4" display="inline-block"/>
+                    <style selectorText="#divParent" display="block" border-top-color="black" border-right-color="black" border-bottom-color="black" border-left-color="black"/>
+                    <style selectorText="#divChild1" display="inline"/>
+                    <style selectorText="#divChild2" display="block"/>
+                    <style selectorText="div" color="red" font-size="20px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid"/>
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            div {
-                width: 200px;
-                font-size: 14px;
-            }
             #div1 { }
-            #div2 { background-color: red; }
-            #div3 { background-color: green; }
-            #div4 { background-color: blue; }
-            #div5 { background-color: #0FF; }
-            #div6 { background-color: transparent; }
-            #divParent { background-color: gray; }
-            #divChild1 { background-color: transparent; }
-            #divChild2 { background-color: inherit; }
+            #div2 { display: inline; }
+            #div3 { display: block; }
+            #div4 { display: inline-block; }
+            #divParent { display: block; border-color: black; }
+            #divChild1 { display: inline; }
+            #divChild2 { display: block; }
+            div {
+                color: red;
+                font-size: 20px;                
+                border-style: solid;
+            }
         ]]></text>
                     </node>
                 </node>
@@ -55,79 +52,61 @@
                 <node nodeType="1" localName="div" id="div1">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           background-color: default
+           display: default
         ]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
+        text
         ]]></text>
                 </node>
                 <node nodeType="1" localName="div" id="div2">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           background-color: red
+           display: inline
         ]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
+        text
         ]]></text>
                 </node>
                 <node nodeType="1" localName="div" id="div3">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           background-color: green
+           display: block
         ]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
+        text
         ]]></text>
                 </node>
                 <node nodeType="1" localName="div" id="div4">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           background-color: blue
+           display: inline-block
         ]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
-        ]]></text>
-                </node>
-                <node nodeType="1" localName="div" id="div5">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-           background-color: #0FF
-        ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
-        ]]></text>
-                </node>
-                <node nodeType="1" localName="div" id="div6">
-                    <node nodeType="3" localName="text">
-                        <text><![CDATA[
-           background-color: transparent
-        ]]></text>
-                    </node>
-                </node>
-                <node nodeType="3" localName="text">
-                    <text><![CDATA[
+        text
         ]]></text>
                 </node>
                 <node nodeType="1" localName="div" id="divParent">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           background-color: gray
+           display: block
             ]]></text>
                     </node>
                     <node nodeType="1" localName="div" id="divChild1">
                         <node nodeType="3" localName="text">
                             <text><![CDATA[
-               background-color: transparent
+               display: inline
             ]]></text>
                         </node>
                     </node>
@@ -138,7 +117,7 @@
                     <node nodeType="1" localName="div" id="divChild2">
                         <node nodeType="3" localName="text">
                             <text><![CDATA[
-               background-color: inherit
+               display: block
             ]]></text>
                         </node>
                     </node>
@@ -164,6 +143,8 @@
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
+
+            
 ]]></text>
                 </node>
             </node>
