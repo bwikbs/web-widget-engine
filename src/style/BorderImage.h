@@ -24,6 +24,12 @@ public:
 	{
 
 	}
+
+    void checkComputed(Length fontSize, Font* font)
+    {
+        m_slices.checkComputed(fontSize, font);
+    }
+
 public:
 	BorderImageRepeatValue m_repeatX;   // [border-image-repeat]
 	BorderImageRepeatValue m_repeatY;	// [border-image-repeat]
@@ -53,6 +59,13 @@ public:
     void setRepeatX(BorderImageRepeatValue value) { data()->m_repeatX = value; }
     void setRepeatY(BorderImageRepeatValue value) { data()->m_repeatY = value; }
     void setWidths(BorderImageLengthBox value) { data()->m_widths = value; }
+
+    void checkComputed(Length fontSize, Font* font)
+    {
+        if (m_data) {
+            m_data->checkComputed(fontSize, font);
+        }
+    }
 
 private:
 	bool isNull() { return m_data == nullptr; }

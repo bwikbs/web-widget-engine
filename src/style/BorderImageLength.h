@@ -72,6 +72,12 @@ namespace StarFish {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
 
+        void checkComputed(Length fontSize, Font* font)
+        {
+            if (m_type == LengthType)
+                m_length.changeToFixedIfNeeded(fontSize, font);
+        }
+
         Type m_type;
         Length m_length;
         double m_number;
@@ -105,6 +111,14 @@ namespace StarFish {
             , m_top(t)
             , m_bottom(b)
         {
+        }
+
+        void checkComputed(Length fontSize, Font* font)
+        {
+            m_left.checkComputed(fontSize, font);
+            m_right.checkComputed(fontSize, font);
+            m_top.checkComputed(fontSize, font);
+            m_bottom.checkComputed(fontSize, font);
         }
 
         BorderImageLength& left() { return m_left; }

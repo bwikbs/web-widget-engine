@@ -58,6 +58,11 @@ public:
         return style() != BorderStyleValue::BNone;
     }
 
+    void checkComputed(Length fontSize, Font* font)
+    {
+        m_width.changeToFixedIfNeeded(fontSize, font);
+    }
+
 protected:
     BorderStyleValue m_style;
     Length m_width;

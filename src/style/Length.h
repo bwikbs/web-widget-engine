@@ -168,6 +168,14 @@ public:
         return !operator ==(o);
     }
 
+    void checkComputed(Length fontSize, Font* font)
+    {
+        m_left.changeToFixedIfNeeded(fontSize, font);
+        m_right.changeToFixedIfNeeded(fontSize, font);
+        m_top.changeToFixedIfNeeded(fontSize, font);
+        m_bottom.changeToFixedIfNeeded(fontSize, font);
+    }
+
     const Length& left() const { return m_left; }
     const Length& right() const { return m_right; }
     const Length& top() const { return m_top; }

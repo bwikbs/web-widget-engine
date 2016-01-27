@@ -737,9 +737,6 @@ protected:
             m_display = DisplayValue::BlockDisplayValue;
         }
 
-        m_width.changeToFixedIfNeeded(fontSize(), font());
-        m_height.changeToFixedIfNeeded(fontSize(), font());
-
         if (lineHeight().isPercent() && lineHeight().percent() != -100) {
             // The computed value of the property is this percentage multiplied by the element's computed font size. Negative values are illegal.
             float lineHight = lineHeight().percent();
@@ -748,21 +745,32 @@ protected:
             setLineHeight(Length(Length::Fixed, lineHight * multipliedSize));
         }
 
+        // Convert all non-computed Lengths to computed Length
+        STARFISH_ASSERT(m_inheritedStyles.m_fontSize.isFixed());
+        Length baseFontSize = fontSize();
+        m_inheritedStyles.m_letterSpacing.changeToFixedIfNeeded(baseFontSize, font());
+        m_inheritedStyles.m_lineHeight.changeToFixedIfNeeded(baseFontSize, font());
+        m_width.changeToFixedIfNeeded(baseFontSize, font());
+        m_height.changeToFixedIfNeeded(baseFontSize, font());
+        m_verticalAlignLength.changeToFixedIfNeeded(baseFontSize, font());
+
         if (m_surround) {
-            m_surround->margin.top().changeToFixedIfNeeded(fontSize(), font());
-            m_surround->margin.right().changeToFixedIfNeeded(fontSize(), font());
-            m_surround->margin.bottom().changeToFixedIfNeeded(fontSize(), font());
-            m_surround->margin.left().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->margin.top().changeToFixedIfNeeded(baseFontSize, font());
+            m_surround->margin.right().changeToFixedIfNeeded(baseFontSize, font());
+            m_surround->margin.bottom().changeToFixedIfNeeded(baseFontSize, font());
+            m_surround->margin.left().changeToFixedIfNeeded(baseFontSize, font());
 
-            m_surround->padding.top().changeToFixedIfNeeded(fontSize(), font());
-            m_surround->padding.right().changeToFixedIfNeeded(fontSize(), font());
-            m_surround->padding.bottom().changeToFixedIfNeeded(fontSize(), font());
-            m_surround->padding.left().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->padding.top().changeToFixedIfNeeded(baseFontSize, font());
+            m_surround->padding.right().changeToFixedIfNeeded(baseFontSize, font());
+            m_surround->padding.bottom().changeToFixedIfNeeded(baseFontSize, font());
+            m_surround->padding.left().changeToFixedIfNeeded(baseFontSize, font());
 
-            m_surround->offset.top().changeToFixedIfNeeded(fontSize(), font());
-            m_surround->offset.right().changeToFixedIfNeeded(fontSize(), font());
-            m_surround->offset.bottom().changeToFixedIfNeeded(fontSize(), font());
-            m_surround->offset.left().changeToFixedIfNeeded(fontSize(), font());
+            m_surround->offset.top().changeToFixedIfNeeded(baseFontSize, font());
+            m_surround->offset.right().changeToFixedIfNeeded(baseFontSize, font());
+            m_surround->offset.bottom().changeToFixedIfNeeded(baseFontSize, font());
+            m_surround->offset.left().changeToFixedIfNeeded(baseFontSize, font());
+
+            m_surround->border.checkComputed(baseFontSize, font());
 
             if (hasBorderStyle() && !hasBorderColor()) {
                 // If an element's border color is not specified with a border property,
@@ -775,7 +783,7 @@ protected:
         }
 
         if(m_background)
-            m_background->checkComputed(fontSize(), font());
+            m_background->checkComputed(baseFontSize, font());
     }
 
     void loadResources(StarFish* sf);
@@ -796,8 +804,6 @@ protected:
     TextOverflowValue m_textOverflow;
     Length m_width;
     Length m_height;
-    Length m_bottom;
-    Length m_left;
     VerticalAlignValue m_verticalAlign;
     Length m_verticalAlignLength;
 

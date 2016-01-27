@@ -44,6 +44,15 @@ public:
 
     BorderImage& image() { return m_image; }
 
+    void checkComputed(Length fontSize, Font* font)
+    {
+        m_left.checkComputed(fontSize, font);
+        m_right.checkComputed(fontSize, font);
+        m_top.checkComputed(fontSize, font);
+        m_bottom.checkComputed(fontSize, font);
+        m_image.checkComputed(fontSize, font);
+    }
+
 private:
     BorderValue m_top;
     BorderValue m_right;
