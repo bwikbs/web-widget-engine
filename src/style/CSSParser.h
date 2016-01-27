@@ -9,14 +9,154 @@ class CSSTokenizer: public gc {
     //<ident-token>, <function-token>, <at-keyword-token>, <hash-token>, <string-token>, <bad-string-token>, <url-token>, <bad-url-token>, <delim-token>, <number-token>, <percentage-token>, <dimension-token>, <unicode-range-token>, <include-match-token>, <dash-match-token>, <prefix-match-token>, <suffix-match-token>, <substring-match-token>, <column-token>, <whitespace-token>, <CDO-token>, <CDC-token>, <colon-token>, <semicolon-token>, <comma-token>, <[-token>, <]-token>, <(-token>, <)-token>, <{-token>, and <}-token>
     enum TokenType {
     };
+
+public:
+    static bool isDigit(char c)
+    {
+        if (c >= '0' && c <= '9')
+            return true;
+        return false;
+    }
+
+    static bool isAlpha(char c)
+    {
+        if (c >= 'a' && c <='z')
+            return true;
+        return false;
+    }
+
+    static bool isNameStart(char c)
+    {
+        if (isAlpha(c)) return true;
+        if (c == '_') return true;
+        //TODO
+        return false;
+    }
+
+    static bool isNameChar(char c)
+    {
+        if (isNameStart(c)) return true;
+        if (isDigit(c)) return true;
+        if (c == '-') return true;
+        return false;
+    }
 };
 
 class CSSPropertyParser : public gc {
 public:
-    CSSPropertyParser(char* value):
-        m_startPos(value),
-        m_endPos(value + strlen(value)),
-        m_curPos(value) {
+    CSSPropertyParser(char* value)
+        : m_startPos(value)
+        , m_endPos(value + strlen(value))
+        , m_curPos(value)
+    {
+    }
+
+    bool consumeNumber()
+    {
+        float res = 0;
+        bool sign = true; // +
+        char* cur = m_curPos;
+        if (*cur == '-') {
+            sign = false;
+            cur++;
+        } else if (*cur == '+') {
+            sign = true;
+            cur++;
+        }
+        while (CSSTokenizer::isDigit(*cur) && cur < m_endPos) {
+            res = res*10 + (*cur - '0');
+            cur++;
+        }
+        if (cur == m_curPos)
+            return false;
+        if (*cur == '.' && cur < m_endPos) {
+            cur++;
+            int pt = 10;
+            while (CSSTokenizer::isDigit(*cur) && cur < m_endPos) {
+                res += (float)(*cur - '0')/pt;
+                pt *= 10;
+                cur++;
+            }
+        }
+
+        m_curPos = cur;
+        if (!sign) res *= (-1);
+        m_parsedNumber = res;
+        return true;
+    }
+
+    float parsedNumber() { return m_parsedNumber; }
+
+    bool consumeString()
+    {
+        int len = 0;
+        for (char* cur = m_curPos; cur < m_endPos; cur++, len++) {
+            if (!CSSTokenizer::isNameChar(*cur))
+                break;
+        }
+        m_parsedString = String::fromUTF8(m_curPos, len);
+        m_curPos += len;
+        return true;
+    }
+
+    String* parsedString() { return m_parsedString; }
+
+    bool isEnd() {
+        return (m_curPos == m_endPos);
+    }
+
+    static bool assureLength(const char* token, bool allowNegative)
+    {
+        CSSPropertyParser* parser = new CSSPropertyParser((char*) token);
+        if (!parser->consumeNumber()) return false;
+        float num = parser->parsedNumber();
+        if (!allowNegative && num < 0) return false;
+        if (parser->consumeString()) {
+            String* str = parser->parsedString();
+            if (str->equals("px")
+                || str->equals("em")
+                || str->equals("ex")
+                || str->equals("in")
+                || str->equals("cm")
+                || str->equals("mm")
+                || str->equals("pt")
+                || str->equals("pc"))
+                return parser->isEnd();
+            return false;
+        } else {
+            // After a zero length, the unit identifier is optional
+            if (num == 0) return true;
+            return false;
+        }
+        return true;
+    }
+
+    static bool assurePercent(const char* token, bool allowNegative)
+    {
+        CSSPropertyParser* parser = new CSSPropertyParser((char*) token);
+        if (!parser->consumeNumber()) return false;
+        float num = parser->parsedNumber();
+        if (!allowNegative && num < 0) return false;
+        if (parser->consumeString()) {
+            String* str = parser->parsedString();
+            if (str->equals("%"))
+                return parser->isEnd();
+            return false;
+        } else {
+            // After a zero length, the unit identifier is optional
+            if (num == 0) return true;
+            return false;
+        }
+        return true;
+    }
+
+    static bool assureNumber(const char* token, bool allowNegative)
+    {
+        CSSPropertyParser* parser = new CSSPropertyParser((char*) token);
+        if (!parser->consumeNumber()) return false;
+        float num = parser->parsedNumber();
+        if (!allowNegative && num < 0) return false;
+        return parser->isEnd();
     }
 
     static char* getNextSingleValue(char* str) {
@@ -63,6 +203,9 @@ public:
     char* m_endPos;
     char* m_curPos;
     float m_parsedFloatValue;
+
+    float m_parsedNumber;
+    String* m_parsedString;
 };
 
 }

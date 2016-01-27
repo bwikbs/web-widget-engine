@@ -1451,7 +1451,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(Height, height) \
     F(FontSize, fontSize) \
     F(Position, position) \
-    F(TextDecoration, textDecoration)
+    F(TextDecoration, textDecoration) \
+    F(BorderImageWidth, borderImageWidth)
 
 
 #define DEFINE_ACCESSOR_PROPERTY(name, nameLower) \

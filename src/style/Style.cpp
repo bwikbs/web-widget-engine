@@ -432,6 +432,41 @@ void CSSStyleValuePair::setValueRight(const char* value)
     }
 }
 
+void CSSStyleValuePair::setValueBorderImageWidth(const char* value)
+{
+    // [length | percentage | number | auto] {1, 4}
+    m_keyKind = CSSStyleValuePair::KeyKind::BorderImageWidth;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else {
+        m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
+        ValueList* values = new ValueList();
+        std::vector<String*, gc_allocator<String*>> tokens;
+        DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+        for (unsigned int i = 0; i < tokens.size(); i++) {
+            const char* currentToken = tokens[i]->utf8Data();
+            if (strcmp(currentToken, "auto") == 0) {
+                values->append(CSSStyleValuePair::ValueKind::Auto, {0});
+            } else if (endsWith(currentToken, "%")) {
+                float f;
+                sscanf(currentToken, "%f%%", &f);
+                values->append(CSSStyleValuePair::ValueKind::Percentage, {.m_floatValue = (f / 100.f)});
+            } else if (endsWithNumber(currentToken)) {
+                char* pEnd;
+                double d = strtod (currentToken, &pEnd);
+                STARFISH_ASSERT(pEnd == currentToken + tokens[i]->length());
+                values->append(CSSStyleValuePair::ValueKind::Number, {.m_floatValue = (float)d});
+            } else {
+                CSSStyleValuePair::ValueData data = {.m_length = parseCSSLength(currentToken)};
+                values->append(CSSStyleValuePair::ValueKind::Length, data);
+            }
+        }
+        m_value.m_multiValue = values;
+    }
+}
+
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
     CSSStyleValuePair ret;
@@ -762,37 +797,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             }
         }
     } else if (strcmp(key, "border-image-width") == 0) {
-        // [length | percentage | number | auto] {1, 4}
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageWidth;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
-            ValueList* values = new ValueList();
-            std::vector<String*, gc_allocator<String*>> tokens;
-            DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
-            for (unsigned int i = 0; i < tokens.size(); i++) {
-                const char* currentToken = tokens[i]->utf8Data();
-                if (strcmp(currentToken, "auto") == 0) {
-                    values->append(CSSStyleValuePair::ValueKind::Auto, {0});
-                } else if (endsWith(currentToken, "%")) {
-                    float f;
-                    sscanf(currentToken, "%f%%", &f);
-                    values->append(CSSStyleValuePair::ValueKind::Percentage, {.m_floatValue = (f / 100.f)});
-                } else if (endsWithNumber(currentToken)) {
-                    char* pEnd;
-                    double d = strtod (currentToken, &pEnd);
-                    STARFISH_ASSERT(pEnd == currentToken + tokens[i]->length());
-                    values->append(CSSStyleValuePair::ValueKind::Number, {.m_floatValue = (float)d});
-                } else {
-                    CSSStyleValuePair::ValueData data = {.m_length = parseCSSLength(currentToken)};
-                    values->append(CSSStyleValuePair::ValueKind::Length, data);
-                }
-            }
-            ret.m_value.m_multiValue = values;
-        }
+        ret.setValueBorderImageWidth(value);
     } else if (strcmp(key, "border-image-slice") == 0) {
         // number | percentage {1,4} && fill?
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSlice;
@@ -1194,6 +1199,9 @@ String* CSSStyleValuePair::toString()
                     return lengthOrPercentageToString();
             }
         }
+        case BorderImageWidth: {
+            //TODO
+        }
         default: {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
@@ -1381,6 +1389,25 @@ bool CSSStyleDeclaration::checkInputErrorPosition(CSSStyleValuePair::KeyKind key
 
 bool CSSStyleDeclaration::checkInputErrorTextDecoration(CSSStyleValuePair::KeyKind key, const char* value)
 {
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    // [ <length> | <percentage> | <number> | auto ]{1,4}
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+    if (tokens.size() > 4) return false;
+    for (unsigned int i = 0; i < tokens.size(); i++) {
+        const char* currentToken = tokens[i]->utf8Data();
+        if (CSSPropertyParser::assureLength(currentToken, false)) {
+        } else if (CSSPropertyParser::assurePercent(currentToken, false)) {
+        } else if (CSSPropertyParser::assureNumber(currentToken, false)) {
+        } else if (strcmp(currentToken, "auto") == 0) {
+        } else {
+            return false;
+        }
+    }
     return true;
 }
 

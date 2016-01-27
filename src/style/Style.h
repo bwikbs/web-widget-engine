@@ -617,7 +617,8 @@ public:
     F(Width) \
     F(FontSize) \
     F(Position) \
-    F(TextDecoration)
+    F(TextDecoration) \
+    F(BorderImageWidth)
 
 #define SET_VALUE(name) \
     void setValue##name(const char* value);
