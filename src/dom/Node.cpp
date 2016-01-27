@@ -437,6 +437,8 @@ void Node::dumpStyle()
             printf("normal, ");
     } else if (m_style->lineHeight().isFixed()) {
         printf("%f, ", m_style->lineHeight().fixed());
+    } else {
+        printf("normal, ");
     }
 
     // text-overflow

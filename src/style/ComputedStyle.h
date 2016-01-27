@@ -741,12 +741,14 @@ protected:
             m_display = DisplayValue::BlockDisplayValue;
         }
 
-        if (lineHeight().isPercent() && lineHeight().percent() != -100) {
-            // The computed value of the property is this percentage multiplied by the element's computed font size. Negative values are illegal.
-            float lineHight = lineHeight().percent();
-            // FIXME: If the font size is percent type, how can calculate the computed value?
-            float multipliedSize = fontSize().isFixed() ? fontSize().fixed() : DEFAULT_FONT_SIZE;
-            setLineHeight(Length(Length::Fixed, lineHight * multipliedSize));
+        if (lineHeight().isPercent()) {
+            if (lineHeight().percent() == -100) {
+                // FIXME: The computed value of initial and normal should be normal.
+                setLineHeight(Length(Length::EmToBeFixed, 1.2));
+            } else {
+                // The computed value of the property is this percentage multiplied by the element's computed font size. Negative values are illegal.
+                setLineHeight(Length(Length::Fixed, lineHeight().percent() * fontSize().fixed()));
+            }
         }
 
         // Convert all non-computed Lengths to computed Length

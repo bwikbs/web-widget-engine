@@ -28,8 +28,6 @@ public:
             	float fSize = 0.0f;
             	if(fontSize.isFixed())
             		fSize = fontSize.fixed();
-            	else if (fontSize.percent())
-            		fSize = fontSize.percent();
 
             	m_data = fSize * m_data;
             	m_type = Fixed;
