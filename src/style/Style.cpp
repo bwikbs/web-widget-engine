@@ -1132,6 +1132,7 @@ String* CSSStyleValuePair::toString()
                     return String::fromUTF8("rtl");
                 default: break;
             }
+            break;
         }
         case MarginTop:
         case MarginRight:
@@ -1160,6 +1161,7 @@ String* CSSStyleValuePair::toString()
                 default:
                     break;
             }
+            break;
         }
         case TextDecoration: {
             switch(textDecoration()) {
@@ -1175,6 +1177,7 @@ String* CSSStyleValuePair::toString()
                     return String::fromUTF8("blink");
                 default: break;
             }
+            break;
         }
         case FontSize: {
             switch(valueKind()) {
