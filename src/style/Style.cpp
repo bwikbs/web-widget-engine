@@ -125,7 +125,6 @@ void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
         ret.m_value.m_floatValue = f;
     } else {
         parseLength(ret, value);
-        parseLength(ret, value);
     }
 }
 
