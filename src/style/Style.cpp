@@ -1071,6 +1071,38 @@ String* CSSStyleDeclaration::direction()
     return String::emptyString;
 }
 
+String* CSSStyleDeclaration::fontSize()
+{
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
+        CSSStyleValuePair v = *itr;
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::FontSize) {
+            switch(v.valueKind()) {
+                case CSSStyleValuePair::ValueKind::XXSmallFontSizeValueKind:
+                    return String::fromUTF8("xx-small");
+                case CSSStyleValuePair::ValueKind::XSmallFontSizeValueKind:
+                    return String::fromUTF8("x-small");
+                case CSSStyleValuePair::ValueKind::SmallFontSizeValueKind:
+                    return String::fromUTF8("small");
+                case CSSStyleValuePair::ValueKind::MediumFontSizeValueKind:
+                    return String::fromUTF8("medium");
+                case CSSStyleValuePair::ValueKind::LargeFontSizeValueKind:
+                    return String::fromUTF8("large");
+                case CSSStyleValuePair::ValueKind::XLargeFontSizeValueKind:
+                    return String::fromUTF8("x-large");
+                case CSSStyleValuePair::ValueKind::XXLargeFontSizeValueKind:
+                    return String::fromUTF8("xx-large");
+                case CSSStyleValuePair::ValueKind::LargerFontSizeValueKind:
+                    return String::fromUTF8("larger");
+                case CSSStyleValuePair::ValueKind::SmallerFontSizeValueKind:
+                    return String::fromUTF8("smaller");
+                default:
+                    return v.lengthOrPercentageToString();
+            }
+        }
+    }
+    return String::emptyString;
+}
+
 String* CSSStyleDeclaration::height()
 {
     for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {

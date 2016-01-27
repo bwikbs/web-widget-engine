@@ -1467,6 +1467,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     /* Use css attribute binding template to define css attributes */
 #define FOR_EACH_STYLE_ATTRIBUTE(F)\
     F(direction, direction) \
+    F(fontSize, font-size) \
     F(height, height) \
     F(overflow, overflow-x) \
     F(position, position) \

@@ -731,6 +731,7 @@ public:
 #undef FOR_EACH_STYLE_ATTRIBUTE
 
     String* direction();
+    String* fontSize();
     String* height();
     String* Margin();
     void setMargin(const char* value);
