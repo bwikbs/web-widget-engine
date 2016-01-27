@@ -706,6 +706,12 @@ public:
     F(MarginBottom) \
     F(MarginLeft)
 
+#define CHECK_INPUT_ERROR(name) \
+    bool checkInputError##name(CSSStyleValuePair::KeyKind key, const char* value);
+
+    FOR_EACH_STYLE_ATTRIBUTE(CHECK_INPUT_ERROR)
+#undef CHECK_INPUT_ERROR
+
 #define ATTRIBUTE_GETTER(name) \
     String* name () { \
         for (unsigned i = 0; i < m_cssValues.size(); i++) { \
@@ -721,15 +727,17 @@ public:
 #define ATTRIBUTE_SETTER(name) \
     void set##name(const char* value) \
     { \
-        for (unsigned i = 0; i < m_cssValues.size(); i++) { \
-            if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) { \
-                m_cssValues.at(i).setValue##name(value); \
+        if (checkInputError##name(CSSStyleValuePair::KeyKind::name, value)) { \
+            for (unsigned i = 0; i < m_cssValues.size(); i++) { \
+                if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) { \
+                    m_cssValues.at(i).setValue##name(value); \
+                } \
             } \
+            CSSStyleValuePair ret; \
+            ret.setKeyKind(CSSStyleValuePair::KeyKind::name); \
+            ret.setValue##name(value); \
+            m_cssValues.push_back(ret); \
         } \
-        CSSStyleValuePair ret; \
-        ret.setKeyKind(CSSStyleValuePair::KeyKind::name); \
-        ret.setValue##name(value); \
-        m_cssValues.push_back(ret); \
     }
 
     FOR_EACH_STYLE_ATTRIBUTE(ATTRIBUTE_SETTER)

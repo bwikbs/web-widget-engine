@@ -235,7 +235,6 @@ void CSSStyleValuePair::setValueMarginLeft(const char* value)
     setValuePercentageOrLength(value);
 }
 
-
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
     CSSStyleValuePair ret;
@@ -1299,6 +1298,31 @@ String* CSSStyleDeclaration::textAlign()
         }
     }
     return String::emptyString;
+}
+
+bool CSSStyleDeclaration::checkInputErrorColor(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorMarginTop(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorMarginRight(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorMarginBottom(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorMarginLeft(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
 }
 
 ComputedStyle* StyleResolver::resolveDocumentStyle(StarFish* sf)
