@@ -493,6 +493,10 @@ public:
         return m_surround;
     }
 
+    OverflowValue overflow() {
+        return overflowX();
+    }
+
     OverflowValue overflowX() {
         return m_overflowX;
     }

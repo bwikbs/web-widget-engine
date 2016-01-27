@@ -4,8 +4,11 @@
 
 namespace StarFish {
 
-void FrameBlockBox::layout(LayoutContext& ctx)
+void FrameBlockBox::layout(LayoutContext& passedCtx)
 {
+    LayoutContext newCtx(this);
+    LayoutContext& ctx = isEstablishesBlockFormattingContext() ? newCtx : passedCtx;
+
     if (isNormalFlow()) {
         // https://www.w3.org/TR/CSS2/visudet.html#the-width-property
         // Determine horizontal margins and width of this object.
@@ -440,7 +443,7 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
                 if (lineFormattingContext.m_currentLineWidth == 0 && isWhiteSpace) {
                     return;
                 }
-                if (offset != 0 && nextOffset == txt->length() && isWhiteSpace) {
+                if ((i + 1) == result.size() && offset != 0 && nextOffset == txt->length() && isWhiteSpace) {
                     return;
                 }
 
@@ -494,6 +497,8 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
                 // TODO consider margin, border, padding
                 float topToLineBox = ctx.lastLineBox()->absolutePoint(r).y();
                 ascender = topToLineBox + ctx.lastLineBox()->m_ascender;
+            } else {
+                ascender = f->asFrameBox()->height();
             }
 
             insertBlockBox:
@@ -637,7 +642,7 @@ void FrameBlockBox::computePreferredWidth(ComputePreferredWidthContext& ctx)
                     if (currentLineWidth == 0 && isWhiteSpace) {
                         return;
                     }
-                    if (offset != 0 && nextOffset == s->length() && isWhiteSpace) {
+                    if ((i + 1) == result.size() && offset != 0 && nextOffset == s->length() && isWhiteSpace) {
                         return;
                     }
 

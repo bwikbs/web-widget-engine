@@ -40,8 +40,9 @@ class LineBox;
 class LayoutContext
 {
 public:
-    LayoutContext()
+    LayoutContext(Frame* rootFrame)
     {
+        m_rootFrame = rootFrame;
         m_lastLineBox = nullptr;
     }
 
@@ -87,6 +88,7 @@ public:
     }
 
 private:
+    Frame* m_rootFrame;
     LineBox* m_lastLineBox;
     // NOTE. we dont need gc_allocator here. because, FrameTree already has referenece for Frames
     std::map<Frame*, std::vector<Frame*>> m_absolutePositionedFrames;
@@ -138,12 +140,20 @@ public:
         m_flags.m_needsLayout = true;
 
         bool isRootElement = node && node->isElement() && node->asElement()->isHTMLElement() && node->asElement()->asHTMLElement()->isHTMLHtmlElement();
+
         // TODO add condition
         m_flags.m_isEstablishesBlockFormattingContext = isRootElement;
-        // TODO add condition
+        if (m_style) {
+            m_flags.m_isEstablishesBlockFormattingContext = m_flags.m_isEstablishesBlockFormattingContext || (m_style->overflow() != OverflowValue::VisibleOverflow);
+        }
+
         m_flags.m_isPositionedElement = m_style && m_style->position() != PositionValue::StaticPositionValue;
+
         // TODO add condition
         m_flags.m_isEstablishesStackingContext = isRootElement;
+        if (m_style) {
+            m_flags.m_isEstablishesStackingContext = m_flags.m_isEstablishesStackingContext || (m_flags.m_isPositionedElement && m_style->zIndex() != 0);
+        }
 
         if (m_style && m_style->width().isAuto()) {
            if (m_style->display() == InlineBlockDisplayValue) {

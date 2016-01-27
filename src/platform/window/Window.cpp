@@ -310,7 +310,7 @@ void Window::rendering()
     FrameTreeBuilder::buildFrameTree(m_document);
 
     // lay out frame tree
-    LayoutContext ctx;
+    LayoutContext ctx(nullptr);
     m_document->frame()->layout(ctx);
 
     if (m_starFish->startUpFlag() & StarFishStartUpFlag::enableFrameTreeDump) {
