@@ -1,3 +1,4 @@
+
 #include "StarFishConfig.h"
 #include "ComputedStyle.h"
 
@@ -7,10 +8,7 @@ namespace StarFish {
 
 void ComputedStyle::loadResources(StarFish* sf)
 {
-	if (m_inheritedStyles.m_fontSize.isPercent())
-		m_font = sf->fetchFont(String::emptyString, m_inheritedStyles.m_fontSize.percent(), 0);
-	else
-		m_font = sf->fetchFont(String::emptyString, m_inheritedStyles.m_fontSize.fixed(), 0);
+    m_font = sf->fetchFont(String::emptyString, m_inheritedStyles.m_fontSize.fixed(), 0);
     if (!bgImage()->equals(String::emptyString)) {
         setBgImageData(sf->fetchImage(sf->makeResourcePath(bgImage())));
     }

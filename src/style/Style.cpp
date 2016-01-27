@@ -1505,14 +1505,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::SmallerFontSizeValueKind) {
                     style->m_inheritedStyles.m_fontSize = Length(Length::Fixed, parentStyle->m_inheritedStyles.m_fontSize.fixed() / 1.2f);
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {
-                	float parentValue = 0.0f;
-
-                	if(parentStyle->m_inheritedStyles.m_fontSize.isPercent())
-                		parentValue = parentStyle->m_inheritedStyles.m_fontSize.percent();
-                	else
-                		parentValue = parentStyle->m_inheritedStyles.m_fontSize.fixed();
-
-                	style->m_inheritedStyles.m_fontSize = Length(Length::Percent, parentValue * cssValues[k].percentageValue());
+                    float parentComputedFontSize = parentStyle->fontSize().fixed();
+                    style->m_inheritedStyles.m_fontSize = Length(Length::Fixed, cssValues[k].percentageValue() * parentComputedFontSize);
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length);
                     style->m_inheritedStyles.m_fontSize = cssValues[k].lengthValue().toLength();
