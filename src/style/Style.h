@@ -666,7 +666,7 @@ protected:
     std::vector<CSSStyleValuePair::ValueData, gc_allocator<CSSStyleValuePair::ValueData>> m_values;
 };
 
-class CSSStyleDeclaration : public EventTarget<ScriptWrappable> {
+class CSSStyleDeclaration : public ScriptWrappable {
     friend class StyleResolver;
 public:
     CSSStyleDeclaration(Document* document)
@@ -748,7 +748,8 @@ protected:
     Document* m_document;
 };
 
-class CSSStyleRule : public EventTarget<ScriptWrappable> {
+// FIXME implement CSSRule
+class CSSStyleRule : public ScriptWrappable {
     friend class StyleResolver;
 public:
     enum Kind {
@@ -794,12 +795,12 @@ protected:
 class CSSStyleSheet : public gc {
     friend class StyleResolver;
 public:
-    void addRule(CSSStyleRule rule)
+    void addRule(CSSStyleRule* rule)
     {
         m_rules.push_back(rule);
     }
 protected:
-    std::vector<CSSStyleRule> m_rules;
+    std::vector<CSSStyleRule*, gc_allocator<CSSStyleRule*>> m_rules;
 };
 
 class StyleResolver {

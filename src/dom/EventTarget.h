@@ -25,6 +25,16 @@ protected:
     }
 
 public:
+    inline void* operator new(size_t size)
+    {
+        return GC_MALLOC(size);
+    }
+
+    inline void operator delete(void* obj)
+    {
+        GC_free(obj);
+    }
+
     virtual bool isWindow()
     {
         return false;

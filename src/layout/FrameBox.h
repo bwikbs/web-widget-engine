@@ -34,6 +34,8 @@ public:
 
     void setX(float x) { m_frameRect.setX(x); }
     void setY(float y) { m_frameRect.setY(y); }
+    void moveX(float t) { m_frameRect.setX(x() + t); }
+    void moveY(float t) { m_frameRect.setY(y() + t); }
     void setWidth(float width) { m_frameRect.setWidth(width); }
     void setHeight(float height) { m_frameRect.setHeight(height); }
 

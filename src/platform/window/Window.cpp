@@ -96,7 +96,7 @@ void mainRenderingFunction(Evas_Object *o, Evas_Object_Box_Data *priv, void *use
 #ifndef STARFISH_TIZEN_WEARABLE
 Window* Window::create(StarFish* sf, size_t w, size_t h)
 {
-    auto wnd = new(GC) WindowImplEFL(sf);
+    auto wnd = new WindowImplEFL(sf);
     wnd->m_starFish = sf;
     wnd->m_window = elm_win_add(NULL, "", ELM_WIN_BASIC);
 
@@ -165,7 +165,7 @@ Window* Window::create(StarFish* sf, size_t w, size_t h)
 #else
 Window* Window::create(StarFish* sf, size_t w, size_t h, void* win)
 {
-    auto wnd = new(GC) WindowImplEFL(sf);
+    auto wnd = new WindowImplEFL(sf);
     wnd->m_starFish = sf;
     wnd->m_window = (Evas_Object*)win;
 
@@ -240,44 +240,44 @@ Window::Window(StarFish* starFish)
     CSSStyleSheet* userAgentStyleSheet = new CSSStyleSheet;
 
     {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("html"), CSSStyleRule::PseudoClass::None, document());
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("html"), CSSStyleRule::PseudoClass::None, document());
+        rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
         userAgentStyleSheet->addRule(rule);
     }
 
     {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("head"), CSSStyleRule::PseudoClass::None, document());
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("head"), CSSStyleRule::PseudoClass::None, document());
+        rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
         userAgentStyleSheet->addRule(rule);
     }
 
     {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("style"), CSSStyleRule::PseudoClass::None, document());
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("style"), CSSStyleRule::PseudoClass::None, document());
+        rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
         userAgentStyleSheet->addRule(rule);
     }
 
     {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("script"), CSSStyleRule::PseudoClass::None, document());
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
+        CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("script"), CSSStyleRule::PseudoClass::None, document());
+        rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none"));
         userAgentStyleSheet->addRule(rule);
     }
 
     {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("body"), CSSStyleRule::PseudoClass::None, document());
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("body"), CSSStyleRule::PseudoClass::None, document());
+        rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
         userAgentStyleSheet->addRule(rule);
     }
 
     {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("div"), CSSStyleRule::PseudoClass::None, document());
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
+        CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("div"), CSSStyleRule::PseudoClass::None, document());
+        rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block"));
         userAgentStyleSheet->addRule(rule);
     }
 
     {
-        CSSStyleRule rule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("img"), CSSStyleRule::PseudoClass::None, document());
-        rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "inline"));
+        CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("img"), CSSStyleRule::PseudoClass::None, document());
+        rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "inline"));
         userAgentStyleSheet->addRule(rule);
     }
 

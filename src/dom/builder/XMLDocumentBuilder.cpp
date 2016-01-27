@@ -101,13 +101,13 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                             }
                         }
 
-                        CSSStyleRule rule(kind, st, pc, document);
+                        CSSStyleRule *rule = new CSSStyleRule(kind, st, pc, document);
                         const tinyxml2::XMLAttribute* attr = e->FirstAttribute();
                         while (attr) {
                             if (strcmp(attr->Name(), "selectorText") != 0) {
                                 const char* n = attr->Name();
                                 const char* v = attr->Value();
-                                rule.styleDeclaration()->addValuePair(CSSStyleValuePair::fromString(n, v));
+                                rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString(n, v));
                             }
                             attr = attr->Next();
                         }

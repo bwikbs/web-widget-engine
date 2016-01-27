@@ -26,9 +26,9 @@ void FrameBlockBox::layout(LayoutContext& ctx)
                 remainWidth -= paddingWidth();
                 setContentWidth(remainWidth);
             }
-            setX(marginLeft() + x());
+            moveX(marginLeft());
             // TODO implement margin-collapse
-            setY(marginTop() + y());
+            moveY(marginTop());
         } else {
             if (m_style->width().isFixed()) {
                 setContentWidth(m_style->width().fixed());
@@ -42,13 +42,15 @@ void FrameBlockBox::layout(LayoutContext& ctx)
                 remain -= contentWidth();
                 remain -= borderWidth();
                 remain -= paddingWidth();
-                setMarginLeft(remain / 2);
-                setMarginRight(remain / 2);
+                if (remain > 0) {
+                    setMarginLeft(remain / 2);
+                    setMarginRight(remain / 2);
+                }
             }
 
-            setX(marginLeft() + x());
+            moveX(marginLeft());
             // TODO implement margin-collapse
-            setY(marginTop() + y());
+            moveY(marginTop());
         }
     } else {
         STARFISH_ASSERT(node() != nullptr);
