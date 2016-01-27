@@ -576,24 +576,7 @@ public:
             return nullptr;
     }
 
-    String* toString()
-    {
-        switch (keyKind()) {
-            case Color: {
-                if (m_valueKind == CSSStyleValuePair::ValueKind::StringValueKind)
-                    return stringValue();
-                break;
-            }
-            case MarginTop:
-            case MarginRight:
-            case MarginBottom:
-            case MarginLeft:
-                return lengthOrPercentageToString();
-            default:
-                return nullptr;
-        }
-        return nullptr;
-    }
+    String* toString();
 
     void setLengthValue(const char* value);
 
@@ -617,11 +600,20 @@ public:
     }
 
     void setValuePercentageOrLength(const char* value);
-    void setValueColor(const char* value);
-    void setValueMarginTop(const char* value);
-    void setValueMarginRight(const char* value);
-    void setValueMarginBottom(const char* value);
-    void setValueMarginLeft(const char* value);
+
+#define FOR_EACH_STYLE_ATTRIBUTE(F) \
+    F(Color) \
+    F(BackgroundColor) \
+    F(MarginTop) \
+    F(MarginRight) \
+    F(MarginBottom) \
+    F(MarginLeft)
+
+#define SET_VALUE(name) \
+    void setValue##name(const char* value);
+
+    FOR_EACH_STYLE_ATTRIBUTE(SET_VALUE)
+#undef SET_VALUE
 
 protected:
     KeyKind m_keyKind;
@@ -698,13 +690,6 @@ public:
     {
         return m_document;
     }
-
-#define FOR_EACH_STYLE_ATTRIBUTE(F) \
-    F(Color) \
-    F(MarginTop) \
-    F(MarginRight) \
-    F(MarginBottom) \
-    F(MarginLeft)
 
 #define CHECK_INPUT_ERROR(name) \
     bool checkInputError##name(CSSStyleValuePair::KeyKind key, const char* value);

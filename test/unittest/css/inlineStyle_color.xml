@@ -86,7 +86,7 @@
 			var a = document.getElementById("idText");
 			print(a);
 			print(a.style.color);
-			a.style.color = "red";
+			a.style.color = "blue";
 			print(a.style.color);
 			print("<End>")
             return 1<2;

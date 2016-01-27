@@ -201,6 +201,12 @@ void CSSStyleValuePair::setValueColor(const char* value)
     }
 }
 
+void CSSStyleValuePair::setValueBackgroundColor(const char* value)
+{
+    setValueColor(value);
+}
+
+
 void CSSStyleValuePair::setValuePercentageOrLength(const char* value)
 {
     if (VALUE_IS_STRING("auto")) {
@@ -340,7 +346,6 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         // color | <transparent> | inherit
         // TODO add initial
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundColor;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Transparent;
         if (VALUE_IS_INHERIT()) {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
         } else if (VALUE_IS_INITIAL()) {
@@ -1057,6 +1062,28 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     return ret;
 }
 
+String* CSSStyleValuePair::toString()
+{
+    switch (keyKind()) {
+        case Color:
+        case BackgroundColor:
+        {
+            if (m_valueKind == CSSStyleValuePair::ValueKind::StringValueKind)
+                return stringValue();
+            break;
+        }
+        case MarginTop:
+        case MarginRight:
+        case MarginBottom:
+        case MarginLeft:
+            return lengthOrPercentageToString();
+        default: {
+            return nullptr;
+        }
+    }
+    return nullptr;
+}
+
 String* CSSStyleDeclaration::direction()
 {
     for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
@@ -1326,6 +1353,11 @@ String* CSSStyleDeclaration::textAlign()
 }
 
 bool CSSStyleDeclaration::checkInputErrorColor(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBackgroundColor(CSSStyleValuePair::KeyKind key, const char* value)
 {
     return true;
 }

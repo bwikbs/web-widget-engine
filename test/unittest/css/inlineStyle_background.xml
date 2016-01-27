@@ -85,27 +85,9 @@
         function test() {
 			var a = document.getElementById("idText");
 			print(a);
-
-			print(a.style.marginTop);
-			a.style.marginTop = "10%";
-			print(a.style.marginTop);
-
-			print(a.style.marginBottom);
-			a.style.marginBottom = "3pt";
-			print(a.style.marginBottom);
-
-			print(a.style.marginRight);
-			a.style.marginRight = "5px";
-			print(a.style.marginRight);
-
-			print(a.style.marginLeft);
-			a.style.marginLeft = "10pt";
-			print(a.style.marginLeft);
-
-			print(a.style.margin);
-			a.style.margin = "11pt 10px 3pt 4%";
-			print(a.style.margin);
-
+			print(a.style.backgroundColor);
+			a.style.backgroundColor = "blue";
+			print(a.style.backgroundColor);
 			print("<End>")
             return 1<2;
         }

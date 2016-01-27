@@ -1436,6 +1436,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
 #define FOR_EACH_STYLE_ATTRIBUTE(F) \
     F(Color, color) \
+    F(BackgroundColor, backgroundColor) \
     F(MarginTop, marginTop) \
     F(MarginRight, marginRight) \
     F(MarginBottom, marginBottom) \
@@ -1448,15 +1449,12 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject); \
  \
         String* c = ((CSSStyleDeclaration*) originalObj)->name(); \
-        if (c != nullptr) \
-            return escargot::ESString::create(c->utf8Data()); \
-        return escargot::ESValue(escargot::ESValue::ESNull); \
+        STARFISH_ASSERT(c); \
+        return escargot::ESString::create(c->utf8Data()); \
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) { \
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject); \
         if (v.isESString()) { \
             ((CSSStyleDeclaration*) originalObj)->set##name(v.asESString()->utf8Data()); \
-        } else { \
-            THROW_ILLEGAL_INVOCATION() \
         } \
     }, false, false, false);
 
