@@ -240,6 +240,70 @@ void CSSStyleValuePair::setValueMarginLeft(const char* value)
     setValuePercentageOrLength(value);
 }
 
+void CSSStyleValuePair::setValueTop(const char* value)
+{
+    // length | percentage | <auto> | inherit
+    m_keyKind = CSSStyleValuePair::KeyKind::Top;
+    m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+    if (VALUE_IS_STRING("auto")) {
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else {
+        setValuePercentageOrLength(value);
+    }
+}
+
+void CSSStyleValuePair::setValueBottom(const char* value)
+{
+    // length | percentage | <auto> | inherit
+    m_keyKind = CSSStyleValuePair::KeyKind::Bottom;
+    m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+    if (VALUE_IS_STRING("auto")) {
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else {
+        setValuePercentageOrLength(value);
+    }
+}
+
+void CSSStyleValuePair::setValueLeft(const char* value)
+{
+    // length | percentage | <auto> | inherit
+    m_keyKind = CSSStyleValuePair::KeyKind::Left;
+    m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+    if (VALUE_IS_STRING("auto")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else {
+        setValuePercentageOrLength(value);
+    }
+}
+
+void CSSStyleValuePair::setValueRight(const char* value)
+{
+    // length | percentage | <auto> | inherit
+    m_keyKind = CSSStyleValuePair::KeyKind::Right;
+    m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+    if (VALUE_IS_STRING("auto")) {
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else {
+        setValuePercentageOrLength(value);
+    }
+}
+
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
     CSSStyleValuePair ret;
@@ -577,57 +641,13 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "top") == 0) {
-        // length | percentage | <auto> | inherit
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::Top;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
-
-        if (VALUE_IS_STRING("auto")) {
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueTop(value);
     } else if (strcmp(key, "right") == 0) {
-        // length | percentage | <auto> | inherit
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::Right;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
-
-        if (VALUE_IS_STRING("auto")) {
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueRight(value);
     } else if (strcmp(key, "bottom") == 0) {
-        // length | percentage | <auto> | inherit
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::Bottom;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
-
-        if (VALUE_IS_STRING("auto")) {
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueBottom(value);
     } else if (strcmp(key, "left") == 0) {
-        // length | percentage | <auto> | inherit
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::Left;
-
-        if (VALUE_IS_STRING("auto")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueLeft(value);
     } else if (strcmp(key, "border-top-color") == 0) {
         // color | transparent | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderTopColor;
@@ -1077,6 +1097,11 @@ String* CSSStyleValuePair::toString()
         case MarginBottom:
         case MarginLeft:
             return lengthOrPercentageToString();
+        case Top:
+        case Bottom:
+        case Left:
+        case Right:
+            return lengthOrPercentageToString();
         default: {
             return nullptr;
         }
@@ -1258,32 +1283,6 @@ String* CSSStyleDeclaration::textDecoration()
     return String::emptyString;
 }
 
-#define FOR_EACH_ATTR(F) \
-    F(top, Top) \
-    F(bottom, Bottom) \
-    F(left, Left) \
-    F(right, Right)
-
-#define ATTR_TBLR(jsprop, cssprop) \
-String* CSSStyleDeclaration::jsprop() \
-{ \
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) { \
-        CSSStyleValuePair v = *itr; \
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::cssprop) { \
-            switch(v.valueKind()) { \
-                case CSSStyleValuePair::ValueKind::Length: \
-                case CSSStyleValuePair::ValueKind::Percentage: \
-                    return v.lengthOrPercentageToString(); \
-                default: break; \
-            } \
-        } \
-    } \
-    return String::emptyString; \
-}
-FOR_EACH_ATTR(ATTR_TBLR)
-#undef FOR_EACH_ATTR
-#undef ATTR_TBLR
-
 String* CSSStyleDeclaration::width()
 {
     for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
@@ -1378,6 +1377,26 @@ bool CSSStyleDeclaration::checkInputErrorMarginBottom(CSSStyleValuePair::KeyKind
 }
 
 bool CSSStyleDeclaration::checkInputErrorMarginLeft(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorTop(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBottom(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorLeft(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorRight(CSSStyleValuePair::KeyKind key, const char* value)
 {
     return true;
 }

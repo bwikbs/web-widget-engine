@@ -1441,7 +1441,11 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(MarginRight, marginRight) \
     F(MarginBottom, marginBottom) \
     F(MarginLeft, marginLeft) \
-    F(Margin, margin)
+    F(Margin, margin) \
+    F(Top, top) \
+    F(Bottom, bottom) \
+    F(Left, left) \
+    F(Right, right)
 
 #define DEFINE_ACCESSOR_PROPERTY(name, nameLower) \
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create(#nameLower), \
@@ -1464,17 +1468,13 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     /* Use css attribute binding template to define css attributes */
 #define FOR_EACH_STYLE_ATTRIBUTE(F)\
-    F(bottom, bottom) \
     F(direction, direction) \
     F(fontSize, font-size) \
     F(height, height) \
-    F(left, left) \
     F(overflow, overflow-x) \
     F(position, position) \
-    F(right, right) \
     F(textAlign, text-align) \
     F(textDecoration, text-decoration) \
-    F(top, top) \
     F(visibility, visibility) \
     F(width, width)
 
