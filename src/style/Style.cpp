@@ -1125,12 +1125,13 @@ String* CSSStyleValuePair::toString()
             break;
         }
         case Direction: {
-            if(directionValue() == LtrDirectionValue) {
-                return String::fromUTF8("ltr");
-            } else if(directionValue() == RtlDirectionValue) {
-                return String::fromUTF8("rtl");
+            switch(directionValue()) {
+                case LtrDirectionValue:
+                    return String::fromUTF8("ltr");
+                case RtlDirectionValue:
+                    return String::fromUTF8("rtl");
+                default: break;
             }
-            break;
         }
         case MarginTop:
         case MarginRight:
@@ -1348,10 +1349,10 @@ bool CSSStyleDeclaration::checkInputErrorTop(CSSStyleValuePair::KeyKind key, con
     std::vector<String*, gc_allocator<String*>> tokens;
     DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
     if (tokens.size() == 1) {
-        const char* currentToken = tokens[0]->utf8Data();
-        if (CSSPropertyParser::assureLength(currentToken, false) ||
-            CSSPropertyParser::assurePercent(currentToken, false) ||
-            (strcmp(currentToken, "auto") == 0)) {
+        const char* token = tokens[0]->utf8Data();
+        if (CSSPropertyParser::assureLength(token, false) ||
+            CSSPropertyParser::assurePercent(token, false) ||
+            (strcmp(token, "auto") == 0)) {
                 return true;
         }
     }
@@ -1375,7 +1376,17 @@ bool CSSStyleDeclaration::checkInputErrorRight(CSSStyleValuePair::KeyKind key, c
 
 bool CSSStyleDeclaration::checkInputErrorDirection(CSSStyleValuePair::KeyKind key, const char* value)
 {
-    return true;
+    // <ltr> | rtl | inherit
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+    if (tokens.size() == 1) {
+        const char* token = tokens[0]->utf8Data();
+        if ((strcmp(token, "ltr") == 0) ||
+            (strcmp(token, "rtl") == 0)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorWidth(CSSStyleValuePair::KeyKind key, const char* value)
