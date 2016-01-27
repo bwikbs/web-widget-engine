@@ -788,6 +788,13 @@ protected:
 
         if(m_background)
             m_background->checkComputed(baseFontSize, font());
+
+
+        // [vertical-align] : Update percentage value referring to the [line-height]
+        // TODO: Uncomment code
+        // if (isNumericVerticalAlign() && verticalAlignLength().isPercent()) {
+        //     m_verticalAlignLength.percentToFixed(lineHeight());
+        // }
     }
 
     void loadResources(StarFish* sf);

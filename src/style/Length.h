@@ -59,6 +59,13 @@ public:
         return m_data;
     }
 
+    void percentToFixed(float refer)
+    {
+        STARFISH_ASSERT(m_type == Percent);
+        m_data = refer * m_data;
+        m_type = Fixed;
+    }
+
     float specifiedValue(float parentLength) const
     {
         STARFISH_ASSERT(isSpecified());
