@@ -1344,22 +1344,33 @@ bool CSSStyleDeclaration::checkInputErrorMarginLeft(CSSStyleValuePair::KeyKind k
 
 bool CSSStyleDeclaration::checkInputErrorTop(CSSStyleValuePair::KeyKind key, const char* value)
 {
-    return true;
+    // length | percentage | <auto> | inherit
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+    if (tokens.size() == 1) {
+        const char* currentToken = tokens[0]->utf8Data();
+        if (CSSPropertyParser::assureLength(currentToken, false) ||
+            CSSPropertyParser::assurePercent(currentToken, false) ||
+            (strcmp(currentToken, "auto") == 0)) {
+                return true;
+        }
+    }
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorBottom(CSSStyleValuePair::KeyKind key, const char* value)
 {
-    return true;
+    return checkInputErrorTop(key, value);
 }
 
 bool CSSStyleDeclaration::checkInputErrorLeft(CSSStyleValuePair::KeyKind key, const char* value)
 {
-    return true;
+    return checkInputErrorTop(key, value);
 }
 
 bool CSSStyleDeclaration::checkInputErrorRight(CSSStyleValuePair::KeyKind key, const char* value)
 {
-    return true;
+    return checkInputErrorTop(key, value);
 }
 
 bool CSSStyleDeclaration::checkInputErrorDirection(CSSStyleValuePair::KeyKind key, const char* value)
