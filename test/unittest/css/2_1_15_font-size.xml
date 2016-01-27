@@ -10,16 +10,17 @@
 ]]></text>
 				</node>
 				<node nodeType="1" localName="style">
-					<style selectorText="body" font-size="20px"/>
+					<style selectorText="body" font-size="1.3em"/>
 					<style selectorText="#s" font-size="small"/>
 					<style selectorText="#m" font-size="medium"/>
 					<style selectorText="#l" font-size="large"/>
 					<style selectorText="#p" font-size="200%"/>
 					<style selectorText="#pp" font-size="200%"/>
+					<style selectorText="#em" font-size="2em"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
 body {
-    font-size: 20px;;
+    font-size: 1.3em;;
 }
 #s {
     font-size: small;
@@ -36,7 +37,9 @@ body {
 #pp {
     font-size: 200%;
 }
-
+#em {
+    font-size: 2em;
+}
 ]]></text>
 					</node>
 				</node>
@@ -89,7 +92,17 @@ body {
 					</node>
 					<node nodeType="1" localName="div" id="pp">
 						<node nodeType="3" localName="text">
-							<text><![CDATA[font-size5]]></text>
+							<text><![CDATA[font-size5
+		]]></text>
+						</node>
+						<node nodeType="1" localName="div" id="em">
+							<node nodeType="3" localName="text">
+								<text><![CDATA[font-size6]]></text>
+							</node>
+						</node>
+						<node nodeType="3" localName="text">
+							<text><![CDATA[
+	]]></text>
 						</node>
 					</node>
 					<node nodeType="3" localName="text">
