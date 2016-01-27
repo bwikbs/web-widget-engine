@@ -252,11 +252,88 @@ void CSSStyleValuePair::setValueHeight(const char* value)
     }
 }
 
+void CSSStyleValuePair::setValueFontSize(const char* value)
+{
+    // TODO add initial
+    // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
+    //        O      |       O       |   O    |    O       |    O
+    m_keyKind = CSSStyleValuePair::KeyKind::FontSize;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    }  else if (VALUE_IS_STRING("xx-small")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::XXSmallFontSizeValueKind;
+    } else if (VALUE_IS_STRING("x-small")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::XSmallFontSizeValueKind;
+    } else if (VALUE_IS_STRING("small")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::SmallFontSizeValueKind;
+    } else if (VALUE_IS_STRING("medium")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::MediumFontSizeValueKind;
+    } else if (VALUE_IS_STRING("large")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::LargeFontSizeValueKind;
+    } else if (VALUE_IS_STRING("x-large")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::XLargeFontSizeValueKind;
+    } else if (VALUE_IS_STRING("xx-large")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::XXLargeFontSizeValueKind;
+    } else if (VALUE_IS_STRING("larger")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::LargerFontSizeValueKind;
+    } else if (VALUE_IS_STRING("smaller")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::SmallerFontSizeValueKind;
+    } else {
+        setValuePercentageOrLength(value);
+    }
+}
+
+void CSSStyleValuePair::setValuePosition(const char* value)
+{
+    // <static> | relative | absolute | fixed | inherit
+    m_keyKind = CSSStyleValuePair::KeyKind::Position;
+    m_valueKind = CSSStyleValuePair::ValueKind::PositionValueKind;
+
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("static")) {
+        m_value.m_position = PositionValue::StaticPositionValue;
+    } else if (VALUE_IS_STRING("relative")) {
+        m_value.m_position = PositionValue::RelativePositionValue;
+    } else if (VALUE_IS_STRING("absolute")) {
+        m_value.m_position = PositionValue::AbsolutePositionValue;
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+void CSSStyleValuePair::setValueTextDecoration(const char* value)
+{
+    // none | [ underline || overline || line-through || blink ] | inherit // Initial value -> none
+    m_keyKind = CSSStyleValuePair::KeyKind::TextDecoration;
+    m_valueKind = CSSStyleValuePair::ValueKind::TextDecorationKind;
+
+    if(VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_NONE()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::None;
+        m_value.m_textDecoration = TextDecorationValue::NoneTextDecorationValue;
+    } else if (VALUE_IS_STRING("underline")) {
+        m_value.m_textDecoration = TextDecorationValue::UnderLineTextDecorationValue;
+    } else if (VALUE_IS_STRING("overline")) {
+        m_value.m_textDecoration = TextDecorationValue::OverLineTextDecorationValue;
+    } else if (VALUE_IS_STRING("line-through")) {
+        m_value.m_textDecoration = TextDecorationValue::LineThroughTextDecorationValue;
+    } else if (VALUE_IS_STRING("blink")) {
+        m_value.m_textDecoration = TextDecorationValue::BlinkTextDecorationValue;
+    }
+}
+
 void CSSStyleValuePair::setValueBackgroundColor(const char* value)
 {
     setValueColor(value);
 }
-
 
 void CSSStyleValuePair::setValuePercentageOrLength(const char* value)
 {
@@ -378,59 +455,13 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "position") == 0) {
-        // <static> | relative | absolute | fixed | inherit
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::Position;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::PositionValueKind;
-
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("static")) {
-            ret.m_value.m_position = PositionValue::StaticPositionValue;
-        } else if (VALUE_IS_STRING("relative")) {
-            ret.m_value.m_position = PositionValue::RelativePositionValue;
-        } else if (VALUE_IS_STRING("absolute")) {
-            ret.m_value.m_position = PositionValue::AbsolutePositionValue;
-        } else {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
-        }
-
+        ret.setValuePosition(value);
     } else if (strcmp(key, "width") == 0) {
         ret.setValueWidth(value);
     } else if (strcmp(key, "height") == 0) {
         ret.setValueHeight(value);
     } else if (strcmp(key, "font-size") == 0) {
-        // TODO add initial
-        // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
-        //        O      |       O       |   O    |    O       |    O
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::FontSize;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        }  else if (VALUE_IS_STRING("xx-small")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::XXSmallFontSizeValueKind;
-        } else if (VALUE_IS_STRING("x-small")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::XSmallFontSizeValueKind;
-        } else if (VALUE_IS_STRING("small")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::SmallFontSizeValueKind;
-        } else if (VALUE_IS_STRING("medium")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::MediumFontSizeValueKind;
-        } else if (VALUE_IS_STRING("large")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::LargeFontSizeValueKind;
-        } else if (VALUE_IS_STRING("x-large")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::XLargeFontSizeValueKind;
-        } else if (VALUE_IS_STRING("xx-large")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::XXLargeFontSizeValueKind;
-        } else if (VALUE_IS_STRING("larger")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::LargerFontSizeValueKind;
-        } else if (VALUE_IS_STRING("smaller")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::SmallerFontSizeValueKind;
-        }
-        else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueFontSize(value);
     } else if (strcmp(key, "color") == 0) {
         // color | inherit // initial value -> depends on user agent
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Color;
@@ -521,26 +552,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "text-decoration") == 0) {
-        // none | [ underline || overline || line-through || blink ] | inherit // Initial value -> none
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::TextDecoration;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::TextDecorationKind;
-
-        if(VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_NONE()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::None;
-            ret.m_value.m_textDecoration = TextDecorationValue::NoneTextDecorationValue;
-        } else if (VALUE_IS_STRING("underline")) {
-            ret.m_value.m_textDecoration = TextDecorationValue::UnderLineTextDecorationValue;
-        } else if (VALUE_IS_STRING("overline")) {
-            ret.m_value.m_textDecoration = TextDecorationValue::OverLineTextDecorationValue;
-        } else if (VALUE_IS_STRING("line-through")) {
-            ret.m_value.m_textDecoration = TextDecorationValue::LineThroughTextDecorationValue;
-        } else if (VALUE_IS_STRING("blink")) {
-            ret.m_value.m_textDecoration = TextDecorationValue::BlinkTextDecorationValue;
-        }
+        ret.setValueTextDecoration(value);
     } else if (strcmp(key, "letter-spacing") == 0) {
         // normal | length | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::LetterSpacing;
@@ -607,21 +619,18 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
         } else {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
+            CSSPropertyParser* parser = new CSSPropertyParser((char*) value);
             //NOTE: CSS 2.1 does not support layering multiple background images(for comma-separated)
             ValueList* values = new ValueList(ValueList::Separator::SpaceSeparator);
-            std::vector<String*, gc_allocator<String*>> tokens;
-            DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
-            for (unsigned int i = 0; i < tokens.size(); i++) {
-                const char* currentToken = tokens[i]->utf8Data();
-                if (strcmp(currentToken, "auto") == 0) {
-                    values->append(CSSStyleValuePair::ValueKind::Auto, {0});
-                } else if (endsWith(currentToken, "%")) {
-                    float f;
-                    sscanf(currentToken, "%f%%", &f);
-                    values->append(CSSStyleValuePair::ValueKind::Percentage, {.m_floatValue = (f / 100.f)});
-                } else {
-                    CSSStyleValuePair::ValueData data = {.m_length = parseCSSLength(currentToken)};
-                    values->append(CSSStyleValuePair::ValueKind::Length, data);
+            CSSStyleValuePair::ValueKind kind;
+            while (parser->findNextValueKind(' ', &kind)) {
+                if (kind == CSSStyleValuePair::ValueKind::Auto) {
+                    values->append(kind, {0});
+                } else if (kind == CSSStyleValuePair::ValueKind::Percentage) {
+                    values->append(kind, {.m_floatValue = parser->parsedFloatValue()});
+                } else if (kind == CSSStyleValuePair::ValueKind::Length) {
+                    CSSStyleValuePair::ValueData data = {.m_length = CSSLength(parser->parsedFloatValue())};
+                    values->append(kind, data);
                 }
             }
             ret.m_value.m_multiValue = values;
@@ -1131,21 +1140,38 @@ String* CSSStyleValuePair::toString()
         case Height:
         case Width:
             return lengthOrPercentageToString();
-        default: {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
-            return nullptr;
-        }
-    }
-    STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    return String::emptyString;
-}
 
-String* CSSStyleDeclaration::fontSize()
-{
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-        CSSStyleValuePair v = *itr;
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::FontSize) {
-            switch(v.valueKind()) {
+        case Position: {
+            switch(positionValue()) {
+                case PositionValue::StaticPositionValue:
+                    return String::fromUTF8("static");
+                case PositionValue::RelativePositionValue:
+                    return String::fromUTF8("relative");
+                case PositionValue::AbsolutePositionValue:
+                    return String::fromUTF8("absolute");
+                case PositionValue::FixedPositionValue:
+                    return String::fromUTF8("fixed");
+                default:
+                    break;
+            }
+        }
+        case TextDecoration: {
+            switch(textDecoration()) {
+                case TextDecorationValue::NoneTextDecorationValue:
+                    return String::fromUTF8("none");
+                case TextDecorationValue::UnderLineTextDecorationValue:
+                    return String::fromUTF8("underline");
+                case TextDecorationValue::OverLineTextDecorationValue:
+                    return String::fromUTF8("overline");
+                case TextDecorationValue::LineThroughTextDecorationValue:
+                    return String::fromUTF8("line-through");
+                case TextDecorationValue::BlinkTextDecorationValue:
+                    return String::fromUTF8("blink");
+                default: break;
+            }
+        }
+        case FontSize: {
+            switch(valueKind()) {
                 case CSSStyleValuePair::ValueKind::XXSmallFontSizeValueKind:
                     return String::fromUTF8("xx-small");
                 case CSSStyleValuePair::ValueKind::XSmallFontSizeValueKind:
@@ -1165,10 +1191,15 @@ String* CSSStyleDeclaration::fontSize()
                 case CSSStyleValuePair::ValueKind::SmallerFontSizeValueKind:
                     return String::fromUTF8("smaller");
                 default:
-                    return v.lengthOrPercentageToString();
+                    return lengthOrPercentageToString();
             }
         }
+        default: {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
+        }
     }
+    STARFISH_RELEASE_ASSERT_NOT_REACHED();
     return String::emptyString;
 }
 
@@ -1219,68 +1250,6 @@ void CSSStyleDeclaration::setMargin(const char* value)
             setMarginBottom(tokens[2]->utf8Data());
     if (len > 3)
             setMarginLeft(tokens[3]->utf8Data());
-}
-
-String* CSSStyleDeclaration::overflow()
-{
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-        CSSStyleValuePair v = *itr;
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::OverflowX) {
-            switch(v.overflowValueX()) {
-                case OverflowValue::VisibleOverflow:
-                    return String::fromUTF8("visible");
-                case OverflowValue::HiddenOverflow:
-                return String::fromUTF8("hidden");
-                default: break;
-            }
-        }
-    }
-    return String::emptyString;
-}
-
-String* CSSStyleDeclaration::position()
-{
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-        CSSStyleValuePair v = *itr;
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::Position) {
-            switch(v.positionValue()) {
-                case PositionValue::StaticPositionValue:
-                    return String::fromUTF8("static");
-                case PositionValue::RelativePositionValue:
-                    return String::fromUTF8("relative");
-                case PositionValue::AbsolutePositionValue:
-                    return String::fromUTF8("absolute");
-                case PositionValue::FixedPositionValue:
-                    return String::fromUTF8("fixed");
-                default:
-                    break;
-            }
-        }
-    }
-    return String::emptyString;
-}
-
-String* CSSStyleDeclaration::textDecoration()
-{
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-        CSSStyleValuePair v = *itr;
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::TextDecoration) {
-            switch(v.textDecoration()) {
-                case TextDecorationValue::NoneTextDecorationValue:
-                    return String::fromUTF8("none");
-                case TextDecorationValue::UnderLineTextDecorationValue:
-                    return String::fromUTF8("underline");
-                case TextDecorationValue::OverLineTextDecorationValue:
-                    return String::fromUTF8("overline");
-                case TextDecorationValue::LineThroughTextDecorationValue:
-                    return String::fromUTF8("line-through");
-                case TextDecorationValue::BlinkTextDecorationValue:
-                    return String::fromUTF8("blink");
-                default: break;
-            }
-        }
-    }
-    return String::emptyString;
 }
 
 String* CSSStyleDeclaration::visibility()
@@ -1396,6 +1365,21 @@ bool CSSStyleDeclaration::checkInputErrorWidth(CSSStyleValuePair::KeyKind key, c
 }
 
 bool CSSStyleDeclaration::checkInputErrorHeight(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorFontSize(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorPosition(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorTextDecoration(CSSStyleValuePair::KeyKind key, const char* value)
 {
     return true;
 }
