@@ -745,14 +745,18 @@ public:
 
 #undef FOR_EACH_STYLE_ATTRIBUTE
 
+    String* bottom();
     String* direction();
     String* fontSize();
     String* height();
+    String* left();
     String* Margin();
     void setMargin(const char* value);
     String* overflow();
     String* position();
+    String* right();
     String* textDecoration();
+    String* top();
     String* width();
     String* visibility();
     String* opacity();

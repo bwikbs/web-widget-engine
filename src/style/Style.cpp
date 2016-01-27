@@ -1232,6 +1232,32 @@ String* CSSStyleDeclaration::textDecoration()
     return String::emptyString;
 }
 
+#define FOR_EACH_ATTR(F) \
+    F(top, Top) \
+    F(bottom, Bottom) \
+    F(left, Left) \
+    F(right, Right)
+
+#define ATTR_TBLR(jsprop, cssprop) \
+String* CSSStyleDeclaration::jsprop() \
+{ \
+    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) { \
+        CSSStyleValuePair v = *itr; \
+        if(v.keyKind() == CSSStyleValuePair::KeyKind::cssprop) { \
+            switch(v.valueKind()) { \
+                case CSSStyleValuePair::ValueKind::Length: \
+                case CSSStyleValuePair::ValueKind::Percentage: \
+                    return v.lengthOrPercentageToString(); \
+                default: break; \
+            } \
+        } \
+    } \
+    return String::emptyString; \
+}
+FOR_EACH_ATTR(ATTR_TBLR)
+#undef FOR_EACH_ATTR
+#undef ATTR_TBLR
+
 String* CSSStyleDeclaration::width()
 {
     for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
