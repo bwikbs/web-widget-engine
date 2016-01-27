@@ -616,6 +616,13 @@ public:
         }
     }
 
+    void setValuePercentageOrLength(const char* value);
+    void setValueColor(const char* value);
+    void setValueMarginTop(const char* value);
+    void setValueMarginRight(const char* value);
+    void setValueMarginBottom(const char* value);
+    void setValueMarginLeft(const char* value);
+
 protected:
     KeyKind m_keyKind;
     ValueKind m_valueKind;
@@ -716,12 +723,12 @@ public:
     { \
         for (unsigned i = 0; i < m_cssValues.size(); i++) { \
             if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) { \
-                m_cssValues.at(i).setValue(CSSStyleValuePair::KeyKind::name, value); \
+                m_cssValues.at(i).setValue##name(value); \
             } \
         } \
         CSSStyleValuePair ret; \
         ret.setKeyKind(CSSStyleValuePair::KeyKind::name); \
-        ret.setValue(CSSStyleValuePair::KeyKind::name, value); \
+        ret.setValue##name(value); \
         m_cssValues.push_back(ret); \
     }
 

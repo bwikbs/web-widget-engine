@@ -189,6 +189,53 @@ Length convertPercentOrNumberToLength(CSSStyleValuePair::ValueKind kind, CSSStyl
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
 }
 
+void CSSStyleValuePair::setValueColor(const char* value)
+{
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else {
+        // TODO check string has right color string
+        m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+        m_value.m_stringValue = String::fromUTF8(value);
+    }
+}
+
+void CSSStyleValuePair::setValuePercentageOrLength(const char* value)
+{
+    if (VALUE_IS_STRING("auto")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else {
+        parsePercentageOrLength(*this, value);
+    }
+}
+
+void CSSStyleValuePair::setValueMarginTop(const char* value)
+{
+    setValuePercentageOrLength(value);
+}
+
+void CSSStyleValuePair::setValueMarginRight(const char* value)
+{
+    setValuePercentageOrLength(value);
+}
+
+void CSSStyleValuePair::setValueMarginBottom(const char* value)
+{
+    setValuePercentageOrLength(value);
+}
+
+void CSSStyleValuePair::setValueMarginLeft(const char* value)
+{
+    setValuePercentageOrLength(value);
+}
+
+
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
     CSSStyleValuePair ret;
@@ -290,15 +337,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "color") == 0) {
         // color | inherit // initial value -> depends on user agent
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Color;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            // TODO check string has right color string
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
-            ret.m_value.m_stringValue = String::fromUTF8(value);
-        }
+        ret.setValueColor(value);
     } else if (strcmp(key, "background-color") == 0) {
         // color | <transparent> | inherit
         // TODO add initial
@@ -875,55 +914,19 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "margin-top") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginTop;
-
-        if (VALUE_IS_STRING("auto")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueMarginTop(value);
     } else if (strcmp(key, "margin-bottom") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginBottom;
-
-        if (VALUE_IS_STRING("auto")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueMarginTop(value);
     } else if (strcmp(key, "margin-left") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginLeft;
-
-        if (VALUE_IS_STRING("auto")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueMarginTop(value);
     } else if (strcmp(key, "margin-right") == 0) {
         // length | percentage | auto | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginRight;
-
-        if (VALUE_IS_STRING("auto")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueMarginTop(value);
     } else if (strcmp(key, "padding-top") == 0) {
         // length | percentage | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingTop;
