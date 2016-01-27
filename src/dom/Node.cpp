@@ -416,7 +416,11 @@ void Node::dumpStyle()
         printf("direction: rtl, ");
 
     // font-size
-    printf("font-size: %.0f, ", m_style->font()->size());
+    //printf("font-size: %.0f, ", m_style->font()->size());
+    if(m_style->fontSize().isFixed())
+    	printf("font-size: %.0f, ", m_style->fontSize().fixed());
+    else if(m_style->fontSize().isPercent())
+    	printf("font-size: %.2f, ", m_style->fontSize().percent());
 
     // font-style
     printf("font-style: ");
