@@ -592,18 +592,21 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
         } else {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
-            CSSPropertyParser* parser = new CSSPropertyParser((char*) value);
             //NOTE: CSS 2.1 does not support layering multiple background images(for comma-separated)
             ValueList* values = new ValueList(ValueList::Separator::SpaceSeparator);
-            CSSStyleValuePair::ValueKind kind;
-            while (parser->findNextValueKind(' ', &kind)) {
-                if (kind == CSSStyleValuePair::ValueKind::Auto) {
-                    values->append(kind, {0});
-                } else if (kind == CSSStyleValuePair::ValueKind::Percentage) {
-                    values->append(kind, {.m_floatValue = parser->parsedFloatValue()});
-                } else if (kind == CSSStyleValuePair::ValueKind::Length) {
-                    CSSStyleValuePair::ValueData data = {.m_length = CSSLength(parser->parsedFloatValue())};
-                    values->append(kind, data);
+            std::vector<String*, gc_allocator<String*>> tokens;
+            DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+            for (unsigned int i = 0; i < tokens.size(); i++) {
+                const char* currentToken = tokens[i]->utf8Data();
+                if (strcmp(currentToken, "auto") == 0) {
+                    values->append(CSSStyleValuePair::ValueKind::Auto, {0});
+                } else if (endsWith(currentToken, "%")) {
+                    float f;
+                    sscanf(currentToken, "%f%%", &f);
+                    values->append(CSSStyleValuePair::ValueKind::Percentage, {.m_floatValue = (f / 100.f)});
+                } else {
+                    CSSStyleValuePair::ValueData data = {.m_length = parseCSSLength(currentToken)};
+                    values->append(CSSStyleValuePair::ValueKind::Length, data);
                 }
             }
             ret.m_value.m_multiValue = values;
