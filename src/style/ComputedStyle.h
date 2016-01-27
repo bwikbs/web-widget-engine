@@ -733,10 +733,7 @@ protected:
 
     void arrangeStyleValues(ComputedStyle* parentStyle)
     {
-        // if float: left, right
-        // display-> block
-
-        // https://developer.mozilla.org/en-US/docs/Web/CSS/float
+        // 9.7 Relationships between 'display', 'position', and 'float'
         if (position() == AbsolutePositionValue || position() == FixedPositionValue) {
             m_display = DisplayValue::BlockDisplayValue;
         }

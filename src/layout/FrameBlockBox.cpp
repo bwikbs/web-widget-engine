@@ -29,9 +29,6 @@ void FrameBlockBox::layout(LayoutContext& passedCtx)
                 remainWidth -= paddingWidth();
                 setContentWidth(remainWidth);
             }
-            moveX(marginLeft());
-            // TODO implement margin-collapse
-            moveY(marginTop());
         } else {
             if (m_style->width().isFixed()) {
                 setContentWidth(m_style->width().fixed());
@@ -50,10 +47,6 @@ void FrameBlockBox::layout(LayoutContext& passedCtx)
                     setMarginRight(remain / 2);
                 }
             }
-
-            moveX(marginLeft());
-            // TODO implement margin-collapse
-            moveY(marginTop());
         }
     } else {
         STARFISH_ASSERT(node() != nullptr);
@@ -304,6 +297,10 @@ void FrameBlockBox::layout(LayoutContext& passedCtx)
             f->layout(ctx);
         }
     });
+
+    if (isEstablishesBlockFormattingContext()) {
+        ctx.propagateAbsolutePositionedFrames(passedCtx);
+    }
 }
 
 float FrameBlockBox::layoutBlock(LayoutContext& ctx)
@@ -315,9 +312,13 @@ float FrameBlockBox::layoutBlock(LayoutContext& ctx)
         // Place the child.
         child->asFrameBox()->setX(paddingLeft() + borderLeft());
         child->asFrameBox()->setY(normalFlowHeight + top);
+
         // Lay out the child
-        if (child->isNormalFlow())
+        if (child->isNormalFlow()) {
             child->layout(ctx);
+            child->asFrameBox()->moveX(child->asFrameBox()->marginLeft());
+            child->asFrameBox()->moveY(child->asFrameBox()->marginTop());
+        }
 
         if (child->isNormalFlow()) {
             // TODO implement margin-collapse
@@ -465,7 +466,6 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
                     if (isWhiteSpace)
                         return;
                     // try this at nextline
-                    m_lineBoxes.push_back(LineBox(this));
                     lineFormattingContext.breakLine();
                     goto textAppendRetry;
                 }
@@ -480,11 +480,15 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             r->layout(ctx);
 
             insertReplacedBox:
-            if (r->width() < (inlineContentWidth - lineFormattingContext.m_currentLineWidth) || lineFormattingContext.m_currentLineWidth == 0) {
+            if ((r->width() + r->marginWidth()) < (inlineContentWidth - lineFormattingContext.m_currentLineWidth) || lineFormattingContext.m_currentLineWidth == 0) {
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.push_back(new InlineReplacedBox(f->node(), f->style(), &m_lineBoxes[lineFormattingContext.m_currentLine], r));
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginLeft(r->marginLeft());
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginTop(r->marginTop());
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginRight(r->marginRight());
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginBottom(r->marginBottom());
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setWidth(r->width());
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setHeight(r->height());
-                lineFormattingContext.m_currentLineWidth += r->width();
+                lineFormattingContext.m_currentLineWidth += (r->width() + r->marginWidth());
             } else {
                 lineFormattingContext.breakLine();
                 goto insertReplacedBox;
@@ -494,7 +498,7 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             f->layout(ctx);
             float ascender = 0;
             if (ctx.lastLineBox() && r->isAncestorOf(ctx.lastLineBox())) {
-                // TODO consider margin, border, padding
+                // TODO consider margin
                 float topToLineBox = ctx.lastLineBox()->absolutePoint(r).y();
                 ascender = topToLineBox + ctx.lastLineBox()->m_ascender;
             } else {
@@ -502,11 +506,15 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             }
 
             insertBlockBox:
-            if (r->width() < (inlineContentWidth - lineFormattingContext.m_currentLineWidth) || lineFormattingContext.m_currentLineWidth == 0) {
+            if ((r->width() + r->marginWidth()) < (inlineContentWidth - lineFormattingContext.m_currentLineWidth) || lineFormattingContext.m_currentLineWidth == 0) {
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.push_back(new InlineBlockBox(f->node(), f->style(), &m_lineBoxes[lineFormattingContext.m_currentLine], r, ascender));
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginLeft(r->marginLeft());
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginTop(r->marginTop());
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginRight(r->marginRight());
+                m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginBottom(r->marginBottom());
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setWidth(r->width());
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setHeight(r->height());
-                lineFormattingContext.m_currentLineWidth += r->width();
+                lineFormattingContext.m_currentLineWidth += (r->width() + r->marginWidth());
             } else {
                 lineFormattingContext.breakLine();
                 goto insertBlockBox;
@@ -529,8 +537,8 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
         // align boxes
         float x = 0;
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
-            b.m_boxes[j]->setX(x);
-            x += b.m_boxes[j]->width();
+            b.m_boxes[j]->setX(x + b.m_boxes[j]->marginLeft());
+            x += b.m_boxes[j]->width() + b.m_boxes[j]->marginWidth();
         }
 
         // text align
@@ -540,7 +548,7 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             for (size_t j = 0; j < b.m_boxes.size(); j ++) {
                 InlineBox* box = b.m_boxes[b.m_boxes.size() -1 - j];
                 box->setX(x - xx);
-                xx += box->width();
+                xx += box->width() + box->marginWidth();
             }
         } else {
             STARFISH_ASSERT(style()->textAlign() == TextAlignValue::CenterTextAlignValue);
@@ -551,7 +559,7 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             }
         }
 
-        // TODO vertical align(middle, top, bottom, middle)
+        // TODO vertical align(middle, top, bottom)
         float maxAscender = 0;
         float maxDecender = 0;
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
@@ -560,11 +568,12 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
                 maxAscender = std::max(ib->asInlineTextBox()->style()->font()->metrics().m_ascender, maxAscender);
                 maxDecender = std::min(ib->asInlineTextBox()->style()->font()->metrics().m_descender, maxDecender);
             } else if (ib->isInlineReplacedBox()) {
-                maxAscender = std::max(b.m_boxes[j]->height(), maxAscender);
+                // TODO consider padding as decender
+                maxAscender = std::max(b.m_boxes[j]->height() + b.m_boxes[j]->marginHeight(), maxAscender);
             } else if (ib->isInlineBlockBox()) {
-                float dec = -(b.m_boxes[j]->height() - b.m_boxes[j]->asInlineBlockBox()->m_ascender);
-                maxAscender = std::max(b.m_boxes[j]->asInlineBlockBox()->m_ascender, maxAscender);
-                maxDecender = std::min(dec, dec);
+                float dec = -(b.m_boxes[j]->height() - b.m_boxes[j]->asInlineBlockBox()->m_ascender) - b.m_boxes[j]->marginBottom();
+                maxAscender = std::max(b.m_boxes[j]->asInlineBlockBox()->m_ascender + b.m_boxes[j]->marginTop(), maxAscender);
+                maxDecender = std::min(dec, maxDecender);
             } else {
                 STARFISH_RELEASE_ASSERT_NOT_REACHED();
             }
@@ -579,10 +588,13 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             if (ib->isInlineTextBox()) {
                 ib->setY(height + maxDecender - ib->height() - ib->asInlineTextBox()->style()->font()->metrics().m_descender);
             } else if (ib->isInlineReplacedBox()) {
-                ib->setY(height + maxDecender - ib->height());
+                // TODO consider padding as decender
+                ib->setY(height + maxDecender - ib->height() - ib->marginTop());
             } else if (ib->isInlineBlockBox()) {
-                float dec = -(b.m_boxes[j]->height() - b.m_boxes[j]->asInlineBlockBox()->m_ascender);
-                ib->setY(height + maxDecender - ib->height() - dec);
+                float dec = -(b.m_boxes[j]->height() - b.m_boxes[j]->asInlineBlockBox()->m_ascender) - ib->marginBottom();
+                ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
+            } else {
+                STARFISH_RELEASE_ASSERT_NOT_REACHED();
             }
         }
 

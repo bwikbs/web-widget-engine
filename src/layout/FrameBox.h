@@ -5,6 +5,8 @@
 
 namespace StarFish {
 
+class InlineBox;
+
 class FrameBox : public Frame {
 public:
     FrameBox(Node* node, ComputedStyle* style)
@@ -17,6 +19,17 @@ public:
     virtual bool isFrameBox()
     {
         return true;
+    }
+
+    virtual bool isInlineBox()
+    {
+        return false;
+    }
+
+    InlineBox* asInlineBox()
+    {
+        STARFISH_ASSERT(isInlineBox());
+        return (InlineBox*)this;
     }
 
     virtual void dump(int depth)
@@ -34,8 +47,8 @@ public:
 
     void setX(float x) { m_frameRect.setX(x); }
     void setY(float y) { m_frameRect.setY(y); }
-    void moveX(float t) { m_frameRect.setX(x() + t); }
-    void moveY(float t) { m_frameRect.setY(y() + t); }
+    void moveX(float t) { setX(x() + t); }
+    void moveY(float t) { setY(y() + t); }
     void setWidth(float width) { m_frameRect.setWidth(width); }
     void setHeight(float height) { m_frameRect.setHeight(height); }
 
@@ -236,7 +249,7 @@ public:
         while (top != p) {
             l.setX(l.x() + p->asFrameBox()->x());
             l.setY(l.y() + p->asFrameBox()->y());
-            p = p->parent();
+            p = p->layoutParent();
         }
         return l;
     }

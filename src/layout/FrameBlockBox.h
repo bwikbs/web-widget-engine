@@ -27,6 +27,7 @@ public:
         return nullptr;
     }
 
+    virtual bool isInlineBox() { return true; }
     virtual bool isInlineTextBox() const { return false; }
     virtual bool isInlineReplacedBox() const { return false; }
     virtual bool isInlineBlockBox() const { return false; }
@@ -61,6 +62,11 @@ public:
             canvas->setColor(style()->color());
             canvas->drawText(0, 0, m_text);
         }
+    }
+
+    virtual void dump(int depth)
+    {
+        printf(" [%s] ", m_text->utf8Data());
     }
 
     virtual const char* name()
@@ -105,6 +111,7 @@ public:
         : InlineBox(node, style, parent)
     {
         m_frameBlockBox = f;
+        ((FrameBox*)m_frameBlockBox)->setLayoutParent(this);
         m_ascender = ascender;
     }
 

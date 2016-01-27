@@ -87,6 +87,23 @@ public:
         }
     }
 
+    void propagateAbsolutePositionedFrames(LayoutContext& to)
+    {
+        auto iter = m_absolutePositionedFrames.begin();
+
+        while (iter != m_absolutePositionedFrames.end()) {
+            auto iter2 = to.m_absolutePositionedFrames.find(iter->first);
+            if (iter2 == to.m_absolutePositionedFrames.end()) {
+                to.m_absolutePositionedFrames.insert(std::make_pair(iter->first, iter->second));
+            } else {
+                iter2->second.insert(iter2->second.end(), iter->second.begin(), iter->second.end());
+            }
+            iter++;
+        }
+
+        m_absolutePositionedFrames.clear();
+    }
+
 private:
     Frame* m_rootFrame;
     LineBox* m_lastLineBox;
@@ -251,12 +268,22 @@ public:
 
     void setParent(Frame* f)
     {
-        m_parent = f;
+        m_layoutParent = m_parent = f;
+    }
+
+    void setLayoutParent(Frame* f)
+    {
+        m_layoutParent = f;
     }
 
     Frame* parent()
     {
         return m_parent;
+    }
+
+    Frame* layoutParent()
+    {
+        return m_layoutParent;
     }
 
     Frame* next()
@@ -407,6 +434,7 @@ protected:
     ComputedStyle* m_style;
 
     Frame* m_parent;
+    Frame* m_layoutParent;
 
     Frame* m_previous;
     Frame* m_next;
