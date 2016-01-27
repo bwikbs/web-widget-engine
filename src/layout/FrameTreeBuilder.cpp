@@ -60,7 +60,12 @@ void buildTree(Node* current, Frame* parent)
         clearTree(current);
         return ;
     } else if (display == DisplayValue::InlineBlockDisplayValue) {
-        currentFrame = new FrameBlockBox(current, current->style());
+        if (current->isElement() && current->asElement()->isHTMLElement() && current->asElement()->asHTMLElement()->isHTMLImageElement()) {
+            auto element = current->asElement()->asHTMLElement()->asHTMLImageElement();
+            currentFrame = new FrameReplacedImage(current, current->style(), element->src());
+        } else {
+            currentFrame = new FrameBlockBox(current, current->style());
+        }
     }
 
     if (parent->isFrameBlockBox()) {

@@ -98,7 +98,7 @@ Window* Window::create(StarFish* sf, size_t w, size_t h)
 {
     auto wnd = new WindowImplEFL(sf);
     wnd->m_starFish = sf;
-    wnd->m_window = elm_win_add(NULL, "", ELM_WIN_BASIC);
+    wnd->m_window = elm_win_add(NULL, "StarFish", ELM_WIN_BASIC);
 
     Evas* e = evas_object_evas_get(wnd->m_window);
     g_internalCanvas = e;

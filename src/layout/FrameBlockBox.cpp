@@ -568,8 +568,12 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
                 maxAscender = std::max(ib->asInlineTextBox()->style()->font()->metrics().m_ascender, maxAscender);
                 maxDecender = std::min(ib->asInlineTextBox()->style()->font()->metrics().m_descender, maxDecender);
             } else if (ib->isInlineReplacedBox()) {
-                // TODO consider padding as decender
-                maxAscender = std::max(b.m_boxes[j]->height() + b.m_boxes[j]->marginHeight(), maxAscender);
+                float asc = b.m_boxes[j]->marginTop() + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->borderTop() + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->paddingTop()
+                        + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->contentHeight();
+                float dec = -(b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->paddingBottom() + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->borderBottom()
+                        + b.m_boxes[j]->marginBottom());
+                maxAscender = std::max(asc, maxAscender);
+                maxDecender = std::min(dec, maxDecender);
             } else if (ib->isInlineBlockBox()) {
                 float dec = -(b.m_boxes[j]->height() - b.m_boxes[j]->asInlineBlockBox()->m_ascender) - b.m_boxes[j]->marginBottom();
                 maxAscender = std::max(b.m_boxes[j]->asInlineBlockBox()->m_ascender + b.m_boxes[j]->marginTop(), maxAscender);
@@ -588,8 +592,9 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             if (ib->isInlineTextBox()) {
                 ib->setY(height + maxDecender - ib->height() - ib->asInlineTextBox()->style()->font()->metrics().m_descender);
             } else if (ib->isInlineReplacedBox()) {
-                // TODO consider padding as decender
-                ib->setY(height + maxDecender - ib->height() - ib->marginTop());
+                float asc = b.m_boxes[j]->marginTop() + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->borderTop() + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->paddingTop()
+                            + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->contentHeight();
+                ib->setY(height + maxDecender - asc + b.m_boxes[j]->marginTop());
             } else if (ib->isInlineBlockBox()) {
                 float dec = -(b.m_boxes[j]->height() - b.m_boxes[j]->asInlineBlockBox()->m_ascender) - ib->marginBottom();
                 ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());

@@ -31,7 +31,8 @@ public:
     virtual void paintReplaced(Canvas* canvas)
     {
         if (m_imageData)
-            canvas->drawImage(m_imageData, Rect(0, 0, width(), height()));
+            canvas->drawImage(m_imageData, Rect(borderLeft() + paddingLeft(), borderTop() + paddingTop(),
+                    width() - borderWidth() - paddingWidth(), height() - borderHeight() - paddingHeight()));
     }
 
     virtual Size intrinsicSize()

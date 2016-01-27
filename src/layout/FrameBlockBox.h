@@ -9,6 +9,7 @@ namespace StarFish {
 class FrameBlockBox;
 class InlineTextBox;
 class InlineBlockBox;
+class InlineReplacedBox;
 
 class InlineBox : public FrameBox {
 public:
@@ -43,6 +44,12 @@ public:
         STARFISH_ASSERT(isInlineBlockBox());
         return (InlineBlockBox*)this;
     }
+
+    InlineReplacedBox* asInlineReplacedBox()
+    {
+        STARFISH_ASSERT(isInlineReplacedBox());
+        return (InlineReplacedBox*)this;
+    }
 };
 
 class InlineTextBox : public InlineBox {
@@ -66,6 +73,7 @@ public:
 
     virtual void dump(int depth)
     {
+        InlineBox::dump(depth);
         printf(" [%s] ", m_text->utf8Data());
     }
 
@@ -90,14 +98,17 @@ public:
 
     virtual void paint(Canvas* canvas, PaintingStage stage)
     {
-        if (stage == PaintingNormalFlowInline) {
-            m_frameReplaced->paintReplaced(canvas);\
-        }
+        m_frameReplaced->paint(canvas, stage);
     }
 
     virtual const char* name()
     {
         return "InlineReplacedBox";
+    }
+
+    FrameReplaced* replacedBox()
+    {
+        return m_frameReplaced;
     }
 
 protected:

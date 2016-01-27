@@ -37,7 +37,8 @@ public:
 
     virtual void layout(LayoutContext& ctx)
     {
-        // TODO A computed value of 'auto' for 'margin-left' or 'margin-right' becomes a used value of '0'.
+        float parentContentWidth = ctx.blockContainer(this)->asFrameBox()->contentWidth();
+        computeBorderMarginPadding(parentContentWidth);
         Size s = intrinsicSize();
         if ((s.width() == 0 || s.height() == 0) && (style()->width().isAuto() || style()->height().isAuto())) {
             setContentWidth(0);
@@ -75,6 +76,8 @@ public:
                     setContentHeight(s.height());
             }
         }
+
+        // TODO implement more things about margin...
     }
 
     virtual Size intrinsicSize() = 0;
@@ -86,8 +89,8 @@ public:
 
     virtual void paint(Canvas* canvas, PaintingStage stage)
     {
-        // FIXME check spec. is this stage right??
-        if (stage == PaintingNormalFlowBlock) {
+        if (stage == PaintingNormalFlowInline) {
+            paintBackgroundAndBorders(canvas);
             paintReplaced(canvas);
         }
     }
