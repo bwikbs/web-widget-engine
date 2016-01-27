@@ -677,11 +677,11 @@ public:
 
     void addValuePair(CSSStyleValuePair p)
     {
-        for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-            CSSStyleValuePair v = *itr;
+        for(size_t i = 0; i < m_cssValues.size(); i++) {
+            CSSStyleValuePair v = m_cssValues[i];
             if(v.keyKind() == p.keyKind()) {
-                m_cssValues.erase(itr); // FIXME: m_cssValues should be a list
-                break;
+                m_cssValues[i] = p;
+                return;
             }
         }
         m_cssValues.push_back(p);
