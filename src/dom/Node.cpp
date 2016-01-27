@@ -376,9 +376,7 @@ void Node::dumpStyle()
     } else if (m_style->verticalAlign() == VerticalAlignValue::TextBottomVAlignValue) {
         printf("vertical-align: text-bottom, ");
     } else if (m_style->verticalAlignLength().isFixed()) {
-        printf("vertical-align: %f, ", m_style->verticalAlignLength().fixed());
-    } else if (m_style->verticalAlignLength().isPercent()) {
-        printf("vertical-align: %fp, ", m_style->verticalAlignLength().percent());
+        printf("vertical-align: %.2f, ", m_style->verticalAlignLength().fixed());
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
