@@ -201,6 +201,57 @@ void CSSStyleValuePair::setValueColor(const char* value)
     }
 }
 
+void CSSStyleValuePair::setValueDirection(const char* value)
+{
+    // <ltr> | rtl | inherit
+    // TODO add initial
+    m_keyKind = CSSStyleValuePair::KeyKind::Direction;
+    m_valueKind = CSSStyleValuePair::ValueKind::DirectionValueKind;
+    if (VALUE_IS_STRING("ltr")) {
+        m_value.m_direction = DirectionValue::LtrDirectionValue;
+    } else if (VALUE_IS_STRING("rtl")) {
+        m_value.m_direction = DirectionValue::RtlDirectionValue;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+void CSSStyleValuePair::setValueWidth(const char* value)
+{
+    // length | percentage | <auto> | inherit
+    m_keyKind = CSSStyleValuePair::KeyKind::Width;
+    m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+    if (VALUE_IS_STRING("auto")) {
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else {
+        setValuePercentageOrLength(value);
+    }
+}
+
+void CSSStyleValuePair::setValueHeight(const char* value)
+{
+    // length | percentage | <auto> | inherit
+    m_keyKind = CSSStyleValuePair::KeyKind::Height;
+    m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+
+    if (VALUE_IS_STRING("auto")) {
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else {
+        setValuePercentageOrLength(value);
+    }
+}
+
 void CSSStyleValuePair::setValueBackgroundColor(const char* value)
 {
     setValueColor(value);
@@ -346,31 +397,9 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
 
     } else if (strcmp(key, "width") == 0) {
-        // length | percentage | <auto> | inherit
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::Width;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
-
-        if (VALUE_IS_STRING("auto")) {
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueWidth(value);
     } else if (strcmp(key, "height") == 0) {
-        // length | percentage | <auto> | inherit
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::Height;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Auto;
-
-        if (VALUE_IS_STRING("auto")) {
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValueHeight(value);
     } else if (strcmp(key, "font-size") == 0) {
         // TODO add initial
         // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
@@ -563,21 +592,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "direction") == 0) {
-        // <ltr> | rtl | inherit
-        // TODO add initial
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::Direction;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::DirectionValueKind;
-        if (VALUE_IS_STRING("ltr")) {
-            ret.m_value.m_direction = DirectionValue::LtrDirectionValue;
-        } else if (VALUE_IS_STRING("rtl")) {
-            ret.m_value.m_direction = DirectionValue::RtlDirectionValue;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
-        }
+        ret.setValueDirection(value);
     } else if (strcmp(key, "background-size") == 0) {
         // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
         // TODO add initial
@@ -1095,6 +1110,14 @@ String* CSSStyleValuePair::toString()
                 return stringValue();
             break;
         }
+        case Direction: {
+            if(directionValue() == LtrDirectionValue) {
+                return String::fromUTF8("ltr");
+            } else if(directionValue() == RtlDirectionValue) {
+                return String::fromUTF8("rtl");
+            }
+            break;
+        }
         case MarginTop:
         case MarginRight:
         case MarginBottom:
@@ -1105,25 +1128,15 @@ String* CSSStyleValuePair::toString()
         case Left:
         case Right:
             return lengthOrPercentageToString();
+        case Height:
+        case Width:
+            return lengthOrPercentageToString();
         default: {
+            STARFISH_RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
         }
     }
-    return nullptr;
-}
-
-String* CSSStyleDeclaration::direction()
-{
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-        CSSStyleValuePair v = *itr;
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::Direction) {
-            if(v.directionValue() == LtrDirectionValue) {
-                return String::createASCIIString("ltr");
-            } else if(v.directionValue() == RtlDirectionValue) {
-                return String::createASCIIString("rtl");
-            }
-        }
-    }
+    STARFISH_RELEASE_ASSERT_NOT_REACHED();
     return String::emptyString;
 }
 
@@ -1153,22 +1166,6 @@ String* CSSStyleDeclaration::fontSize()
                     return String::fromUTF8("smaller");
                 default:
                     return v.lengthOrPercentageToString();
-            }
-        }
-    }
-    return String::emptyString;
-}
-
-String* CSSStyleDeclaration::height()
-{
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-        CSSStyleValuePair v = *itr;
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::Height) {
-            switch(v.valueKind()) {
-                case CSSStyleValuePair::ValueKind::Length:
-                case CSSStyleValuePair::ValueKind::Percentage:
-                    return v.lengthOrPercentageToString();
-                default: break;
             }
         }
     }
@@ -1286,22 +1283,6 @@ String* CSSStyleDeclaration::textDecoration()
     return String::emptyString;
 }
 
-String* CSSStyleDeclaration::width()
-{
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-        CSSStyleValuePair v = *itr;
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::Width) {
-            switch(v.valueKind()) {
-                case CSSStyleValuePair::ValueKind::Length:
-                case CSSStyleValuePair::ValueKind::Percentage:
-                    return v.lengthOrPercentageToString();
-                default: break;
-            }
-        }
-    }
-    return String::emptyString;
-}
-
 String* CSSStyleDeclaration::visibility()
 {
     for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
@@ -1400,6 +1381,21 @@ bool CSSStyleDeclaration::checkInputErrorLeft(CSSStyleValuePair::KeyKind key, co
 }
 
 bool CSSStyleDeclaration::checkInputErrorRight(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorDirection(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorWidth(CSSStyleValuePair::KeyKind key, const char* value)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorHeight(CSSStyleValuePair::KeyKind key, const char* value)
 {
     return true;
 }

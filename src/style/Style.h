@@ -611,7 +611,10 @@ public:
     F(Top) \
     F(Right) \
     F(Bottom) \
-    F(Left)
+    F(Left) \
+    F(Direction) \
+    F(Height) \
+    F(Width)
 
 #define SET_VALUE(name) \
     void setValue##name(const char* value);
@@ -734,15 +737,12 @@ public:
 
 #undef FOR_EACH_STYLE_ATTRIBUTE
 
-    String* direction();
     String* fontSize();
-    String* height();
     String* Margin();
     void setMargin(const char* value);
     String* overflow();
     String* position();
     String* textDecoration();
-    String* width();
     String* visibility();
     String* opacity();
     String* textAlign();
