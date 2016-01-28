@@ -101,6 +101,7 @@ public:
     String* substring(size_t pos, size_t len);
 
     String* toUpper();
+    String* toLower();
     bool isASCIIString() { return m_isASCIIString; }
     String* concat(String* str);
 
@@ -198,6 +199,17 @@ inline String* String::toUpper()
     if (m_isASCIIString) {
         ASCIIString str = *asASCIIString();
         std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+        return new StringDataASCII(std::move(str));
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+inline String* String::toLower()
+{
+    if (m_isASCIIString) {
+        ASCIIString str = *asASCIIString();
+        std::transform(str.begin(), str.end(),str.begin(), ::tolower);
         return new StringDataASCII(std::move(str));
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
