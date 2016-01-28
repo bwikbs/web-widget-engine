@@ -626,6 +626,7 @@ public:
     F(Position) \
     F(TextDecoration) \
     F(BorderImageWidth) \
+    F(BorderTopWidth) \
     F(TextAlign) \
     F(Visibility) \
     F(Opacity)

@@ -544,6 +544,25 @@ void CSSStyleValuePair::setValueBorderImageWidth(std::vector<String*, gc_allocat
     }
 }
 
+void CSSStyleValuePair::setValueBorderTopWidth(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("thin")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::BorderThin;
+    } else if (VALUE_IS_STRING("medium")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::BorderMedium;
+    } else if (VALUE_IS_STRING("thick")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::BorderThick;
+    } else {
+        setValuePercentageOrLength(value);
+    }
+}
+
 void CSSStyleValuePair::setValueTextAlign(std::vector<String*, gc_allocator<String*>>* tokens)
 {
 
@@ -1023,19 +1042,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "border-top-width") == 0) {
         // border-width | inherit // initial value -> medium ('thin' <='medium' <= 'thick')
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderTopWidth;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("thin")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderThin;
-        } else if (VALUE_IS_STRING("medium")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderMedium;
-        } else if (VALUE_IS_STRING("thick")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderThick;
-        } else {
-            parseLength(ret, value);
-        }
+        ret.setValueBorderTopWidth(&tokens);
     } else if (strcmp(key, "border-right-width") == 0) {
         // border-width | inherit // initial value -> medium ('thin' <='medium' <= 'thick')
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderRightWidth;
@@ -1300,6 +1307,20 @@ String* CSSStyleValuePair::toString()
         case BorderImageWidth: {
             //TODO
         }
+        case BorderTopWidth: {
+            switch(valueKind()) {
+            case CSSStyleValuePair::ValueKind::BorderThin:
+                return String::fromUTF8("thin");
+            case CSSStyleValuePair::ValueKind::BorderMedium:
+                return String::fromUTF8("medium");
+            case CSSStyleValuePair::ValueKind::BorderThick:
+                return String::fromUTF8("thick");
+            case CSSStyleValuePair::ValueKind::Inherit:
+                return String::fromUTF8("inherit");
+            default:
+                return lengthOrPercentageToString();
+            }
+        }
         case TextAlign: {
             switch(textAlignValue()) {
                 case TextAlignValue::NamelessTextAlignValue:
@@ -1529,6 +1550,22 @@ bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, g
         }
     }
     return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderTopWidth(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // border-width(thin | <medium> | thick) | length | inherit
+    if (tokens->size() == 1) {
+        const char* token = tokens->at(0)->utf8Data();
+        if ((strcmp(token, "thin") == 0) ||
+            (strcmp(token, "medium") == 0) ||
+            (strcmp(token, "thick") == 0) ||
+            (strcmp(token, "inherit") == 0) ||
+            CSSPropertyParser::assureLength(token, false)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorTextAlign(std::vector<String*, gc_allocator<String*>>* tokens)

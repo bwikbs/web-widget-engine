@@ -72,7 +72,7 @@
             document.getElementById("div2").style.borderTopWidth = "inherit";
             print(document.getElementById("div2").style.borderTopWidth);
             document.getElementById("div2").style.borderTopWidth = "thin";
-            print(document.getElementById("div2").style.borderTopWidth);
+            print(document.getElementById("div2").style.borderTopWidth);            
             print("done");
         }
         test();

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            #div1 { }
+            #div2 { border-top-width: 10px; }
+            div {
+                font-size: 20px;
+                width: 400px;
+                border-style: solid;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="div1">
+            div1
+        </div>
+        <div id="div2">
+            div2
+        </div>
+    </body>
+    </body>
+    <script type="text/javascript">
+        function test() {
+            document.getElementById("div1").style.borderTopWidth = "10px";
+            print(document.getElementById("div1").style.borderTopWidth);
+            document.getElementById("div2").style.borderTopWidth = "inherit";
+            print(document.getElementById("div2").style.borderTopWidth);
+            document.getElementById("div2").style.borderTopWidth = "thin";
+            print(document.getElementById("div2").style.borderTopWidth);            
+            print("done");
+        }
+        test();
+    </script>
+</html>
