@@ -1252,9 +1252,9 @@ String* CSSStyleValuePair::toString()
                     return String::fromUTF8("ltr");
                 case RtlDirectionValue:
                     return String::fromUTF8("rtl");
-                default: break;
+                default:
+                    return String::emptyString;
             }
-            break;
         }
         case MarginTop:
         case MarginRight:
@@ -1281,9 +1281,8 @@ String* CSSStyleValuePair::toString()
                 case PositionValue::FixedPositionValue:
                     return String::fromUTF8("fixed");
                 default:
-                    break;
+                    return String::emptyString;
             }
-            break;
         }
         case TextDecoration: {
             switch(textDecoration()) {
@@ -1297,9 +1296,9 @@ String* CSSStyleValuePair::toString()
                     return String::fromUTF8("line-through");
                 case TextDecorationValue::BlinkTextDecorationValue:
                     return String::fromUTF8("blink");
-                default: break;
+                default:
+                    return String::emptyString;
             }
-            break;
         }
         case FontSize: {
             switch(valueKind()) {
@@ -1380,7 +1379,6 @@ String* CSSStyleValuePair::toString()
         }
     }
     STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    return String::emptyString;
 }
 
 void CSSStyleValuePair::setLengthValue(const char* value)
