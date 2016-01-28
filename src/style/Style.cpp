@@ -1327,8 +1327,7 @@ String* CSSStyleValuePair::toString()
             }
         }
         case Opacity: {
-            printf("MONG:%f\n",numberValue());
-             return String::fromUTF8(std::to_string(numberValue()).c_str());
+            return String::fromUTF8(std::to_string(numberValue()).c_str());
         }
         default: {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -1534,12 +1533,28 @@ bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, g
 
 bool CSSStyleDeclaration::checkInputErrorTextAlign(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    if (tokens->size() == 1) {
+        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        if ((strcmp(token, "left") == 0) ||
+            (strcmp(token, "right") == 0) ||
+            (strcmp(token, "center") == 0) ||
+            (strcmp(token, "justify") == 0)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorVisibility(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    if (tokens->size() == 1) {
+        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        if ((strcmp(token, "visible") == 0) ||
+            (strcmp(token, "hidden") == 0)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorOpacity(std::vector<String*, gc_allocator<String*>>* tokens)
