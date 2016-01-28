@@ -65,6 +65,29 @@
                         <text><![CDATA[This is letter-spacing: initial]]></text>
                     </node>
                 </node>
+<node nodeType="1" localName="script" type="text/javascript">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+    function run() {
+        document.getElementById("div1").style.letterSpacing = "Initial";
+        print("div1 set letter-spacing(\"Initial\"): " + document.getElementById("div1").style.letterSpacing);
+
+        document.getElementById("div1").style.letterSpacing = "inherit";
+        print("div1 set letter-spacing(\"inherit\"): " + document.getElementById("div1").style.letterSpacing);
+
+        document.getElementById("div1").style.letterSpacing = "20pX";
+        print("div1 set letter-spacing(\"20pX\"): " + document.getElementById("div1").style.letterSpacing);
+
+        document.getElementById("div1").style.letterSpacing = "Normal";
+        print("div1 set letter-spacing(\"Normal\"): " + document.getElementById("div1").style.letterSpacing);
+
+        document.getElementById("div1").style.letterSpacing = "";
+        print("div1 set letter-spacing(\"\"): " + document.getElementById("div1").style.letterSpacing);
+    }
+    run();
+    ]]></text>
+                    </node>
+                </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
 

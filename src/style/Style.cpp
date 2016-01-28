@@ -1419,6 +1419,13 @@ String* CSSStyleValuePair::toString()
                     return String::emptyString;
             }
         }
+        case LetterSpacing:
+            if (m_valueKind == CSSStyleValuePair::ValueKind::Normal) {
+                return String::fromUTF8("normal");
+            } else {
+                return valueToString();
+            }
+            break;
         case LineHeight:
             if (m_valueKind == CSSStyleValuePair::ValueKind::Normal) {
                 return String::fromUTF8("normal");
@@ -1703,6 +1710,16 @@ bool CSSStyleDeclaration::checkInputErrorColor(std::vector<String*, gc_allocator
 bool CSSStyleDeclaration::checkInputErrorBackgroundColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return checkInputErrorColor(tokens);
+}
+
+bool CSSStyleDeclaration::checkInputErrorLetterSpacing(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() != 1) return false;
+    (*tokens)[0] = (*tokens)[0]->toLower();
+    const char* value = (*tokens)[0]->utf8Data();
+    return (VALUE_IS_STRING("normal")
+            || CSSPropertyParser::assureEssential(value)
+            || CSSPropertyParser::assureLength(value, false));
 }
 
 bool CSSStyleDeclaration::checkInputErrorLineHeight(std::vector<String*, gc_allocator<String*>>* tokens)

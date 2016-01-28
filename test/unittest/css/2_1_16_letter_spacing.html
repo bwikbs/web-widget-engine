@@ -20,5 +20,24 @@
 <div id="div3">This is letter-spacing: initial</div>
 
 </body>
+<script type="text/javascript">
+    function run() {
+        document.getElementById("div1").style.letterSpacing = "Initial";
+        print("div1 set letter-spacing(\"Initial\"): " + document.getElementById("div1").style.letterSpacing);
+
+        document.getElementById("div1").style.letterSpacing = "inherit";
+        print("div1 set letter-spacing(\"inherit\"): " + document.getElementById("div1").style.letterSpacing);
+
+        document.getElementById("div1").style.letterSpacing = "20pX";
+        print("div1 set letter-spacing(\"20pX\"): " + document.getElementById("div1").style.letterSpacing);
+
+        document.getElementById("div1").style.letterSpacing = "Normal";
+        print("div1 set letter-spacing(\"Normal\"): " + document.getElementById("div1").style.letterSpacing);
+
+        document.getElementById("div1").style.letterSpacing = "";
+        print("div1 set letter-spacing(\"\"): " + document.getElementById("div1").style.letterSpacing);
+    }
+    run();
+</script>
 </html>
 
