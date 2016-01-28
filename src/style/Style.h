@@ -662,7 +662,8 @@ public:
     F(Opacity) \
     F(OverflowX) \
     F(BackgroundImage) \
-    F(ZIndex)
+    F(ZIndex) \
+    F(VerticalAlign)
 
 #define SET_VALUE(name) \
     void setValue##name(std::vector<String*, gc_allocator<String*>>* tokens);

@@ -806,6 +806,43 @@ void CSSStyleValuePair::setValueZIndex(std::vector<String*, gc_allocator<String*
     }
 }
 
+void CSSStyleValuePair::setValueVerticalAlign(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    m_keyKind = CSSStyleValuePair::KeyKind::VerticalAlign;
+    if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_STRING("baseline")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+        m_value.m_verticalAlign = VerticalAlignValue::BaselineVAlignValue;
+    } else if (VALUE_IS_STRING("sub")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+        m_value.m_verticalAlign = VerticalAlignValue::SubVAlignValue;
+    } else if (VALUE_IS_STRING("super")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+        m_value.m_verticalAlign = VerticalAlignValue::SuperVAlignValue;
+    } else if (VALUE_IS_STRING("top")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+        m_value.m_verticalAlign = VerticalAlignValue::TopVAlignValue;
+    } else if (VALUE_IS_STRING("text-top")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+        m_value.m_verticalAlign = VerticalAlignValue::TextTopVAlignValue;
+    } else if (VALUE_IS_STRING("middle")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+        m_value.m_verticalAlign = VerticalAlignValue::MiddleVAlignValue;
+    } else if (VALUE_IS_STRING("bottom")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+        m_value.m_verticalAlign = VerticalAlignValue::BottomVAlignValue;
+    } else if (VALUE_IS_STRING("text-bottom")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
+        m_value.m_verticalAlign = VerticalAlignValue::TextBottomVAlignValue;
+    } else {
+        setValuePercentageOrLength(value);
+    }
+}
+
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
     CSSStyleValuePair ret;
@@ -892,8 +929,8 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::VerticalAlignValueKind;
             ret.m_value.m_verticalAlign = VerticalAlignValue::TextBottomVAlignValue;
         } else {
-            parsePercentageOrLength(ret, value);
-        }
+            parsePercentageOrLength(ret, value)
+;        }
     } else if (strcmp(key, "text-align") == 0) {
         // left | right | center | justify | <inherit>
         // TODO add initial
@@ -1529,6 +1566,36 @@ String* CSSStyleValuePair::toString()
                 return String::fromUTF8(std::to_string((int) numberValue()).c_str());
             break;
         }
+        case VerticalAlign: {
+            switch(valueKind()) {
+                case CSSStyleValuePair::ValueKind::VerticalAlignValueKind:
+                    switch(verticalAlignValue()) {
+                        case VerticalAlignValue::BaselineVAlignValue:
+                            return String::fromUTF8("baseline");
+                        case VerticalAlignValue::SubVAlignValue:
+                            return String::fromUTF8("sub");
+                        case VerticalAlignValue::SuperVAlignValue:
+                            return String::fromUTF8("super");
+                        case VerticalAlignValue::TopVAlignValue:
+                            return String::fromUTF8("top");
+                        case VerticalAlignValue::TextTopVAlignValue:
+                            return String::fromUTF8("text-top");
+                        case VerticalAlignValue::MiddleVAlignValue:
+                            return String::fromUTF8("middle");
+                        case VerticalAlignValue::BottomVAlignValue:
+                            return String::fromUTF8("bottom");
+                        case VerticalAlignValue::TextBottomVAlignValue:
+                            return String::fromUTF8("text-bottom");
+                        case VerticalAlignValue::NumericVAlignValue:
+                            // FIXME:mh.byun
+                            return String::fromUTF8("number??");
+                        default:
+                            return String::emptyString;
+                    }
+                default:
+                    return lengthOrPercentageToString();
+            }
+        }
         default: {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
@@ -1910,6 +1977,26 @@ bool CSSStyleDeclaration::checkInputErrorZIndex(std::vector<String*, gc_allocato
             (strcmp(token, "initial") == 0) ||
             (strcmp(token, "inherit") == 0) ||
             CSSPropertyParser::assureInteger(token, false)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CSSStyleDeclaration::checkInputErrorVerticalAlign(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() == 1) {
+        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        if ((strcmp(token, "baseline") == 0) ||
+            (strcmp(token, "sub") == 0) ||
+            (strcmp(token, "super") == 0) ||
+            (strcmp(token, "top") == 0) ||
+            (strcmp(token, "text-top") == 0) ||
+            (strcmp(token, "middle") == 0) ||
+            (strcmp(token, "bottom") == 0) ||
+            (strcmp(token, "text-bottom") == 0)) {
+            return true;
+        }else if(CSSPropertyParser::assureLength(token, true)||CSSPropertyParser::assurePercent(token, true)){
             return true;
         }
     }
