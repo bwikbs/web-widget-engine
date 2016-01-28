@@ -10,11 +10,11 @@
 ]]></text>
 				</node>
 				<node nodeType="1" localName="style">
-					<style selectorText="body" background-image="url(&quot;test/starfish.png&quot;)"/>
+					<style selectorText="body" background-image="url(&quot;    test/starfish.png   &quot;)"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
 body  {
-    background-image: url(    "test/starfish.png"    );
+    background-image: url(    "    test/starfish.png   "    );
 }
 ]]></text>
 					</node>
@@ -48,7 +48,10 @@ body  {
     function test() {
       var b = document.body;
       print(b.style.backgroundImage);
-      b.style.backgroundImage="url(          \"test/paper.gif\"         )";
+	  b.style.backgroundImage="url(      \"test/paper.gif\"      )";
+	  //b.style.backgroundImage="    url(\"    test/paper.gif    \")    ";
+      //b.style.backgroundImage="    url('    test/paper.gif    ')    ";
+	  //b.style.backgroundImage="    url(    test/paper.gif    )    ";
       print(b.style.backgroundImage);
       print("<End>");
     }

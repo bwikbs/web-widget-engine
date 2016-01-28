@@ -128,13 +128,35 @@ void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
     }
 }
 
+const char* removeWhiteSpace(const char* s) {
+    size_t length = strlen(s);
+    std::string str;
+    for (size_t i = 0; i < length; i++) {
+        if (s[i] != ' ') {
+            str += s[i];
+        }
+    }
+
+    return str.c_str();
+}
+
 String* parseUrl(String* value)
 {
-    int pathlen = value->length();
-    if (pathlen >= 7) {
-    	String* temp = value->substring(5, pathlen - 7);
-    	printf("parseUrl(): %s\n", temp->asASCIIString()->c_str());
-    	return temp;
+    const char* str = value->utf8Data();
+
+    if (startsWith(str, "url(") && endsWith(str, ")")) {
+        const char* trimStr = removeWhiteSpace(str);
+        size_t pathlen = strlen(trimStr);
+        String* ret;
+
+        if(startsWith(trimStr, "url(\"") || startsWith(trimStr, "url('")) {
+            ret = String::fromUTF8(trimStr)->substring(5, pathlen - 7);
+        } else {
+            ret = String::fromUTF8(trimStr)->substring(4, pathlen - 5);
+        }
+
+        printf("parseUrl(): %s\n", ret->utf8Data());
+        return ret;
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
         return 0;
@@ -1680,25 +1702,16 @@ bool CSSStyleDeclaration::checkInputErrorMarginTop(std::vector<String*, gc_alloc
     return checkHavingOneTokenAndLengthOrPercentage(tokens);
 }
 
-const char* trim(const char* s) {
-    size_t length = strlen(s);
-    std::string str;
-
-    for (size_t i = 0; i < length; i++) {
-        if (s[i] != ' ') {
-            str += s[i];
-        }
-    }
-
-    return str.c_str();
-}
-
 bool CSSStyleDeclaration::checkInputErrorBackgroundImage(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     if (tokens->size() == 1) {
         const char* token = tokens->at(0)->utf8Data();
+        size_t len = strlen(token);
 
         if(startsWith(token, "url(") && endsWith(token, ")")) {
+            if((token[4] == '\"' || token[4] == '\'') && (token[4] != token[len-2])) {
+                return false;
+            }
             return true;
         } else if (startsWith(token, "initial") && strlen(token) == 7) {
             return true;
@@ -1712,13 +1725,27 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundImage(std::vector<String*, gc
         const char* token1 = tokens->at(1)->utf8Data();
 
         if(startsWith(token0, "url(") && endsWith(token1, ")")) {
+            size_t len0 = strlen(token0);
+            size_t len1 = strlen(token1);
+
+            if(len0 > 4 && (token0[4] == '\"' || token0[4] == '\'') && (token0[4] != token0[len0-1])) {
+                return false;
+            } else if(len1 > 1 && (token1[0] == '\"' || token1[0] == '\'') && (token1[0] != token1[len1-2])) {
+                return false;
+            }
             return true;
         }
     } else if (tokens->size() == 3) {
         const char* token0 = tokens->at(0)->utf8Data();
+        const char* token1 = tokens->at(1)->utf8Data();
         const char* token2 = tokens->at(2)->utf8Data();
 
         if((startsWith(token0, "url(") && strlen(token0) == 4) && (endsWith(token2, ")") && strlen(token2) == 1)) {
+            size_t len1 = strlen(token1);
+
+            if((token1[0] == '\"' || token1[0] == '\'') && (token1[0] != token1[len1-1])) {
+                return false;
+            }
             return true;
         }
     }
