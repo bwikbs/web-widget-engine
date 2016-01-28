@@ -1338,12 +1338,21 @@ String* CSSStyleDeclaration::textAlign()
 
 bool CSSStyleDeclaration::checkInputErrorColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    // color | percentage | <auto> | inherit
+    if (tokens->size() > 1)
+        return false;
+    const char* token = tokens->at(0)->utf8Data();
+    if (!(CSSPropertyParser::assureColor(token) ||
+        (strcmp(token, "initial") == 0) ||
+        (strcmp(token, "inherit") == 0))) {
+            return false;
+    }
     return true;
 }
 
 bool CSSStyleDeclaration::checkInputErrorBackgroundColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    return checkInputErrorColor(tokens);
 }
 
 bool CSSStyleDeclaration::checkInputErrorMarginTop(std::vector<String*, gc_allocator<String*>>* tokens)

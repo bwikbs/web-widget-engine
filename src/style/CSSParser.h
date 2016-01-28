@@ -165,6 +165,18 @@ public:
         return parser->isEnd();
     }
 
+    static bool assureColor(const char* token)
+    {
+        if (strcmp(token, "red") == 0 ||
+            strcmp(token, "green") == 0 ||
+            strcmp(token, "yellow") == 0 ||
+            strcmp(token, "blue") == 0 ||
+            strcmp(token, "purple") == 0 ||
+            strcmp(token, "black") == 0)
+            return true;
+        return false;
+    }
+
     static char* getNextSingleValue(char* str) {
         char* next = NULL;
         while( (next = strchr(str, ' ')) ) {
