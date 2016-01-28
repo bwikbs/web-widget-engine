@@ -651,8 +651,13 @@ public:
     F(Height) \
     F(Width) \
     F(FontSize) \
+    F(FontStyle) \
+    F(Display) \
     F(Position) \
     F(TextDecoration) \
+    F(BorderImageRepeat) \
+    F(BorderImageSlice) \
+    F(BorderImageSource) \
     F(BorderImageWidth) \
     F(BorderTopStyle) \
     F(BorderRightStyle) \

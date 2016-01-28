@@ -1452,8 +1452,13 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(Width, width) \
     F(Height, height) \
     F(FontSize, fontSize) \
+    F(FontStyle, fontStyle) \
     F(Position, position) \
     F(TextDecoration, textDecoration) \
+    F(Display, display) \
+    F(BorderImageRepeat, borderImageRepeat) \
+    F(BorderImageSlice, borderImageSlice) \
+    F(BorderImageSource, borderImageSource) \
     F(BorderImageWidth, borderImageWidth) \
     F(BorderTopStyle, borderTopStyle) \
     F(BorderRightStyle, borderRightStyle) \

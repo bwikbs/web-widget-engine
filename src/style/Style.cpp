@@ -315,6 +315,52 @@ void CSSStyleValuePair::setValueFontSize(std::vector<String*, gc_allocator<Strin
     }
 }
 
+void CSSStyleValuePair::setValueFontStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    // <normal> | italic | oblique | inherit
+    m_keyKind = CSSStyleValuePair::KeyKind::FontStyle;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("normal")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontStyleValueKind;
+        m_value.m_fontStyle = FontStyleValue::NormalFontStyleValue;
+    } else if (VALUE_IS_STRING("italic")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontStyleValueKind;
+        m_value.m_fontStyle = FontStyleValue::ItalicFontStyleValue;
+    } else if (VALUE_IS_STRING("oblique")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontStyleValueKind;
+        m_value.m_fontStyle = FontStyleValue::ObliqueFontStyleValue;
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+void CSSStyleValuePair::setValueDisplay(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    // <inline> | block | list-item | inline-block | table | inline-table | table-row-group | table-header-group | table-footer-group | table-row | table-column-group | table-column | table-cell | table-caption | none | inherit
+    m_keyKind = CSSStyleValuePair::KeyKind::Display;
+    m_valueKind = CSSStyleValuePair::ValueKind::DisplayValueKind;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if(VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("block")) {
+        m_value.m_display = DisplayValue::BlockDisplayValue;
+    } else if (VALUE_IS_STRING("inline")) {
+        m_value.m_display = DisplayValue::InlineDisplayValue;
+    } else if (VALUE_IS_STRING("inline-block")) {
+        m_value.m_display = DisplayValue::InlineBlockDisplayValue;
+    } else if (VALUE_IS_STRING("none")) {
+        m_value.m_display = DisplayValue::NoneDisplayValue;
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 void CSSStyleValuePair::setValuePosition(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     const char* value = tokens->at(0)->utf8Data();
@@ -558,6 +604,92 @@ void CSSStyleValuePair::setValueRight(std::vector<String*, gc_allocator<String*>
         m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
     } else {
         setValuePercentageOrLength(value);
+    }
+}
+
+void CSSStyleValuePair::setValueBorderImageSlice(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    // number | percentage {1,4} && fill?
+    m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSlice;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else {
+        m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
+        m_value.m_multiValue = new ValueList();
+        std::vector<String*, gc_allocator<String*>> tokens;
+        DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+        for (unsigned int i = 0; i < tokens.size(); i++) {
+            const char* currentToken = tokens[i]->utf8Data();
+            if (startsWith(currentToken, "fill")) {
+                m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::StringValueKind, {0});
+            } else if (endsWith(currentToken, "%")) {
+                float f;
+                sscanf(currentToken, "%f%%", &f);
+                m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::Percentage, {.m_floatValue = (f / 100.f)});
+            } else {
+                char* pEnd;
+                double d = strtod (currentToken, &pEnd);
+                STARFISH_ASSERT(pEnd == currentToken + tokens[i]->length());
+                m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::Number, {.m_floatValue = (float)d});
+            }
+        }
+    }
+}
+
+void CSSStyleValuePair::setValueBorderImageSource(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    // none | <image>
+    m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSource;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if(VALUE_IS_STRING("none")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::None;
+    } else {
+        m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+        m_value.m_stringValue = String::fromUTF8(value);
+    }
+}
+
+void CSSStyleValuePair::setValueBorderImageRepeat(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    // <stretch> | repeat | round | space {1,2}
+    m_keyKind = CSSStyleValuePair::KeyKind::BorderImageRepeat;
+    if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else {
+        m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
+        m_value.m_multiValue = new ValueList();
+
+        // TODO: find better way to parse axis data
+        // 1) parse X-axis data
+        if (startsWith(value, "stretch")) {
+            m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = StretchValue});
+        } else if (startsWith(value, "repeat")) {
+            m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RepeatValue});
+        } else if (startsWith(value, "round")) {
+            m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RoundValue});
+        } else if (startsWith(value, "space")) {
+            m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = SpaceValue});
+        }
+        // 2) parse Y-axis data
+        if (endsWith(value, "stretch")) {
+            m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = StretchValue});
+        } else if (endsWith(value, "repeat")) {
+            m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RepeatValue});
+        } else if (endsWith(value, "round")) {
+            m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RoundValue});
+        } else if (endsWith(value, "space")) {
+            m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = SpaceValue});
+        }
     }
 }
 
@@ -873,24 +1005,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     std::vector<String*, gc_allocator<String*>> tokens;
     DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
     if (strcmp(key, "display") == 0) {
-        // <inline> | block | list-item | inline-block | table | inline-table | table-row-group | table-header-group | table-footer-group | table-row | table-column-group | table-column | table-cell | table-caption | none | inherit
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::Display;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::DisplayValueKind;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if(VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("block")) {
-            ret.m_value.m_display = DisplayValue::BlockDisplayValue;
-        } else if (VALUE_IS_STRING("inline")) {
-            ret.m_value.m_display = DisplayValue::InlineDisplayValue;
-        } else if (VALUE_IS_STRING("inline-block")) {
-            ret.m_value.m_display = DisplayValue::InlineBlockDisplayValue;
-        } else if (VALUE_IS_STRING("none")) {
-            ret.m_value.m_display = DisplayValue::NoneDisplayValue;
-        } else {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
-        }
+        ret.setValueDisplay(&tokens);
     } else if (strcmp(key, "position") == 0) {
         ret.setValuePosition(&tokens);
     } else if (strcmp(key, "width") == 0) {
@@ -1005,24 +1120,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "white-space") == 0) {
         //TODO
     } else if (strcmp(key, "font-style") == 0) {
-        // <normal> | italic | oblique | inherit
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::FontStyle;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("normal")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::FontStyleValueKind;
-            ret.m_value.m_fontStyle = FontStyleValue::NormalFontStyleValue;
-        } else if (VALUE_IS_STRING("italic")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::FontStyleValueKind;
-            ret.m_value.m_fontStyle = FontStyleValue::ItalicFontStyleValue;
-        } else if (VALUE_IS_STRING("oblique")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::FontStyleValueKind;
-            ret.m_value.m_fontStyle = FontStyleValue::ObliqueFontStyleValue;
-        } else {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
-        }
+        ret.setValueFontStyle(&tokens);
     } else if (strcmp(key, "direction") == 0) {
         ret.setValueDirection(&tokens);
     } else if (strcmp(key, "background-size") == 0) {
@@ -1149,81 +1247,13 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
 
     } else if (strcmp(key, "border-image-repeat") == 0) {
-        // <stretch> | repeat | round | space {1,2}
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageRepeat;
-        if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
-            ret.m_value.m_multiValue = new ValueList();
-
-            // TODO: find better way to parse axis data
-            // 1) parse X-axis data
-            if (startsWith(value, "stretch")) {
-                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = StretchValue});
-            } else if (startsWith(value, "repeat")) {
-                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RepeatValue});
-            } else if (startsWith(value, "round")) {
-                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RoundValue});
-            } else if (startsWith(value, "space")) {
-                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = SpaceValue});
-            }
-            // 2) parse Y-axis data
-            if (endsWith(value, "stretch")) {
-                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = StretchValue});
-            } else if (endsWith(value, "repeat")) {
-                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RepeatValue});
-            } else if (endsWith(value, "round")) {
-                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = RoundValue});
-            } else if (endsWith(value, "space")) {
-                ret.m_value.m_multiValue->append(BorderImageRepeatValueKind, {.m_borderImageRepeat = SpaceValue});
-            }
-        }
+        ret.setValueBorderImageRepeat(&tokens);
     } else if (strcmp(key, "border-image-width") == 0) {
         ret.setValueBorderImageWidth(&tokens);
     } else if (strcmp(key, "border-image-slice") == 0) {
-        // number | percentage {1,4} && fill?
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSlice;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
-            ret.m_value.m_multiValue = new ValueList();
-            std::vector<String*, gc_allocator<String*>> tokens;
-            DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
-            for (unsigned int i = 0; i < tokens.size(); i++) {
-                const char* currentToken = tokens[i]->utf8Data();
-                if (startsWith(currentToken, "fill")) {
-                    ret.m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::StringValueKind, {0});
-                } else if (endsWith(currentToken, "%")) {
-                    float f;
-                    sscanf(currentToken, "%f%%", &f);
-                    ret.m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::Percentage, {.m_floatValue = (f / 100.f)});
-                } else {
-                    char* pEnd;
-                    double d = strtod (currentToken, &pEnd);
-                    STARFISH_ASSERT(pEnd == currentToken + tokens[i]->length());
-                    ret.m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::Number, {.m_floatValue = (float)d});
-                }
-            }
-        }
+        ret.setValueBorderImageSlice(&tokens);
     } else if (strcmp(key, "border-image-source") == 0) {
-        // none | <image>
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSource;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if(VALUE_IS_STRING("none")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::None;
-        } else {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
-            ret.m_value.m_stringValue = String::fromUTF8(value);
-        }
+        ret.setValueBorderImageSource(&tokens);
     } else if (strcmp(key, "border-top-style") == 0) {
         // border-style(<none> | solid) | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderTopStyle;
@@ -1500,6 +1530,47 @@ String* CSSStyleValuePair::toString()
                 default:
                     return lengthOrPercentageToString();
             }
+        }
+        case FontStyle: {
+            switch(valueKind()) {
+                case CSSStyleValuePair::ValueKind::FontStyleValueKind:
+                    switch(fontStyleValue()) {
+                    case FontStyleValue::NormalFontStyleValue:
+                        return String::fromUTF8("normal");
+                    case FontStyleValue::ItalicFontStyleValue:
+                        return String::fromUTF8("italic");
+                    case FontStyleValue::ObliqueFontStyleValue:
+                        return String::fromUTF8("oblique");
+                    }
+                default:
+                    return lengthOrPercentageToString();
+            }
+        }
+        case Display: {
+            switch(valueKind()) {
+                case CSSStyleValuePair::ValueKind::DisplayValueKind:
+                    switch(displayValue()) {
+                    case DisplayValue::InlineDisplayValue:
+                        return String::fromUTF8("inline");
+                    case DisplayValue::BlockDisplayValue:
+                        return String::fromUTF8("block");
+                    case DisplayValue::InlineBlockDisplayValue:
+                        return String::fromUTF8("inline-block");
+                    case DisplayValue::NoneDisplayValue:
+                        return String::fromUTF8("none");
+                    }
+                default:
+                    return lengthOrPercentageToString();
+            }
+        }
+        case BorderImageRepeat: {
+            //TODO(june0cho)
+        }
+        case BorderImageSlice: {
+            //TODO(june0cho)
+        }
+        case BorderImageSource: {
+            //TODO(june0cho)
         }
         case BorderImageWidth: {
             switch(valueKind()) {
@@ -1884,6 +1955,37 @@ bool CSSStyleDeclaration::checkInputErrorFontSize(std::vector<String*, gc_alloca
     return true;
 }
 
+bool CSSStyleDeclaration::checkInputErrorFontStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() == 1) {
+        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        if ((strcmp(token, "normal") == 0) ||
+            (strcmp(token, "italic") == 0) ||
+            (strcmp(token, "oblique") == 0) ||
+            (strcmp(token, "inherit") == 0) ||
+            (strcmp(token, "init") == 0)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CSSStyleDeclaration::checkInputErrorDisplay(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() == 1) {
+        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        if ((strcmp(token, "inline") == 0) ||
+            (strcmp(token, "block") == 0) ||
+            (strcmp(token, "inline-block") == 0) ||
+            (strcmp(token, "none") == 0) ||
+            (strcmp(token, "inherit") == 0) ||
+            (strcmp(token, "init") == 0)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool CSSStyleDeclaration::checkInputErrorPosition(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
@@ -1904,16 +2006,35 @@ bool CSSStyleDeclaration::checkInputErrorTextDecoration(std::vector<String*, gc_
     return false;
 }
 
+bool CSSStyleDeclaration::checkInputErrorBorderImageRepeat(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    //TODO(june0cho)
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderImageSlice(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    //TODO(june0cho)
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderImageSource(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    //TODO(june0cho)
+    return true;
+}
+
 bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     // [ <length> | <percentage> | <number> | auto ]{1,4}
     if (tokens->size() > 4) return false;
     for (unsigned int i = 0; i < tokens->size(); i++) {
-        const char* currentToken = tokens->at(i)->utf8Data();
-        if (CSSPropertyParser::assureLength(currentToken, false)) {
-        } else if (CSSPropertyParser::assurePercent(currentToken, false)) {
-        } else if (CSSPropertyParser::assureNumber(currentToken, false)) {
-        } else if (strcmp(currentToken, "auto") == 0) {
+        const char* currentToken = tokens->at(i)->toLower()->utf8Data();
+        if (CSSPropertyParser::assureLength(currentToken, false) ||
+           CSSPropertyParser::assurePercent(currentToken, false) ||
+           CSSPropertyParser::assureNumber(currentToken, false) ||
+           strcmp(currentToken, "auto") == 0) {
+           continue;
         } else {
             return false;
         }
