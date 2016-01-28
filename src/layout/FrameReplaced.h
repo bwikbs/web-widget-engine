@@ -37,47 +37,57 @@ public:
 
     virtual void layout(LayoutContext& ctx)
     {
+        Size s = intrinsicSize();
         float parentContentWidth = ctx.blockContainer(this)->asFrameBox()->contentWidth();
         computeBorderMarginPadding(parentContentWidth);
-        Size s = intrinsicSize();
-        if ((s.width() == 0 || s.height() == 0) && (style()->width().isAuto() || style()->height().isAuto())) {
-            setContentWidth(0);
-            setContentHeight(0);
-            return;
-        }
-        if (style()->width().isAuto() && style()->height().isAuto()) {
-            setContentWidth(s.width());
-            setContentHeight(s.height());
-        } else if (style()->width().isSpecified() && style()->height().isAuto()) {
-            float w = style()->width().specifiedValue(ctx.parentContentWidth(this));
-            float h = w * (s.height() / s.width());
-            setContentWidth(w);
-            setContentHeight(h);
-        } else if (style()->width().isAuto() && style()->height().isSpecified()) {
-            if (style()->height().isFixed()) {
-                float h = style()->height().fixed();
-                float w = h * (s.width() / s.height());
-                setContentWidth(w);
-                setContentHeight(h);
-            } else {
-                // FIXME
+
+        if (isNormalFlow()) {
+            if ((s.width() == 0 || s.height() == 0) && (style()->width().isAuto() || style()->height().isAuto())) {
+                setContentWidth(0);
+                setContentHeight(0);
+            } else if (style()->width().isAuto() && style()->height().isAuto()) {
                 setContentWidth(s.width());
                 setContentHeight(s.height());
-            }
-        } else {
-            STARFISH_ASSERT(style()->width().isSpecified() && style()->height().isSpecified());
-            setContentWidth(style()->width().specifiedValue(ctx.parentContentWidth(this)));
-            if (style()->height().isFixed()) {
-                setContentHeight(style()->height().fixed());
-            } else {
-                if (ctx.parentHasFixedHeight(this))
-                    setContentHeight(style()->height().percent() * ctx.parentFixedHeight(this));
-                else
+            } else if (style()->width().isSpecified() && style()->height().isAuto()) {
+                float w = style()->width().specifiedValue(ctx.parentContentWidth(this));
+                float h = w * (s.height() / s.width());
+                setContentWidth(w);
+                setContentHeight(h);
+            } else if (style()->width().isAuto() && style()->height().isSpecified()) {
+                if (style()->height().isFixed()) {
+                    float h = style()->height().fixed();
+                    float w = h * (s.width() / s.height());
+                    setContentWidth(w);
+                    setContentHeight(h);
+                } else {
+                    // FIXME
+                    setContentWidth(s.width());
                     setContentHeight(s.height());
+                }
+            } else {
+                STARFISH_ASSERT(style()->width().isSpecified() && style()->height().isSpecified());
+                setContentWidth(style()->width().specifiedValue(ctx.parentContentWidth(this)));
+                if (style()->height().isFixed()) {
+                    setContentHeight(style()->height().fixed());
+                } else {
+                    if (ctx.parentHasFixedHeight(this))
+                        setContentHeight(style()->height().percent() * ctx.parentFixedHeight(this));
+                    else
+                        setContentHeight(s.height());
+                }
+            }
+
+            if (style()->display() == BlockDisplayValue && style()->marginLeft().isAuto() && style()->marginRight().isAuto()) {
+                float remain = parentContentWidth;
+                remain -= contentWidth();
+                remain -= borderWidth();
+                remain -= paddingWidth();
+                if (remain > 0) {
+                    setMarginLeft(remain / 2);
+                    setMarginRight(remain / 2);
+                }
             }
         }
-
-        // TODO implement more things about margin...
     }
 
     virtual Size intrinsicSize() = 0;
