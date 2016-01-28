@@ -552,10 +552,8 @@ void CSSStyleValuePair::setValueBorderImageWidth(std::vector<String*, gc_allocat
     } else {
         m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
         ValueList* values = new ValueList();
-        std::vector<String*, gc_allocator<String*>> tokens;
-        DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
-        for (unsigned int i = 0; i < tokens.size(); i++) {
-            const char* currentToken = tokens[i]->utf8Data();
+        for (unsigned int i = 0; i < tokens->size(); i++) {
+            const char* currentToken = tokens->at(i)->utf8Data();
             if (strcmp(currentToken, "auto") == 0) {
                 values->append(CSSStyleValuePair::ValueKind::Auto, {0});
             } else if (endsWith(currentToken, "%")) {
@@ -565,7 +563,7 @@ void CSSStyleValuePair::setValueBorderImageWidth(std::vector<String*, gc_allocat
             } else if (endsWithNumber(currentToken)) {
                 char* pEnd;
                 double d = strtod (currentToken, &pEnd);
-                STARFISH_ASSERT(pEnd == currentToken + tokens[i]->length());
+                STARFISH_ASSERT(pEnd == currentToken + tokens->at(i)->length());
                 values->append(CSSStyleValuePair::ValueKind::Number, {.m_floatValue = (float)d});
             } else {
                 CSSStyleValuePair::ValueData data = {.m_length = parseCSSLength(currentToken)};
@@ -1411,7 +1409,24 @@ String* CSSStyleValuePair::toString()
             }
         }
         case BorderImageWidth: {
-            //TODO
+            switch(valueKind()) {
+                case CSSStyleValuePair::ValueKind::ValueListKind:
+                {
+                    ValueList* values = multiValue();
+                    String* s = String::fromUTF8("(");
+                    for (unsigned int i = 0; i < values->size(); i++) {
+                        String* newstr = valueToString(values->getValueKindAtIndex(i),
+                                                       values->getValueAtIndex(i));
+                        s = s->concat(newstr);
+                        if (i != values->size() - 1)
+                            s = s->concat(String::fromUTF8(","));
+                    }
+                    s = s->concat(String::fromUTF8(")"));
+                    return s;
+                }
+                default:
+                    return lengthOrPercentageToString();
+            }
         }
         case BorderTopStyle:
         case BorderRightStyle:

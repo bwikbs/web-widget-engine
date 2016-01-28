@@ -15,6 +15,19 @@
 
 <div id="borderimg">Hello World!</div>
 
+<script type="text/javascript">
+    function run() {
+        var divNode = document.getElementById("borderimg");
+        print(divNode.nodeName);
+        print(divNode.style.borderImageWidth);
+        divNode.style.borderImageWidth = "20% 2.1px 333";
+        print(divNode.style.borderImageWidth);
+        divNode.style.borderImageWidth = "10ee";
+        print(divNode.style.borderImageWidth);
+    }
+    run();
+</script>
+
 </body>
 </html>
 

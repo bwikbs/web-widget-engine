@@ -577,6 +577,29 @@ public:
             return nullptr;
     }
 
+    String* numberToString(float f)
+    {
+        return String::fromUTF8(std::to_string(f).c_str());
+    }
+
+    String* valueToString(CSSStyleValuePair::ValueKind kind, CSSStyleValuePair::ValueData data)
+    {
+        if (kind == CSSStyleValuePair::ValueKind::Auto)
+            return String::fromUTF8("auto");
+        else if (kind == CSSStyleValuePair::ValueKind::Inherit)
+            return String::fromUTF8("Inherit");
+        else if (kind == CSSStyleValuePair::ValueKind::Initial)
+            return String::fromUTF8("Initial");
+        else if (kind == CSSStyleValuePair::ValueKind::Length)
+            return data.m_length.toString();
+        else if (kind == CSSStyleValuePair::ValueKind::Percentage)
+            return percentageToString(data.m_floatValue);
+        else if (kind == CSSStyleValuePair::ValueKind::Number)
+            return numberToString(data.m_floatValue);
+        else
+            return nullptr;
+    }
+
     String* toString();
 
     void setLengthValue(const char* value);
