@@ -456,20 +456,17 @@ void CSSStyleValuePair::setValueMarginTop(std::vector<String*, gc_allocator<Stri
 
 void CSSStyleValuePair::setValueMarginRight(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    const char* value = tokens->at(0)->utf8Data();
-    setValuePercentageOrLength(value);
+    setValueMarginTop(tokens);
 }
 
 void CSSStyleValuePair::setValueMarginBottom(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    const char* value = tokens->at(0)->utf8Data();
-    setValuePercentageOrLength(value);
+    setValueMarginTop(tokens);
 }
 
 void CSSStyleValuePair::setValueMarginLeft(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    const char* value = tokens->at(0)->utf8Data();
-    setValuePercentageOrLength(value);
+    setValueMarginTop(tokens);
 }
 
 void CSSStyleValuePair::setValueTop(std::vector<String*, gc_allocator<String*>>* tokens)
@@ -1209,15 +1206,15 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "margin-bottom") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginBottom;
-        ret.setValueMarginTop(&tokens);
+        ret.setValueMarginBottom(&tokens);
     } else if (strcmp(key, "margin-left") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginLeft;
-        ret.setValueMarginTop(&tokens);
+        ret.setValueMarginLeft(&tokens);
     } else if (strcmp(key, "margin-right") == 0) {
         // length | percentage | auto | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginRight;
-        ret.setValueMarginTop(&tokens);
+        ret.setValueMarginRight(&tokens);
     } else if (strcmp(key, "padding-top") == 0) {
         // length | percentage | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingTop;
