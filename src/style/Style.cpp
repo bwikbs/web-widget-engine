@@ -596,8 +596,6 @@ void CSSStyleValuePair::setValueOpacity(std::vector<String*, gc_allocator<String
 {
     const char* value = tokens->at(0)->utf8Data();
 
-    printf("MONG:%s\n",value);
-
     m_keyKind = CSSStyleValuePair::KeyKind::Opacity;
     m_valueKind = CSSStyleValuePair::ValueKind::Number;
 
@@ -607,6 +605,8 @@ void CSSStyleValuePair::setValueOpacity(std::vector<String*, gc_allocator<String
         m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
     } else {
         sscanf(value, "%f%%", &m_value.m_floatValue);
+        if(m_value.m_floatValue>1.0)
+            m_value.m_floatValue=1.0;
     }
 }
 

@@ -1454,8 +1454,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(TextDecoration, textDecoration) \
     F(BorderImageWidth, borderImageWidth) \
     F(TextAlign, textAlign) \
-    F(Visibility, visibility) \
-    F(Opacity, opacity)
+    F(Visibility, visibility)
 
 #define DEFINE_ACCESSOR_PROPERTY(name, nameLower) \
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create(#nameLower), \
@@ -1477,25 +1476,23 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
 
 /* Define css attributes that cannot use the template above */
-/*
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create("opacity"),
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
 
-        String* c = ((CSSStyleDeclaration*) originalObj)->opacity();
+        String* c = ((CSSStyleDeclaration*) originalObj)->Opacity();
         if (c != nullptr)
             return escargot::ESString::create(c->utf8Data());
         return escargot::ESValue(escargot::ESValue::ESNull);
     }, [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name, const escargot::ESValue& v) {
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject);
         if (v.isNumber()) {
-            if(v.toNumber()<=1)
-                ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("opacity", std::to_string(v.toNumber()).c_str()));
-            else
-                ((CSSStyleDeclaration*)originalObj)->addValuePair(CSSStyleValuePair::fromString("opacity", "1.0"));
+            ((CSSStyleDeclaration*)originalObj)->setOpacity(std::to_string(v.toNumber()).c_str());
+        }else if(v.isESString()){
+            ((CSSStyleDeclaration*)originalObj)->setOpacity(v.asESString()->utf8Data());
         }
     }, false, false, false);
-*/
+
     DEFINE_FUNCTION(CSSStyleRule, CSSStyleRuleFunction->protoType());
     fetchData(this)->m_cssStyleRule = CSSStyleRuleFunction;
 }

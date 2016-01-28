@@ -73,7 +73,7 @@
 								        function test() {
 												                   var a = document.getElementById("idText");
 												                   print(a.style.opacity);
-												                   a.style.opacity=0.5
+												                   a.style.opacity='0.5'
 												                   print(a.style.opacity);
 												                   a.style.opacity=1.5
 												                   print(a.style.opacity);
