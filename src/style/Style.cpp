@@ -1533,7 +1533,17 @@ bool CSSStyleDeclaration::checkInputErrorPosition(std::vector<String*, gc_alloca
 
 bool CSSStyleDeclaration::checkInputErrorTextDecoration(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    if (tokens->size() == 1) {
+        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        if ((strcmp(token, "none") == 0) ||
+            (strcmp(token, "underline") == 0) ||
+            (strcmp(token, "overline") == 0) ||
+            (strcmp(token, "line-through") == 0) ||
+            (strcmp(token, "blink") == 0)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, gc_allocator<String*>>* tokens)
