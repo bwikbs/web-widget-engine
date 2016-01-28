@@ -10,6 +10,7 @@
         ]]></text>
                 </node>
                 <node nodeType="1" localName="style" type="text/css">
+                    <style selectorText="div" color="blue" width="200px" font-size="16px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid"/>
                     <style selectorText="#div1"/>
                     <style selectorText="#div2" border-top-color="red" border-right-color="red" border-bottom-color="red" border-left-color="red"/>
                     <style selectorText="#div3" border-top-color="transparent" border-right-color="transparent" border-bottom-color="transparent" border-left-color="transparent"/>
@@ -20,9 +21,14 @@
                     <style selectorText="#divParent" border-top-color="black" border-right-color="black" border-bottom-color="black" border-left-color="black"/>
                     <style selectorText="#divChild1" border-top-color="red" border-right-color="red" border-bottom-color="red" border-left-color="red"/>
                     <style selectorText="#divChild2" border-top-color="inherit" border-right-color="inherit" border-bottom-color="inherit" border-left-color="inherit"/>
-                    <style selectorText="div" color="blue" width="200px" font-size="16px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid"/>
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
+            div {
+                color: blue;
+                width: 200px;
+                font-size: 16px;
+                border-style: solid;
+            }
             #div1 { }
             #div2 { border-color: red; }
             #div3 { border-color: transparent; }
@@ -33,12 +39,6 @@
             #divParent { border-color: black; }
             #divChild1 { border-color: red; }
             #divChild2 { border-color: inherit; }
-            div {
-                color: blue;
-                width: 200px;
-                font-size: 16px;
-                border-style: solid;
-            }
         ]]></text>
                     </node>
                 </node>
@@ -70,7 +70,7 @@
                 <node nodeType="1" localName="div" id="div2">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-color: none
+           border-color: red
         ]]></text>
                     </node>
                 </node>
@@ -81,7 +81,7 @@
                 <node nodeType="1" localName="div" id="div3">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-color: solid
+           border-color: transparent
         ]]></text>
                     </node>
                 </node>
@@ -92,7 +92,7 @@
                 <node nodeType="1" localName="div" id="div4">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-top-color: solid
+           border-top-color: red
         ]]></text>
                     </node>
                 </node>
@@ -103,7 +103,7 @@
                 <node nodeType="1" localName="div" id="div5">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-right-color: solid
+           border-right-color: red
         ]]></text>
                     </node>
                 </node>
@@ -114,7 +114,7 @@
                 <node nodeType="1" localName="div" id="div6">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-bottm-color: solid
+           border-bottm-color: red
         ]]></text>
                     </node>
                 </node>
@@ -125,7 +125,7 @@
                 <node nodeType="1" localName="div" id="div7">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-left-color: solid
+           border-left-color: red
         ]]></text>
                     </node>
                 </node>
@@ -136,13 +136,13 @@
                 <node nodeType="1" localName="div" id="divParent">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-           border-color: solid
+           border-color: black
             ]]></text>
                     </node>
                     <node nodeType="1" localName="div" id="divChild1">
                         <node nodeType="3" localName="text">
                             <text><![CDATA[
-               border-color: none
+               border-color: red
             ]]></text>
                         </node>
                     </node>
@@ -179,8 +179,6 @@
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
-
-            
 ]]></text>
                 </node>
             </node>

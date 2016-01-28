@@ -659,6 +659,10 @@ public:
     F(BorderImageSlice) \
     F(BorderImageSource) \
     F(BorderImageWidth) \
+    F(BorderTopColor) \
+    F(BorderRightColor) \
+    F(BorderBottomColor) \
+    F(BorderLeftColor) \
     F(BorderTopStyle) \
     F(BorderRightStyle) \
     F(BorderBottomStyle) \
