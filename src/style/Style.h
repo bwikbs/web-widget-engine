@@ -605,10 +605,16 @@ public:
 #define FOR_EACH_STYLE_ATTRIBUTE(F) \
     F(Color) \
     F(BackgroundColor) \
+    F(LetterSpacing) \
+    F(LineHeight) \
     F(MarginTop) \
     F(MarginRight) \
     F(MarginBottom) \
     F(MarginLeft) \
+    F(PaddingTop) \
+    F(PaddingRight) \
+    F(PaddingBottom) \
+    F(PaddingLeft) \
     F(Top) \
     F(Right) \
     F(Bottom) \

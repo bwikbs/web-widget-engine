@@ -355,6 +355,67 @@ void CSSStyleValuePair::setValuePercentageOrLength(const char* value)
     }
 }
 
+void CSSStyleValuePair::setValueLetterSpacing(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // normal | length | inherit
+    const char* value = tokens->at(0)->utf8Data();
+    m_keyKind = CSSStyleValuePair::KeyKind::LetterSpacing;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("normal")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Normal;
+    } else {
+        parseLength(*this, value);
+    }
+}
+
+void CSSStyleValuePair::setValueLineHeight(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // <normal> | number | length | percentage | inherit
+    const char* value = tokens->at(0)->utf8Data();
+    m_valueKind = CSSStyleValuePair::ValueKind::Normal;
+    if (VALUE_IS_INITIAL() || VALUE_IS_STRING("normal")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Normal;
+    } else if (VALUE_IS_STRING("inherit")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else {
+        char* pEnd;
+        double d = strtod (value, &pEnd);
+        if (pEnd == value + strlen(value)) {
+            m_valueKind = CSSStyleValuePair::ValueKind::Number;
+            m_value.m_floatValue = d;
+        } else {
+            parsePercentageOrLength(*this, value);
+        }
+    }
+}
+
+void CSSStyleValuePair::setValuePaddingTop(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    setValuePercentageOrLength(value);
+}
+
+void CSSStyleValuePair::setValuePaddingRight(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    setValuePercentageOrLength(value);
+}
+
+void CSSStyleValuePair::setValuePaddingBottom(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    setValuePercentageOrLength(value);
+}
+
+void CSSStyleValuePair::setValuePaddingLeft(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    setValuePercentageOrLength(value);
+}
+
 void CSSStyleValuePair::setValueMarginTop(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     const char* value = tokens->at(0)->utf8Data();
@@ -609,15 +670,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "letter-spacing") == 0) {
         // normal | length | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::LetterSpacing;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("normal")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Normal;
-        } else {
-            parseLength(ret, value);
-        }
+        ret.setValueLetterSpacing(&tokens);
     } else if (strcmp(key, "text-overflow") == 0) {
         // <clip> | ellipsis | string
         ret.m_keyKind = CSSStyleValuePair::KeyKind::TextOverflow;
@@ -968,22 +1021,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "line-height") == 0) {
         // <normal> | number | length | percentage | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::LineHeight;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::Normal;
-
-        if (VALUE_IS_INITIAL() || VALUE_IS_STRING("normal")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Normal;
-        } else if (VALUE_IS_STRING("inherit")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else {
-            char* pEnd;
-            double d = strtod (value, &pEnd);
-            if (pEnd == value + strlen(value)) {
-                ret.m_valueKind = CSSStyleValuePair::ValueKind::Number;
-                ret.m_value.m_floatValue = d;
-            } else {
-                parsePercentageOrLength(ret, value);
-            }
-        }
+        ret.setValueLineHeight(&tokens);
     } else if (strcmp(key, "margin-top") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginTop;
@@ -1003,47 +1041,19 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "padding-top") == 0) {
         // length | percentage | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingTop;
-
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValuePaddingTop(&tokens);
     } else if (strcmp(key, "padding-right") == 0) {
         // length | percentage | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingRight;
-
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValuePaddingRight(&tokens);
     } else if (strcmp(key, "padding-bottom") == 0) {
         // length | percentage | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingBottom;
-
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValuePaddingBottom(&tokens);
     } else if (strcmp(key, "padding-left") == 0) {
         // length | percentage | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingLeft;
-
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            parsePercentageOrLength(ret, value);
-        }
+        ret.setValuePaddingLeft(&tokens);
     } else if (strcmp(key, "opacity") == 0) {
         // alphavalue | inherit <1>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Opacity;
