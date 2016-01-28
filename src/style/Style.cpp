@@ -1604,15 +1604,14 @@ String* CSSStyleValuePair::toString()
                 case CSSStyleValuePair::ValueKind::ValueListKind:
                 {
                     ValueList* values = multiValue();
-                    String* s = String::fromUTF8("(");
+                    String* s = String::fromUTF8("");
                     for (unsigned int i = 0; i < values->size(); i++) {
                         String* newstr = valueToString(values->getValueKindAtIndex(i),
                                                        values->getValueAtIndex(i));
                         s = s->concat(newstr);
                         if (i != values->size() - 1)
-                            s = s->concat(String::fromUTF8(","));
+                            s = s->concat(String::fromUTF8(" "));
                     }
-                    s = s->concat(String::fromUTF8(")"));
                     return s;
                 }
                 default:
