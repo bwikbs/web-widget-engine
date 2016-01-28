@@ -686,6 +686,28 @@ void CSSStyleValuePair::setValueOpacity(std::vector<String*, gc_allocator<String
     }
 }
 
+void CSSStyleValuePair::setValueOverflowX(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+
+    m_keyKind = CSSStyleValuePair::KeyKind::OverflowX;
+    m_valueKind = CSSStyleValuePair::ValueKind::OverflowValueKind;
+
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("auto") || VALUE_IS_STRING("scroll")) {
+        // Not Supported!!
+    } else if (VALUE_IS_STRING("visible")) {
+        m_value.m_overflowX = OverflowValue::VisibleOverflow;
+    } else if (VALUE_IS_STRING("hidden")){
+        m_value.m_overflowX = OverflowValue::HiddenOverflow;
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
     CSSStyleValuePair ret;
@@ -1373,6 +1395,16 @@ String* CSSStyleValuePair::toString()
         case Opacity: {
             return String::fromUTF8(std::to_string(numberValue()).c_str());
         }
+        case OverflowX: {
+            switch(overflowValueX()) {
+                case OverflowValue::VisibleOverflow:
+                    return String::fromUTF8("visible");
+                case OverflowValue::HiddenOverflow:
+                    return String::fromUTF8("hidden");
+                default:
+                    return String::emptyString;
+            }
+        }
         default: {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
@@ -1650,6 +1682,18 @@ bool CSSStyleDeclaration::checkInputErrorVisibility(std::vector<String*, gc_allo
 bool CSSStyleDeclaration::checkInputErrorOpacity(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorOverflowX(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() == 1) {
+        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        if ((strcmp(token, "visible") == 0) ||
+            (strcmp(token, "hidden") == 0)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 ComputedStyle* StyleResolver::resolveDocumentStyle(StarFish* sf)

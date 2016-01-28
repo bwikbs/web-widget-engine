@@ -632,7 +632,8 @@ public:
     F(BorderLeftWidth) \
     F(TextAlign) \
     F(Visibility) \
-    F(Opacity)
+    F(Opacity) \
+    F(OverflowX)
 
 #define SET_VALUE(name) \
     void setValue##name(std::vector<String*, gc_allocator<String*>>* tokens);
