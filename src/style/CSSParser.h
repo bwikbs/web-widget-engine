@@ -186,6 +186,15 @@ public:
         return false;
     }
 
+    static bool assureEssential(const char* token)
+    {
+        // initial || inherit
+        if (strcmp(token, "initial") == 0 ||
+            strcmp(token, "inherit") == 0)
+            return true;
+        return false;
+    }
+
     static char* getNextSingleValue(char* str) {
         char* next = NULL;
         while( (next = strchr(str, ' ')) ) {

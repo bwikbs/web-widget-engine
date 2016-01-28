@@ -38,8 +38,16 @@
     </body>
     </body>
     <script type="text/javascript">
-        function test() {
-            return 1<2;
+        function run() {
+            document.getElementById("div1").style.lineHeight = "20pX";
+            print("div1 set line-height(\"20pX\"): " + document.getElementById("div1").style.lineHeight);
+
+            document.getElementById("div1").style.lineHeight = "Normal";
+            print("div1 set line-height(\"Normal\"): " + document.getElementById("div1").style.lineHeight);
+
+            document.getElementById("div1").style.lineHeight = "";
+            print("div1 set line-height(\"\"): " + document.getElementById("div1").style.lineHeight);
         }
+        run();
     </script>
 </html>

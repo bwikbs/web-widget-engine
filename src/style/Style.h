@@ -582,6 +582,11 @@ public:
         return String::fromUTF8(std::to_string(f).c_str());
     }
 
+    String* valueToString()
+    {
+        return valueToString(valueKind(), m_value);
+    }
+
     String* valueToString(CSSStyleValuePair::ValueKind kind, CSSStyleValuePair::ValueData data)
     {
         if (kind == CSSStyleValuePair::ValueKind::Auto)
@@ -754,8 +759,7 @@ public:
 #undef CHECK_INPUT_ERROR
 
     bool checkInputErrorMargin(std::vector<String*, gc_allocator<String*>>* tokens);
-    bool checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*>>* tokens);
-
+    bool checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*>>* tokens, bool allowNegative);
 #define ATTRIBUTE_GETTER(name) \
     String* name () { \
         for (unsigned i = 0; i < m_cssValues.size(); i++) { \

@@ -98,6 +98,8 @@ public:
         return true;
     }
 
+    static String* fromFloat(float f);
+
     String* substring(size_t pos, size_t len);
 
     String* toUpper();

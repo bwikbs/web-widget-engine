@@ -1438,6 +1438,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(Color, color) \
     F(Direction, direction) \
     F(BackgroundColor, backgroundColor) \
+    F(LineHeight, lineHeight) \
     F(MarginTop, marginTop) \
     F(MarginRight, marginRight) \
     F(MarginBottom, marginBottom) \

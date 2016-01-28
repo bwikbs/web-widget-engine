@@ -116,5 +116,13 @@ const char* String::utf8DataSlowCase()
     return utf32ToUtf8(asUTF32String()->data(), asUTF32String()->length());
 }
 
+String* String::fromFloat(float f)
+{
+    if (f == std::floor(f))
+        return String::fromUTF8(std::to_string((int) std::floor(f)).c_str());
+
+    return String::fromUTF8(std::to_string(f).c_str());
+}
+
 
 }
