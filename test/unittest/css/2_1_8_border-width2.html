@@ -23,12 +23,22 @@
     <script type="text/javascript">
         function test() {
             document.getElementById("div1").style.borderTopWidth = "10px";
-            print(document.getElementById("div1").style.borderTopWidth);
-            document.getElementById("div2").style.borderTopWidth = "inherit";
-            print(document.getElementById("div2").style.borderTopWidth);
+            document.getElementById("div1").style.borderRightWidth = "10px";
+            document.getElementById("div1").style.borderBottomWidth = "10px";
+            document.getElementById("div1").style.borderLeftWidth = "10px";
+            console.log(document.getElementById("div1").style.borderTopWidth);
+            console.log(document.getElementById("div1").style.borderRightWidth);
+            console.log(document.getElementById("div1").style.borderBottomWidth);
+            console.log(document.getElementById("div1").style.borderLeftWidth);
             document.getElementById("div2").style.borderTopWidth = "thin";
-            print(document.getElementById("div2").style.borderTopWidth);            
-            print("done");
+            document.getElementById("div2").style.borderRightWidth = "thin";
+            document.getElementById("div2").style.borderBottomWidth = "thin";
+            document.getElementById("div2").style.borderLeftWidth = "thin";
+            console.log(document.getElementById("div2").style.borderTopWidth);
+            console.log(document.getElementById("div2").style.borderRightWidth);
+            console.log(document.getElementById("div2").style.borderBottomWidth);
+            console.log(document.getElementById("div2").style.borderLeftWidth);
+            console.log("done");
         }
         test();
     </script>

@@ -39,7 +39,7 @@
                     <text><![CDATA[
         ]]></text>
                 </node>
-                <node nodeType="1" localName="div" id="div1" style="border-top-width: 10px;">
+                <node nodeType="1" localName="div" id="div1" style="border-width: 10px;">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
             div1
@@ -50,7 +50,7 @@
                     <text><![CDATA[
         ]]></text>
                 </node>
-                <node nodeType="1" localName="div" id="div2" style="border-top-width: thin;">
+                <node nodeType="1" localName="div" id="div2" style="border-width: thin;">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
             div2
@@ -68,11 +68,21 @@
                         <text><![CDATA[
         function test() {
             document.getElementById("div1").style.borderTopWidth = "10px";
+            document.getElementById("div1").style.borderRightWidth = "10px";
+            document.getElementById("div1").style.borderBottomWidth = "10px";
+            document.getElementById("div1").style.borderLeftWidth = "10px";
             print(document.getElementById("div1").style.borderTopWidth);
-            document.getElementById("div2").style.borderTopWidth = "inherit";
-            print(document.getElementById("div2").style.borderTopWidth);
+            print(document.getElementById("div1").style.borderRightWidth);
+            print(document.getElementById("div1").style.borderBottomWidth);
+            print(document.getElementById("div1").style.borderLeftWidth);
             document.getElementById("div2").style.borderTopWidth = "thin";
-            print(document.getElementById("div2").style.borderTopWidth);            
+            document.getElementById("div2").style.borderRightWidth = "thin";
+            document.getElementById("div2").style.borderBottomWidth = "thin";
+            document.getElementById("div2").style.borderLeftWidth = "thin";
+            print(document.getElementById("div2").style.borderTopWidth);
+            print(document.getElementById("div2").style.borderRightWidth);
+            print(document.getElementById("div2").style.borderBottomWidth);
+            print(document.getElementById("div2").style.borderLeftWidth);
             print("done");
         }
         test();

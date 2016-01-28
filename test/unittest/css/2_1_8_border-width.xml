@@ -10,16 +10,36 @@
         ]]></text>
                 </node>
                 <node nodeType="1" localName="style" type="text/css">
-                    <style selectorText="#div1"/>
-                    <style selectorText="#div2" border-top-width="10px"/>
-                    <style selectorText="div" font-size="20px" width="400px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid"/>
+                    <style selectorText="#div1" color="red"/>
+                    <style selectorText="#div2" color="gray" border-top-width="10px" border-right-width="10px" border-bottom-width="10px" border-left-width="10px"/>
+                    <style selectorText="#div3" color="green" border-top-width="thin" border-right-width="thin" border-bottom-width="thin" border-left-width="thin"/>
+                    <style selectorText="#div4" color="red" border-top-width="medium" border-right-width="medium" border-bottom-width="medium" border-left-width="medium"/>
+                    <style selectorText="#div5" color="blue" border-top-width="thick" border-right-width="thick" border-bottom-width="thick" border-left-width="thick"/>
+                    <style selectorText="#div6" color="gray" border-top-width="10px"/>
+                    <style selectorText="#div7" color="gray" border-right-width="10px"/>
+                    <style selectorText="#div8" color="gray" border-bottom-width="10px"/>
+                    <style selectorText="#div9" color="gray" border-left-width="10px"/>
+                    <style selectorText="#divParent" color="black" border-top-width="thick" border-right-width="thick" border-bottom-width="thick" border-left-width="thick"/>
+                    <style selectorText="#divChild1" color="fuchsia" border-top-width="thin" border-right-width="thin" border-bottom-width="thin" border-left-width="thin"/>
+                    <style selectorText="#divChild2" color="orange" border-top-width="inherit" border-right-width="inherit" border-bottom-width="inherit" border-left-width="inherit"/>
+                    <style selectorText="div" width="200px" font-size="16px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid"/>
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            #div1 { }
-            #div2 { border-top-width: 10px; }
+            #div1 { color: red; }
+            #div2 { color: gray; border-width: 10px; }
+            #div3 { color: green; border-width: thin; }
+            #div4 { color: red; border-width: medium; }
+            #div5 { color: blue; border-width: thick; }            
+            #div6 { color: gray; border-top-width: 10px; }
+            #div7 { color: gray; border-right-width: 10px; }
+            #div8 { color: gray; border-bottom-width: 10px; }
+            #div9 { color: gray; border-left-width: 10px; }
+            #divParent { color: black; border-width: thick; }
+            #divChild1 { color: fuchsia; border-width: thin; }
+            #divChild2 { color: orange; border-width: inherit; }
             div {
-                font-size: 20px;
-                width: 400px;
+                width: 200px;
+                font-size: 16px;
                 border-style: solid;
             }
         ]]></text>
@@ -39,10 +59,10 @@
                     <text><![CDATA[
         ]]></text>
                 </node>
-                <node nodeType="1" localName="div" id="div1" style="border-top-width: 10px;">
+                <node nodeType="1" localName="div" id="div1">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            div1
+           border-width: default 
         ]]></text>
                     </node>
                 </node>
@@ -50,10 +70,120 @@
                     <text><![CDATA[
         ]]></text>
                 </node>
-                <node nodeType="1" localName="div" id="div2" style="border-top-width: thin;">
+                <node nodeType="1" localName="div" id="div2">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            div2
+           border-width: 10px
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="div3">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+           border-width: thin
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="div4">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+           border-width: medium
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="div5">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+           border-width: thick
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="div6">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+           border-top-width: 10px
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="div7">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+           border-right-width: 10px
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="div8">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+           border-bottom-width: 10px
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="div9">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+           border-left-width: 10px
+        ]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+        ]]></text>
+                </node>
+                <node nodeType="1" localName="div" id="divParent">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+           border-width: thick
+            ]]></text>
+                    </node>
+                    <node nodeType="1" localName="div" id="divChild1">
+                        <node nodeType="3" localName="text">
+                            <text><![CDATA[
+               border-width: thin
+            ]]></text>
+                        </node>
+                    </node>
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+            ]]></text>
+                    </node>
+                    <node nodeType="1" localName="div" id="divChild2">
+                        <node nodeType="3" localName="text">
+                            <text><![CDATA[
+               border-width: inherit
+            ]]></text>
+                        </node>
+                    </node>
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
         ]]></text>
                     </node>
                 </node>
@@ -67,20 +197,15 @@
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
         function test() {
-            document.getElementById("div1").style.borderTopWidth = "10px";
-            print(document.getElementById("div1").style.borderTopWidth);
-            document.getElementById("div2").style.borderTopWidth = "inherit";
-            print(document.getElementById("div2").style.borderTopWidth);
-            document.getElementById("div2").style.borderTopWidth = "thin";
-            print(document.getElementById("div2").style.borderTopWidth);
-            print("done");
+            return 1<2;
         }
-        test();
     ]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
+
+            
 ]]></text>
                 </node>
             </node>
