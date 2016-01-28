@@ -1316,43 +1316,41 @@ String* CSSStyleDeclaration::textAlign()
     return String::emptyString;
 }
 
-bool CSSStyleDeclaration::checkInputErrorColor(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBackgroundColor(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorBackgroundColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorMarginTop(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorMarginTop(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorMarginRight(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorMarginRight(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorMarginBottom(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorMarginBottom(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorMarginLeft(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorMarginLeft(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorTop(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorTop(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     // length | percentage | <auto> | inherit
-    std::vector<String*, gc_allocator<String*>> tokens;
-    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
-    if (tokens.size() == 1) {
-        const char* token = tokens[0]->utf8Data();
+    if (tokens->size() == 1) {
+        const char* token = tokens->at(0)->utf8Data();
         if (CSSPropertyParser::assureLength(token, false) ||
             CSSPropertyParser::assurePercent(token, false) ||
             (strcmp(token, "auto") == 0)) {
@@ -1362,28 +1360,26 @@ bool CSSStyleDeclaration::checkInputErrorTop(CSSStyleValuePair::KeyKind key, con
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBottom(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorBottom(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return checkInputErrorTop(key, value);
+    return checkInputErrorTop(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorLeft(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorLeft(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return checkInputErrorTop(key, value);
+    return checkInputErrorTop(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorRight(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorRight(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return checkInputErrorTop(key, value);
+    return checkInputErrorTop(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorDirection(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorDirection(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     // <ltr> | rtl | inherit
-    std::vector<String*, gc_allocator<String*>> tokens;
-    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
-    if (tokens.size() == 1) {
-        const char* token = tokens[0]->utf8Data();
+    if (tokens->size() == 1) {
+        const char* token = tokens->at(0)->utf8Data();
         if ((strcmp(token, "ltr") == 0) ||
             (strcmp(token, "rtl") == 0)) {
             return true;
@@ -1392,39 +1388,37 @@ bool CSSStyleDeclaration::checkInputErrorDirection(CSSStyleValuePair::KeyKind ke
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorWidth(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorWidth(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorHeight(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorHeight(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorFontSize(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorFontSize(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorPosition(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorPosition(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorTextDecoration(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorTextDecoration(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(CSSStyleValuePair::KeyKind key, const char* value)
+bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     // [ <length> | <percentage> | <number> | auto ]{1,4}
-    std::vector<String*, gc_allocator<String*>> tokens;
-    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
-    if (tokens.size() > 4) return false;
-    for (unsigned int i = 0; i < tokens.size(); i++) {
-        const char* currentToken = tokens[i]->utf8Data();
+    if (tokens->size() > 4) return false;
+    for (unsigned int i = 0; i < tokens->size(); i++) {
+        const char* currentToken = tokens->at(i)->utf8Data();
         if (CSSPropertyParser::assureLength(currentToken, false)) {
         } else if (CSSPropertyParser::assurePercent(currentToken, false)) {
         } else if (CSSPropertyParser::assureNumber(currentToken, false)) {

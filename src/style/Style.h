@@ -8,6 +8,7 @@
 #include "style/DefaultStyle.h"
 #include "style/UnitHelper.h"
 #include "dom/EventTarget.h"
+#include "dom/DOMTokenList.h"
 #include <sstream>
 
 
@@ -703,7 +704,7 @@ public:
     }
 
 #define CHECK_INPUT_ERROR(name) \
-    bool checkInputError##name(CSSStyleValuePair::KeyKind key, const char* value);
+    bool checkInputError##name(std::vector<String*, gc_allocator<String*>>* tokens);
 
     FOR_EACH_STYLE_ATTRIBUTE(CHECK_INPUT_ERROR)
 #undef CHECK_INPUT_ERROR
@@ -723,7 +724,9 @@ public:
 #define ATTRIBUTE_SETTER(name) \
     void set##name(const char* value) \
     { \
-        if (checkInputError##name(CSSStyleValuePair::KeyKind::name, value)) { \
+        std::vector<String*, gc_allocator<String*>> tokens; \
+        DOMTokenList::tokenize(&tokens, String::fromUTF8(value)); \
+        if (checkInputError##name(&tokens)) { \
             for (unsigned i = 0; i < m_cssValues.size(); i++) { \
                 if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) { \
                     m_cssValues.at(i).setValue##name(value); \

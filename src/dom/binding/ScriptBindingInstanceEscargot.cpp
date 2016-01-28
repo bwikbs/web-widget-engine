@@ -1454,7 +1454,6 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(TextDecoration, textDecoration) \
     F(BorderImageWidth, borderImageWidth)
 
-
 #define DEFINE_ACCESSOR_PROPERTY(name, nameLower) \
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create(#nameLower), \
             [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue { \
