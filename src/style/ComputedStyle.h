@@ -41,6 +41,11 @@ public:
         initNonInheritedStyles();
     }
 
+    DisplayValue originalDisplay()
+    {
+        return m_originalDisplay;
+    }
+
     DisplayValue display()
     {
         return m_display;
@@ -736,6 +741,7 @@ protected:
     void arrangeStyleValues(ComputedStyle* parentStyle)
     {
         // 9.7 Relationships between 'display', 'position', and 'float'
+        m_originalDisplay = m_display;
         if (position() == AbsolutePositionValue || position() == FixedPositionValue) {
             m_display = DisplayValue::BlockDisplayValue;
         }
@@ -810,6 +816,7 @@ protected:
     } m_inheritedStyles;
 
     DisplayValue m_display;
+    DisplayValue m_originalDisplay;
     PositionValue m_position;
     TextOverflowValue m_textOverflow;
     Length m_width;

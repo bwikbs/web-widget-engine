@@ -53,7 +53,7 @@ void FrameBlockBox::layout(LayoutContext& passedCtx)
         FrameBox* cb = ctx.containingBlock(this)->asFrameBox();
         FrameBox* parent = m_parent->asFrameBox();
         auto absLoc = parent->absolutePoint(cb);
-        float absX = absLoc.x() + cb->borderLeft();
+        float absX = absLoc.x() - cb->borderLeft();
         auto setAbsX = [&](float x) {
             setX(x - absX);
         };
@@ -196,7 +196,7 @@ void FrameBlockBox::layout(LayoutContext& passedCtx)
         FrameBox* cb = ctx.containingBlock(this)->asFrameBox();
         FrameBox* parent = m_parent->asFrameBox();
         auto absLoc = parent->absolutePoint(cb);
-        float absY = absLoc.y() + cb->borderTop();
+        float absY = absLoc.y() - cb->borderTop();
         auto setAbsY = [&](float y) {
             setY(y - absY);
         };
@@ -337,7 +337,6 @@ bool isInlineBox(Frame* f)
     return f->isFrameText() || f->isFrameReplaced() || f->isFrameBlockBox() || f->isFrameLineBreak();
 }
 
-// NOTE this function collect only normal-flow child!
 void collectInlineBox(std::vector<Frame*>& result, Frame* current, Frame* top)
 {
     if (current != top) {
@@ -430,6 +429,14 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
 
     for (unsigned i = 0; i < result.size(); i ++) {
         Frame* f = result[i];
+
+        if (!f->isNormalFlow()) {
+            m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.push_back(f->asFrameBox());
+            f->setLayoutParent(&m_lineBoxes[lineFormattingContext.m_currentLine]);
+            ctx.registerAbsolutePositionedFrames(f->asFrameBox());
+            continue;
+        }
+
         if (f->isFrameText()) {
             String* txt = f->asFrameText()->text();
             //fast path
@@ -493,9 +500,11 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
                 lineFormattingContext.breakLine();
                 goto insertReplacedBox;
             }
-        } else if (f->isFrameBlockBox()){
+        } else if (f->isFrameBlockBox()) {
+            // inline-block
             FrameBlockBox* r = f->asFrameBlockBox();
             f->layout(ctx);
+
             float ascender = 0;
             if (ctx.lastLineBox() && r->isAncestorOf(ctx.lastLineBox())) {
                 // TODO consider margin
@@ -538,7 +547,8 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
         float x = 0;
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
             b.m_boxes[j]->setX(x + b.m_boxes[j]->marginLeft());
-            x += b.m_boxes[j]->width() + b.m_boxes[j]->marginWidth();
+            if (b.m_boxes[j]->isNormalFlow())
+                x += b.m_boxes[j]->width() + b.m_boxes[j]->marginWidth();
         }
 
         // text align
@@ -546,15 +556,16 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
         } else if (style()->textAlign() == TextAlignValue::RightTextAlignValue) {
             float xx = 0;
             for (size_t j = 0; j < b.m_boxes.size(); j ++) {
-                InlineBox* box = b.m_boxes[b.m_boxes.size() -1 - j];
+                FrameBox* box = b.m_boxes[b.m_boxes.size() -1 - j];
                 box->setX(x - xx);
-                xx += box->width() + box->marginWidth();
+                if (box->isNormalFlow())
+                    xx += box->width() + box->marginWidth();
             }
         } else {
             STARFISH_ASSERT(style()->textAlign() == TextAlignValue::CenterTextAlignValue);
             float diff = (inlineContentWidth - x) / 2;
             for (size_t j = 0; j < b.m_boxes.size(); j ++) {
-                InlineBox* box = b.m_boxes[j];
+                FrameBox* box = b.m_boxes[j];
                 box->setX(box->x() + diff);
             }
         }
@@ -563,23 +574,30 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
         float maxAscender = 0;
         float maxDecender = 0;
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
-            InlineBox* ib = b.m_boxes[j];
-            if (ib->isInlineTextBox()) {
-                maxAscender = std::max(ib->asInlineTextBox()->style()->font()->metrics().m_ascender, maxAscender);
-                maxDecender = std::min(ib->asInlineTextBox()->style()->font()->metrics().m_descender, maxDecender);
-            } else if (ib->isInlineReplacedBox()) {
-                float asc = b.m_boxes[j]->marginTop() + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->borderTop() + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->paddingTop()
-                        + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->contentHeight();
-                float dec = -(b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->paddingBottom() + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->borderBottom()
-                        + b.m_boxes[j]->marginBottom());
-                maxAscender = std::max(asc, maxAscender);
-                maxDecender = std::min(dec, maxDecender);
-            } else if (ib->isInlineBlockBox()) {
-                float dec = -(b.m_boxes[j]->height() - b.m_boxes[j]->asInlineBlockBox()->m_ascender) - b.m_boxes[j]->marginBottom();
-                maxAscender = std::max(b.m_boxes[j]->asInlineBlockBox()->m_ascender + b.m_boxes[j]->marginTop(), maxAscender);
-                maxDecender = std::min(dec, maxDecender);
+            if (b.m_boxes[j]->isInlineBox()) {
+                // normal flow
+                InlineBox* ib = b.m_boxes[j]->asInlineBox();
+                if (ib->isInlineTextBox()) {
+                    maxAscender = std::max(ib->asInlineTextBox()->style()->font()->metrics().m_ascender, maxAscender);
+                    maxDecender = std::min(ib->asInlineTextBox()->style()->font()->metrics().m_descender, maxDecender);
+                } else if (ib->isInlineReplacedBox()) {
+                    float asc = ib->marginTop() + ib->asInlineReplacedBox()->replacedBox()->borderTop() + ib->asInlineReplacedBox()->replacedBox()->paddingTop()
+                            + ib->asInlineReplacedBox()->replacedBox()->contentHeight();
+                    float dec = -(ib->asInlineReplacedBox()->replacedBox()->paddingBottom() + ib->asInlineReplacedBox()->replacedBox()->borderBottom()
+                            + ib->marginBottom());
+                    maxAscender = std::max(asc, maxAscender);
+                    maxDecender = std::min(dec, maxDecender);
+                } else if (ib->isInlineBlockBox()) {
+                    float dec = -(ib->height() - ib->asInlineBlockBox()->m_ascender) - ib->marginBottom();
+                    maxAscender = std::max(ib->asInlineBlockBox()->m_ascender + ib->marginTop(), maxAscender);
+                    maxDecender = std::min(dec, maxDecender);
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
             } else {
-                STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                // out of flow boxes
+                b.m_boxes[j]->setY(b.m_boxes[j]->marginTop());
+                continue;
             }
         }
 
@@ -588,18 +606,22 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
 
         float height = maxAscender - maxDecender;
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
-            InlineBox* ib = b.m_boxes[j];
-            if (ib->isInlineTextBox()) {
-                ib->setY(height + maxDecender - ib->height() - ib->asInlineTextBox()->style()->font()->metrics().m_descender);
-            } else if (ib->isInlineReplacedBox()) {
-                float asc = b.m_boxes[j]->marginTop() + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->borderTop() + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->paddingTop()
-                            + b.m_boxes[j]->asInlineReplacedBox()->replacedBox()->contentHeight();
-                ib->setY(height + maxDecender - asc + b.m_boxes[j]->marginTop());
-            } else if (ib->isInlineBlockBox()) {
-                float dec = -(b.m_boxes[j]->height() - b.m_boxes[j]->asInlineBlockBox()->m_ascender) - ib->marginBottom();
-                ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
+            if (b.m_boxes[j]->isInlineBox()) {
+                InlineBox* ib = b.m_boxes[j]->asInlineBox();
+                if (ib->isInlineTextBox()) {
+                    ib->setY(height + maxDecender - ib->height() - ib->asInlineTextBox()->style()->font()->metrics().m_descender);
+                } else if (ib->isInlineReplacedBox()) {
+                    float asc = ib->marginTop() + ib->asInlineReplacedBox()->replacedBox()->borderTop() + ib->asInlineReplacedBox()->replacedBox()->paddingTop()
+                                + ib->asInlineReplacedBox()->replacedBox()->contentHeight();
+                    ib->setY(height + maxDecender - asc + ib->marginTop());
+                } else if (ib->isInlineBlockBox()) {
+                    float dec = -(ib->height() - ib->asInlineBlockBox()->m_ascender) - ib->marginBottom();
+                    ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
             } else {
-                STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                // out of flow boxes
             }
         }
 
@@ -922,7 +944,7 @@ Frame* FrameBlockBox::hitTest(float x, float y,HitTestStage stage)
 
                 return FrameBox::hitTest(x, y, stage);
             } else {
-                return FrameBox::hitTest(x, y, stage);
+                return node() ? nullptr : FrameBox::hitTest(x, y, stage);
             }
         } else {
             if (!hasBlockFlow()) {

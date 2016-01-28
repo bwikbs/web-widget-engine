@@ -24,7 +24,7 @@ Frame* LayoutContext::containingBlock(Frame* currentFrame)
     // https://www.w3.org/TR/2011/REC-CSS2-20110607/visudet.html#containing-block-details
     Frame* block = blockContainer(currentFrame);
     if (currentFrame->style()->position() == AbsolutePositionValue) {
-        while (!block->isFrameDocument() && block->style()->position() != AbsolutePositionValue) {
+        while (!block->isFrameDocument() && !block->isPositionedElement()) {
             block = blockContainer(block);
         }
         return block;

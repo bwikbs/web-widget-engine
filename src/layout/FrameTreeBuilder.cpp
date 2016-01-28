@@ -27,7 +27,7 @@ void clearTree(Node* current)
 
 void buildTree(Node* current, Frame* parent)
 {
-    DisplayValue display = current->style()->display();
+    DisplayValue display = current->style()->originalDisplay();
     Frame* currentFrame;
 
     bool isBlockChild = false;
@@ -41,7 +41,6 @@ void buildTree(Node* current, Frame* parent)
         } else {
             currentFrame = new FrameBlockBox(current, current->style());
         }
-
     } else if (display == DisplayValue::InlineDisplayValue) {
         if (current->isCharacterData() && current->asCharacterData()->isText()) {
             currentFrame = new FrameText(current, current->style());
