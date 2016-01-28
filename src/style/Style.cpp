@@ -188,8 +188,9 @@ Length convertPercentOrNumberToLength(CSSStyleValuePair::ValueKind kind, CSSStyl
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
 }
 
-void CSSStyleValuePair::setValueColor(const char* value)
+void CSSStyleValuePair::setValueColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     if (VALUE_IS_INHERIT()) {
         m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
     } else if (VALUE_IS_INITIAL()) {
@@ -201,8 +202,9 @@ void CSSStyleValuePair::setValueColor(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueDirection(const char* value)
+void CSSStyleValuePair::setValueDirection(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // <ltr> | rtl | inherit
     // TODO add initial
     m_keyKind = CSSStyleValuePair::KeyKind::Direction;
@@ -220,8 +222,9 @@ void CSSStyleValuePair::setValueDirection(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueWidth(const char* value)
+void CSSStyleValuePair::setValueWidth(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // length | percentage | <auto> | inherit
     m_keyKind = CSSStyleValuePair::KeyKind::Width;
     m_valueKind = CSSStyleValuePair::ValueKind::Auto;
@@ -236,8 +239,9 @@ void CSSStyleValuePair::setValueWidth(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueHeight(const char* value)
+void CSSStyleValuePair::setValueHeight(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // length | percentage | <auto> | inherit
     m_keyKind = CSSStyleValuePair::KeyKind::Height;
     m_valueKind = CSSStyleValuePair::ValueKind::Auto;
@@ -252,8 +256,9 @@ void CSSStyleValuePair::setValueHeight(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueFontSize(const char* value)
+void CSSStyleValuePair::setValueFontSize(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // TODO add initial
     // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
     //        O      |       O       |   O    |    O       |    O
@@ -285,8 +290,9 @@ void CSSStyleValuePair::setValueFontSize(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValuePosition(const char* value)
+void CSSStyleValuePair::setValuePosition(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // <static> | relative | absolute | fixed | inherit
     m_keyKind = CSSStyleValuePair::KeyKind::Position;
     m_valueKind = CSSStyleValuePair::ValueKind::PositionValueKind;
@@ -306,8 +312,9 @@ void CSSStyleValuePair::setValuePosition(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueTextDecoration(const char* value)
+void CSSStyleValuePair::setValueTextDecoration(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // none | [ underline || overline || line-through || blink ] | inherit // Initial value -> none
     m_keyKind = CSSStyleValuePair::KeyKind::TextDecoration;
     m_valueKind = CSSStyleValuePair::ValueKind::TextDecorationKind;
@@ -330,9 +337,9 @@ void CSSStyleValuePair::setValueTextDecoration(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueBackgroundColor(const char* value)
+void CSSStyleValuePair::setValueBackgroundColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    setValueColor(value);
+    setValueColor(tokens);
 }
 
 void CSSStyleValuePair::setValuePercentageOrLength(const char* value)
@@ -348,28 +355,33 @@ void CSSStyleValuePair::setValuePercentageOrLength(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueMarginTop(const char* value)
+void CSSStyleValuePair::setValueMarginTop(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     setValuePercentageOrLength(value);
 }
 
-void CSSStyleValuePair::setValueMarginRight(const char* value)
+void CSSStyleValuePair::setValueMarginRight(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     setValuePercentageOrLength(value);
 }
 
-void CSSStyleValuePair::setValueMarginBottom(const char* value)
+void CSSStyleValuePair::setValueMarginBottom(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     setValuePercentageOrLength(value);
 }
 
-void CSSStyleValuePair::setValueMarginLeft(const char* value)
+void CSSStyleValuePair::setValueMarginLeft(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     setValuePercentageOrLength(value);
 }
 
-void CSSStyleValuePair::setValueTop(const char* value)
+void CSSStyleValuePair::setValueTop(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // length | percentage | <auto> | inherit
     m_keyKind = CSSStyleValuePair::KeyKind::Top;
     m_valueKind = CSSStyleValuePair::ValueKind::Auto;
@@ -384,8 +396,9 @@ void CSSStyleValuePair::setValueTop(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueBottom(const char* value)
+void CSSStyleValuePair::setValueBottom(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // length | percentage | <auto> | inherit
     m_keyKind = CSSStyleValuePair::KeyKind::Bottom;
     m_valueKind = CSSStyleValuePair::ValueKind::Auto;
@@ -400,8 +413,9 @@ void CSSStyleValuePair::setValueBottom(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueLeft(const char* value)
+void CSSStyleValuePair::setValueLeft(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // length | percentage | <auto> | inherit
     m_keyKind = CSSStyleValuePair::KeyKind::Left;
     m_valueKind = CSSStyleValuePair::ValueKind::Auto;
@@ -416,8 +430,9 @@ void CSSStyleValuePair::setValueLeft(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueRight(const char* value)
+void CSSStyleValuePair::setValueRight(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // length | percentage | <auto> | inherit
     m_keyKind = CSSStyleValuePair::KeyKind::Right;
     m_valueKind = CSSStyleValuePair::ValueKind::Auto;
@@ -432,8 +447,9 @@ void CSSStyleValuePair::setValueRight(const char* value)
     }
 }
 
-void CSSStyleValuePair::setValueBorderImageWidth(const char* value)
+void CSSStyleValuePair::setValueBorderImageWidth(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    const char* value = tokens->at(0)->utf8Data();
     // [length | percentage | number | auto] {1, 4}
     m_keyKind = CSSStyleValuePair::KeyKind::BorderImageWidth;
     if (VALUE_IS_INHERIT()) {
@@ -470,6 +486,8 @@ void CSSStyleValuePair::setValueBorderImageWidth(const char* value)
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
     CSSStyleValuePair ret;
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
     if (strcmp(key, "display") == 0) {
         // <inline> | block | list-item | inline-block | table | inline-table | table-row-group | table-header-group | table-footer-group | table-row | table-column-group | table-column | table-cell | table-caption | none | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Display;
@@ -490,17 +508,17 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "position") == 0) {
-        ret.setValuePosition(value);
+        ret.setValuePosition(&tokens);
     } else if (strcmp(key, "width") == 0) {
-        ret.setValueWidth(value);
+        ret.setValueWidth(&tokens);
     } else if (strcmp(key, "height") == 0) {
-        ret.setValueHeight(value);
+        ret.setValueHeight(&tokens);
     } else if (strcmp(key, "font-size") == 0) {
-        ret.setValueFontSize(value);
+        ret.setValueFontSize(&tokens);
     } else if (strcmp(key, "color") == 0) {
         // color | inherit // initial value -> depends on user agent
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Color;
-        ret.setValueColor(value);
+        ret.setValueColor(&tokens);
     } else if (strcmp(key, "background-color") == 0) {
         // color | <transparent> | inherit
         // TODO add initial
@@ -587,7 +605,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "text-decoration") == 0) {
-        ret.setValueTextDecoration(value);
+        ret.setValueTextDecoration(&tokens);
     } else if (strcmp(key, "letter-spacing") == 0) {
         // normal | length | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::LetterSpacing;
@@ -639,7 +657,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "direction") == 0) {
-        ret.setValueDirection(value);
+        ret.setValueDirection(&tokens);
     } else if (strcmp(key, "background-size") == 0) {
         // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
         // TODO add initial
@@ -703,13 +721,13 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "top") == 0) {
-        ret.setValueTop(value);
+        ret.setValueTop(&tokens);
     } else if (strcmp(key, "right") == 0) {
-        ret.setValueRight(value);
+        ret.setValueRight(&tokens);
     } else if (strcmp(key, "bottom") == 0) {
-        ret.setValueBottom(value);
+        ret.setValueBottom(&tokens);
     } else if (strcmp(key, "left") == 0) {
-        ret.setValueLeft(value);
+        ret.setValueLeft(&tokens);
     } else if (strcmp(key, "border-top-color") == 0) {
         // color | transparent | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderTopColor;
@@ -797,7 +815,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             }
         }
     } else if (strcmp(key, "border-image-width") == 0) {
-        ret.setValueBorderImageWidth(value);
+        ret.setValueBorderImageWidth(&tokens);
     } else if (strcmp(key, "border-image-slice") == 0) {
         // number | percentage {1,4} && fill?
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderImageSlice;
@@ -969,19 +987,19 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "margin-top") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginTop;
-        ret.setValueMarginTop(value);
+        ret.setValueMarginTop(&tokens);
     } else if (strcmp(key, "margin-bottom") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginBottom;
-        ret.setValueMarginTop(value);
+        ret.setValueMarginTop(&tokens);
     } else if (strcmp(key, "margin-left") == 0) {
         // length | percentage | auto | inherit <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginLeft;
-        ret.setValueMarginTop(value);
+        ret.setValueMarginTop(&tokens);
     } else if (strcmp(key, "margin-right") == 0) {
         // length | percentage | auto | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::MarginRight;
-        ret.setValueMarginTop(value);
+        ret.setValueMarginTop(&tokens);
     } else if (strcmp(key, "padding-top") == 0) {
         // length | percentage | inherit  <0>
         ret.m_keyKind = CSSStyleValuePair::KeyKind::PaddingTop;

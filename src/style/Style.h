@@ -622,7 +622,7 @@ public:
     F(BorderImageWidth)
 
 #define SET_VALUE(name) \
-    void setValue##name(const char* value);
+    void setValue##name(std::vector<String*, gc_allocator<String*>>* tokens);
 
     FOR_EACH_STYLE_ATTRIBUTE(SET_VALUE)
 #undef SET_VALUE
@@ -729,12 +729,12 @@ public:
         if (checkInputError##name(&tokens)) { \
             for (unsigned i = 0; i < m_cssValues.size(); i++) { \
                 if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) { \
-                    m_cssValues.at(i).setValue##name(value); \
+                    m_cssValues.at(i).setValue##name(&tokens); \
                 } \
             } \
             CSSStyleValuePair ret; \
             ret.setKeyKind(CSSStyleValuePair::KeyKind::name); \
-            ret.setValue##name(value); \
+            ret.setValue##name(&tokens); \
             m_cssValues.push_back(ret); \
         } \
     }
