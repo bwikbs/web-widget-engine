@@ -2091,9 +2091,11 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->setLineHeight(parentStyle->lineHeight());
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial ||
                            cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Normal) {
-                    // The compute value is 'normal'. We use -100 to represent "normal" line height.
+                    // The compute value should be 'normal'.
+                    // https://developer.mozilla.org/ko/docs/Web/CSS/line-height.
+                    style->setLineHeight(Length(Length::EmToBeFixed, 1.2));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Number) {
-                    // TODO: The computed value is the same as the specified value.
+                    // The computed value should be same as the specified value.
                     style->setLineHeight(Length(Length::EmToBeFixed, cssValues[k].numberValue()));
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Length ||
                            cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Percentage) {

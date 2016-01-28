@@ -27,7 +27,8 @@ public:
 
         m_inheritedStyles.m_visibility = VisibilityValue::VisibleVisibilityValue;
         m_inheritedStyles.m_letterSpacing = Length(Length::Fixed, 0);
-        m_inheritedStyles.m_lineHeight = Length(Length::Percent, -100);
+        // https://developer.mozilla.org/ko/docs/Web/CSS/line-height.
+        m_inheritedStyles.m_lineHeight = Length(Length::EmToBeFixed, 1.2);
 
         initNonInheritedStyles();
     }
@@ -254,7 +255,8 @@ public:
 
     Length lineHeight()
     {
-        // -100% is used to represent "normal" line height.
+        // According to the CSS spec, the computed value is the absolute value for <length> and <percentage> & otherwise as specified.
+        // However, our computed value is the absolute value.
         return m_inheritedStyles.m_lineHeight;
     }
 
@@ -739,13 +741,8 @@ protected:
         }
 
         if (lineHeight().isPercent()) {
-            if (lineHeight().percent() == -100) {
-                // FIXME: The computed value of initial and normal should be normal.
-                setLineHeight(Length(Length::EmToBeFixed, 1.2));
-            } else {
-                // The computed value of the property is this percentage multiplied by the element's computed font size. Negative values are illegal.
-                setLineHeight(Length(Length::Fixed, lineHeight().percent() * fontSize().fixed()));
-            }
+            // The computed value of the property is this percentage multiplied by the element's computed font size. Negative values are illegal.
+            setLineHeight(Length(Length::Fixed, lineHeight().percent() * fontSize().fixed()));
         }
 
         // Convert all non-computed Lengths to computed Length

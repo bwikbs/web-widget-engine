@@ -429,15 +429,10 @@ void Node::dumpStyle()
     printf("letter-spacing: %f, ", m_style->letterSpacing().fixed());
 
     // line-height
-    printf("line-height: ");
-    if (m_style->lineHeight().isPercent()) {
-        if (m_style->lineHeight().percent() == -100)
-            printf("normal, ");
-    } else if (m_style->lineHeight().isFixed()) {
-        printf("%f, ", m_style->lineHeight().fixed());
-    } else {
-        printf("normal, ");
-    }
+    if (m_style->lineHeight().isFixed())
+        printf("line-height: %.1f, ", m_style->lineHeight().fixed());
+    else
+        printf("line-height: normal, ");
 
     // text-overflow
     printf("text-overflow: ");

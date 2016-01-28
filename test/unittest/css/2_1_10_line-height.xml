@@ -52,7 +52,7 @@
                 <node nodeType="1" localName="div" id="div1">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            line=-height: 10px
+            line-height: 10px
         ]]></text>
                     </node>
                 </node>
@@ -63,7 +63,7 @@
                 <node nodeType="1" localName="div" id="div2">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            line=-height: 10px
+            line-height: 10px
         ]]></text>
                     </node>
                 </node>
@@ -74,7 +74,7 @@
                 <node nodeType="1" localName="div" id="div3">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            line=-height: 20px
+            line-height: 20px
         ]]></text>
                     </node>
                 </node>
@@ -85,7 +85,7 @@
                 <node nodeType="1" localName="div" id="div4">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            line=-height: 40px
+            line-height: 40px
         ]]></text>
                     </node>
                 </node>
@@ -96,7 +96,7 @@
                 <node nodeType="1" localName="div" id="div5">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            line=-height: 50px
+            line-height: 50px
         ]]></text>
                     </node>
                 </node>
@@ -107,7 +107,7 @@
                 <node nodeType="1" localName="div" id="div6">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-            line=-height: normal
+            line-height: normal
         ]]></text>
                     </node>
                 </node>
