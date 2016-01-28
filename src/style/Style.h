@@ -626,6 +626,10 @@ public:
     F(Position) \
     F(TextDecoration) \
     F(BorderImageWidth) \
+    F(BorderTopStyle) \
+    F(BorderRightStyle) \
+    F(BorderBottomStyle) \
+    F(BorderLeftStyle) \
     F(BorderTopWidth) \
     F(BorderRightWidth) \
     F(BorderBottomWidth) \

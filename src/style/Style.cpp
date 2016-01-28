@@ -544,6 +544,62 @@ void CSSStyleValuePair::setValueBorderImageWidth(std::vector<String*, gc_allocat
     }
 }
 
+void CSSStyleValuePair::setValueBorderTopStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    // border-style(<none> | solid) | inherit
+    m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("solid")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
+    }
+}
+
+void CSSStyleValuePair::setValueBorderRightStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    // border-style(<none> | solid) | inherit
+    m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("solid")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
+    }
+}
+
+void CSSStyleValuePair::setValueBorderBottomStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    // border-style(<none> | solid) | inherit
+    m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("solid")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
+    }
+}
+
+void CSSStyleValuePair::setValueBorderLeftStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    // border-style(<none> | solid) | inherit
+    m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("solid")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
+    }
+}
+
 void CSSStyleValuePair::setValueBorderTopWidth(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     const char* value = tokens->at(0)->utf8Data();
@@ -1077,47 +1133,19 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "border-top-style") == 0) {
         // border-style(<none> | solid) | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderTopStyle;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("solid")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
-        }
+        ret.setValueBorderTopStyle(&tokens);
     } else if (strcmp(key, "border-right-style") == 0) {
         // border-style(<none> | solid) | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderRightStyle;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("solid")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
-        }
+        ret.setValueBorderRightStyle(&tokens);
     } else if (strcmp(key, "border-bottom-style") == 0) {
         // border-style(<none> | solid) | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderBottomStyle;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("solid")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
-        }
+        ret.setValueBorderBottomStyle(&tokens);
     } else if (strcmp(key, "border-left-style") == 0) {
         // border-style(<none> | solid) | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderLeftStyle;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderNone;
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("solid")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::BorderSolid;
-        }
+        ret.setValueBorderLeftStyle(&tokens);
     } else if (strcmp(key, "border-top-width") == 0) {
         // border-width(thin | <medium> | thick) | length | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BorderTopWidth;
@@ -1348,6 +1376,21 @@ String* CSSStyleValuePair::toString()
         }
         case BorderImageWidth: {
             //TODO
+        }
+        case BorderTopStyle:
+        case BorderRightStyle:
+        case BorderBottomStyle:
+        case BorderLeftStyle: {
+            switch(valueKind()) {
+            case CSSStyleValuePair::ValueKind::BorderNone:
+                return String::fromUTF8("none");
+            case CSSStyleValuePair::ValueKind::BorderSolid:
+                return String::fromUTF8("solid");
+            case CSSStyleValuePair::ValueKind::Inherit:
+                return String::fromUTF8("inherit");
+            default:
+                break;
+            }
         }
         case BorderTopWidth:
         case BorderBottomWidth:
@@ -1615,6 +1658,40 @@ bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, g
         }
     }
     return true;
+}
+
+bool checkInputErrorBorderUnitStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // border-style(<none> | solid) | inherit
+    if (tokens->size() == 1) {
+        const char* token = tokens->at(0)->utf8Data();
+        if ((strcmp(token, "none") == 0) ||
+            (strcmp(token, "solid") == 0) ||
+            (strcmp(token, "inherit") == 0)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderTopStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkInputErrorBorderUnitStyle(tokens);
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderRightStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkInputErrorBorderUnitStyle(tokens);
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderBottomStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkInputErrorBorderUnitStyle(tokens);
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderLeftStyle(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkInputErrorBorderUnitStyle(tokens);
 }
 
 bool checkInputErrorBorderUnitWidth(std::vector<String*, gc_allocator<String*>>* tokens)
