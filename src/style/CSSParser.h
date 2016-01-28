@@ -40,6 +40,12 @@ public:
         if (c == '-') return true;
         return false;
     }
+
+    static bool isUnitChar(char c)
+    {
+        if (c == '%') return true;
+        return false;
+    }
 };
 
 class CSSPropertyParser : public gc {
@@ -91,7 +97,7 @@ public:
     {
         int len = 0;
         for (char* cur = m_curPos; cur < m_endPos; cur++, len++) {
-            if (!CSSTokenizer::isNameChar(*cur))
+            if (!(CSSTokenizer::isNameChar(*cur) || CSSTokenizer::isUnitChar(*cur)))
                 break;
         }
         m_parsedString = String::fromUTF8(m_curPos, len);

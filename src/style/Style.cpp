@@ -1271,15 +1271,17 @@ void CSSStyleDeclaration::setMargin(const char* value)
 {
     std::vector<String*, gc_allocator<String*>> tokens;
     DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
-    unsigned len = tokens.size();
-    if (len > 0)
-        setMarginTop(tokens[0]->utf8Data());
-    if (len > 1)
-            setMarginRight(tokens[1]->utf8Data());
-    if (len > 2)
-            setMarginBottom(tokens[2]->utf8Data());
-    if (len > 3)
-            setMarginLeft(tokens[3]->utf8Data());
+    if (checkInputErrorMargin(&tokens)) {
+        unsigned len = tokens.size();
+        if (len > 0)
+            setMarginTop(tokens[0]->utf8Data());
+        if (len > 1)
+                setMarginRight(tokens[1]->utf8Data());
+        if (len > 2)
+                setMarginBottom(tokens[2]->utf8Data());
+        if (len > 3)
+                setMarginLeft(tokens[3]->utf8Data());
+    }
 }
 
 String* CSSStyleDeclaration::visibility()
@@ -1346,51 +1348,70 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundColor(std::vector<String*, gc
 
 bool CSSStyleDeclaration::checkInputErrorMarginTop(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    return checkHavingOneTokenAndLengthOrPercentage(tokens);
 }
 
 bool CSSStyleDeclaration::checkInputErrorMarginRight(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    return checkHavingOneTokenAndLengthOrPercentage(tokens);
 }
 
 bool CSSStyleDeclaration::checkInputErrorMarginBottom(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    return checkHavingOneTokenAndLengthOrPercentage(tokens);
 }
 
 bool CSSStyleDeclaration::checkInputErrorMarginLeft(std::vector<String*, gc_allocator<String*>>* tokens)
 {
+    return checkHavingOneTokenAndLengthOrPercentage(tokens);
+}
+
+bool CSSStyleDeclaration::checkInputErrorMargin(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // length | percentage | <auto> | inherit
+    for (unsigned i = 0; i < tokens->size(); i++) {
+        const char* token = tokens->at(i)->utf8Data();
+        if (!(CSSPropertyParser::assureLength(token, false) ||
+            CSSPropertyParser::assurePercent(token, false) ||
+            (strcmp(token, "auto") == 0) || (strcmp(token, "initial") == 0) || (strcmp(token, "inherit") == 0))) {
+                return false;
+        }
+    }
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorTop(std::vector<String*, gc_allocator<String*>>* tokens)
+bool CSSStyleDeclaration::checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     // length | percentage | <auto> | inherit
     if (tokens->size() == 1) {
         const char* token = tokens->at(0)->utf8Data();
         if (CSSPropertyParser::assureLength(token, false) ||
             CSSPropertyParser::assurePercent(token, false) ||
-            (strcmp(token, "auto") == 0)) {
+            (strcmp(token, "auto") == 0) || (strcmp(token, "initial") == 0) || (strcmp(token, "inherit") == 0)) {
                 return true;
         }
     }
     return false;
 }
 
+bool CSSStyleDeclaration::checkInputErrorTop(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkHavingOneTokenAndLengthOrPercentage(tokens);
+}
+
 bool CSSStyleDeclaration::checkInputErrorBottom(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return checkInputErrorTop(tokens);
+    return checkHavingOneTokenAndLengthOrPercentage(tokens);
 }
 
 bool CSSStyleDeclaration::checkInputErrorLeft(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return checkInputErrorTop(tokens);
+    return checkHavingOneTokenAndLengthOrPercentage(tokens);
 }
 
 bool CSSStyleDeclaration::checkInputErrorRight(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return checkInputErrorTop(tokens);
+    return checkHavingOneTokenAndLengthOrPercentage(tokens);
 }
 
 bool CSSStyleDeclaration::checkInputErrorDirection(std::vector<String*, gc_allocator<String*>>* tokens)

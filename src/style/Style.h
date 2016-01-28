@@ -709,6 +709,9 @@ public:
     FOR_EACH_STYLE_ATTRIBUTE(CHECK_INPUT_ERROR)
 #undef CHECK_INPUT_ERROR
 
+    bool checkInputErrorMargin(std::vector<String*, gc_allocator<String*>>* tokens);
+    bool checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*>>* tokens);
+
 #define ATTRIBUTE_GETTER(name) \
     String* name () { \
         for (unsigned i = 0; i < m_cssValues.size(); i++) { \
