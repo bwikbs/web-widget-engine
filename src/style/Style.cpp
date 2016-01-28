@@ -793,6 +793,21 @@ void CSSStyleValuePair::setValueOverflowX(std::vector<String*, gc_allocator<Stri
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 }
+void CSSStyleValuePair::setValueZIndex(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+    if (VALUE_IS_STRING("auto")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else {
+        // TODO check string has right color string
+        m_valueKind = CSSStyleValuePair::ValueKind::Number;
+        sscanf(value, "%f%%", &m_value.m_floatValue);
+    }
+}
 
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
@@ -1313,7 +1328,13 @@ String* CSSStyleValuePair::toString()
         case Color:
         case BackgroundColor:
         {
-            if (m_valueKind == CSSStyleValuePair::ValueKind::StringValueKind)
+            if (m_valueKind == CSSStyleValuePair::ValueKind::Auto)
+                return String::fromUTF8("auto");
+            else if (m_valueKind == CSSStyleValuePair::ValueKind::Initial)
+                return String::fromUTF8("initial");
+            else if (m_valueKind == CSSStyleValuePair::ValueKind::Inherit)
+                return String::fromUTF8("inherit");
+            else if (m_valueKind == CSSStyleValuePair::ValueKind::StringValueKind)
                 return stringValue();
             break;
         }
@@ -1498,6 +1519,18 @@ String* CSSStyleValuePair::toString()
                 default:
                     return String::emptyString;
             }
+        }
+        case ZIndex:
+        {
+            if (m_valueKind == CSSStyleValuePair::ValueKind::Auto)
+                return String::fromUTF8("auto");
+            else if (m_valueKind == CSSStyleValuePair::ValueKind::Initial)
+                return String::fromUTF8("initial");
+            else if (m_valueKind == CSSStyleValuePair::ValueKind::Inherit)
+                return String::fromUTF8("inherit");
+            else if (m_valueKind == CSSStyleValuePair::ValueKind::Number)
+                return String::fromUTF8(std::to_string((int) numberValue()).c_str());
+            break;
         }
         default: {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -1867,6 +1900,19 @@ bool CSSStyleDeclaration::checkInputErrorOverflowX(std::vector<String*, gc_alloc
         const char* token = (*tokens)[0]->toLower()->utf8Data();
         if ((strcmp(token, "visible") == 0) ||
             (strcmp(token, "hidden") == 0)) {
+            return true;
+        }
+    }
+    return false;
+}
+bool CSSStyleDeclaration::checkInputErrorZIndex(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() == 1) {
+        const char* token = tokens->at(0)->utf8Data();
+        if ((strcmp(token, "auto") == 0) ||
+            (strcmp(token, "initial") == 0) ||
+            (strcmp(token, "inherit") == 0) ||
+            CSSPropertyParser::assureInteger(token, false)) {
             return true;
         }
     }

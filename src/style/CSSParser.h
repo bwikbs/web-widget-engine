@@ -165,6 +165,15 @@ public:
         return parser->isEnd();
     }
 
+    static bool assureInteger(const char* token, bool allowNegative)
+    {
+        CSSPropertyParser* parser = new CSSPropertyParser((char*) token);
+        if (!parser->consumeNumber()) return false;
+        float num = parser->parsedNumber();
+        if (num != std::floor(num)) return false;
+        return parser->isEnd();
+    }
+
     static bool assureColor(const char* token)
     {
         if (strcmp(token, "red") == 0 ||

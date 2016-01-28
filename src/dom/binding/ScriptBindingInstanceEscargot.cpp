@@ -1464,7 +1464,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(TextAlign, textAlign) \
     F(Visibility, visibility) \
     F(OverflowX, overflow) \
-    F(BackgroundImage, backgroundImage)
+    F(BackgroundImage, backgroundImage) \
+    F(ZIndex, zIndex)
 
 #define DEFINE_ACCESSOR_PROPERTY(name, nameLower) \
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create(#nameLower), \
@@ -1478,6 +1479,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::CSSStyleDeclarationObject); \
         if (v.isESString()) { \
             ((CSSStyleDeclaration*) originalObj)->set##name(v.asESString()->utf8Data()); \
+        } else if (v.isNumber()) { \
+            ((CSSStyleDeclaration*) originalObj)->set##name(std::to_string(v.toNumber()).c_str()); \
         } \
     }, false, false, false);
 
