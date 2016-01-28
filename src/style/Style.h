@@ -566,9 +566,9 @@ public:
         if (valueKind() == CSSStyleValuePair::ValueKind::Auto)
             return String::fromUTF8("auto");
         else if (valueKind() == CSSStyleValuePair::ValueKind::Inherit)
-            return String::fromUTF8("Inherit");
+            return String::fromUTF8("inherit");
         else if (valueKind() == CSSStyleValuePair::ValueKind::Initial)
-            return String::fromUTF8("Initial");
+            return String::fromUTF8("initial");
         else if (valueKind() == CSSStyleValuePair::ValueKind::Length)
             return lengthValue().toString();
         else if (valueKind() == CSSStyleValuePair::ValueKind::Percentage)
@@ -592,9 +592,9 @@ public:
         if (kind == CSSStyleValuePair::ValueKind::Auto)
             return String::fromUTF8("auto");
         else if (kind == CSSStyleValuePair::ValueKind::Inherit)
-            return String::fromUTF8("Inherit");
+            return String::fromUTF8("inherit");
         else if (kind == CSSStyleValuePair::ValueKind::Initial)
-            return String::fromUTF8("Initial");
+            return String::fromUTF8("initial");
         else if (kind == CSSStyleValuePair::ValueKind::Length)
             return data.m_length.toString();
         else if (kind == CSSStyleValuePair::ValueKind::Percentage)

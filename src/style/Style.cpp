@@ -430,10 +430,12 @@ void CSSStyleValuePair::setValueLineHeight(std::vector<String*, gc_allocator<Str
     // <normal> | number | length | percentage | inherit
     const char* value = tokens->at(0)->utf8Data();
     m_valueKind = CSSStyleValuePair::ValueKind::Normal;
-    if (VALUE_IS_INITIAL() || VALUE_IS_STRING("normal")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::Normal;
+    if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
     } else if (VALUE_IS_STRING("inherit")) {
         m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_STRING("normal")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Normal;
     } else {
         char* pEnd;
         double d = strtod (value, &pEnd);
