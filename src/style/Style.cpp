@@ -544,6 +544,72 @@ void CSSStyleValuePair::setValueBorderImageWidth(std::vector<String*, gc_allocat
     }
 }
 
+void CSSStyleValuePair::setValueTextAlign(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+
+    const char* value = tokens->at(0)->utf8Data();
+    m_keyKind = CSSStyleValuePair::KeyKind::TextAlign;
+    m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    }  else if (VALUE_IS_STRING("left")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::TextAlignValueKind;
+        m_value.m_textAlign = TextAlignValue::LeftTextAlignValue;
+    } else if (VALUE_IS_STRING("center")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::TextAlignValueKind;
+        m_value.m_textAlign = TextAlignValue::CenterTextAlignValue;
+    } else if (VALUE_IS_STRING("right")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::TextAlignValueKind;
+        m_value.m_textAlign = TextAlignValue::RightTextAlignValue;
+    } else if (VALUE_IS_STRING("justify")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::TextAlignValueKind;
+        m_value.m_textAlign = TextAlignValue::JustifyTextAlignValue;
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+void CSSStyleValuePair::setValueVisibility(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+
+    m_keyKind = CSSStyleValuePair::KeyKind::Visibility;
+    m_valueKind = CSSStyleValuePair::ValueKind::VisibilityKind;
+
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("visible")) {
+        m_value.m_visibility = VisibilityValue::VisibleVisibilityValue;
+    } else if (VALUE_IS_STRING("hidden")){
+        m_value.m_visibility = VisibilityValue::HiddenVisibilityValue;
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+void CSSStyleValuePair::setValueOpacity(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    const char* value = tokens->at(0)->utf8Data();
+
+    printf("MONG:%s\n",value);
+
+    m_keyKind = CSSStyleValuePair::KeyKind::Opacity;
+    m_valueKind = CSSStyleValuePair::ValueKind::Number;
+
+    if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else {
+        sscanf(value, "%f%%", &m_value.m_floatValue);
+    }
+}
+
 CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
 {
     CSSStyleValuePair ret;
@@ -1234,6 +1300,36 @@ String* CSSStyleValuePair::toString()
         case BorderImageWidth: {
             //TODO
         }
+        case TextAlign: {
+            switch(textAlignValue()) {
+                case TextAlignValue::NamelessTextAlignValue:
+                    return String::fromUTF8("left");
+                case TextAlignValue::LeftTextAlignValue:
+                    return String::fromUTF8("left");
+                case TextAlignValue::RightTextAlignValue:
+                    return String::fromUTF8("right");
+                case TextAlignValue::CenterTextAlignValue:
+                    return String::fromUTF8("center");
+                case TextAlignValue::JustifyTextAlignValue:
+                    return String::fromUTF8("justify");
+                default:
+                    return String::emptyString;
+            }
+        }
+        case Visibility: {
+            switch(visibility()) {
+                case VisibilityValue::VisibleVisibilityValue:
+                    return String::fromUTF8("visible");
+                case VisibilityValue::HiddenVisibilityValue:
+                    return String::fromUTF8("hidden");
+                default:
+                    return String::emptyString;
+            }
+        }
+        case Opacity: {
+            printf("MONG:%f\n",numberValue());
+             return String::fromUTF8(std::to_string(numberValue()).c_str());
+        }
         default: {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
             return nullptr;
@@ -1292,58 +1388,6 @@ void CSSStyleDeclaration::setMargin(const char* value)
         if (len > 3)
                 setMarginLeft(tokens[3]->utf8Data());
     }
-}
-
-String* CSSStyleDeclaration::visibility()
-{
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-        CSSStyleValuePair v = *itr;
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::Visibility && v.valueKind() == CSSStyleValuePair::ValueKind::VisibilityKind) {
-            switch(v.visibility()) {
-                case VisibilityValue::VisibleVisibilityValue:
-                    return String::fromUTF8("visible");
-                case VisibilityValue::HiddenVisibilityValue:
-                    return String::fromUTF8("hidden");
-                default: break;
-            }
-        }
-    }
-    return String::emptyString;
-}
-
-String* CSSStyleDeclaration::opacity()
-{
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-        CSSStyleValuePair v = *itr;
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::Opacity && v.valueKind() == CSSStyleValuePair::ValueKind::Number) {
-            return String::fromUTF8(std::to_string(v.numberValue()).c_str());
-        }
-    }
-    return String::emptyString;
-}
-
-String* CSSStyleDeclaration::textAlign()
-{
-    for(auto itr = m_cssValues.begin(); itr != m_cssValues.end(); ++itr) {
-        CSSStyleValuePair v = *itr;
-        if(v.keyKind() == CSSStyleValuePair::KeyKind::TextAlign && v.valueKind() == CSSStyleValuePair::ValueKind::TextAlignValueKind) {
-            switch(v.textAlignValue()) {
-                //FIXME:mh.byun LTR case only
-                case TextAlignValue::NamelessTextAlignValue:
-                    return String::fromUTF8("left");
-                case TextAlignValue::LeftTextAlignValue:
-                    return String::fromUTF8("left");
-                case TextAlignValue::RightTextAlignValue:
-                    return String::fromUTF8("right");
-                case TextAlignValue::CenterTextAlignValue:
-                    return String::fromUTF8("center");
-                case TextAlignValue::JustifyTextAlignValue:
-                    return String::fromUTF8("justify");
-                default: break;
-            }
-        }
-    }
-    return String::emptyString;
 }
 
 bool CSSStyleDeclaration::checkInputErrorColor(std::vector<String*, gc_allocator<String*>>* tokens)
@@ -1485,6 +1529,21 @@ bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, g
             return false;
         }
     }
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorTextAlign(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorVisibility(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorOpacity(std::vector<String*, gc_allocator<String*>>* tokens)
+{
     return true;
 }
 
