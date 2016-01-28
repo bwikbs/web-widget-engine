@@ -522,7 +522,7 @@ public:
 
     friend void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value);
     friend void parseLength(CSSStyleValuePair& ret, const char* value);
-    friend void parseUrl(CSSStyleValuePair& ret, const char* value);
+    friend void parseUrl(const char* value);
     friend CSSLength parseCSSLength(const char* value);
     static CSSStyleValuePair fromString(const char* key, const char* value);
 
@@ -637,7 +637,8 @@ public:
     F(TextAlign) \
     F(Visibility) \
     F(Opacity) \
-    F(OverflowX)
+    F(OverflowX) \
+    F(BackgroundImage)
 
 #define SET_VALUE(name) \
     void setValue##name(std::vector<String*, gc_allocator<String*>>* tokens);

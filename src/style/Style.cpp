@@ -128,13 +128,16 @@ void parsePercentageOrLength(CSSStyleValuePair& ret, const char* value)
     }
 }
 
-void parseUrl(CSSStyleValuePair& ret, const char* value)
+String* parseUrl(String* value)
 {
-    int pathlen = strlen(value);
+    int pathlen = value->length();
     if (pathlen >= 7) {
-        ret.m_value.m_stringValue = String::fromUTF8(value + 5, pathlen - 7);
+    	String* temp = value->substring(5, pathlen - 7);
+    	printf("parseUrl(): %s\n", temp->asASCIIString()->c_str());
+    	return temp;
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        return 0;
     }
 }
 
@@ -340,6 +343,35 @@ void CSSStyleValuePair::setValueTextDecoration(std::vector<String*, gc_allocator
 void CSSStyleValuePair::setValueBackgroundColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     setValueColor(tokens);
+}
+
+void CSSStyleValuePair::setValueBackgroundImage(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() == 1) {
+        const char* value = tokens->at(0)->utf8Data();
+
+        if (VALUE_IS_NONE()) {
+            m_valueKind = CSSStyleValuePair::ValueKind::None;
+        } else if (VALUE_IS_INITIAL()) {
+            m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+        } else if (VALUE_IS_INHERIT()) {
+            m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+        } else {
+            m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+            m_value.m_stringValue = String::fromUTF8(value);
+        }
+    } else if (tokens->size() == 2) {
+        m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+
+        String* sum = tokens->at(0);
+        m_value.m_stringValue = sum->concat(tokens->at(1));
+    } else if (tokens->size() == 3) {
+        m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
+
+        String* sum = tokens->at(0);
+        m_value.m_stringValue = sum->concat(tokens->at(1))->concat(tokens->at(2));
+
+    }
 }
 
 void CSSStyleValuePair::setValuePercentageOrLength(const char* value)
@@ -816,17 +848,8 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else if (strcmp(key, "background-image") == 0) {
         // uri | <none> | inherit
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundImage;
-        if (VALUE_IS_NONE()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::None;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
-            parseUrl(ret, value);
-        }
+    	ret.setKeyKind(CSSStyleValuePair::KeyKind::BackgroundImage);
+        ret.setValueBackgroundImage(&tokens);
     } else if (strcmp(key, "vertical-align") == 0) {
         // <baseline> | sub | super | top | text-top | middle | bottom | text-bottom | percentage | length | inherit
         ret.m_keyKind = CSSStyleValuePair::KeyKind::VerticalAlign;
@@ -1128,7 +1151,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             ret.m_valueKind = CSSStyleValuePair::ValueKind::None;
         } else {
             ret.m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
-            parseUrl(ret, value);
+            ret.m_value.m_stringValue = String::fromUTF8(value);
         }
     } else if (strcmp(key, "border-top-style") == 0) {
         // border-style(<none> | solid) | inherit
@@ -1296,6 +1319,19 @@ String* CSSStyleValuePair::toString()
                 return stringValue();
             break;
         }
+        case BackgroundImage:
+        	if (m_valueKind == CSSStyleValuePair::ValueKind::None) {
+        		return String::fromUTF8("none");
+        	} else if (m_valueKind == CSSStyleValuePair::ValueKind::Inherit) {
+        		return String::fromUTF8("initial");
+        	} else if (m_valueKind == CSSStyleValuePair::ValueKind::Initial) {
+        		return String::fromUTF8("inherit");
+    		} else if (m_valueKind == CSSStyleValuePair::ValueKind::StringValueKind) {
+    			return stringValue();
+    		} else {
+    			STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    		}
+        	break;
         case Direction: {
             switch(directionValue()) {
                 case LtrDirectionValue:
@@ -1526,9 +1562,56 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundColor(std::vector<String*, gc
     return checkInputErrorColor(tokens);
 }
 
+
 bool CSSStyleDeclaration::checkInputErrorMarginTop(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens);
+}
+
+const char* trim(const char* s) {
+    size_t length = strlen(s);
+    std::string str;
+
+    for (size_t i = 0; i < length; i++) {
+        if (s[i] != ' ') {
+            str += s[i];
+        }
+    }
+
+    return str.c_str();
+}
+
+bool CSSStyleDeclaration::checkInputErrorBackgroundImage(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() == 1) {
+        const char* token = tokens->at(0)->utf8Data();
+
+        if(startsWith(token, "url(") && endsWith(token, ")")) {
+            return true;
+        } else if (startsWith(token, "initial") && strlen(token) == 7) {
+            return true;
+        } else if (startsWith(token, "inherit") && strlen(token) == 7) {
+            return true;
+        } else if (startsWith(token, "none") && strlen(token) == 4) {
+            return true;
+        }
+    } else if (tokens->size() == 2) {
+        const char* token0 = tokens->at(0)->utf8Data();
+        const char* token1 = tokens->at(1)->utf8Data();
+
+        if(startsWith(token0, "url(") && endsWith(token1, ")")) {
+            return true;
+        }
+    } else if (tokens->size() == 3) {
+        const char* token0 = tokens->at(0)->utf8Data();
+        const char* token2 = tokens->at(2)->utf8Data();
+
+        if((startsWith(token0, "url(") && strlen(token0) == 4) && (endsWith(token2, ")") && strlen(token2) == 1)) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorMarginRight(std::vector<String*, gc_allocator<String*>>* tokens)
@@ -2039,7 +2122,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
                     style->setBgImage(parentStyle->bgImage());
                 } else {
-                    style->setBgImage(cssValues[k].stringValue());
+                	STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::StringValueKind);
+                    style->setBgImage(parseUrl(cssValues[k].stringValue()));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BackgroundSize:
@@ -2246,8 +2330,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::None) {
                     style->setBorderImageSource(String::emptyString);
                 } else {
-                    //STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
-                    style->setBorderImageSource(cssValues[k].stringValue());
+                	STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
+                    style->setBorderImageSource(parseUrl(cssValues[k].stringValue()));
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageWidth:
