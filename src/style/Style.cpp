@@ -154,8 +154,6 @@ String* parseUrl(String* value)
         } else {
             ret = String::fromUTF8(trimStr)->substring(4, pathlen - 5);
         }
-
-        printf("parseUrl(): %s\n", ret->utf8Data());
         return ret;
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
@@ -1868,11 +1866,7 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundImage(std::vector<String*, gc
                 return false;
             }
             return true;
-        } else if (startsWith(token, "initial") && strlen(token) == 7) {
-            return true;
-        } else if (startsWith(token, "inherit") && strlen(token) == 7) {
-            return true;
-        } else if (startsWith(token, "none") && strlen(token) == 4) {
+        } else if (CSSPropertyParser::assureEssential(token)) {
             return true;
         }
     } else if (tokens->size() == 2) {
