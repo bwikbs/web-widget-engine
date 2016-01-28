@@ -1564,7 +1564,8 @@ bool CSSStyleDeclaration::checkHavingOneTokenAndLengthOrPercentage(std::vector<S
 {
     // length | percentage | <auto> | inherit
     if (tokens->size() == 1) {
-        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        (*tokens)[0] = (*tokens)[0]->toLower();
+        const char* token = (*tokens)[0]->utf8Data();
         if (CSSPropertyParser::assureLength(token, false) ||
             CSSPropertyParser::assurePercent(token, false) ||
             (strcmp(token, "auto") == 0) || (strcmp(token, "initial") == 0) || (strcmp(token, "inherit") == 0)) {
@@ -1598,7 +1599,8 @@ bool CSSStyleDeclaration::checkInputErrorDirection(std::vector<String*, gc_alloc
 {
     // <ltr> | rtl | inherit
     if (tokens->size() == 1) {
-        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        (*tokens)[0] = (*tokens)[0]->toLower();
+        const char* token = (*tokens)[0]->utf8Data();
         if ((strcmp(token, "ltr") == 0) ||
             (strcmp(token, "rtl") == 0) ||
             (strcmp(token, "inherit") == 0)) {
