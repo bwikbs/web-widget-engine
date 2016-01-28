@@ -1503,7 +1503,8 @@ bool CSSStyleDeclaration::checkInputErrorDirection(std::vector<String*, gc_alloc
     if (tokens->size() == 1) {
         const char* token = (*tokens)[0]->toLower()->utf8Data();
         if ((strcmp(token, "ltr") == 0) ||
-            (strcmp(token, "rtl") == 0)) {
+            (strcmp(token, "rtl") == 0) ||
+            (strcmp(token, "inherit") == 0)) {
             return true;
         }
     }
