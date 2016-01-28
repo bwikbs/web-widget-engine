@@ -14,14 +14,22 @@ void DOMTokenList::tokenize(std::vector<String*, gc_allocator<String*>>* tokens,
     bool isWhiteSpaceState = true;
 
     std::string str;
+    bool inQuotationMarks = false;
     for (size_t i = 0; i < length; i ++) {
+        if (data[i] == '"' || data[i] == '\'') {
+            if (inQuotationMarks)
+                inQuotationMarks = false;
+            else
+                inQuotationMarks = true;
+        }
         if (isWhiteSpaceState) {
             if (data[i] != ' ') {
                 isWhiteSpaceState = false;
                 str += data[i];
-            }
+            } else
+                continue;
         } else {
-            if (data[i] == ' ') {
+            if (data[i] == ' ' && !inQuotationMarks) {
                 isWhiteSpaceState = true;
                 tokens->push_back(String::fromUTF8(str.data(), str.length()));
                 str.clear();
@@ -34,7 +42,7 @@ void DOMTokenList::tokenize(std::vector<String*, gc_allocator<String*>>* tokens,
     if (str.length()) {
         tokens->push_back(String::fromUTF8(str.data(), str.length()));
     }
-    STARFISH_ASSERT(src->indexOf(' ') == SIZE_MAX || tokens->size() > 1);
+//    STARFISH_ASSERT(str.find(' ', 0) == SIZE_MAX || tokens->size() > 1);
 }
 
 unsigned long DOMTokenList::length()
