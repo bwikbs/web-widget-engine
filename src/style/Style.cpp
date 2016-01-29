@@ -2127,23 +2127,26 @@ void CSSStyleDeclaration::setBackgroundRepeat(const char* value)
 
 
 String* CSSStyleDeclaration::Background(){
-/*    String* repeatX = BackgroundRepeatX();
+    String* image = BackgroundImage();
+    String* repeat;
+    String* repeatX = BackgroundRepeatX();
     String* repeatY = BackgroundRepeatY();
+    String* color = BackgroundColor();
 
     if(repeatX->equals("repeat") && repeatY->equals("repeat"))
-        return String::fromUTF8("repeat");
+        repeat = String::fromUTF8("repeat");
     else if(repeatX->equals("repeat") && repeatY->equals("no-repeat"))
-        return String::fromUTF8("repeat-x");
+        repeat = String::fromUTF8("repeat-x");
     else if(repeatX->equals("no-repeat") && repeatY->equals("repeat"))
-        return String::fromUTF8("repeat-y");
+        repeat = String::fromUTF8("repeat-y");
     else if(repeatX->equals("no-repeat") && repeatY->equals("no-repeat"))
-        return String::fromUTF8("no-repeat");
+        repeat = String::fromUTF8("no-repeat");
     else if(repeatX->equals("initial") && repeatY->equals("initial"))
-        return String::fromUTF8("initial");
+        repeat = String::fromUTF8("");
     else if(repeatX->equals("inherit") && repeatY->equals("inherit"))
-        return String::fromUTF8("inherit");
-*/
-    return String::emptyString;
+        repeat = String::fromUTF8("");
+
+    return image->concat(String::fromUTF8(" "))->concat(repeat)->concat(String::fromUTF8(" "))->concat(color);
 }
 
 void CSSStyleDeclaration::setBackground(const char* value)
