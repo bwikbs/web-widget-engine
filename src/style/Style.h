@@ -813,6 +813,7 @@ public:
             for (unsigned i = 0; i < m_cssValues.size(); i++) { \
                 if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) { \
                     m_cssValues.at(i).setValue##name(&tokens); \
+                    return; \
                 } \
             } \
             CSSStyleValuePair ret; \
