@@ -103,6 +103,12 @@
 			print(a.style.marginLeft);
 
 			print(a.style.margin);
+			a.style.margin = "11pt";
+			print(a.style.margin);
+			a.style.margin = "12pt 13px";
+			print(a.style.margin);
+			a.style.margin = "14pt 15px 16%";
+			print(a.style.margin);
 			a.style.margin = "11pt 10px 3pt 4%";
 			print(a.style.margin);
 

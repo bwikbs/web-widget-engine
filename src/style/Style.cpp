@@ -1829,14 +1829,20 @@ void CSSStyleDeclaration::setMargin(const char* value)
     DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
     if (checkInputErrorMargin(&tokens)) {
         unsigned len = tokens.size();
-        if (len > 0)
-            setMarginTop(tokens[0]->utf8Data());
-        if (len > 1)
-                setMarginRight(tokens[1]->utf8Data());
-        if (len > 2)
-                setMarginBottom(tokens[2]->utf8Data());
-        if (len > 3)
-                setMarginLeft(tokens[3]->utf8Data());
+        if (len == 1) {
+            tokens.push_back(tokens[0]);
+            tokens.push_back(tokens[0]);
+            tokens.push_back(tokens[0]);
+        } else if (len == 2) {
+            tokens.push_back(tokens[0]);
+            tokens.push_back(tokens[1]);
+        } else if (len == 3)
+            tokens.push_back(tokens[1]);
+
+        setMarginTop(tokens[0]->utf8Data());
+        setMarginRight(tokens[1]->utf8Data());
+        setMarginBottom(tokens[2]->utf8Data());
+        setMarginLeft(tokens[3]->utf8Data());
     }
 }
 
