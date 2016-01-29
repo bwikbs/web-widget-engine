@@ -88,6 +88,8 @@
 			print(a.style.color);
 			a.style.color = "blue";
 			print(a.style.color);
+			a.style.color = "";
+			print(a.style.color);
 			print("<End>")
             return 1<2;
         }

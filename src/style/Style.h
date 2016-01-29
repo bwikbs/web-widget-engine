@@ -784,6 +784,14 @@ public:
 #define ATTRIBUTE_SETTER(name) \
     void set##name(const char* value) \
     { \
+        if (*value == '\0') { \
+            for (unsigned i = 0; i < m_cssValues.size(); i++) { \
+                if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) { \
+                    m_cssValues.erase(m_cssValues.begin()+i); \
+                } \
+              } \
+             return; \
+        } \
         std::vector<String*, gc_allocator<String*>> tokens; \
         DOMTokenList::tokenize(&tokens, String::fromUTF8(value)); \
         if (checkInputError##name(&tokens)) { \
