@@ -195,6 +195,35 @@ public:
         return false;
     }
 
+    static bool assureBorderWidth(const char* token)
+    {
+        // border-width(thin | <medium> | thick) | length
+        if (strcmp(token, "thin") == 0 ||
+            strcmp(token, "medium") == 0 ||
+            strcmp(token, "thick") == 0 ||
+            assureLength(token, false))
+            return true;
+        return false;
+    }
+
+    static bool assureBorderStyle(const char* token)
+    {
+        // border-style(<none> | solid) | inherit
+        if (strcmp(token, "none") == 0 ||
+            strcmp(token, "solid") == 0)
+            return true;
+        return false;
+    }
+
+    static bool assureBorderColor(const char* token)
+    {
+        // color | transparent | inherit
+        if (assureColor(token) ||
+            strcmp(token, "transparent") == 0)
+            return true;
+        return false;
+    }
+
     static char* getNextSingleValue(char* str) {
         char* next = NULL;
         while( (next = strchr(str, ' ')) ) {

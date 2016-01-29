@@ -177,6 +177,13 @@ enum BorderImageRepeatValue {
     SpaceValue,
 };
 
+enum BorderShorthandValueType {
+    BWidth,
+    BStyle,
+    BColor,
+    BInvalid,
+};
+
 enum BorderStyleValue {
     BNone,
     BSolid,
@@ -775,6 +782,7 @@ public:
 #undef CHECK_INPUT_ERROR
     bool checkInputErrorMargin(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkInputErrorBackgroundRepeat(std::vector<String*, gc_allocator<String*>>* tokens);
+    bool checkInputErrorBorderTop(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*>>* tokens, bool allowNegative);
 #define ATTRIBUTE_GETTER(name) \
     String* name () { \
@@ -820,7 +828,9 @@ public:
 #undef FOR_EACH_STYLE_ATTRIBUTE
 
     String* Margin();
+    String* BorderTop();
     void setMargin(const char* value);
+    void setBorderTop(const char* value);
 
     String* BackgroundRepeat();
     void setBackgroundRepeat(const char* value);

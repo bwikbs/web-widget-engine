@@ -832,6 +832,65 @@ void CSSStyleValuePair::setValueBorderImageWidth(std::vector<String*, gc_allocat
     }
 }
 
+String* CSSStyleDeclaration::BorderTop()
+{
+    // TODO
+    return String::emptyString;
+}
+
+BorderShorthandValueType checkBorderValueType(const char* token)
+{
+    if (CSSPropertyParser::assureBorderWidth(token)) {
+        return BorderShorthandValueType::BWidth;
+    } else if (CSSPropertyParser::assureBorderStyle(token)) {
+        return BorderShorthandValueType::BStyle;
+    } else if (CSSPropertyParser::assureBorderColor(token)) {
+        return BorderShorthandValueType::BColor;
+    } else {
+        return BorderShorthandValueType::BInvalid;
+    }
+}
+
+void CSSStyleDeclaration::setBorderTop(const char* value)
+{
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+    if (checkInputErrorBorderTop(&tokens)) {
+        if (tokens.size() == 1 && VALUE_IS_INHERIT()) {
+            setBorderTopWidth("inherit");
+            setBorderTopStyle("inherit");
+            setBorderTopColor("inherit");
+            return;
+        }
+
+        bool hasWidth = false, hasStyle = false, hasColor = false;
+        for (unsigned i = 0; i < tokens.size(); i++) {
+            switch (checkBorderValueType(tokens[i]->utf8Data())) {
+            case BorderShorthandValueType::BWidth:
+                setBorderTopWidth(tokens[i]->utf8Data());
+                hasWidth = true;
+                break;
+            case BorderShorthandValueType::BStyle:
+                setBorderTopStyle(tokens[i]->utf8Data());
+                hasStyle = true;
+                break;
+            case BorderShorthandValueType::BColor:
+                setBorderTopColor(tokens[i]->utf8Data());
+                hasColor = true;
+                break;
+            default:
+                break;
+            }
+        }
+        if (!hasWidth)
+            setBorderTopWidth("initial");
+        if (!hasStyle)
+            setBorderTopStyle("initial");
+        if (!hasColor)
+            setBorderTopColor("initial");
+    }
+}
+
 void CSSStyleValuePair::setValueBorderTopColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     const char* value = tokens->at(0)->utf8Data();
@@ -2433,6 +2492,41 @@ bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, g
         }
     }
     return true;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderTop(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // [border-width || border-style || border-color] | inherit | initial
+    if (tokens->size() == 1 && CSSPropertyParser::assureEssential(tokens->at(0)->toLower()->utf8Data())) {
+        return true;
+    }
+
+    bool hasWidth = false, hasStyle = false, hasColor = false;
+    if (tokens->size() > 0 && tokens->size() <= 3) {
+        for (unsigned i = 0; i < tokens->size(); i++) {
+            switch (checkBorderValueType(tokens->at(i)->toLower()->utf8Data())) {
+            case BorderShorthandValueType::BWidth:
+                if (hasWidth)
+                    return false;
+                hasWidth = true;
+                break;
+            case BorderShorthandValueType::BStyle:
+                if (hasStyle)
+                    return false;
+                hasStyle = true;
+                break;
+            case BorderShorthandValueType::BColor:
+                if (hasColor)
+                    return false;
+                hasColor = true;
+                break;
+            case BorderShorthandValueType::BInvalid:
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 bool checkInputErrorBorderUnitColor(std::vector<String*, gc_allocator<String*>>* tokens)
