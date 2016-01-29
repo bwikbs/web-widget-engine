@@ -41,7 +41,7 @@
             document.body.style.padding = "70% 70%";
             print("div1 set padding(\"70% 70%\"): " + document.body.style.padding);
 
-            document.body.style.padding = "5em 11em 5em 11em";
+            document.body.style.padding = "5em 11em 5m 11em";
             print("div1 set padding(\"5em 11em 5em 11em\"): " + document.body.style.padding);
 
             document.body.style.padding = "100px 30px 50px 30px";
@@ -53,17 +53,11 @@
             document.body.style.padding = "5gt";
             print("div1 set padding(\"5gt\"): " + document.body.style.padding + " (egnore invalid unit)");
 
-            document.body.style.padding = "5em 11em 5m 11em";
-            print("div1 set padding(\"5em 11em 5m 11em\"): " + document.body.style.padding + " (egnore all)");
-
-            document.body.style.padding = "inherit inherit";
-            print("div1 set padding(\"inherit inherit\"): " + document.body.style.padding + " (egnore multiple inherit/initial)");
-
             document.body.style.padding = "-7px";
             print("div1 set padding(\"-7px\"): " + document.body.style.padding + " (egnore negative value)");
 
             document.body.style.padding = "";
-            print("div1 set padding(\"\"): (reset all padding values)");
+            print("div1 set padding(\"\"): (reset all padding value)");
             print("- padding: " + document.body.style.padding);
             print("- paddingTop: " + document.body.style.paddingTop);
             print("- paddingRight: " + document.body.style.paddingRight);

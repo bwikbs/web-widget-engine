@@ -1,7 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-<style>
+<?xml version="1.0" encoding="UTF-8"?>
+<HTMLDocument>
+	<node nodeType="9" localName="document">
+		<node nodeType="10" localName="documentType">
+		</node>
+		<node nodeType="1" localName="html">
+			<node nodeType="1" localName="head">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+				<node nodeType="1" localName="style">
+					<style selectorText="#box1" background-color="maroon" color="white"/>
+					<style selectorText="#box2" background-color="navy" color="white" padding-right="50px"/>
+					<style selectorText="#box3" background-color="orange" padding-right="60%"/>
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
 #box1 {
     background-color: maroon;
     color: white;
@@ -16,18 +29,58 @@
     background-color: orange;
     padding-right: 60%;
 }
-</style>
-</head>
-<body>
+]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+]]></text>
+				</node>
+			</node>
+			<node nodeType="3" localName="text">
+				<text><![CDATA[
+]]></text>
+			</node>
+			<node nodeType="1" localName="body" style="">
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
 
-<div id="box1">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" id="box1">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
 
-<div id="box2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" id="box2">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
 
-<div id="box3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+]]></text>
+				</node>
+				<node nodeType="1" localName="div" id="box3">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
 
-</body>
-    <script type="text/javascript">
+
+    ]]></text>
+				</node>
+				<node nodeType="1" localName="script" type="text/javascript">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
         function run() {
             document.body.style.padding = "Initial";
             print("div1 set padding(\"Initial\"): " + document.body.style.padding);
@@ -71,5 +124,15 @@
             print("- paddingLeft: " + document.body.style.paddingLeft);
         }
         run();
-    </script>
-</html>
+    ]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
+
+]]></text>
+				</node>
+			</node>
+		</node>
+	</node>
+</HTMLDocument>

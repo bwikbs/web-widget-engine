@@ -838,6 +838,9 @@ public:
     String* Background();
     void setBackground(const char* value);
 
+    String* Padding();
+    void setPadding(const char* value);
+
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;
     Document* m_document;

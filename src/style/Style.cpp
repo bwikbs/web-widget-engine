@@ -2247,6 +2247,65 @@ void CSSStyleDeclaration::setBackground(const char* value)
     }
 }
 
+String* CSSStyleDeclaration::Padding()
+{
+    String* sum;
+    String* space = String::fromUTF8(" ");
+    String* top = PaddingTop();
+    if (!top->equals(String::emptyString)) {
+        String* right = PaddingRight();
+        if (!right->equals(String::emptyString)) {
+            String* bottom = PaddingBottom();
+            if (!bottom->equals(String::emptyString)) {
+                String* left = PaddingLeft();
+                if (!left->equals(String::emptyString)) {
+                       sum = top;
+                       return sum->concat(space)->concat(right)->concat(space)->concat(bottom)->concat(space)->concat(left);
+                  }
+            }
+        }
+    }
+    return String::emptyString;
+}
+
+void CSSStyleDeclaration::setPadding(const char* value)
+{
+    if (*value == '\0') {
+        setPaddingTop(value);
+        setPaddingRight(value);
+        setPaddingBottom(value);
+        setPaddingLeft(value);
+        return;
+    }
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+    unsigned len = tokens.size();
+    if (len < 1 || len > 4) return;
+    if (len != 1) {
+        for (unsigned int i = 0; i < len; i++) {
+            String* current = tokens.at(i)->toLower();
+            if (current->equals("initial")) return;
+            if (current->equals("inherit")) return;
+            if (!CSSPropertyParser::assureLength(current->utf8Data(), false)
+                && !CSSPropertyParser::assurePercent(current->utf8Data(), false)) return;
+        }
+    }
+    if (len == 1) {
+        tokens.push_back(tokens[0]);
+        tokens.push_back(tokens[0]);
+        tokens.push_back(tokens[0]);
+    } else if (len == 2) {
+        tokens.push_back(tokens[0]);
+        tokens.push_back(tokens[1]);
+    } else if (len == 3)
+        tokens.push_back(tokens[1]);
+
+    setPaddingTop(tokens[0]->utf8Data());
+    setPaddingRight(tokens[1]->utf8Data());
+    setPaddingBottom(tokens[2]->utf8Data());
+    setPaddingLeft(tokens[3]->utf8Data());
+}
+
 bool CSSStyleDeclaration::checkInputErrorColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     // color | percentage | <auto> | inherit

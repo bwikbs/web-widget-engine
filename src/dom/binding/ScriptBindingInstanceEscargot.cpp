@@ -1444,6 +1444,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(PaddingRight, paddingRight) \
     F(PaddingBottom, paddingBottom) \
     F(PaddingLeft, paddingLeft) \
+    F(Padding, padding) \
     F(MarginTop, marginTop) \
     F(MarginRight, marginRight) \
     F(MarginBottom, marginBottom) \
