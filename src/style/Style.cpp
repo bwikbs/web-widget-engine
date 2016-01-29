@@ -1993,7 +1993,23 @@ bool CSSStyleDeclaration::checkInputErrorHeight(std::vector<String*, gc_allocato
 
 bool CSSStyleDeclaration::checkInputErrorFontSize(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    if (tokens->size() == 1) {
+        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        if ((strcmp(token, "xx-small") == 0) ||
+            (strcmp(token, "x-small") == 0) ||
+            (strcmp(token, "small") == 0) ||
+            (strcmp(token, "medium") == 0) ||
+            (strcmp(token, "large") == 0) ||
+            (strcmp(token, "x-large") == 0) ||
+            (strcmp(token, "xx-large") == 0) ||
+            (strcmp(token, "larger") == 0) ||
+            (strcmp(token, "smaller") == 0) ||
+            (strcmp(token, "inherit") == 0) ||
+            (strcmp(token, "init") == 0)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorFontStyle(std::vector<String*, gc_allocator<String*>>* tokens)
@@ -2029,7 +2045,17 @@ bool CSSStyleDeclaration::checkInputErrorDisplay(std::vector<String*, gc_allocat
 
 bool CSSStyleDeclaration::checkInputErrorPosition(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    if (tokens->size() == 1) {
+        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        if ((strcmp(token, "static") == 0) ||
+            (strcmp(token, "relative") == 0) ||
+            (strcmp(token, "absolute") == 0) ||
+            (strcmp(token, "fixed") == 0) ||
+            (strcmp(token, "inherit") == 0)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorTextDecoration(std::vector<String*, gc_allocator<String*>>* tokens)
