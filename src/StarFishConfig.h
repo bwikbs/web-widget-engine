@@ -161,6 +161,7 @@
 
 
 #include "util/String.h"
+#include "util/QualifiedName.h"
 #include "style/Unit.h"
 
 #endif

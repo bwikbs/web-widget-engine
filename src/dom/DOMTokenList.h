@@ -9,8 +9,8 @@ class Node;
 class Element;
 class DOMTokenList : public ScriptWrappable {
 public:
-    DOMTokenList(ScriptBindingInstance* instance, Element* element, String* localName)
-    : m_element(element), m_localName(localName)
+    DOMTokenList(ScriptBindingInstance* instance, Element* element, QualifiedName localName)
+        : m_element(element), m_localName(localName)
     {
         initScriptWrappable(this, instance);
     }
@@ -26,7 +26,7 @@ public:
     bool toggle(String* token, bool isForced, bool forceValue);
 private:
     Element* m_element;
-    String* m_localName;
+    QualifiedName m_localName;
 };
 
 }

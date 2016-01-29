@@ -10,25 +10,26 @@ class Attribute{
 public:
 
     Attribute()
+        : m_name(QualifiedName::emptyQualifiedName())
     {
-        m_value = m_name = String::emptyString;
+        m_value = String::emptyString;
     }
 
-    Attribute(String* name, String* value)
+    Attribute(QualifiedName name, String* value)
+        : m_name(name)
     {
-        m_name = name;
         m_value = value;
     }
 
-    String* name()
+    QualifiedName name()
     {
-        STARFISH_ASSERT(m_name->length());
+        STARFISH_ASSERT(m_name.string()->length());
         return m_name;
     }
 
     String* value()
     {
-        STARFISH_ASSERT(m_name->length());
+        STARFISH_ASSERT(m_name.string()->length());
         return m_value;
     }
 
@@ -37,7 +38,7 @@ public:
         m_value = v;
     }
 protected:
-    String* m_name;
+    QualifiedName m_name;
     String* m_value;
 };
 

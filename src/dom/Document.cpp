@@ -87,37 +87,38 @@ HTMLCollection* Document::getElementsByClassName(String* classNames)
   return new HTMLCollection(scriptBindingInstance(), this, filter);
 }
 
-Element* Document::createElement(String* localName)
+Element* Document::createElement(QualifiedName localName)
 {
-  if(localName->equals(window()->starFish()->staticStrings()->m_htmlLocalName)){
-    return new HTMLElement(this);
-  }else if(localName->equals(window()->starFish()->staticStrings()->m_headLocalName)){
-    return new HTMLHeadElement(this);
-  }else if(localName->equals(window()->starFish()->staticStrings()->m_styleLocalName)){
-    return new HTMLStyleElement(this);
-  }else if(localName->equals(window()->starFish()->staticStrings()->m_scriptLocalName)){
-    return new HTMLScriptElement(this);
-  }else if(localName->equals(window()->starFish()->staticStrings()->m_bodyLocalName)){
-    return new HTMLBodyElement(this);
-  }else if(localName->equals(window()->starFish()->staticStrings()->m_divLocalName)){
-    return new HTMLDivElement(this);
-  }else if(localName->equals(window()->starFish()->staticStrings()->m_imageLocalName)){
-    return new HTMLImageElement(this);
+  if (localName == window()->starFish()->staticStrings()->m_htmlLocalName) {
+      return new HTMLElement(this);
+  } else if (localName == window()->starFish()->staticStrings()->m_headLocalName) {
+      return new HTMLHeadElement(this);
+  } else if (localName == window()->starFish()->staticStrings()->m_styleLocalName) {
+      return new HTMLStyleElement(this);
+  } else if (localName == window()->starFish()->staticStrings()->m_scriptLocalName) {
+      return new HTMLScriptElement(this);
+  } else if (localName == window()->starFish()->staticStrings()->m_bodyLocalName) {
+      return new HTMLBodyElement(this);
+  } else if (localName == window()->starFish()->staticStrings()->m_divLocalName) {
+      return new HTMLDivElement(this);
+  } else if (localName == window()->starFish()->staticStrings()->m_imageLocalName) {
+      return new HTMLImageElement(this);
   }
   return new HTMLUnknownElement(this,localName);
 }
 
-Text*    Document::createTextNode(String* data)
+Text* Document::createTextNode(String* data)
 {
   return new Text(this,data);
 }
 
-Comment*    Document::createComment(String* data)
+Comment* Document::createComment(String* data)
 {
   return new Comment(this,data);
 }
 
-Attr* Document::createAttribute(String* localName){
+Attr* Document::createAttribute(QualifiedName localName)
+{
   return new Attr(scriptBindingInstance(),localName);
 }
 

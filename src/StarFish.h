@@ -11,33 +11,36 @@ class ScriptBindingInstance;
 class ImageData;
 
 class StaticStrings {
+    friend class QualifiedName;
 public:
-    StaticStrings();
+    StaticStrings(StarFish* sf);
 
     // Node Names
-    String* m_documentLocalName;
-    String* m_textLocalName;
-    String* m_commentLocalName;
-    String* m_htmlLocalName;
-    String* m_headLocalName;
-    String* m_styleLocalName;
-    String* m_scriptLocalName;
-    String* m_bodyLocalName;
-    String* m_divLocalName;
-    String* m_imageLocalName;
-    String* m_brLocalName;
+    QualifiedName m_documentLocalName;
+    QualifiedName m_textLocalName;
+    QualifiedName m_commentLocalName;
+    QualifiedName m_htmlLocalName;
+    QualifiedName m_headLocalName;
+    QualifiedName m_styleLocalName;
+    QualifiedName m_scriptLocalName;
+    QualifiedName m_bodyLocalName;
+    QualifiedName m_divLocalName;
+    QualifiedName m_imageLocalName;
+    QualifiedName m_brLocalName;
 
     // Attribute Names
-    String* m_id;
-    String* m_class;
-    String* m_src;
+    QualifiedName m_id;
+    QualifiedName m_class;
+    QualifiedName m_localName;
+    QualifiedName m_src;
 
     // Event Names
-    String* m_click;
-    String* m_onclick;
+    QualifiedName m_click;
+    QualifiedName m_onclick;
 
-    // Etc
-    String* m_space;
+protected:
+    std::unordered_map<std::string, QualifiedName,
+    std::hash<std::string>, std::equal_to<std::string>, gc_allocator<std::pair<std::string, QualifiedName>>> m_staticStringMap;
 };
 
 enum StarFishStartUpFlag {

@@ -21,7 +21,7 @@ Attr* NamedNodeMap::item(unsigned long index)
     } else
         return nullptr;
 }
-Attr* NamedNodeMap::getNamedItem(String* name)
+Attr* NamedNodeMap::getNamedItem(QualifiedName name)
 {
     if (m_element->getAttribute(name) != String::emptyString)
         return new Attr(m_instance, m_element, name);
@@ -33,7 +33,7 @@ void NamedNodeMap::setNamedItem(Attr* attr)
     m_element->setAttribute(attr->name(), attr->value());
 }
 
-void NamedNodeMap::removeNamedItem(String* name)
+void NamedNodeMap::removeNamedItem(QualifiedName name)
 {
     m_element->removeAttribute(name);
 }

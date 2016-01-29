@@ -150,7 +150,7 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                     continue;
                 }
 
-                newNode->asElement()->setAttribute(String::fromUTF8(attr->Name()), String::fromUTF8(attr->Value()));
+                newNode->asElement()->setAttribute(QualifiedName::fromString(document->window()->starFish(), attr->Name()), String::fromUTF8(attr->Value()));
                 attr = attr->Next();
             }
         }

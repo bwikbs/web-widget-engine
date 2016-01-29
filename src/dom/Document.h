@@ -24,12 +24,12 @@ public:
     Element* getElementById(String* id);
 
     /* 4.5. Interface Document */
-    Element* createElement(String* localName);
+    Element* createElement(QualifiedName localName);
     Text*    createTextNode(String* data);
     Comment* createComment(String* data);
     HTMLCollection* getElementsByTagName(String* qualifiedName);
     HTMLCollection* getElementsByClassName(String* classNames);
-    Attr* createAttribute(String* localName);
+    Attr* createAttribute(QualifiedName localName);
 
     /* Other methods */
     virtual NodeType nodeType()

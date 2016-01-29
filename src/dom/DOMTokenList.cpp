@@ -85,7 +85,7 @@ String* DOMTokenList::addSingleToken(String* src, std::vector<String*, gc_alloca
     }
     if (!matched) {
         if (src->length() > 0)
-            return src->concat(m_element->document()->window()->starFish()->staticStrings()->m_space)->concat(token);
+            return src->concat(String::spaceString)->concat(token);
         else
             return src->concat(token);
     }
@@ -132,7 +132,7 @@ void DOMTokenList::remove(String* token)
                     dst = tokens.at(i);
                     isEmpty = false;
                 } else {
-                    dst = dst->concat(m_element->document()->window()->starFish()->staticStrings()->m_space)->concat(tokens.at(i));
+                    dst = dst->concat(String::spaceString)->concat(tokens.at(i));
                 }
             }
         }
@@ -160,7 +160,7 @@ void DOMTokenList::remove(std::vector<String*, gc_allocator<String*>>* tokensToR
                     dst = tokens.at(i);
                     isEmpty = false;
                 } else {
-                    dst = dst->concat(m_element->document()->window()->starFish()->staticStrings()->m_space)->concat(tokens.at(i));
+                    dst = dst->concat(String::spaceString)->concat(tokens.at(i));
                 }
             }
         }

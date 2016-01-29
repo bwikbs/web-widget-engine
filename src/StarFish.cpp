@@ -11,10 +11,12 @@ namespace StarFish {
 
 #ifndef STARFISH_TIZEN_WEARABLE
 StarFish::StarFish(StarFishStartUpFlag flag, String* currentPath)
+    : m_staticStrings(this)
 {
     m_startUpFlag = flag;
     m_currentPath = currentPath;
     GC_add_roots(String::emptyString, String::emptyString + sizeof(String*));
+    GC_add_roots(String::spaceString, String::spaceString + sizeof(String*));
     elm_init(0,0);
     elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
     m_messageLoop = new MessageLoop();
@@ -24,10 +26,12 @@ StarFish::StarFish(StarFishStartUpFlag flag, String* currentPath)
 }
 #else
 StarFish::StarFish(StarFishStartUpFlag flag, String* currentPath, void* win)
+    : m_staticStrings(this)
 {
     m_startUpFlag = flag;
     m_currentPath = currentPath;
     GC_add_roots(String::emptyString, String::emptyString + sizeof(String*));
+    GC_add_roots(String::spaceString, String::spaceString + sizeof(String*));
     m_messageLoop = new MessageLoop();
     m_scriptBindingInstance = new ScriptBindingInstance();
     m_scriptBindingInstance->initBinding(this);
@@ -71,28 +75,27 @@ ImageData* StarFish::fetchImage(String* str)
     return iter->second;
 }
 
-StaticStrings::StaticStrings()
+StaticStrings::StaticStrings(StarFish* sf)
 {
-    m_documentLocalName = String::createASCIIString("#document");
-    m_textLocalName = String::createASCIIString("#text");
-    m_commentLocalName = String::createASCIIString("#comment");
-    m_htmlLocalName = String::createASCIIString("html");
-    m_headLocalName = String::createASCIIString("head");
-    m_styleLocalName = String::createASCIIString("style");
-    m_scriptLocalName = String::createASCIIString("script");
-    m_bodyLocalName = String::createASCIIString("body");
-    m_divLocalName = String::createASCIIString("div");
-    m_imageLocalName = String::createASCIIString("img");
-    m_brLocalName = String::createASCIIString("br");
+    m_documentLocalName = QualifiedName::fromString(sf, "#document");
+    m_textLocalName = QualifiedName::fromString(sf, "#text");
+    m_commentLocalName = QualifiedName::fromString(sf, "#comment");
+    m_htmlLocalName = QualifiedName::fromString(sf, "html");
+    m_headLocalName = QualifiedName::fromString(sf, "head");
+    m_styleLocalName = QualifiedName::fromString(sf, "style");
+    m_scriptLocalName = QualifiedName::fromString(sf, "script");
+    m_bodyLocalName = QualifiedName::fromString(sf, "body");
+    m_divLocalName = QualifiedName::fromString(sf, "div");
+    m_imageLocalName = QualifiedName::fromString(sf, "img");
+    m_brLocalName = QualifiedName::fromString(sf, "br");
 
-    m_id = String::createASCIIString("id");
-    m_class = String::createASCIIString("class");
-    m_src = String::createASCIIString("src");
+    m_id = QualifiedName::fromString(sf, "id");
+    m_class = QualifiedName::fromString(sf, "class");
+    m_localName = QualifiedName::fromString(sf, "localName");
+    m_src = QualifiedName::fromString(sf, "src");
 
-    m_click = String::createASCIIString("click");
-    m_onclick = String::createASCIIString("onclick");
-
-    m_space = String::createASCIIString(" ");
+    m_click = QualifiedName::fromString(sf, "click");
+    m_onclick = QualifiedName::fromString(sf, "onclick");
 }
 
 }

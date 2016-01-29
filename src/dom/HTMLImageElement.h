@@ -37,10 +37,10 @@ public:
         return getAttribute(document()->window()->starFish()->staticStrings()->m_src);
     }
 
-    virtual void didAttributeChanged(String* name, String* old, String* value)
+    virtual void didAttributeChanged(QualifiedName name, String* old, String* value)
     {
         HTMLElement::didAttributeChanged(name, old, value);
-        if (name->equals(document()->window()->starFish()->staticStrings()->m_src)) {
+        if (name == document()->window()->starFish()->staticStrings()->m_src) {
             m_src = value;
             setNeedsStyleRecalc();
         }

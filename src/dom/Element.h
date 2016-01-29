@@ -116,8 +116,8 @@ public:
         return false;
     }
 
-    size_t hasAtttibute(String* name);
-    String* getAttribute(String* name)
+    size_t hasAtttibute(QualifiedName name);
+    String* getAttribute(QualifiedName name)
     {
         size_t siz = hasAtttibute(name);
         if (siz == SIZE_MAX)
@@ -125,10 +125,10 @@ public:
         return getAttribute(siz);
     }
     String* getAttribute(size_t pos);
-    void setAttribute(String* name, String* value);
-    void removeAttribute(String* name);
+    void setAttribute(QualifiedName name, String* value);
+    void removeAttribute(QualifiedName name);
 
-    virtual void didAttributeChanged(String* name, String* old, String* value);
+    virtual void didAttributeChanged(QualifiedName name, String* old, String* value);
 
     virtual void dump()
     {

@@ -512,7 +512,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         CHECK_TYPEOF(originalObj, ScriptWrappable::Type::NodeObject);
         Node* nd = ((Node *)originalObj);
         if (nd->isElement()) {
-            return escargot::ESString::create(nd->asElement()->getAttribute(String::fromUTF8("localName"))->utf8Data());
+            return escargot::ESString::create(nd->asElement()->localName()->utf8Data());
         } else {
             THROW_ILLEGAL_INVOCATION();
         }
@@ -524,7 +524,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
         Node* nd = ((Node *)originalObj);
         if (nd->isElement()) {
             // FIXME(JMP): We have to fix this to follow DOM spec after implementing Namespace
-            return escargot::ESString::create(nd->asElement()->getAttribute(String::fromUTF8("localName"))->toUpper()->utf8Data());
+            return escargot::ESString::create(nd->asElement()->localName()->toUpper()->utf8Data());
         } else {
             THROW_ILLEGAL_INVOCATION();
         }
@@ -778,7 +778,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
             if (argValue.isESString()) {
                 escargot::ESString* argStr = argValue.asESString();
-                Element* elem = doc->createElement(String::fromUTF8(argStr->utf8Data()));
+                QualifiedName name = QualifiedName::fromString(doc->window()->starFish(), argStr->utf8Data());
+                Element* elem = doc->createElement(name);
                 if (elem != nullptr)
                     return escargot::ESValue((escargot::ESObject *)elem);
             }
@@ -883,7 +884,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
             escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
             if (argValue.isESString()) {
                 escargot::ESString* argStr = argValue.asESString();
-                Attr* result = doc->createAttribute(String::fromUTF8(argStr->utf8Data()));
+                Attr* result = doc->createAttribute(QualifiedName::fromString(doc->window()->starFish(), argStr->utf8Data()));
                 if (result != nullptr)
                     return escargot::ESValue((escargot::ESObject *)result);
             }
@@ -1321,7 +1322,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
        escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
        if (argValue.isESString()) {
-           Attr* elem = ((NamedNodeMap*) thisValue.asESPointer()->asESObject())->getNamedItem(String::fromUTF8(argValue.asESString()->utf8Data()));
+           Attr* elem = ((NamedNodeMap*) thisValue.asESPointer()->asESObject())->getNamedItem(
+                   QualifiedName::fromString(((NamedNodeMap*) thisValue.asESPointer()->asESObject())->element()->document()->window()->starFish(), argValue.asESString()->utf8Data()));
            if (elem != nullptr)
                return escargot::ESValue((escargot::ESObject *)elem);
        } else {
@@ -1353,7 +1355,8 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
        escargot::ESValue argValue = instance->currentExecutionContext()->readArgument(0);
        if (argValue.isESString()) {
-           String* name = String::fromUTF8(argValue.asESString()->utf8Data());
+           QualifiedName name = QualifiedName::fromString(((NamedNodeMap*) thisValue.asESPointer()->asESObject())->element()->document()->window()->starFish(),
+                   argValue.asESString()->utf8Data());
            Attr* old = ((NamedNodeMap*) thisValue.asESPointer()->asESObject())->getNamedItem(name);
            Attr* toReturn = new Attr(((NamedNodeMap*) thisValue.asESPointer()->asESObject())->striptBindingInstance(), name, old->value());
            ((NamedNodeMap*) thisValue.asESPointer()->asESObject())->removeNamedItem(name);

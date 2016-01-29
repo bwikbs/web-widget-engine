@@ -17,10 +17,10 @@
 
 namespace StarFish {
 
-size_t Element::hasAtttibute(String* name)
+size_t Element::hasAtttibute(QualifiedName name)
 {
     for (size_t i = 0; i < m_attributes.size(); i ++) {
-        if (m_attributes[i].name()->equals(name)) {
+        if (m_attributes[i].name() == name) {
             return i;
         }
     }
@@ -32,7 +32,7 @@ String* Element::getAttribute(size_t pos)
     return m_attributes[pos].value();
 }
 
-void Element::setAttribute(String* name, String* value)
+void Element::setAttribute(QualifiedName name, String* value)
 {
     size_t idx = hasAtttibute(name);
     if (idx == SIZE_MAX) {
@@ -45,7 +45,7 @@ void Element::setAttribute(String* name, String* value)
     }
 }
 
-void Element::removeAttribute(String* name)
+void Element::removeAttribute(QualifiedName name)
 {
     size_t idx = hasAtttibute(name);
     if (idx == SIZE_MAX) {
@@ -56,12 +56,12 @@ void Element::removeAttribute(String* name)
     }
 }
 
-void Element::didAttributeChanged(String* name, String* old, String* value)
+void Element::didAttributeChanged(QualifiedName name, String* old, String* value)
 {
-    if (name->equals("id")) {
+    if (name == document()->window()->starFish()->staticStrings()->m_id) {
         m_id = value;
         setNeedsStyleRecalc();
-    } else if (name->equals("class")) {
+    } else if (name == document()->window()->starFish()->staticStrings()->m_class) {
         DOMTokenList::tokenize(&m_classNames, value);
         setNeedsStyleRecalc();
     }

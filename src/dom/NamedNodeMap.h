@@ -15,10 +15,11 @@ public:
     }
     unsigned long length();
     Attr* item(unsigned long index);
-    Attr* getNamedItem(String* name);
+    Attr* getNamedItem(QualifiedName name);
     void setNamedItem(Attr* attr);
-    void removeNamedItem(String* name);
+    void removeNamedItem(QualifiedName name);
     ScriptBindingInstance* striptBindingInstance() { return m_instance; }
+    Element* element() { return m_element; }
 private:
     Element* m_element;
     ScriptBindingInstance* m_instance;
