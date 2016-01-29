@@ -857,6 +857,15 @@ public:
     String* Padding();
     void setPadding(const char* value);
 
+    static String* combineBoxString(String* t, String* r, String* b, String* l)
+    {
+        String* space = String::fromUTF8(" ");
+        if (!r->equals(l)) return t->concat(space)->concat(r)->concat(space)->concat(b)->concat(space)->concat(l);
+        else if (!t->equals(b)) return t->concat(space)->concat(r)->concat(space)->concat(b);
+        else if (!t->equals(r)) return t->concat(space)->concat(r);
+        else return t;
+    }
+
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;
     Document* m_document;

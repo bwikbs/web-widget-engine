@@ -2225,7 +2225,8 @@ String* CSSStyleValuePair::toString()
                             return String::fromUTF8("text-bottom");
                         case VerticalAlignValue::NumericVAlignValue:
                             // FIXME:mh.byun
-                            return String::fromUTF8("number??");
+                            // FIXED: NumericVAlignValue cannot be here. (only used in ComputedStyle)
+                            STARFISH_RELEASE_ASSERT_NOT_REACHED();
                         default:
                             return String::emptyString;
                     }
@@ -2256,8 +2257,6 @@ void CSSStyleValuePair::setLengthValue(const char* value)
 
 String* CSSStyleDeclaration::Margin()
 {
-    String* sum;
-    String* space = String::fromUTF8(" ");
     String* top = MarginTop();
     if (!top->equals(String::emptyString)) {
         String* right = MarginRight();
@@ -2266,8 +2265,7 @@ String* CSSStyleDeclaration::Margin()
             if (!bottom->equals(String::emptyString)) {
                 String* left = MarginLeft();
                 if (!left->equals(String::emptyString)) {
-                       sum = top;
-                       return sum->concat(space)->concat(right)->concat(space)->concat(bottom)->concat(space)->concat(left);
+                       return combineBoxString(top, right, bottom, left);
                   }
             }
         }
@@ -2470,8 +2468,6 @@ void CSSStyleDeclaration::setBackground(const char* value)
 
 String* CSSStyleDeclaration::Padding()
 {
-    String* sum;
-    String* space = String::fromUTF8(" ");
     String* top = PaddingTop();
     if (!top->equals(String::emptyString)) {
         String* right = PaddingRight();
@@ -2480,8 +2476,7 @@ String* CSSStyleDeclaration::Padding()
             if (!bottom->equals(String::emptyString)) {
                 String* left = PaddingLeft();
                 if (!left->equals(String::emptyString)) {
-                       sum = top;
-                       return sum->concat(space)->concat(right)->concat(space)->concat(bottom)->concat(space)->concat(left);
+                       return combineBoxString(top, right, bottom, left);
                   }
             }
         }
