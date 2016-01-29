@@ -635,6 +635,7 @@ public:
 #define FOR_EACH_STYLE_ATTRIBUTE(F) \
     F(Color) \
     F(BackgroundColor) \
+    F(BackgroundSize) \
     F(LetterSpacing) \
     F(LineHeight) \
     F(MarginTop) \

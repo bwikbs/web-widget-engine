@@ -1480,6 +1480,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(Visibility, visibility) \
     F(OverflowX, overflow) \
     F(BackgroundImage, backgroundImage) \
+    F(BackgroundSize, backgroundSize) \
     F(ZIndex, zIndex) \
     F(VerticalAlign, verticalAlign) \
     F(BackgroundRepeat, backgroundRepeat) \

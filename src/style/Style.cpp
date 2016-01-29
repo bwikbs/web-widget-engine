@@ -411,6 +411,43 @@ void CSSStyleValuePair::setValueBackgroundColor(std::vector<String*, gc_allocato
     setValueColor(tokens);
 }
 
+void CSSStyleValuePair::setValueBackgroundSize(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
+    m_keyKind = CSSStyleValuePair::KeyKind::BackgroundSize;
+
+    String* token = (*tokens)[0];
+    if(token->equals("cover")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Cover;
+    } else if(token->equals("contain")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Contain;
+    } else if(token->equals("initial")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if(token->equals("inherit")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else {
+        m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
+        ValueList* values = new ValueList(ValueList::Separator::SpaceSeparator);
+        m_value.m_multiValue = values;
+        for(unsigned int i=0; i < tokens->size(); i++) {
+            token = (*tokens)[i];
+            CSSPropertyParser* parser = new CSSPropertyParser((char*)token->utf8Data());
+            //NOTE: CSS 2.1 does not support layering multiple background images(for comma-separated)
+            CSSStyleValuePair::ValueKind kind;
+            while (parser->findNextValueKind(' ', &kind)) {
+                if (kind == CSSStyleValuePair::ValueKind::Auto) {
+                    values->append(kind, {0});
+                } else if (kind == CSSStyleValuePair::ValueKind::Percentage) {
+                    values->append(kind, {.m_floatValue = parser->parsedFloatValue()});
+                } else if (kind == CSSStyleValuePair::ValueKind::Length) {
+                    CSSStyleValuePair::ValueData data = {.m_length = CSSLength(parser->parsedFloatValue())};
+                    values->append(kind, data);
+                }
+            }
+        }
+    }
+}
+
 void CSSStyleValuePair::setValueBackgroundImage(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     if (tokens->size() == 1) {
@@ -1256,35 +1293,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "direction") == 0) {
         ret.setValueDirection(&tokens);
     } else if (strcmp(key, "background-size") == 0) {
-        // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
-        // TODO add initial
-        ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundSize;
-        if (VALUE_IS_STRING("contain")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Contain;
-        } else if (VALUE_IS_STRING("cover")) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Cover;
-        } else if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
-            CSSPropertyParser* parser = new CSSPropertyParser((char*) value);
-            //NOTE: CSS 2.1 does not support layering multiple background images(for comma-separated)
-            ValueList* values = new ValueList(ValueList::Separator::SpaceSeparator);
-            CSSStyleValuePair::ValueKind kind;
-            while (parser->findNextValueKind(' ', &kind)) {
-                if (kind == CSSStyleValuePair::ValueKind::Auto) {
-                    values->append(kind, {0});
-                } else if (kind == CSSStyleValuePair::ValueKind::Percentage) {
-                    values->append(kind, {.m_floatValue = parser->parsedFloatValue()});
-                } else if (kind == CSSStyleValuePair::ValueKind::Length) {
-                    CSSStyleValuePair::ValueData data = {.m_length = CSSLength(parser->parsedFloatValue())};
-                    values->append(kind, data);
-                }
-            }
-            ret.m_value.m_multiValue = values;
-        }
+        ret.setValueBackgroundSize(&tokens);
     } else if (strcmp(key, "background-repeat-x") == 0) {
         // repeat | no-repeat | initial | inherit // initial value -> repeat
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatX;
@@ -1538,6 +1547,34 @@ String* CSSStyleValuePair::toString()
                 STARFISH_RELEASE_ASSERT_NOT_REACHED();
             }
             break;
+        case BackgroundSize: {
+            // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
+            // TODO add initial
+            switch(m_valueKind) {
+                case CSSStyleValuePair::ValueKind::Cover:
+                    return String::fromUTF8("cover");
+                case CSSStyleValuePair::ValueKind::Contain:
+                    return String::fromUTF8("contain");
+                case CSSStyleValuePair::ValueKind::Initial:
+                    return String::fromUTF8("initial");
+                case CSSStyleValuePair::ValueKind::Inherit:
+                    return String::fromUTF8("inherit");
+                case CSSStyleValuePair::ValueKind::ValueListKind: {
+                    String* str = String::fromUTF8("");
+                    ValueList* vals = multiValue();
+                    for (unsigned int i = 0; i < vals->size(); i++) {
+                        str = str->concat(valueToString(vals->getValueKindAtIndex(i),
+                                                        vals->getValueAtIndex(i)));
+                        if(i < vals->size()-1) {
+                            str = str->concat(String::fromUTF8(" "));
+                        }
+                    }
+                    return str;
+                }
+                default:
+                    return String::emptyString;
+            }
+        }
         case Direction: {
             switch(directionValue()) {
                 case LtrDirectionValue:
@@ -2008,6 +2045,33 @@ bool CSSStyleDeclaration::checkInputErrorColor(std::vector<String*, gc_allocator
 bool CSSStyleDeclaration::checkInputErrorBackgroundColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     return checkInputErrorColor(tokens);
+}
+
+bool CSSStyleDeclaration::checkInputErrorBackgroundSize(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // [length | percentage | auto]{1,2} | cover | contain // initial value -> auto
+    if(tokens->size() == 1) {
+        const char* token = (*tokens)[0]->utf8Data();
+        if(strcmp(token, "cover") == 0 ||
+           strcmp(token, "contain") == 0 ||
+           strcmp(token, "initial") == 0 ||
+           strcmp(token, "inherit") == 0 ||
+           CSSPropertyParser::assureLength(token, false) ||
+           CSSPropertyParser::assurePercent(token, false)) {
+            return true;
+        }
+    } else if(tokens->size() == 2) {
+        for(unsigned int i = 0; i < tokens->size(); i++) {
+            const char* token = (*tokens)[i]->utf8Data();
+            if(!(CSSPropertyParser::assureLength(token, false) ||
+                 CSSPropertyParser::assurePercent(token, false))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorLetterSpacing(std::vector<String*, gc_allocator<String*>>* tokens)
