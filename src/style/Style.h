@@ -332,6 +332,7 @@ public:
         Number, // real number values - https://www.w3.org/TR/CSS21/syndata.html#value-def-number
         Normal,
         StringValueKind,
+        UrlValueKind,
 
         DisplayValueKind,
         PositionValueKind,
@@ -475,6 +476,12 @@ public:
     String* stringValue()
     {
         STARFISH_ASSERT(m_valueKind == StringValueKind);
+        return m_value.m_stringValue;
+    }
+
+    String* urlValue()
+    {
+        STARFISH_ASSERT(m_valueKind == UrlValueKind);
         return m_value.m_stringValue;
     }
 

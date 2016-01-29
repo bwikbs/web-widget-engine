@@ -105,10 +105,90 @@ public:
         return true;
     }
 
+    bool consumeIfNext(char c)
+    {
+        if (*m_curPos == c) {
+            m_curPos++;
+            return true;
+        }
+        return false;
+    }
+
+    bool consumeWhitespaces()
+    {
+        while (*m_curPos == ' ' && m_curPos < m_endPos) {
+            m_curPos++;
+        }
+        return true;
+    }
+
+    bool consumeUrl()
+    {
+        consumeWhitespaces();
+        int len = 0;
+        char mark='\0';
+        consumeIfNext('\\');
+        if (*m_curPos == '"' || *m_curPos == '\'') {
+            mark = *m_curPos;
+            m_curPos++;
+        }
+        char* start = m_curPos;
+        while (*m_curPos != ')' && m_curPos < m_endPos) {
+            m_curPos++;
+            len++;
+            if (mark != '\0' && mark == *m_curPos) {
+                if (*(m_curPos-1) == '\\') len--;
+                m_curPos++;
+                consumeWhitespaces();
+                break;
+            }
+        }
+        if (*m_curPos != ')') return false;
+        m_parsedUrl = String::fromUTF8(start, len);
+        m_curPos++;
+        return true;
+    }
+
     String* parsedString() { return m_parsedString; }
+    String* parsedUrl() { return m_parsedUrl; }
 
     bool isEnd() {
         return (m_curPos == m_endPos);
+    }
+
+    static String* parseUrl(std::vector<String*, gc_allocator<String*>>* tokens, unsigned start, unsigned end)
+    {
+        String* str = String::emptyString;
+        for (unsigned i = start; i < end; i++)
+        {
+            str = str->concat(tokens->at(i)->toLower());
+        }
+        CSSPropertyParser* parser = new CSSPropertyParser((char*) str->utf8Data());
+        if (parser->consumeString()) {
+            String* name = parser->parsedString();
+            if (name->equals("url") && parser->consumeIfNext('(')) {
+                if( parser->consumeUrl() )
+                    return String::fromUTF8(parser->parsedUrl()->utf8Data());
+            }
+        }
+        return String::emptyString;
+    }
+
+    static bool assureUrl(std::vector<String*, gc_allocator<String*>>* tokens, unsigned start, unsigned end)
+    {
+        String* str = String::emptyString;
+        for (unsigned i = start; i < end; i++)
+        {
+            str = str->concat(tokens->at(i)->toLower());
+        }
+        CSSPropertyParser* parser = new CSSPropertyParser((char*) str->utf8Data());
+        if (parser->consumeString()) {
+            String* name = parser->parsedString();
+            if (name->equals("url") && parser->consumeIfNext('(')) {
+                return parser->consumeUrl();
+            }
+        }
+        return false;
     }
 
     static bool assureLength(const char* token, bool allowNegative)
@@ -271,6 +351,7 @@ public:
 
     float m_parsedNumber;
     String* m_parsedString;
+    String* m_parsedUrl;
 };
 
 }

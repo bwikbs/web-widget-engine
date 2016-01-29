@@ -755,9 +755,9 @@ void CSSStyleValuePair::setValueBorderImageSource(std::vector<String*, gc_alloca
         m_valueKind = CSSStyleValuePair::ValueKind::Initial;
     } else if(VALUE_IS_STRING("none")) {
         m_valueKind = CSSStyleValuePair::ValueKind::None;
-    } else {
-        m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
-        m_value.m_stringValue = String::fromUTF8(value);
+    } else if(startsWith(value, "url(")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::UrlValueKind;
+        m_value.m_stringValue = CSSPropertyParser::parseUrl(tokens, 0, tokens->size());
     }
 }
 
@@ -2018,7 +2018,7 @@ String* CSSStyleValuePair::toString()
                 case CSSStyleValuePair::ValueKind::ValueListKind:
                 {
                     ValueList* values = multiValue();
-                    String* s = String::emptyString;
+                    String* s = String::fromUTF8("");
                     for (unsigned int i = 0; i < values->size(); i++) {
                         STARFISH_ASSERT(values->getValueKindAtIndex(i) == BorderImageRepeatValueKind);
                         switch(values->getValueAtIndex(i).m_borderImageRepeat) {
@@ -2052,7 +2052,7 @@ String* CSSStyleValuePair::toString()
                 case CSSStyleValuePair::ValueKind::ValueListKind:
                 {
                     ValueList* values = multiValue();
-                    String* s = String::emptyString;
+                    String* s = String::fromUTF8("");
                     for (unsigned int i = 0; i < values->size(); i++) {
                         String* newstr;
                         if (values->getValueKindAtIndex(i) == CSSStyleValuePair::ValueKind::StringValueKind)
@@ -2073,8 +2073,13 @@ String* CSSStyleValuePair::toString()
         }
         case BorderImageSource: {
             switch(valueKind()) {
-                case CSSStyleValuePair::ValueKind::StringValueKind:
-                    return stringValue();
+                case CSSStyleValuePair::ValueKind::UrlValueKind:
+                {
+                    String* str = String::fromUTF8("url(\"");
+                    if (urlValue()) str = str->concat(urlValue());
+                    str = str->concat(String::fromUTF8("\")"));
+                    return str;
+                }
                 default:
                     //initial or inherit or none
                     return lengthOrPercentageOrKeywordToString();
@@ -2085,7 +2090,7 @@ String* CSSStyleValuePair::toString()
                 case CSSStyleValuePair::ValueKind::ValueListKind:
                 {
                     ValueList* values = multiValue();
-                    String* s = String::emptyString;
+                    String* s = String::fromUTF8("");
                     for (unsigned int i = 0; i < values->size(); i++) {
                         String* newstr = valueToString(values->getValueKindAtIndex(i),
                                                        values->getValueAtIndex(i));
@@ -2952,8 +2957,15 @@ bool CSSStyleDeclaration::checkInputErrorBorderImageSlice(std::vector<String*, g
 
 bool CSSStyleDeclaration::checkInputErrorBorderImageSource(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    //TODO(june0cho)
-    return true;
+    // none | <image>(=<uri>)
+    if (tokens->size() == 1) {
+        const char* value = (*tokens)[0]->toLower()->utf8Data();
+        if (CSSPropertyParser::assureEssential(value)
+            || strcmp(value, "none") == 0)
+            return true;
+    }
+    // url
+    return CSSPropertyParser::assureUrl(tokens, 0, tokens->size());
 }
 
 bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, gc_allocator<String*>>* tokens)
@@ -3683,8 +3695,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::None) {
                     style->setBorderImageSource(String::emptyString);
                 } else {
-                	STARFISH_ASSERT(CSSStyleValuePair::ValueKind::StringValueKind == cssValues[k].valueKind());
-                    style->setBorderImageSource(parseUrl(cssValues[k].stringValue()));
+                	STARFISH_ASSERT(CSSStyleValuePair::ValueKind::UrlValueKind == cssValues[k].valueKind());
+                    style->setBorderImageSource(cssValues[k].urlValue());
                 }
                 break;
             case CSSStyleValuePair::KeyKind::BorderImageWidth:
