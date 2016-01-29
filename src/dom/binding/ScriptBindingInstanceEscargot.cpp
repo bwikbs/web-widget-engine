@@ -1440,6 +1440,10 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(BackgroundColor, backgroundColor) \
     F(LetterSpacing, letterSpacing) \
     F(LineHeight, lineHeight) \
+    F(PaddingTop, paddingTop) \
+    F(PaddingRight, paddingRight) \
+    F(PaddingBottom, paddingBottom) \
+    F(PaddingLeft, paddingLeft) \
     F(MarginTop, marginTop) \
     F(MarginRight, marginRight) \
     F(MarginBottom, marginBottom) \

@@ -1486,6 +1486,11 @@ String* CSSStyleValuePair::toString()
                 return valueToString();
             }
             break;
+        case PaddingTop:
+        case PaddingRight:
+        case PaddingBottom:
+        case PaddingLeft:
+            return lengthOrPercentageToString();
         case MarginTop:
         case MarginRight:
         case MarginBottom:
@@ -1904,6 +1909,31 @@ bool CSSStyleDeclaration::checkInputErrorLineHeight(std::vector<String*, gc_allo
             || CSSPropertyParser::assureLength(value, false)
             || CSSPropertyParser::assurePercent(value, false)
             || CSSPropertyParser::assureNumber(value, false));
+}
+
+bool CSSStyleDeclaration::checkInputErrorPaddingTop(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() != 1) return false;
+    (*tokens)[0] = (*tokens)[0]->toLower();
+    const char* value = (*tokens)[0]->utf8Data();
+    return (CSSPropertyParser::assureEssential(value)
+            || CSSPropertyParser::assureLength(value, false)
+            || CSSPropertyParser::assurePercent(value, false));
+}
+
+bool CSSStyleDeclaration::checkInputErrorPaddingRight(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkInputErrorPaddingTop(tokens);
+}
+
+bool CSSStyleDeclaration::checkInputErrorPaddingBottom(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkInputErrorPaddingTop(tokens);
+}
+
+bool CSSStyleDeclaration::checkInputErrorPaddingLeft(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkInputErrorPaddingTop(tokens);
 }
 
 bool CSSStyleDeclaration::checkInputErrorMarginTop(std::vector<String*, gc_allocator<String*>>* tokens)

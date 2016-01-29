@@ -36,9 +36,26 @@
     </body>
     </body>
     <script type="text/javascript">
-        function test() {
-            return 1<2;
+        function run() {
+            document.body.style.paddingLeft = "Initial";
+            print("div1 set paddingLeft(\"Initial\"): " + document.body.style.paddingLeft);
+
+            document.body.style.paddingLeft = "inherit";
+            print("div1 set paddingLeft(\"inherit\"): " + document.body.style.paddingLeft);
+
+            document.body.style.paddingLeft = "20pX";
+            print("div1 set paddingLeft(\"20pX\"): " + document.body.style.paddingLeft);
+
+            document.body.style.paddingLeft = "40%";
+            print("div1 set paddingLeft(\"40%\"): " + document.body.style.paddingLeft);
+
+            document.body.style.paddingLeft = "5gt";
+            print("div1 set paddingLeft(\"5it\"): " + document.body.style.paddingLeft + " (egnore invalid unit)");
+
+            document.body.style.paddingLeft = "-7px";
+            print("div1 set paddingLeft(\"-7px\"): " + document.body.style.paddingLeft + " (egnore negative value)");
         }
+        run();
     </script>
 </html>
             

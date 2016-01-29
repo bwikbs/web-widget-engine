@@ -123,6 +123,32 @@
     ]]></text>
                     </node>
                 </node>
+                <node nodeType="1" localName="script" type="text/javascript">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+        function run() {
+            document.body.style.paddingBottom = "Initial";
+            print("div1 set paddingBottom(\"Initial\"): " + document.body.style.paddingBottom);
+
+            document.body.style.paddingBottom = "inherit";
+            print("div1 set paddingBottom(\"inherit\"): " + document.body.style.paddingBottom);
+
+            document.body.style.paddingBottom = "20pX";
+            print("div1 set paddingBottom(\"20pX\"): " + document.body.style.paddingBottom);
+
+            document.body.style.paddingBottom = "40%";
+            print("div1 set paddingBottom(\"40%\"): " + document.body.style.paddingBottom);
+
+            document.body.style.paddingBottom = "5gt";
+            print("div1 set paddingBottom(\"5it\"): " + document.body.style.paddingBottom + " (egnore invalid unit)");
+
+            document.body.style.paddingBottom = "-7px";
+            print("div1 set paddingBottom(\"-7px\"): " + document.body.style.paddingBottom + " (egnore negative value)");
+        }
+        run();
+    ]]></text>
+                    </node>
+                </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
 

@@ -125,7 +125,7 @@
             print("div1 set line-height(\"Initial\"): " + document.getElementById("div1").style.lineHeight);
 
             document.getElementById("div1").style.lineHeight = "inherit";
-            print("div1 set line-height(\"Initial\"): " + document.getElementById("div1").style.lineHeight);
+            print("div1 set line-height(\"inherit\"): " + document.getElementById("div1").style.lineHeight);
 
             document.getElementById("div1").style.lineHeight = "20pX";
             print("div1 set line-height(\"20pX\"): " + document.getElementById("div1").style.lineHeight);
