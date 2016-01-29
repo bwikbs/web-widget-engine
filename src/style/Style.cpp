@@ -834,8 +834,38 @@ void CSSStyleValuePair::setValueBorderImageWidth(std::vector<String*, gc_allocat
 
 String* CSSStyleDeclaration::BorderTop()
 {
-    // TODO
-    return String::emptyString;
+    String* space = String::fromUTF8(" ");
+    String* width = BorderTopWidth();
+    String* style = BorderTopStyle();
+    String* color = BorderTopColor();
+    String* sum;
+
+    if (!width->equals(String::emptyString)) {
+        sum = width;
+        if (!style->equals(String::emptyString)) {
+            sum = sum->concat(space)->concat(style);
+            if (!color->equals(String::emptyString)) {
+                sum = sum->concat(space)->concat(color);
+            }
+        } else {
+            if (!color->equals(String::emptyString)) {
+                sum = sum->concat(space)->concat(color);
+            }
+        }
+    } else {
+        if (!style->equals(String::emptyString)) {
+            sum = style;
+            if (!color->equals(String::emptyString)) {
+                sum = sum->concat(space)->concat(color);
+            }
+        } else {
+            if (!color->equals(String::emptyString)) {
+                sum = color;
+            }
+        }
+    }
+
+    return sum;
 }
 
 BorderShorthandValueType checkBorderValueType(const char* token)
