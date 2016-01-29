@@ -780,6 +780,7 @@ public:
     FOR_EACH_STYLE_ATTRIBUTE(CHECK_INPUT_ERROR)
 #undef CHECK_INPUT_ERROR
     bool checkInputErrorMargin(std::vector<String*, gc_allocator<String*>>* tokens);
+    bool checkInputErrorBackground(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkInputErrorBackgroundRepeat(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkInputErrorBorderTop(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*>>* tokens, bool allowNegative);
@@ -833,6 +834,9 @@ public:
 
     String* BackgroundRepeat();
     void setBackgroundRepeat(const char* value);
+
+    String* Background();
+    void setBackground(const char* value);
 
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;

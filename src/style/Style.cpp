@@ -2125,6 +2125,128 @@ void CSSStyleDeclaration::setBackgroundRepeat(const char* value)
     }
 }
 
+
+String* CSSStyleDeclaration::Background(){
+/*    String* repeatX = BackgroundRepeatX();
+    String* repeatY = BackgroundRepeatY();
+
+    if(repeatX->equals("repeat") && repeatY->equals("repeat"))
+        return String::fromUTF8("repeat");
+    else if(repeatX->equals("repeat") && repeatY->equals("no-repeat"))
+        return String::fromUTF8("repeat-x");
+    else if(repeatX->equals("no-repeat") && repeatY->equals("repeat"))
+        return String::fromUTF8("repeat-y");
+    else if(repeatX->equals("no-repeat") && repeatY->equals("no-repeat"))
+        return String::fromUTF8("no-repeat");
+    else if(repeatX->equals("initial") && repeatY->equals("initial"))
+        return String::fromUTF8("initial");
+    else if(repeatX->equals("inherit") && repeatY->equals("inherit"))
+        return String::fromUTF8("inherit");
+*/
+    return String::emptyString;
+}
+
+void CSSStyleDeclaration::setBackground(const char* value)
+{
+    //  [<'background-color'> || <'background-image'> || <'background-repeat'>] | inherit
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+
+    {
+        size_t len = tokens.size();
+        if(len == 1) {
+            if(checkInputErrorBackgroundColor(&tokens)) {
+                setBackgroundColor(value);
+                setBackgroundImage("initial");
+                setBackgroundRepeat("initial");
+            } else if (checkInputErrorBackgroundImage(&tokens)) {
+                setBackgroundImage(value);
+                setBackgroundRepeat("initial");
+                setBackgroundColor("initial");
+            } else if (checkInputErrorBackgroundRepeat(&tokens)) {
+                setBackgroundRepeat(value);
+                setBackgroundImage("initial");
+                setBackgroundColor("initial");
+            } else {
+                setBackgroundRepeat(value);
+                setBackgroundImage(value);
+                setBackgroundColor(value);
+            }
+        } else if(len == 2) {
+            std::vector<String*, gc_allocator<String*>> token0;
+            std::vector<String*, gc_allocator<String*>> token1;
+
+            token0.assign(tokens.begin(), tokens.end() - 1);
+            token1.assign(tokens.begin()+ 1, tokens.end());
+
+            if(checkInputErrorBackgroundColor(&token0) && checkInputErrorBackgroundImage(&token1)) {
+                setBackgroundColor(token0[0]->utf8Data());
+                setBackgroundImage(token1[0]->utf8Data());
+                setBackgroundRepeat("initial");
+            } else if (checkInputErrorBackgroundImage(&token0) && checkInputErrorBackgroundColor(&token1)) {
+                setBackgroundImage(token0[0]->utf8Data());
+                setBackgroundColor(token1[0]->utf8Data());
+                setBackgroundRepeat("initial");
+            } else if (checkInputErrorBackgroundColor(&token0) && checkInputErrorBackgroundRepeat(&token1)) {
+                setBackgroundColor(token0[0]->utf8Data());
+                setBackgroundRepeat(token1[0]->utf8Data());
+                setBackgroundImage("initial");
+            } else if (checkInputErrorBackgroundRepeat(&token0) && checkInputErrorBackgroundColor(&token1)) {
+                setBackgroundRepeat(token0[0]->utf8Data());
+                setBackgroundColor(token1[0]->utf8Data());
+                setBackgroundImage("initial");
+            } else if (checkInputErrorBackgroundImage(&token0) && checkInputErrorBackgroundRepeat(&token1)) {
+                setBackgroundImage(token0[0]->utf8Data());
+                setBackgroundRepeat(token1[0]->utf8Data());
+                setBackgroundColor("initial");
+            } else if (checkInputErrorBackgroundRepeat(&token0) && checkInputErrorBackgroundImage(&token1)) {
+                setBackgroundRepeat(token0[0]->utf8Data());
+                setBackgroundImage(token1[0]->utf8Data());
+                setBackgroundColor("initial");
+            }
+        } else if(len == 3) {
+            std::vector<String*, gc_allocator<String*>> token0;
+            std::vector<String*, gc_allocator<String*>> token1;
+            std::vector<String*, gc_allocator<String*>> token2;
+
+            token0.assign(tokens.begin(), tokens.end() - 2);
+            token1.assign(tokens.begin()+ 1, tokens.end() - 1);
+            token2.assign(tokens.begin()+ 2, tokens.end());
+
+            if(checkInputErrorBackgroundColor(&token0) && checkInputErrorBackgroundImage(&token1) && checkInputErrorBackgroundRepeat(&token2)) {
+                setBackgroundColor(token0[0]->utf8Data());
+                setBackgroundImage(token1[0]->utf8Data());
+                setBackgroundRepeat(token2[0]->utf8Data());
+            }
+            else if(checkInputErrorBackgroundColor(&token0) && checkInputErrorBackgroundRepeat(&token1) && checkInputErrorBackgroundImage(&token2)) {
+                setBackgroundColor(token0[0]->utf8Data());
+                setBackgroundRepeat(token1[0]->utf8Data());
+                setBackgroundImage(token2[0]->utf8Data());
+            }
+            else if(checkInputErrorBackgroundRepeat(&token0) && checkInputErrorBackgroundColor(&token1) && checkInputErrorBackgroundImage(&token2)) {
+                setBackgroundRepeat(token0[0]->utf8Data());
+                setBackgroundColor(token1[0]->utf8Data());
+                setBackgroundImage(token2[0]->utf8Data());
+            }
+            else if(checkInputErrorBackgroundRepeat(&token0) && checkInputErrorBackgroundImage(&token1) && checkInputErrorBackgroundColor(&token2)) {
+                setBackgroundRepeat(token0[0]->utf8Data());
+                setBackgroundImage(token1[0]->utf8Data());
+                setBackgroundColor(token2[0]->utf8Data());
+            }
+            else if(checkInputErrorBackgroundImage(&token0) && checkInputErrorBackgroundColor(&token1) && checkInputErrorBackgroundRepeat(&token2)) {
+                setBackgroundImage(token0[0]->utf8Data());
+                setBackgroundColor(token1[0]->utf8Data());
+                setBackgroundRepeat(token2[0]->utf8Data());
+            }
+            else if(checkInputErrorBackgroundImage(&token0) && checkInputErrorBackgroundRepeat(&token1) && checkInputErrorBackgroundColor(&token2)) {
+                setBackgroundImage(token0[0]->utf8Data());
+                setBackgroundRepeat(token1[0]->utf8Data());
+                setBackgroundColor(token2[0]->utf8Data());
+            }
+        }
+    }
+}
+
 bool CSSStyleDeclaration::checkInputErrorColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     // color | percentage | <auto> | inherit
@@ -2291,6 +2413,57 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundRepeat(std::vector<String*, g
                 || VALUE_IS_STRING("no-repeat")
                 || CSSPropertyParser::assureEssential(value)
                 || strcmp(value, "") == 0;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBackground(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    //  [<'background-color'> || <'background-image'> || <'background-repeat'>] | inherit
+    size_t len = tokens->size();
+    if(len == 1) {
+        if(checkInputErrorBackgroundColor(tokens)
+                || checkInputErrorBackgroundImage(tokens)
+                || checkInputErrorBackgroundRepeat(tokens))
+            return true;
+    } else if(len == 2) {
+        std::vector<String*, gc_allocator<String*>> token0;
+        std::vector<String*, gc_allocator<String*>> token1;
+
+        token0.assign(tokens->begin(), tokens->end() - 1);
+        token1.assign(tokens->begin()+ 1, tokens->end());
+
+        if((checkInputErrorBackgroundColor(&token0) && checkInputErrorBackgroundImage(&token1))
+                || (checkInputErrorBackgroundImage(&token0) && checkInputErrorBackgroundColor(&token1)))
+            return true;
+        else if((checkInputErrorBackgroundColor(&token0) && checkInputErrorBackgroundRepeat(&token1))
+                || (checkInputErrorBackgroundRepeat(&token0) && checkInputErrorBackgroundColor(&token1)))
+            return true;
+        else if((checkInputErrorBackgroundImage(&token0) && checkInputErrorBackgroundRepeat(&token1))
+                || (checkInputErrorBackgroundRepeat(&token0) && checkInputErrorBackgroundImage(&token1)))
+            return true;
+    } else if(len == 3) {
+        std::vector<String*, gc_allocator<String*>> token0;
+        std::vector<String*, gc_allocator<String*>> token1;
+        std::vector<String*, gc_allocator<String*>> token2;
+
+        token0.assign(tokens->begin(), tokens->end() - 2);
+        token1.assign(tokens->begin()+ 1, tokens->end() - 1);
+        token2.assign(tokens->begin()+ 2, tokens->end());
+
+        if(checkInputErrorBackgroundColor(&token0) && checkInputErrorBackgroundImage(&token1) && checkInputErrorBackgroundRepeat(&token2))
+            return true;
+        else if(checkInputErrorBackgroundColor(&token0) && checkInputErrorBackgroundRepeat(&token1) && checkInputErrorBackgroundImage(&token2))
+            return true;
+        else if(checkInputErrorBackgroundRepeat(&token0) && checkInputErrorBackgroundColor(&token1) && checkInputErrorBackgroundImage(&token2))
+            return true;
+        else if(checkInputErrorBackgroundRepeat(&token0) && checkInputErrorBackgroundImage(&token1) && checkInputErrorBackgroundColor(&token2))
+            return true;
+        else if(checkInputErrorBackgroundImage(&token0) && checkInputErrorBackgroundColor(&token1) && checkInputErrorBackgroundRepeat(&token2))
+            return true;
+        else if(checkInputErrorBackgroundImage(&token0) && checkInputErrorBackgroundRepeat(&token1) && checkInputErrorBackgroundColor(&token2))
+            return true;
+    }
+
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorMarginRight(std::vector<String*, gc_allocator<String*>>* tokens)

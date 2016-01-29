@@ -1487,6 +1487,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(BackgroundRepeat, backgroundRepeat) \
     F(BackgroundRepeatX, backgroundRepeatX) \
     F(BackgroundRepeatY, backgroundRepeatY) \
+    F(Background, background) \
 
 
 #define DEFINE_ACCESSOR_PROPERTY(name, nameLower) \
