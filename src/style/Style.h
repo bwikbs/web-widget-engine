@@ -561,7 +561,7 @@ public:
         return String::fromUTF8(std::to_string(v).append("%").c_str());
     }
 
-    String* lengthOrPercentageToString()
+    String* lengthOrPercentageOrKeywordToString()
     {
         if (valueKind() == CSSStyleValuePair::ValueKind::Auto)
             return String::fromUTF8("auto");
@@ -569,6 +569,8 @@ public:
             return String::fromUTF8("inherit");
         else if (valueKind() == CSSStyleValuePair::ValueKind::Initial)
             return String::fromUTF8("initial");
+        else if (valueKind() == CSSStyleValuePair::ValueKind::None)
+            return String::fromUTF8("none");
         else if (valueKind() == CSSStyleValuePair::ValueKind::Length)
             return lengthValue().toString();
         else if (valueKind() == CSSStyleValuePair::ValueKind::Percentage)

@@ -1603,20 +1603,20 @@ String* CSSStyleValuePair::toString()
         case PaddingRight:
         case PaddingBottom:
         case PaddingLeft:
-            return lengthOrPercentageToString();
+            return lengthOrPercentageOrKeywordToString();
         case MarginTop:
         case MarginRight:
         case MarginBottom:
         case MarginLeft:
-            return lengthOrPercentageToString();
+            return lengthOrPercentageOrKeywordToString();
         case Top:
         case Bottom:
         case Left:
         case Right:
-            return lengthOrPercentageToString();
+            return lengthOrPercentageOrKeywordToString();
         case Height:
         case Width:
-            return lengthOrPercentageToString();
+            return lengthOrPercentageOrKeywordToString();
 
         case Position: {
             switch(positionValue()) {
@@ -1669,7 +1669,7 @@ String* CSSStyleValuePair::toString()
                 case CSSStyleValuePair::ValueKind::SmallerFontSizeValueKind:
                     return String::fromUTF8("smaller");
                 default:
-                    return lengthOrPercentageToString();
+                    return lengthOrPercentageOrKeywordToString();
             }
         }
         case FontStyle: {
@@ -1684,7 +1684,7 @@ String* CSSStyleValuePair::toString()
                         return String::fromUTF8("oblique");
                     }
                 default:
-                    return lengthOrPercentageToString();
+                    return lengthOrPercentageOrKeywordToString();
             }
         }
         case Display: {
@@ -1701,7 +1701,7 @@ String* CSSStyleValuePair::toString()
                         return String::fromUTF8("none");
                     }
                 default:
-                    return lengthOrPercentageToString();
+                    return lengthOrPercentageOrKeywordToString();
             }
         }
         case BorderImageRepeat: {
@@ -1735,7 +1735,7 @@ String* CSSStyleValuePair::toString()
                 }
                 default:
                     //initial or inherit
-                    return lengthOrPercentageToString();
+                    return lengthOrPercentageOrKeywordToString();
             }
         }
         case BorderImageSlice: {
@@ -1759,11 +1759,17 @@ String* CSSStyleValuePair::toString()
                 }
                 default:
                     //initial or inherit
-                    return lengthOrPercentageToString();
+                    return lengthOrPercentageOrKeywordToString();
             }
         }
         case BorderImageSource: {
-            //TODO(june0cho)
+            switch(valueKind()) {
+                case CSSStyleValuePair::ValueKind::StringValueKind:
+                    return stringValue();
+                default:
+                    //initial or inherit or none
+                    return lengthOrPercentageOrKeywordToString();
+            }
         }
         case BorderImageWidth: {
             switch(valueKind()) {
@@ -1781,7 +1787,7 @@ String* CSSStyleValuePair::toString()
                     return s;
                 }
                 default:
-                    return lengthOrPercentageToString();
+                    return lengthOrPercentageOrKeywordToString();
             }
         }
         case BorderTopColor:
@@ -1834,7 +1840,7 @@ String* CSSStyleValuePair::toString()
             case CSSStyleValuePair::ValueKind::Inherit:
                 return String::fromUTF8("inherit");
             default:
-                return lengthOrPercentageToString();
+                return lengthOrPercentageOrKeywordToString();
             }
         }
         case TextAlign: {
@@ -1915,7 +1921,7 @@ String* CSSStyleValuePair::toString()
                             return String::emptyString;
                     }
                 default:
-                    return lengthOrPercentageToString();
+                    return lengthOrPercentageOrKeywordToString();
             }
         }
         default: {
