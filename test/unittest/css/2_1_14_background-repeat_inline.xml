@@ -10,12 +10,11 @@
 ]]></text>
 				</node>
 				<node nodeType="1" localName="style">
-					<style selectorText="body" background-image="url(&quot;test/paper.gif&quot;)" background-repeat-x="no-repeat" background-repeat-y="no-repeat"/>
+					<style selectorText="body" background-image="url(&quot;test/paper.gif&quot;)"/>
 					<node nodeType="3" localName="text">
 						<text><![CDATA[
 body {
     background-image: url("test/paper.gif");
-    background-repeat: no-repeat;
 }
 ]]></text>
 					</node>
@@ -29,7 +28,7 @@ body {
 				<text><![CDATA[
 ]]></text>
 			</node>
-			<node nodeType="1" localName="body">
+			<node nodeType="1" localName="body" style="background-repeat: repeat-x;">
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
 
@@ -42,7 +41,24 @@ body {
 				</node>
 				<node nodeType="3" localName="text">
 					<text><![CDATA[
-
+]]></text>
+				</node>
+				<node nodeType="1" localName="script">
+					<node nodeType="3" localName="text">
+						<text><![CDATA[
+    function test() {
+      var b = document.body;
+      print(b.style.backgroundRepeat);
+      b.style.backgroundRepeat="no-repeat";
+      print(b.style.backgroundRepeat);
+      print("<End>");
+    }
+    test();
+]]></text>
+					</node>
+				</node>
+				<node nodeType="3" localName="text">
+					<text><![CDATA[
 
 
 

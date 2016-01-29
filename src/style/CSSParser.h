@@ -190,9 +190,7 @@ public:
     {
         // initial || inherit || none || empty string
         if (strcmp(token, "initial") == 0 ||
-            strcmp(token, "inherit") == 0 ||
-            strcmp(token, "none") == 0 ||
-            strcmp(token, "") == 0)
+            strcmp(token, "inherit") == 0)
             return true;
         return false;
     }

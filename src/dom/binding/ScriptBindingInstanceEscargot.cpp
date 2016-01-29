@@ -1481,7 +1481,11 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(OverflowX, overflow) \
     F(BackgroundImage, backgroundImage) \
     F(ZIndex, zIndex) \
-    F(VerticalAlign, verticalAlign)
+    F(VerticalAlign, verticalAlign) \
+    F(BackgroundRepeat, backgroundRepeat) \
+    F(BackgroundRepeatX, backgroundRepeatX) \
+    F(BackgroundRepeatY, backgroundRepeatY) \
+
 
 #define DEFINE_ACCESSOR_PROPERTY(name, nameLower) \
     CSSStyleDeclarationFunction->protoType().asESPointer()->asESObject()->defineAccessorProperty(escargot::ESString::create(#nameLower), \

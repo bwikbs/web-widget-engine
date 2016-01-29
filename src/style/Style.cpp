@@ -440,6 +440,78 @@ void CSSStyleValuePair::setValueBackgroundImage(std::vector<String*, gc_allocato
     }
 }
 
+void CSSStyleValuePair::setValueBackgroundRepeatX(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // repeat | no-repeat | initial | inherit // initial value -> repeat
+    const char* value = tokens->at(0)->utf8Data();
+
+    m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatX;
+    m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
+
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("no-repeat")) {
+        m_value.m_backgroundRepeatX = BackgroundRepeatValue::NoRepeatRepeatValue;
+    } else if (VALUE_IS_STRING("repeat") || VALUE_IS_INITIAL()) {
+        m_value.m_backgroundRepeatX = BackgroundRepeatValue::RepeatRepeatValue;
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+void CSSStyleValuePair::setValueBackgroundRepeatY(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // repeat | no-repeat | initial | inherit // initial value -> repeat
+    const char* value = tokens->at(0)->utf8Data();
+
+    m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatY;
+    m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
+
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("no-repeat")) {
+        m_value.m_backgroundRepeatY = BackgroundRepeatValue::NoRepeatRepeatValue;
+    } else if (VALUE_IS_STRING("repeat") || VALUE_IS_INITIAL()) {
+        m_value.m_backgroundRepeatY = BackgroundRepeatValue::RepeatRepeatValue;
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+/*
+void CSSStyleValuePair::setValueBackgroundRepeat(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if(tokens->size() == 1) {
+        std::vector<String*, gc_allocator<String*>> repeat;
+        std::vector<String*, gc_allocator<String*>> noRepeat;
+
+        repeat.push_back(String::fromUTF8("repeat"));
+        noRepeat.push_back(String::fromUTF8("no-repeat"));
+
+        if(tokens->at(0)->equals("repeat")) {
+            setValueBackgroundRepeatX(&repeat);
+            setValueBackgroundRepeatY(&repeat);
+        } else if (tokens->at(0)->equals("repeat-x")) {
+            setValueBackgroundRepeatX(&repeat);
+            setValueBackgroundRepeatY(&noRepeat);
+        } else if (tokens->at(0)->equals("repeat-y")) {
+            setValueBackgroundRepeatX(&noRepeat);
+            setValueBackgroundRepeatY(&repeat);
+        } else if (tokens->at(0)->equals("no-repeat")) {
+            setValueBackgroundRepeatX(&noRepeat);
+            setValueBackgroundRepeatY(&noRepeat);
+        } else {
+            setValueBackgroundRepeatX(tokens);
+            setValueBackgroundRepeatY(tokens);
+        }
+    }
+}
+*/
+
 void CSSStyleValuePair::setValuePercentageOrLength(const char* value)
 {
     if (VALUE_IS_STRING("auto")) {
@@ -1216,35 +1288,11 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
     } else if (strcmp(key, "background-repeat-x") == 0) {
         // repeat | no-repeat | initial | inherit // initial value -> repeat
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatX;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
-
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("no-repeat")) {
-            ret.m_value.m_backgroundRepeatX = BackgroundRepeatValue::NoRepeatRepeatValue;
-        } else if (VALUE_IS_STRING("repeat") || VALUE_IS_INITIAL()) {
-            ret.m_value.m_backgroundRepeatX = BackgroundRepeatValue::RepeatRepeatValue;
-        } else {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
-        }
+        ret.setValueBackgroundRepeatX(&tokens);
     } else if (strcmp(key, "background-repeat-y") == 0) {
         // repeat | no-repeat | initial | inherit // initial value -> repeat
         ret.m_keyKind = CSSStyleValuePair::KeyKind::BackgroundRepeatY;
-        ret.m_valueKind = CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind;
-
-        if (VALUE_IS_INHERIT()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-        } else if (VALUE_IS_INITIAL()) {
-            ret.m_valueKind = CSSStyleValuePair::ValueKind::Initial;
-        } else if (VALUE_IS_STRING("no-repeat")) {
-            ret.m_value.m_backgroundRepeatY = BackgroundRepeatValue::NoRepeatRepeatValue;
-        } else if (VALUE_IS_STRING("repeat") || VALUE_IS_INITIAL()) {
-            ret.m_value.m_backgroundRepeatY = BackgroundRepeatValue::RepeatRepeatValue;
-        } else {
-            STARFISH_RELEASE_ASSERT_NOT_REACHED();
-        }
+        ret.setValueBackgroundRepeatY(&tokens);
     } else if (strcmp(key, "top") == 0) {
         ret.setValueTop(&tokens);
     } else if (strcmp(key, "right") == 0) {
@@ -1453,15 +1501,43 @@ String* CSSStyleValuePair::toString()
         	if (m_valueKind == CSSStyleValuePair::ValueKind::None) {
         		return String::fromUTF8("none");
         	} else if (m_valueKind == CSSStyleValuePair::ValueKind::Inherit) {
-        		return String::fromUTF8("initial");
-        	} else if (m_valueKind == CSSStyleValuePair::ValueKind::Initial) {
         		return String::fromUTF8("inherit");
+        	} else if (m_valueKind == CSSStyleValuePair::ValueKind::Initial) {
+        		return String::fromUTF8("initial");
     		} else if (m_valueKind == CSSStyleValuePair::ValueKind::StringValueKind) {
     			return stringValue();
     		} else {
     			STARFISH_RELEASE_ASSERT_NOT_REACHED();
     		}
         	break;
+        case BackgroundRepeatX:
+            if (m_valueKind == CSSStyleValuePair::ValueKind::Inherit) {
+                return String::fromUTF8("inherit");
+            } else if (m_valueKind == CSSStyleValuePair::ValueKind::Initial) {
+                return String::fromUTF8("initial");
+            } else if (m_valueKind == CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind) {
+                if(backgroundRepeatXValue() == RepeatRepeatValue)
+                    return String::fromUTF8("repeat");
+                else
+                    return String::fromUTF8("no-repeat");
+            } else {
+                STARFISH_RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
+        case BackgroundRepeatY:
+            if (m_valueKind == CSSStyleValuePair::ValueKind::Inherit) {
+                return String::fromUTF8("inherit");
+            } else if (m_valueKind == CSSStyleValuePair::ValueKind::Initial) {
+                return String::fromUTF8("initial");
+            } else if (m_valueKind == CSSStyleValuePair::ValueKind::BackgroundRepeatValueKind) {
+                if(backgroundRepeatYValue() == RepeatRepeatValue)
+                    return String::fromUTF8("repeat");
+                else
+                    return String::fromUTF8("no-repeat");
+            } else {
+                STARFISH_RELEASE_ASSERT_NOT_REACHED();
+            }
+            break;
         case Direction: {
             switch(directionValue()) {
                 case LtrDirectionValue:
@@ -1870,6 +1946,51 @@ void CSSStyleDeclaration::setMargin(const char* value)
     }
 }
 
+String* CSSStyleDeclaration::BackgroundRepeat(){
+    String* repeatX = BackgroundRepeatX();
+    String* repeatY = BackgroundRepeatY();
+
+    if(repeatX->equals("repeat") && repeatY->equals("repeat"))
+        return String::fromUTF8("repeat");
+    else if(repeatX->equals("repeat") && repeatY->equals("no-repeat"))
+        return String::fromUTF8("repeat-x");
+    else if(repeatX->equals("no-repeat") && repeatY->equals("repeat"))
+        return String::fromUTF8("repeat-y");
+    else if(repeatX->equals("no-repeat") && repeatY->equals("no-repeat"))
+        return String::fromUTF8("no-repeat");
+    else if(repeatX->equals("initial") && repeatY->equals("initial"))
+        return String::fromUTF8("initial");
+    else if(repeatX->equals("inherit") && repeatY->equals("inherit"))
+        return String::fromUTF8("inherit");
+
+    return String::emptyString;
+}
+
+void CSSStyleDeclaration::setBackgroundRepeat(const char* value)
+{
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+
+    if(checkInputErrorBackgroundRepeat(&tokens)) {
+        if(VALUE_IS_STRING("repeat")) {
+            setBackgroundRepeatX("repeat");
+            setBackgroundRepeatY("repeat");
+        } else if (VALUE_IS_STRING("repeat-x")) {
+            setBackgroundRepeatX("repeat");
+            setBackgroundRepeatY("no-repeat");
+        } else if (VALUE_IS_STRING("repeat-y")) {
+            setBackgroundRepeatX("no-repeat");
+            setBackgroundRepeatY("repeat");
+        } else if (VALUE_IS_STRING("no-repeat")) {
+            setBackgroundRepeatX("no-repeat");
+            setBackgroundRepeatY("no-repeat");
+        } else {
+            setBackgroundRepeatX(value);
+            setBackgroundRepeatY(value);
+        }
+    }
+}
+
 bool CSSStyleDeclaration::checkInputErrorColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     // color | percentage | <auto> | inherit
@@ -1944,6 +2065,7 @@ bool CSSStyleDeclaration::checkInputErrorMarginTop(std::vector<String*, gc_alloc
 bool CSSStyleDeclaration::checkInputErrorBackgroundImage(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     if (tokens->size() == 1) {
+        (*tokens)[0] = (*tokens)[0]->toLower();
         const char* token = tokens->at(0)->utf8Data();
         size_t len = strlen(token);
 
@@ -1952,7 +2074,8 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundImage(std::vector<String*, gc
                 return false;
             }
             return true;
-        } else if (CSSPropertyParser::assureEssential(token)) {
+        } else if (CSSPropertyParser::assureEssential(token)
+                || strcmp(token, "none") == 0 || strcmp(token, "") == 0) {
             return true;
         }
     } else if (tokens->size() == 2) {
@@ -1986,6 +2109,27 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundImage(std::vector<String*, gc
     }
 
     return false;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBackgroundRepeatX(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return true;
+}
+bool CSSStyleDeclaration::checkInputErrorBackgroundRepeatY(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return true;
+}
+bool CSSStyleDeclaration::checkInputErrorBackgroundRepeat(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() != 1) return false;
+    (*tokens)[0] = (*tokens)[0]->toLower();
+    const char* value = (*tokens)[0]->utf8Data();
+    return VALUE_IS_STRING("repeat")
+                || VALUE_IS_STRING("repeat-x")
+                || VALUE_IS_STRING("repeat-y")
+                || VALUE_IS_STRING("no-repeat")
+                || CSSPropertyParser::assureEssential(value)
+                || strcmp(value, "") == 0;
 }
 
 bool CSSStyleDeclaration::checkInputErrorMarginRight(std::vector<String*, gc_allocator<String*>>* tokens)

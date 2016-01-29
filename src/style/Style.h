@@ -679,7 +679,9 @@ public:
     F(OverflowX) \
     F(BackgroundImage) \
     F(ZIndex) \
-    F(VerticalAlign)
+    F(VerticalAlign) \
+    F(BackgroundRepeatX) \
+    F(BackgroundRepeatY) \
 
 #define SET_VALUE(name) \
     void setValue##name(std::vector<String*, gc_allocator<String*>>* tokens);
@@ -768,8 +770,8 @@ public:
 
     FOR_EACH_STYLE_ATTRIBUTE(CHECK_INPUT_ERROR)
 #undef CHECK_INPUT_ERROR
-
     bool checkInputErrorMargin(std::vector<String*, gc_allocator<String*>>* tokens);
+    bool checkInputErrorBackgroundRepeat(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*>>* tokens, bool allowNegative);
 #define ATTRIBUTE_GETTER(name) \
     String* name () { \
@@ -816,6 +818,9 @@ public:
 
     String* Margin();
     void setMargin(const char* value);
+
+    String* BackgroundRepeat();
+    void setBackgroundRepeat(const char* value);
 
 protected:
     std::vector<CSSStyleValuePair, gc_allocator<CSSStyleValuePair>> m_cssValues;
