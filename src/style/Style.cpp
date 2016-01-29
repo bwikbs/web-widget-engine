@@ -1227,8 +1227,9 @@ void CSSStyleValuePair::setValueVerticalAlign(std::vector<String*, gc_allocator<
     }
 }
 
-CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value)
+CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* value, bool& result)
 {
+    result = true;
     CSSStyleValuePair ret;
     std::vector<String*, gc_allocator<String*>> tokens;
     DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
@@ -1492,6 +1493,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }
     } else if (strcmp(key, "overflow-y") == 0) {
+        result = false;
 /*        // visible | hidden | scroll(X) | auto(X) | inherit // initial value -> visible
         ret.m_keyKind = CSSStyleValuePair::KeyKind::OverflowY;
         ret.m_valueKind = CSSStyleValuePair::ValueKind::OverflowValueKind;
@@ -1543,9 +1545,9 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
+        result = false;
         //STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
-
     return ret;
 }
 

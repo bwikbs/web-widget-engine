@@ -563,9 +563,14 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
                     maxAscender = std::max(asc, maxAscender);
                     maxDecender = std::min(dec, maxDecender);
                 } else if (ib->isInlineBlockBox()) {
-                    float dec = -(ib->height() - ib->asInlineBlockBox()->m_ascender) - ib->marginBottom();
-                    maxAscender = std::max(ib->asInlineBlockBox()->m_ascender + ib->marginTop(), maxAscender);
-                    maxDecender = std::min(dec, maxDecender);
+                    if (ib->asInlineBlockBox()->m_ascender == ib->height()) {
+                        maxAscender = std::max(ib->asInlineBlockBox()->m_ascender + ib->marginHeight(), maxAscender);
+                        maxDecender = std::min(0.f, maxDecender);
+                    } else {
+                        float dec = -(ib->height() - ib->asInlineBlockBox()->m_ascender) - ib->marginBottom();
+                        maxAscender = std::max(ib->asInlineBlockBox()->m_ascender + ib->marginTop(), maxAscender);
+                        maxDecender = std::min(dec, maxDecender);
+                    }
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
@@ -590,8 +595,13 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
                                 + ib->asInlineReplacedBox()->replacedBox()->contentHeight();
                     ib->setY(height + maxDecender - asc + ib->marginTop());
                 } else if (ib->isInlineBlockBox()) {
-                    float dec = -(ib->height() - ib->asInlineBlockBox()->m_ascender) - ib->marginBottom();
-                    ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
+                    if (ib->asInlineBlockBox()->m_ascender == ib->height()) {
+                        float dec = 0;
+                        ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
+                    } else {
+                        float dec = -(ib->height() - ib->asInlineBlockBox()->m_ascender) - ib->marginBottom();
+                        ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
+                    }
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }

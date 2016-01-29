@@ -107,7 +107,10 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                             if (strcmp(attr->Name(), "selectorText") != 0) {
                                 const char* n = attr->Name();
                                 const char* v = attr->Value();
-                                rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString(n, v));
+                                bool result;
+                                CSSStyleValuePair ret = CSSStyleValuePair::fromString(n, v, result);
+                                if (result)
+                                    rule->styleDeclaration()->addValuePair(ret);
                             }
                             attr = attr->Next();
                         }

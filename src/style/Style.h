@@ -380,7 +380,6 @@ public:
     CSSStyleValuePair()
         : m_value{0}
     {
-
     }
 
     KeyKind keyKind()
@@ -531,7 +530,7 @@ public:
     friend void parseLength(CSSStyleValuePair& ret, const char* value);
     friend void parseUrl(const char* value);
     friend CSSLength parseCSSLength(const char* value);
-    static CSSStyleValuePair fromString(const char* key, const char* value);
+    static CSSStyleValuePair fromString(const char* key, const char* value, bool& result);
 
     union ValueData {
         float m_floatValue;
