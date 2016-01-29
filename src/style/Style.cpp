@@ -2827,12 +2827,12 @@ bool CSSStyleDeclaration::checkInputErrorDirection(std::vector<String*, gc_alloc
 
 bool CSSStyleDeclaration::checkInputErrorWidth(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    return checkHavingOneTokenAndLengthOrPercentage(tokens, true);
 }
 
 bool CSSStyleDeclaration::checkInputErrorHeight(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    return true;
+    return checkHavingOneTokenAndLengthOrPercentage(tokens, true);
 }
 
 bool CSSStyleDeclaration::checkInputErrorFontSize(std::vector<String*, gc_allocator<String*>>* tokens)
