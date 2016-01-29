@@ -783,6 +783,9 @@ public:
     bool checkInputErrorBackground(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkInputErrorBackgroundRepeat(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkInputErrorBorderTop(std::vector<String*, gc_allocator<String*>>* tokens);
+    bool checkInputErrorBorderRight(std::vector<String*, gc_allocator<String*>>* tokens);
+    bool checkInputErrorBorderBottom(std::vector<String*, gc_allocator<String*>>* tokens);
+    bool checkInputErrorBorderLeft(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*>>* tokens, bool allowNegative);
 #define ATTRIBUTE_GETTER(name) \
     String* name () { \
@@ -830,8 +833,14 @@ public:
 
     String* Margin();
     String* BorderTop();
+    String* BorderRight();
+    String* BorderBottom();
+    String* BorderLeft();
     void setMargin(const char* value);
     void setBorderTop(const char* value);
+    void setBorderRight(const char* value);
+    void setBorderBottom(const char* value);
+    void setBorderLeft(const char* value);
 
     String* BackgroundRepeat();
     void setBackgroundRepeat(const char* value);

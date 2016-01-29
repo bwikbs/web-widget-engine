@@ -832,13 +832,10 @@ void CSSStyleValuePair::setValueBorderImageWidth(std::vector<String*, gc_allocat
     }
 }
 
-String* CSSStyleDeclaration::BorderTop()
+String* BorderString(String* width, String* style, String* color)
 {
     String* space = String::fromUTF8(" ");
-    String* width = BorderTopWidth();
-    String* style = BorderTopStyle();
-    String* color = BorderTopColor();
-    String* sum;
+    String* sum = String::emptyString;
 
     if (!width->equals(String::emptyString)) {
         sum = width;
@@ -866,6 +863,38 @@ String* CSSStyleDeclaration::BorderTop()
     }
 
     return sum;
+}
+
+String* CSSStyleDeclaration::BorderTop()
+{
+    String* width = BorderTopWidth();
+    String* style = BorderTopStyle();
+    String* color = BorderTopColor();
+    return BorderString(width, style, color);
+}
+
+String* CSSStyleDeclaration::BorderRight()
+{
+    String* width = BorderRightWidth();
+    String* style = BorderRightStyle();
+    String* color = BorderRightColor();
+    return BorderString(width, style, color);
+}
+
+String* CSSStyleDeclaration::BorderBottom()
+{
+    String* width = BorderBottomWidth();
+    String* style = BorderBottomStyle();
+    String* color = BorderBottomColor();
+    return BorderString(width, style, color);
+}
+
+String* CSSStyleDeclaration::BorderLeft()
+{
+    String* width = BorderLeftWidth();
+    String* style = BorderLeftStyle();
+    String* color = BorderLeftColor();
+    return BorderString(width, style, color);
 }
 
 BorderShorthandValueType checkBorderValueType(const char* token)
@@ -920,6 +949,123 @@ void CSSStyleDeclaration::setBorderTop(const char* value)
             setBorderTopColor("initial");
     }
 }
+
+void CSSStyleDeclaration::setBorderRight(const char* value)
+{
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+    if (checkInputErrorBorderRight(&tokens)) {
+        if (tokens.size() == 1 && VALUE_IS_INHERIT()) {
+            setBorderRightWidth("inherit");
+            setBorderRightStyle("inherit");
+            setBorderRightColor("inherit");
+            return;
+        }
+
+        bool hasWidth = false, hasStyle = false, hasColor = false;
+        for (unsigned i = 0; i < tokens.size(); i++) {
+            switch (checkBorderValueType(tokens[i]->utf8Data())) {
+            case BorderShorthandValueType::BWidth:
+                setBorderRightWidth(tokens[i]->utf8Data());
+                hasWidth = true;
+                break;
+            case BorderShorthandValueType::BStyle:
+                setBorderRightStyle(tokens[i]->utf8Data());
+                hasStyle = true;
+                break;
+            case BorderShorthandValueType::BColor:
+                setBorderRightColor(tokens[i]->utf8Data());
+                hasColor = true;
+                break;
+            default:
+                break;
+            }
+        }
+        if (!hasWidth)
+            setBorderRightWidth("initial");
+        if (!hasStyle)
+            setBorderRightStyle("initial");
+        if (!hasColor)
+            setBorderRightColor("initial");
+    }}
+
+void CSSStyleDeclaration::setBorderBottom(const char* value)
+{
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+    if (checkInputErrorBorderBottom(&tokens)) {
+        if (tokens.size() == 1 && VALUE_IS_INHERIT()) {
+            setBorderBottomWidth("inherit");
+            setBorderBottomStyle("inherit");
+            setBorderBottomColor("inherit");
+            return;
+        }
+
+        bool hasWidth = false, hasStyle = false, hasColor = false;
+        for (unsigned i = 0; i < tokens.size(); i++) {
+            switch (checkBorderValueType(tokens[i]->utf8Data())) {
+            case BorderShorthandValueType::BWidth:
+                setBorderBottomWidth(tokens[i]->utf8Data());
+                hasWidth = true;
+                break;
+            case BorderShorthandValueType::BStyle:
+                setBorderBottomStyle(tokens[i]->utf8Data());
+                hasStyle = true;
+                break;
+            case BorderShorthandValueType::BColor:
+                setBorderBottomColor(tokens[i]->utf8Data());
+                hasColor = true;
+                break;
+            default:
+                break;
+            }
+        }
+        if (!hasWidth)
+            setBorderBottomWidth("initial");
+        if (!hasStyle)
+            setBorderBottomStyle("initial");
+        if (!hasColor)
+            setBorderBottomColor("initial");
+    }}
+
+void CSSStyleDeclaration::setBorderLeft(const char* value)
+{
+    std::vector<String*, gc_allocator<String*>> tokens;
+    DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
+    if (checkInputErrorBorderLeft(&tokens)) {
+        if (tokens.size() == 1 && VALUE_IS_INHERIT()) {
+            setBorderLeftWidth("inherit");
+            setBorderLeftStyle("inherit");
+            setBorderLeftColor("inherit");
+            return;
+        }
+
+        bool hasWidth = false, hasStyle = false, hasColor = false;
+        for (unsigned i = 0; i < tokens.size(); i++) {
+            switch (checkBorderValueType(tokens[i]->utf8Data())) {
+            case BorderShorthandValueType::BWidth:
+                setBorderLeftWidth(tokens[i]->utf8Data());
+                hasWidth = true;
+                break;
+            case BorderShorthandValueType::BStyle:
+                setBorderLeftStyle(tokens[i]->utf8Data());
+                hasStyle = true;
+                break;
+            case BorderShorthandValueType::BColor:
+                setBorderLeftColor(tokens[i]->utf8Data());
+                hasColor = true;
+                break;
+            default:
+                break;
+            }
+        }
+        if (!hasWidth)
+            setBorderLeftWidth("initial");
+        if (!hasStyle)
+            setBorderLeftStyle("initial");
+        if (!hasColor)
+            setBorderLeftColor("initial");
+    }}
 
 void CSSStyleValuePair::setValueBorderTopColor(std::vector<String*, gc_allocator<String*>>* tokens)
 {
@@ -2794,6 +2940,21 @@ bool CSSStyleDeclaration::checkInputErrorBorderTop(std::vector<String*, gc_alloc
         return true;
     }
     return false;
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderRight(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkInputErrorBorderTop(tokens);
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderBottom(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkInputErrorBorderTop(tokens);
+}
+
+bool CSSStyleDeclaration::checkInputErrorBorderLeft(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    return checkInputErrorBorderTop(tokens);
 }
 
 bool checkInputErrorBorderUnitColor(std::vector<String*, gc_allocator<String*>>* tokens)

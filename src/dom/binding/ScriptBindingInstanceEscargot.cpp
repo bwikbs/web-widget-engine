@@ -1469,6 +1469,9 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(BorderImageSource, borderImageSource) \
     F(BorderImageWidth, borderImageWidth) \
     F(BorderTop, borderTop) \
+    F(BorderRight, borderRight) \
+    F(BorderBottom, borderBottom) \
+    F(BorderLeft, borderLeft) \
     F(BorderTopColor, borderTopColor) \
     F(BorderRightColor, borderRightColor) \
     F(BorderBottomColor, borderBottomColor) \
