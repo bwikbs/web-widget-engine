@@ -10,13 +10,9 @@
 ]]></text>
                 </node>
                 <node nodeType="1" localName="style">
-                    <!-- Remove auto generated border-image-outset -->
-                    <!--style selectorText="#borderimg1" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" border-top-color="transparent" border-right-color="transparent" border-bottom-color="transparent" border-left-color="transparent" border-image-width="initial" border-image-outset="initial" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;test/unittest/css/border.png&quot;)" border-image-repeat="repeat" border-image-slice="30"/>
+                    <style selectorText="#borderimg1" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" border-top-color="transparent" border-right-color="transparent" border-bottom-color="transparent" border-left-color="transparent" border-image-width="initial" border-image-outset="initial" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;test/unittest/css/border.png&quot;)" border-image-repeat="repeat" border-image-slice="30"/>
                     <style selectorText="#borderimg2" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" border-top-color="transparent" border-right-color="transparent" border-bottom-color="transparent" border-left-color="transparent" border-image-width="initial" border-image-outset="initial" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;test/unittest/css/border.png&quot;)" border-image-repeat="round" border-image-slice="30"/>
-                    <style selectorText="#borderimg3" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" border-top-color="transparent" border-right-color="transparent" border-bottom-color="transparent" border-left-color="transparent" border-image-width="initial" border-image-outset="initial" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;test/unittest/css/border.png&quot;)" border-image-repeat="stretch" border-image-slice="30"/-->
-                    <style selectorText="#borderimg1" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" border-top-color="transparent" border-right-color="transparent" border-bottom-color="transparent" border-left-color="transparent" border-image-width="initial" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;test/unittest/css/border.png&quot;)" border-image-repeat="repeat" border-image-slice="30"/>
-                    <style selectorText="#borderimg2" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" border-top-color="transparent" border-right-color="transparent" border-bottom-color="transparent" border-left-color="transparent" border-image-width="initial" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;test/unittest/css/border.png&quot;)" border-image-repeat="round" border-image-slice="30"/>
-                    <style selectorText="#borderimg3" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" border-top-color="transparent" border-right-color="transparent" border-bottom-color="transparent" border-left-color="transparent" border-image-width="initial" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;test/unittest/css/border.png&quot;)" border-image-repeat="stretch" border-image-slice="30"/>
+                    <style selectorText="#borderimg3" border-top-width="15px" border-right-width="15px" border-bottom-width="15px" border-left-width="15px" border-top-style="solid" border-right-style="solid" border-bottom-style="solid" border-left-style="solid" border-top-color="transparent" border-right-color="transparent" border-bottom-color="transparent" border-left-color="transparent" border-image-width="initial" border-image-outset="initial" padding-top="15px" padding-right="15px" padding-bottom="15px" padding-left="15px" border-image-source="url(&quot;test/unittest/css/border.png&quot;)" border-image-repeat="stretch" border-image-slice="30"/>
                     <node nodeType="3" localName="text">
                         <text><![CDATA[ 
 #borderimg1 { 
@@ -24,7 +20,7 @@
     padding: 15px;
     border-image-source: url(test/unittest/css/border.png);
     border-image-repeat: repeat;
-    border-image-slice: 30;
+    border-image-slice: 30; 
 }
 
 #borderimg2 { 
@@ -32,7 +28,7 @@
     padding: 15px;
     border-image-source: url(test/unittest/css/border.png);
     border-image-repeat: round;
-    border-image-slice: 30;
+    border-image-slice: 30; 
 }
 
 #borderimg3 { 
@@ -40,7 +36,7 @@
     padding: 15px;
     border-image-source: url(test/unittest/css/border.png);
     border-image-repeat: stretch;    
-    border-image-slice: 30;
+    border-image-slice: 30; 
 }
 ]]></text>
                     </node>
@@ -60,7 +56,7 @@
 
 ]]></text>
                 </node>
-                <node nodeType="1" localName="div" id="borderimg1">
+                <node nodeType="1" localName="div" id="borderimg1" style="border-image-repeat: repeat;">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[border-image-repeat: repeat;]]></text>
                     </node>
@@ -85,6 +81,32 @@
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
+
+]]></text>
+                </node>
+                <node nodeType="1" localName="script">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+    function run() {
+        var divNode = document.getElementById("borderimg1");
+        print(divNode.nodeName);
+        print(divNode.style.borderImageRepeat);
+        divNode.style.borderImageRepeat = "round";
+        print(divNode.style.borderImageRepeat);
+        divNode.style.borderImageRepeat = "stretch stretch stretch";
+        print(divNode.style.borderImageRepeat);
+        divNode.style.borderImageRepeat = "stretch rounded";
+        print(divNode.style.borderImageRepeat);
+        divNode.style.borderImageRepeat = "repeat";
+        print(divNode.style.borderImageRepeat);
+    }
+    run();
+]]></text>
+                    </node>
+                </node>
+                <node nodeType="3" localName="text">
+                    <text><![CDATA[
+
 
 
 

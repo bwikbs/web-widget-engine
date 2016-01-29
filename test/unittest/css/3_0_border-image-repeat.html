@@ -33,5 +33,22 @@
 <div id="borderimg2">border-image-repeat: round;</div>
 <div id="borderimg3">border-image-repeat: stretched;</div>
 
+<script>
+    function run() {
+        var divNode = document.getElementById("borderimg1");
+        print(divNode.nodeName);
+        print(divNode.style.borderImageRepeat);
+        divNode.style.borderImageRepeat = "round";
+        print(divNode.style.borderImageRepeat);
+        divNode.style.borderImageRepeat = "stretch stretch-stretch";
+        print(divNode.style.borderImageRepeat);
+        divNode.style.borderImageRepeat = "stretch rounded";
+        print(divNode.style.borderImageRepeat);
+        divNode.style.borderImageRepeat = "repeat";
+        print(divNode.style.borderImageRepeat);
+    }
+    run();
+</script>
+
 </body>
 </html>

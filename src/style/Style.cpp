@@ -1429,7 +1429,7 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         }
     } else {
         STARFISH_LOG_ERROR("CSSStyleValuePair::fromString -> unsupport key = %s\n", key);
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+        //STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
 
     return ret;
@@ -1589,7 +1589,38 @@ String* CSSStyleValuePair::toString()
             }
         }
         case BorderImageRepeat: {
-            //TODO(june0cho)
+            switch(valueKind()) {
+                case CSSStyleValuePair::ValueKind::ValueListKind:
+                {
+                    ValueList* values = multiValue();
+                    String* s = String::emptyString;
+                    for (unsigned int i = 0; i < values->size(); i++) {
+                        STARFISH_ASSERT(values->getValueKindAtIndex(i) == BorderImageRepeatValueKind);
+                        switch(values->getValueAtIndex(i).m_borderImageRepeat) {
+                            case BorderImageRepeatValue::StretchValue :
+                                s = s->concat(String::fromUTF8("stretch"));
+                                break;
+                            case BorderImageRepeatValue::RepeatValue :
+                                s = s->concat(String::fromUTF8("repeat"));
+                                break;
+                            case BorderImageRepeatValue::RoundValue :
+                                s = s->concat(String::fromUTF8("round"));
+                                break;
+                            case BorderImageRepeatValue::SpaceValue :
+                                s = s->concat(String::fromUTF8("space"));
+                                break;
+                            default:
+                                STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                        }
+                        if (i != values->size() - 1)
+                            s = s->concat(String::fromUTF8(" "));
+                    }
+                    return s;
+                }
+                default:
+                    //initial or inherit
+                    return lengthOrPercentageToString();
+            }
         }
         case BorderImageSlice: {
             //TODO(june0cho)
@@ -1602,7 +1633,7 @@ String* CSSStyleValuePair::toString()
                 case CSSStyleValuePair::ValueKind::ValueListKind:
                 {
                     ValueList* values = multiValue();
-                    String* s = String::fromUTF8("");
+                    String* s = String::emptyString;
                     for (unsigned int i = 0; i < values->size(); i++) {
                         String* newstr = valueToString(values->getValueKindAtIndex(i),
                                                        values->getValueAtIndex(i));
@@ -2075,8 +2106,21 @@ bool CSSStyleDeclaration::checkInputErrorTextDecoration(std::vector<String*, gc_
 
 bool CSSStyleDeclaration::checkInputErrorBorderImageRepeat(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    //TODO(june0cho)
-    return true;
+    if (tokens->size() == 1 || tokens->size() == 2) {
+        for (unsigned int i = 0; i < tokens->size(); i++) {
+            const char* token = (*tokens)[i]->toLower()->utf8Data();
+            if ((strcmp(token, "stretch") == 0) ||
+                (strcmp(token, "repeat") == 0) ||
+                (strcmp(token, "round") == 0) ||
+                (strcmp(token, "space") == 0)) {
+                continue;
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 bool CSSStyleDeclaration::checkInputErrorBorderImageSlice(std::vector<String*, gc_allocator<String*>>* tokens)
