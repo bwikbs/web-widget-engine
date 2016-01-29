@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
     // GC_disable();
     int flag = 0;
 
+    const char* path = "";
     for (int i = 2; i < argc; i ++) {
         if (strcmp(argv[i], "--dump-computed-style") == 0) {
             flag |= StarFish::enableComputedStyleDump;
@@ -21,10 +22,13 @@ int main(int argc, char *argv[])
             flag |= StarFish::enableHitTestDump;
         } else if (strcmp(argv[i], "--enable-black-theme") == 0) {
             flag |= StarFish::enableBlackTheme;
+        } else if (strstr(argv[i], "--working-directory=") == argv[i]) {
+            path = argv[i] + strlen("--working-directory=");
         }
     }
 
-    StarFish::StarFish* sf = new StarFish::StarFish((StarFish::StarFishStartUpFlag)flag);
+    printf("running StarFish (working directory = %s)\n", path);
+    StarFish::StarFish* sf = new StarFish::StarFish((StarFish::StarFishStartUpFlag)flag, String::fromUTF8(path));
     if (argc == 1) {
         puts("please specify xml path");
         return -1;

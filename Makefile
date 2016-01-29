@@ -352,5 +352,9 @@ asm:
 	objdump -d        $(BIN) | c++filt > $(BIN).asm
 	readelf -a --wide $(BIN) | c++filt > $(BIN).elf
 	vi -O $(BIN).asm $(BIN).elf
+	
+install_runner_dep:
+	sudo apt-get install nodejs phantomjs npm
+	npm install fs path phantom
 
 .PHONY: clean

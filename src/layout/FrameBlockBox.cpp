@@ -291,6 +291,7 @@ float FrameBlockBox::layoutBlock(LayoutContext& ctx)
         if (child->isNormalFlow()) {
             child->layout(ctx);
             child->asFrameBox()->moveX(child->asFrameBox()->marginLeft());
+            // TODO implement margin-collapse
             child->asFrameBox()->moveY(child->asFrameBox()->marginTop());
         }
 

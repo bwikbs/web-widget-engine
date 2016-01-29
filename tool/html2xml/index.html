@@ -7,46 +7,13 @@
 	<body>
 		<h1>input html code you want</h1>
 		<h3> external links(.css, .js) are not supported.</h3>
-		<form onsubmit="onSubmit()" action="#">
+		<form onsubmit="onSubmit()" action="#" id="form">
 			<input type="submit">
 			<br>
 			<textarea rows="30" cols="80" id="code">
-<!DOCTYPE html>
-<html>
-	<head>
-		<style type="text/css">
-			#idText {
-				font-size: 20px;				
-				color: red;
-			}
-			.classText {
-				font-size: 12px;
-				text-align: 16px;
-			}
-			div {
-				display: block;
-			}
-		</style>
-	</head>
-	<body>
-	test
-		<div id="idText">
-			text2
-		</div>
-		<div class="classText">
-			tttttt
-		</div>
-	</body>
-	<script type="text/javascript">
-		function test() {
-			return 1<2;
-		}
-	</script>
-</html>
 			</textarea>
 			<h3>output</h3>
-			<textarea rows="30" cols="80" id="result"></textarea>
-			
+			<textarea rows="30" cols="80" id="result"></textarea>			
 		</form>
 		
 		<script type="text/javascript" >
@@ -63,6 +30,7 @@
 				document.body.appendChild(iframe);		
 				
 				iframe.onload = function() {
+					console.log("onload");
 					function nameFromType(type) {
 						switch(type) {
 							case 1:
