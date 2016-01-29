@@ -85,7 +85,7 @@
         text
         ]]></text>
                 </node>
-                <node nodeType="1" localName="div" id="div4">
+                <node nodeType="1" localName="div" id="div4" style="display: inline-block;">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
            display: inline-block
@@ -129,22 +129,29 @@
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
     
-    
     ]]></text>
                 </node>
                 <node nodeType="1" localName="script" type="text/javascript">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
         function test() {
-            return 1<2;
+            var divNode = document.getElementById("div4");
+            print(divNode.nodeName);
+            print(divNode.style.display);
+            divNode.style.display = "inline";
+            print(divNode.style.display);
+            divNode.style.display = "blockinline";
+            print(divNode.style.display);
+            divNode.style.display = "inline-block";
         }
+        test();
     ]]></text>
                     </node>
                 </node>
                 <node nodeType="3" localName="text">
                     <text><![CDATA[
 
-            
+
 ]]></text>
                 </node>
             </node>

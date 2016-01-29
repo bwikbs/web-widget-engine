@@ -43,11 +43,17 @@
             </div>
         </div>
     </body>
-    </body>
     <script type="text/javascript">
         function test() {
-            return 1<2;
+            var divNode = document.getElementById("div4");
+            print(divNode.nodeName);
+            print(divNode.style.display);
+            divNode.style.display = "inline";
+            print(divNode.style.display);
+            divNode.style.display = "blockinline";
+            print(divNode.style.display);
+            divNode.style.display = "inline-block";
         }
+        test();
     </script>
 </html>
-            
