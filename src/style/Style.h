@@ -601,6 +601,8 @@ public:
             return percentageToString(data.m_floatValue);
         else if (kind == CSSStyleValuePair::ValueKind::Number)
             return numberToString(data.m_floatValue);
+        else if (kind == CSSStyleValuePair::ValueKind::StringValueKind)
+            return data.m_stringValue;
         else
             return nullptr;
     }

@@ -6,7 +6,7 @@
     border: 10px solid transparent;
     padding: 15px;
     border-image-source: url(test/unittest/css/border.png);
-    border-image-slice: 50;
+    border-image-slice: 50; 
 }
 
 #borderimg2 {
@@ -29,6 +29,18 @@
 <div id="borderimg1">border-image-slice: 50;</div>
 <div id="borderimg2">border-image-slice: 20%;</div>
 <div id="borderimg3">border-image-slice: 30%;</div>
-
+<script type="text/javascript">
+    function run() {
+        var divNode = document.getElementById("borderimg3");
+        console.log(divNode.nodeName);
+        console.log(divNode.style.borderImageSlice);
+        divNode.style.borderImageSlice = "20% 2 333 fill";
+        console.log(divNode.style.borderImageSlice);
+        divNode.style.borderImageSlice = "20% 2.1px 333";
+        console.log(divNode.style.borderImageSlice);
+    }
+    run();
+</script>
 </body>
 </html>
+

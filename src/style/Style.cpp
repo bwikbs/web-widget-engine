@@ -617,10 +617,8 @@ void CSSStyleValuePair::setValueBorderImageSlice(std::vector<String*, gc_allocat
     } else {
         m_valueKind = CSSStyleValuePair::ValueKind::ValueListKind;
         m_value.m_multiValue = new ValueList();
-        std::vector<String*, gc_allocator<String*>> tokens;
-        DOMTokenList::tokenize(&tokens, String::fromUTF8(value));
-        for (unsigned int i = 0; i < tokens.size(); i++) {
-            const char* currentToken = tokens[i]->utf8Data();
+        for (unsigned int i = 0; i < tokens->size(); i++) {
+            const char* currentToken = tokens->at(i)->toLower()->utf8Data();
             if (startsWith(currentToken, "fill")) {
                 m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::StringValueKind, {0});
             } else if (endsWith(currentToken, "%")) {
@@ -630,7 +628,7 @@ void CSSStyleValuePair::setValueBorderImageSlice(std::vector<String*, gc_allocat
             } else {
                 char* pEnd;
                 double d = strtod (currentToken, &pEnd);
-                STARFISH_ASSERT(pEnd == currentToken + tokens[i]->length());
+                STARFISH_ASSERT(pEnd == currentToken + tokens->at(i)->length());
                 m_value.m_multiValue->append(CSSStyleValuePair::ValueKind::Number, {.m_floatValue = (float)d});
             }
         }
@@ -1623,7 +1621,28 @@ String* CSSStyleValuePair::toString()
             }
         }
         case BorderImageSlice: {
-            //TODO(june0cho)
+            switch(valueKind()) {
+                case CSSStyleValuePair::ValueKind::ValueListKind:
+                {
+                    ValueList* values = multiValue();
+                    String* s = String::emptyString;
+                    for (unsigned int i = 0; i < values->size(); i++) {
+                        String* newstr;
+                        if (values->getValueKindAtIndex(i) == CSSStyleValuePair::ValueKind::StringValueKind)
+                            newstr = String::fromUTF8("fill");
+                        else
+                            newstr = valueToString(values->getValueKindAtIndex(i),
+                                                   values->getValueAtIndex(i));
+                        s = s->concat(newstr);
+                        if (i != values->size() - 1)
+                            s = s->concat(String::fromUTF8(" "));
+                    }
+                    return s;
+                }
+                default:
+                    //initial or inherit
+                    return lengthOrPercentageToString();
+            }
         }
         case BorderImageSource: {
             //TODO(june0cho)
@@ -2131,7 +2150,20 @@ bool CSSStyleDeclaration::checkInputErrorBorderImageRepeat(std::vector<String*, 
 
 bool CSSStyleDeclaration::checkInputErrorBorderImageSlice(std::vector<String*, gc_allocator<String*>>* tokens)
 {
-    //TODO(june0cho)
+    // number | percentage {1,4} && fill
+    if (tokens->size() > 4) return false;
+    for (unsigned int i = 0; i < tokens->size(); i++) {
+        const char* currentToken = tokens->at(i)->toLower()->utf8Data();
+        if (CSSPropertyParser::assurePercent(currentToken, false) ||
+           CSSPropertyParser::assureNumber(currentToken, false))
+            continue;
+        else if (strcmp(currentToken, "fill") == 0) {
+           if (i == tokens->size()-1) return true;
+           else return false;
+        } else {
+            return false;
+        }
+    }
     return true;
 }
 
