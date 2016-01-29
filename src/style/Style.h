@@ -782,6 +782,7 @@ public:
     bool checkInputErrorMargin(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkInputErrorBackground(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkInputErrorBackgroundRepeat(std::vector<String*, gc_allocator<String*>>* tokens);
+    bool checkInputErrorBorder(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkInputErrorBorderTop(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkInputErrorBorderRight(std::vector<String*, gc_allocator<String*>>* tokens);
     bool checkInputErrorBorderBottom(std::vector<String*, gc_allocator<String*>>* tokens);
@@ -832,15 +833,20 @@ public:
 #undef FOR_EACH_STYLE_ATTRIBUTE
 
     String* Margin();
+    String* Border();
     String* BorderTop();
     String* BorderRight();
     String* BorderBottom();
     String* BorderLeft();
     void setMargin(const char* value);
+    void setBorder(const char* value);
     void setBorderTop(const char* value);
     void setBorderRight(const char* value);
     void setBorderBottom(const char* value);
     void setBorderLeft(const char* value);
+    void setBorderWidthData(const char* value);
+    void setBorderStyleData(const char* value);
+    void setBorderColorData(const char* value);
 
     String* BackgroundRepeat();
     void setBackgroundRepeat(const char* value);

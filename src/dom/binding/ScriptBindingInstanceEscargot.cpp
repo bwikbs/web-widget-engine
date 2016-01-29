@@ -1464,6 +1464,7 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     F(Position, position) \
     F(TextDecoration, textDecoration) \
     F(Display, display) \
+    F(Border, border) \
     F(BorderImageRepeat, borderImageRepeat) \
     F(BorderImageSlice, borderImageSlice) \
     F(BorderImageSource, borderImageSource) \
