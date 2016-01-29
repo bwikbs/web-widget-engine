@@ -48,8 +48,15 @@
     </body>
     </body>
     <script type="text/javascript">
-        function test() {
+		function test() {
+            var a = document.getElementById("idText");
+            print(a);
+            print(a.style.backgroundColor);
+            a.style.backgroundColor = "blue";
+            print(a.style.backgroundColor);
+            print("<End>")
             return 1<2;
         }
+        test();
     </script>
 </html>

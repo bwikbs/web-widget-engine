@@ -24,5 +24,19 @@ body {
 <div id="rgb">This is a paragraph with id="rgb". This text is blue.</div>
 
 </body>
+    <script type="text/javascript">
+		function test() {
+            var a = document.getElementById("idText");
+            print(a);
+            print(a.style.color);
+            a.style.color = "blue";
+            print(a.style.color);
+            a.style.color = "";
+            print(a.style.color);
+            print("<End>")
+            return 1<2;
+        }
+        test();
+    </script>
 </html>
 

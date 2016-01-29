@@ -76,6 +76,24 @@ body {
 
 ]]></text>
 				</node>
+				<node nodeType="1" localName="script" type="text/javascript">
+                    <node nodeType="3" localName="text">
+                        <text><![CDATA[
+        					function test() {
+            					var a = document.getElementById("rgb");
+            					print(a);
+            					print(a.style.color);
+            					a.style.color = "blue";
+            					print(a.style.color);
+            					a.style.color = "";
+            					print(a.style.color);
+            					print("<End>")
+            					return 1<2;
+        					}
+        					test();
+    					]]></text>
+                    </node>
+				</node>
 			</node>
 		</node>
 	</node>

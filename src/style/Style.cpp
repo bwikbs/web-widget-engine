@@ -2397,6 +2397,8 @@ Color parseColor(String* str)
             return Color(0, 128, 128, 255);
         } else if (strcmp("white", s) == 0) {
             return Color(255, 255, 255, 255);
+        } else if (strcmp("transparent", s) == 0) {
+            return Color(0, 0, 0, 0);
         } else {
             STARFISH_RELEASE_ASSERT_NOT_REACHED();
         }

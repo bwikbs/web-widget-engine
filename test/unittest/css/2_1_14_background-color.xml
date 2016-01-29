@@ -156,9 +156,16 @@
                 <node nodeType="1" localName="script" type="text/javascript">
                     <node nodeType="3" localName="text">
                         <text><![CDATA[
-        function test() {
+		function test() {
+            var a = document.getElementById("divChild1");
+            print(a);
+            print(a.style.backgroundColor);
+            a.style.backgroundColor = "blue";
+            print(a.style.backgroundColor);
+            print("<End>")
             return 1<2;
         }
+        test();
     ]]></text>
                     </node>
                 </node>
