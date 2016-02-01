@@ -42,7 +42,7 @@
          }
       </style>
    </head>
-   <body>
+   <body id="aaa">
       <div id="container">
          <p id="text_header">Health Score</p>
          <img id="img_graph" src="img/graph.png"/>
@@ -53,8 +53,8 @@
       </div>
    </body>
    <script>
-      document.getElementsByTagName("body")[0].onclick = function() {
-         console.log("clicked!");
+      document.getElementsByTagName("body").item(0).onclick = function() {
+         print("clicked!");
       };
    </script>
 </html>
