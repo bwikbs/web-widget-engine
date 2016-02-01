@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
-
+<head>
+    <title></title>
 <style>
-body {
+body, p {
     margin: 0;
     padding: 0;
 }
@@ -31,7 +32,7 @@ body {
     position: relative;
     width: 33%;
     height: 120px;
-    background-image: url("images/circle.png");
+    background-image: url("images/circle-yellow.png");
     background-size: 100%;
 }
 #i2 {
@@ -39,7 +40,7 @@ body {
     position: relative;
     width: 33%;
     height: 120px;
-    background-image: url("images/circle.png");
+    background-image: url("images/circle-orange.png");
     background-size: 100%;
 }
 #i3 {
@@ -47,7 +48,7 @@ body {
     position: relative;
     width: 33%;
     height: 120px;
-    background-image: url("images/circle.png");
+    background-image: url("images/circle-green.png");
     background-size: 100%;
 }
 #i4 {
@@ -55,7 +56,7 @@ body {
     position: relative;
     width: 33%;
     height: 120px;
-    background-image: url("images/circle.png");
+    background-image: url("images/circle-blue.png");
     background-size: 100%;
 }
 #i1_t1, #i2_t1, #i3_t1, #i4_t1 {
@@ -64,39 +65,37 @@ body {
     top: 45px;
     left: 0px;
 }
-
 </style>
-
 <script>
 function clicked(node) {
   console.log("clicked");
   console.log(node);
 }
 </script>
+</head>
 
 <body>
 
-
 <div id="viewport">
     <div id="t1">
-        <div>GRAPH</div>
+        <p>GRAPH</p>
     </div>
 
     <div id="b1">
         <div id="i1" onclick="clicked(this)">
-            <div id="i1_t1">A</div>
+            <p id="i1_t1">A</p>
         </div>
         <div id="i2" onclick="clicked(this)">
-            <div id="i2_t1">B</div>
+            <p id="i2_t1">B</p>
         </div>
     </div>
 
     <div id="b2">
         <div id="i3" onclick="clicked(this)">
-            <div id="i3_t1">C</div>
+            <p id="i3_t1">C</p>
         </div>
         <div id="i4" onclick="clicked(this)">
-            <div id="i4_t1">D</div>
+            <p id="i4_t1">D</p>
         </div>
     </div>
 </div>
