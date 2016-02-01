@@ -1,5 +1,6 @@
 #include "StarFishConfig.h"
 #include "String.h"
+#include <sstream>
 
 namespace StarFish {
 
@@ -124,5 +125,30 @@ String* String::fromFloat(float f)
     return String::fromUTF8(std::to_string(f).c_str());
 }
 
+void String::split(char delim, Vector& tokens)
+{
+    if(m_isASCIIString) {
+        std::stringstream ss;
+        ss << utf8Data();
+        std::string item;
+        while(std::getline(ss, item, delim)) {
+            tokens.push_back(String::fromUTF8(item.c_str()));
+        }
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+String* String::trim()
+{
+    if(m_isASCIIString) {
+        ASCIIString str = *asASCIIString();
+        size_t first = str.find_first_not_of(' ');
+        size_t last = str.find_last_not_of(' ');
+        return String::fromUTF8(str.substr(first, (last-first+1)).c_str());
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+}
 
 }

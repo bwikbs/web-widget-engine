@@ -10,6 +10,8 @@ class String;
 
 class String {
 public:
+    typedef std::vector<String*, gc_allocator<String*> > Vector;
+
     static String* emptyString;
     static String* spaceString;
 
@@ -106,6 +108,8 @@ public:
     String* toLower();
     bool isASCIIString() { return m_isASCIIString; }
     String* concat(String* str);
+    void split(char delim, Vector& tokens);
+    String* trim();
 
 protected:
     const char* utf8DataSlowCase();
