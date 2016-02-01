@@ -3970,9 +3970,11 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
         return chk;
     };
 
-    // * selector
+    // first sheet is must user-agent style sheet!
     for (unsigned i = 0; i < m_sheets.size(); i ++) {
         CSSStyleSheet* sheet = m_sheets[i];
+
+        // * selector
         for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
             if (sheet->m_rules[j]->m_kind == CSSStyleRule::UniversalSelector &&
                     sheet->m_rules[j]->m_pseudoClass == CSSStyleRule::PseudoClass::None) {
@@ -3980,12 +3982,9 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 apply(cssValues, ret, parent);
             }
         }
-    }
 
-    // *:active selector
-    if ((element->state() & Node::NodeState::NodeStateActive)) {
-        for (unsigned i = 0; i < m_sheets.size(); i ++) {
-            CSSStyleSheet* sheet = m_sheets[i];
+        // *:active selector
+        if ((element->state() & Node::NodeState::NodeStateActive)) {
             for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
                 if (sheet->m_rules[j]->m_kind == CSSStyleRule::UniversalSelector &&
                         sheet->m_rules[j]->m_pseudoClass == CSSStyleRule::PseudoClass::Active) {
@@ -3994,11 +3993,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
             }
         }
-    }
 
-    // type selector
-    for (unsigned i = 0; i < m_sheets.size(); i ++) {
-        CSSStyleSheet* sheet = m_sheets[i];
+        // type selector
         for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
             if (sheet->m_rules[j]->m_kind == CSSStyleRule::TypeSelector &&
                     sheet->m_rules[j]->m_pseudoClass == CSSStyleRule::PseudoClass::None) {
@@ -4008,12 +4004,9 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
             }
         }
-    }
 
-    // type:active selector
-    if ((element->state() & Node::NodeState::NodeStateActive)) {
-        for (unsigned i = 0; i < m_sheets.size(); i ++) {
-            CSSStyleSheet* sheet = m_sheets[i];
+        // type:active selector
+        if ((element->state() & Node::NodeState::NodeStateActive)) {
             for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
                 if (sheet->m_rules[j]->m_kind == CSSStyleRule::TypeSelector &&
                         sheet->m_rules[j]->m_pseudoClass == CSSStyleRule::PseudoClass::Active) {
@@ -4024,11 +4017,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
             }
         }
-    }
 
-    // class selector
-    for (unsigned i = 0; i < m_sheets.size(); i ++) {
-        CSSStyleSheet* sheet = m_sheets[i];
+        // class selector
         for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
             if (sheet->m_rules[j]->m_kind == CSSStyleRule::ClassSelector &&
                     sheet->m_rules[j]->m_pseudoClass == CSSStyleRule::PseudoClass::None) {
@@ -4041,12 +4031,9 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
             }
         }
-    }
 
-    // class:active selector
-    if ((element->state() & Node::NodeState::NodeStateActive)) {
-        for (unsigned i = 0; i < m_sheets.size(); i ++) {
-            CSSStyleSheet* sheet = m_sheets[i];
+        // class:active selector
+        if ((element->state() & Node::NodeState::NodeStateActive)) {
             for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
                 if (sheet->m_rules[j]->m_kind == CSSStyleRule::ClassSelector &&
                         sheet->m_rules[j]->m_pseudoClass == CSSStyleRule::PseudoClass::Active) {
@@ -4060,11 +4047,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
             }
         }
-    }
 
-    // id selector
-    for (unsigned i = 0; i < m_sheets.size(); i ++) {
-        CSSStyleSheet* sheet = m_sheets[i];
+        // id selector
         for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
             if (sheet->m_rules[j]->m_kind == CSSStyleRule::IdSelector &&
                     sheet->m_rules[j]->m_pseudoClass == CSSStyleRule::PseudoClass::None) {
@@ -4074,12 +4058,9 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                 }
             }
         }
-    }
 
-    // id:active selector
-    if ((element->state() & Node::NodeState::NodeStateActive)) {
-        for (unsigned i = 0; i < m_sheets.size(); i ++) {
-            CSSStyleSheet* sheet = m_sheets[i];
+        // id:active selector
+        if ((element->state() & Node::NodeState::NodeStateActive)) {
             for (unsigned j = 0; j < sheet->m_rules.size(); j ++) {
                 if (sheet->m_rules[j]->m_kind == CSSStyleRule::IdSelector &&
                         sheet->m_rules[j]->m_pseudoClass == CSSStyleRule::PseudoClass::Active) {
@@ -4092,8 +4073,8 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
         }
     }
 
-    //inline style
 
+    //inline style
     auto inline_cssValues = element->inlineStyle()->m_cssValues;
     if(inline_cssValues.size()>0)
         apply(inline_cssValues, ret, parent);
