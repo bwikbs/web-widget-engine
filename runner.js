@@ -57,7 +57,7 @@ fs.readFile(process.argv[2], 'utf8', function (err,data) {
 						});
       		}, absPath);
     			
-    		}, 50)
+    		}, 500)
   		});
 	});
 	
