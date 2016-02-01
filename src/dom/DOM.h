@@ -26,5 +26,6 @@
 #include "dom/DOMSettableTokenList.h"
 #include "dom/NamedNodeMap.h"
 #include "dom/Attr.h"
+#include "extra/XMLHttpRequest.h"
 
 #endif

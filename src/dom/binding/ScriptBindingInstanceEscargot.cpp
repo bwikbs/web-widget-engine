@@ -1539,6 +1539,53 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
 
     DEFINE_FUNCTION(CSSStyleRule, CSSStyleRuleFunction->protoType());
     fetchData(this)->m_cssStyleRule = CSSStyleRuleFunction;
+
+    /* XMLHttpRequest */
+    escargot::ESFunctionObject* xhrElementFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue
+        {
+            return new XMLHttpRequest();
+        }, escargot::ESString::create("XMLHttpRequest"), 0, true);
+    xhrElementFunction->protoType().asESPointer()->asESObject()->forceNonVectorHiddenClass(false);
+    xhrElementFunction->protoType().asESPointer()->asESObject()->set__proto__(xhrElementFunction->protoType());
+    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("XMLHttpRequest"), false, false, false, xhrElementFunction);
+    fetchData(this)->m_xhrElement = xhrElementFunction;
+
+    escargot::ESFunctionObject* xhrOpenFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
+        if (v.isObject()) {
+            if (v.asESPointer()->asESObject()->extraData() == ScriptWrappable::XMLHttpRequestObject) {
+                XMLHttpRequest* xhr = (XMLHttpRequest*)v.asESPointer()->asESObject();;
+                xhr->setOpen(String::createASCIIString(instance->currentExecutionContext()->readArgument(0).toString()->utf8Data()),String::createASCIIString(instance->currentExecutionContext()->readArgument(1).toString()->utf8Data()));
+            }
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("open"), 1, false);
+    xhrElementFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("open"), false, false, false, xhrOpenFunction);
+
+    escargot::ESFunctionObject* xhrSendFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
+        if (v.isObject()) {
+            if (v.asESPointer()->asESObject()->extraData() == ScriptWrappable::XMLHttpRequestObject) {
+                XMLHttpRequest* xhr = (XMLHttpRequest*)v.asESPointer()->asESObject();;
+                xhr->send();
+            }
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("send"), 1, false);
+    xhrElementFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("send"), false, false, false, xhrSendFunction);
+
+    escargot::ESFunctionObject* xhrAddEventListenerFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
+        escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
+        if (v.isObject()) {
+            if (v.asESPointer()->asESObject()->extraData() == ScriptWrappable::XMLHttpRequestObject) {
+                XMLHttpRequest* xhr = (XMLHttpRequest*)v.asESPointer()->asESObject();;
+                xhr->addEventListener(String::createASCIIString(instance->currentExecutionContext()->readArgument(0).toString()->utf8Data()),instance->currentExecutionContext()->readArgument(1));
+            }
+        }
+        return escargot::ESValue(escargot::ESValue::ESNull);
+    }, escargot::ESString::create("addEventListener"), 1, false);
+    xhrElementFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("addEventListener"), false, false, false, xhrAddEventListenerFunction);
+
 }
 
 void ScriptBindingInstance::evaluate(String* str)

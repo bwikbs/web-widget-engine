@@ -68,19 +68,19 @@ else ifeq ($(HOST), tizen_arm)
 
 	TIZEN_LIB = m elementary eina eet ecore ecore_file ecore_input edje ethumb_client ecore_imf ecore_con efreet efreet_mime \
 		    efreet_trash eio  evas ecore_evas ecore_x ecore_imf_evas
-	
+
 	DEPENDENCY_INCLUDE = zlib png
-				
+
 	CXXFLAGS += -DEIRENE_TIZEN
 	CXXFLAGS += --sysroot=$(TIZEN_SYSROOT) -std=c++11
-	CXXFLAGS += -I$(EIRENE_ROOT_DIR) 
+	CXXFLAGS += -I$(EIRENE_ROOT_DIR)
 	CXXFLAGS += -I$(WTF_ROOT_DIR)
 	CXXFLAGS +=  $(addprefix -I$(TIZEN_SYSROOT)/usr/include/, $(TIZEN_INCLUDE))
 	CXXFLAGS +=  $(addprefix -I$(DEPENDENCY_ROOT_DIR)/include/, $(DEPENDENCY_INCLUDE))
 	CXXFLAGS += -I$(TIZEN_SYSROOT)/usr/lib/dbus-1.0/include
-	
+
 	LDFLAGS += --sysroot=$(TIZEN_SYSROOT) -L$(DEPENDENCY_ROOT_DIR)/lib
-	LDFLAGS += -Wl,--start-group ${ICU_LIB_PATH} ${DEPENDENCY_LIB_PATH} -Wl,--end-group 
+	LDFLAGS += -Wl,--start-group ${ICU_LIB_PATH} ${DEPENDENCY_LIB_PATH} -Wl,--end-group
 	LDFLAGS +=  $(addprefix -l, $(TIZEN_LIB))
 else ifeq ($(HOST), tizen_wearable_arm)
   OUTDIR=out/tizen_$(ARCH)/$(TYPE)/$(MODE)
@@ -89,19 +89,19 @@ else ifeq ($(HOST), tizen_wearable_arm)
 			efreet-1 ecore-input-evas-1 ecore-audio-1 embryo-1 ecore-imf-evas-1 ethumb-1 eeze-1 eeze-1 e_dbus-1 e_dbus-1 dbus-1.0 freetype2
 
 	TIZEN_LIB = ecore evas rt efl-extension freetype
-	
+
 	DEPENDENCY_INCLUDE =
-				
+
 	CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE
 	CXXFLAGS += --sysroot=$(TIZEN_SYSROOT) -std=c++11
-	CXXFLAGS += -I$(EIRENE_ROOT_DIR) 
+	CXXFLAGS += -I$(EIRENE_ROOT_DIR)
 	CXXFLAGS += -I$(WTF_ROOT_DIR)
 	CXXFLAGS +=  $(addprefix -I$(TIZEN_SYSROOT)/usr/include/, $(TIZEN_INCLUDE))
 	CXXFLAGS +=  $(addprefix -I$(DEPENDENCY_ROOT_DIR)/include/, $(DEPENDENCY_INCLUDE))
 	CXXFLAGS += -I$(TIZEN_SYSROOT)/usr/lib/dbus-1.0/include
-	
+
 	LDFLAGS += --sysroot=$(TIZEN_SYSROOT) -L$(DEPENDENCY_ROOT_DIR)/lib
-	LDFLAGS += -Wl,--start-group ${ICU_LIB_PATH} ${DEPENDENCY_LIB_PATH} -Wl,--end-group 
+	LDFLAGS += -Wl,--start-group ${ICU_LIB_PATH} ${DEPENDENCY_LIB_PATH} -Wl,--end-group
 	LDFLAGS +=  $(addprefix -l, $(TIZEN_LIB))
 endif
 
@@ -239,7 +239,7 @@ OBJS += $(SRC_CC:%.cc= $(OUTDIR)/%.o)
 OBJS += $(SRC_C:%.c= $(OUTDIR)/%.o)
 
 
-LDFLAGS += -lpthread
+LDFLAGS += -lpthread -lcurl
 THIRD_PARTY_LIBS= $(GCLIBS)
 
 ifeq ($(HOST), linux)
@@ -302,7 +302,7 @@ x64.lib.debug: $(OUTDIR)/$(LIB)
 	cp -f $< .
 x64.lib.release: $(OUTDIR)/$(LIB)
 	cp -f $< .
-	
+
 tizen_arm.exe.debug: $(OUTDIR)/$(BIN)
 	cp -f $< .
 tizen_arm.exe.release: $(OUTDIR)/$(BIN)
@@ -329,7 +329,7 @@ $(OUTDIR)/%.o: %.cpp Makefile
 	mkdir -p $(dir $@)
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 	$(CXX) -MM $(CXXFLAGS) -MT $@ $< > $(OUTDIR)/$*.d
-	
+
 $(OUTDIR)/%.o: %.cc Makefile
 	echo "[CXX] $@"
 	mkdir -p $(dir $@)
@@ -352,7 +352,7 @@ asm:
 	objdump -d        $(BIN) | c++filt > $(BIN).asm
 	readelf -a --wide $(BIN) | c++filt > $(BIN).elf
 	vi -O $(BIN).asm $(BIN).elf
-	
+
 install_runner_dep:
 	sudo apt-get install nodejs phantomjs npm
 	npm install fs path phantom

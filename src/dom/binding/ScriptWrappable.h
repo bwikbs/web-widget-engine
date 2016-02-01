@@ -36,6 +36,7 @@ class NamedNodeMap;
 class Attr;
 class CSSStyleDeclaration;
 class CSSStyleRule;
+class XMLHttpRequest;
 
 class ScriptBindingInstance;
 
@@ -55,6 +56,7 @@ public:
         AttrObject,
         CSSStyleDeclarationObject,
         CSSStyleRuleObject,
+        XMLHttpRequestObject,
     };
     ScriptWrappable();
 
@@ -99,6 +101,7 @@ public:
     void initScriptWrappable(Attr* ptr, ScriptBindingInstance*);
     void initScriptWrappable(CSSStyleDeclaration* ptr);
     void initScriptWrappable(CSSStyleRule* ptr);
+    void initScriptWrappable(XMLHttpRequest* ptr);
 
     bool hasProperty(String* name);
 

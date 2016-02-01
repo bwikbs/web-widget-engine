@@ -214,6 +214,14 @@ void ScriptWrappable::initScriptWrappable(HTMLUnknownElement* ptr)
     ((escargot::ESObject *)this)->set__proto__(data->m_htmlUnknownElement->protoType());
 }
 
+void ScriptWrappable::initScriptWrappable(XMLHttpRequest* xhr)
+{
+    Window* window = (Window*)ScriptWrappableGlobalObject::fetch();;
+    auto data = fetchData(window->starFish()->scriptBindingInstance());
+    ((escargot::ESObject *)this)->set__proto__(data->m_xhrElement->protoType());
+    ((escargot::ESObject *)this)->setExtraData(XMLHttpRequestObject);
+}
+
 bool ScriptWrappable::hasProperty(String* name)
 {
     return escargot::ESObject::hasProperty(escargot::ESString::create(name->utf8Data()));
