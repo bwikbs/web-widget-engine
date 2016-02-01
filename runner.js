@@ -12,13 +12,14 @@ fs.readFile(process.argv[2], 'utf8', function (err,data) {
 	
 	// convert
 	var phantom = require('phantom');
-	phantom.create(function (ph) {
+	phantom.create("--web-security=false",'--local-to-remote-url-access=true', function (ph) {
   		ph.createPage(function (page) {
   			page.onConsoleMessage(function (msg) {
     			console.log("Phantom Console: " + msg)
 			})
    		page.open("tool/html2xml/index.html", function (status) {
-      		page.evaluate(function (data, absPath) {
+      		page.evaluate(function (data, absPath, point) {
+				window.point = point
       				var code = document.getElementById("code");
      					code.value = data;
      					onSubmit();
@@ -26,7 +27,7 @@ fs.readFile(process.argv[2], 'utf8', function (err,data) {
      					return "submit"
       			}, function (result) {
       				console.log(result);
-      		}, data, absPath);
+      		}, data, absPath, absPath.substring(0,absPath.lastIndexOf("/")+1))
     		});
     		
     		
