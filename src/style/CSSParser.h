@@ -161,12 +161,12 @@ public:
         String* str = String::emptyString;
         for (unsigned i = start; i < end; i++)
         {
-            str = str->concat(tokens->at(i)->toLower());
+            str = str->concat(tokens->at(i));
         }
         CSSPropertyParser* parser = new CSSPropertyParser((char*) str->utf8Data());
         if (parser->consumeString()) {
             String* name = parser->parsedString();
-            if (name->equals("url") && parser->consumeIfNext('(')) {
+            if (name->toLower()->equals("url") && parser->consumeIfNext('(')) {
                 if( parser->consumeUrl() )
                     return String::fromUTF8(parser->parsedUrl()->utf8Data());
             }
@@ -179,12 +179,13 @@ public:
         String* str = String::emptyString;
         for (unsigned i = start; i < end; i++)
         {
-            str = str->concat(tokens->at(i)->toLower());
+            str = str->concat(tokens->at(i));
         }
         CSSPropertyParser* parser = new CSSPropertyParser((char*) str->utf8Data());
         if (parser->consumeString()) {
             String* name = parser->parsedString();
-            if (name->equals("url") && parser->consumeIfNext('(')) {
+            if (name->toLower()->equals("url") && parser->consumeIfNext('(')) {
+
                 return parser->consumeUrl();
             }
         }

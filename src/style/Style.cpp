@@ -1752,8 +1752,8 @@ String* CSSStyleValuePair::toString()
         		return String::fromUTF8("inherit");
         	} else if (m_valueKind == CSSStyleValuePair::ValueKind::Initial) {
         		return String::fromUTF8("initial");
-    		} else if (m_valueKind == CSSStyleValuePair::ValueKind::StringValueKind) {
-    			return stringValue();
+    		} else if (m_valueKind == CSSStyleValuePair::ValueKind::UrlValueKind) {
+    			return urlValue();
     		} else {
     			STARFISH_RELEASE_ASSERT_NOT_REACHED();
     		}

@@ -77,10 +77,23 @@ public:
         return m_currentPath;
     }
 
+    size_t posPrefix(std::string str)
+    {
+        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+        return str.find("file://");
+    }
+
     String* makeResourcePath(String* src)
     {
         std::string p = m_currentPath->asASCIIString()->data();
-        p.append(src->asASCIIString()->data());
+        std::string strSrc = src->asASCIIString()->data();
+
+        if(posPrefix(strSrc) != std::string::npos)
+            p = strSrc.substr(7);
+        else
+            p.append(strSrc);
+
+
         return String::createASCIIString(p.data());
     }
 

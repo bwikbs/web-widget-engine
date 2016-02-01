@@ -462,7 +462,7 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             r->layout(ctx);
 
             insertReplacedBox:
-            if ((r->width() + r->marginWidth()) < (inlineContentWidth - lineFormattingContext.m_currentLineWidth) || lineFormattingContext.m_currentLineWidth == 0) {
+            if ((r->width() + r->marginWidth()) <= (inlineContentWidth - lineFormattingContext.m_currentLineWidth) || lineFormattingContext.m_currentLineWidth == 0) {
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.push_back(new InlineReplacedBox(f->node(), f->style(), &m_lineBoxes[lineFormattingContext.m_currentLine], r));
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginLeft(r->marginLeft());
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginTop(r->marginTop());
@@ -490,7 +490,7 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             }
 
             insertBlockBox:
-            if ((r->width() + r->marginWidth()) < (inlineContentWidth - lineFormattingContext.m_currentLineWidth) || lineFormattingContext.m_currentLineWidth == 0) {
+            if ((r->width() + r->marginWidth()) <= (inlineContentWidth - lineFormattingContext.m_currentLineWidth) || lineFormattingContext.m_currentLineWidth == 0) {
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.push_back(new InlineBlockBox(f->node(), f->style(), &m_lineBoxes[lineFormattingContext.m_currentLine], r, ascender));
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginLeft(r->marginLeft());
                 m_lineBoxes[lineFormattingContext.m_currentLine].m_boxes.back()->setMarginTop(r->marginTop());
