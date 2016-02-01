@@ -174,7 +174,7 @@ void dump(Frame* frm, unsigned depth)
     }
     printf("%s", frm->name());
     if (frm->node()) {
-        printf("[%s] ", frm->node()->localName()->utf8Data());
+        frm->node()->dump();
     } else {
         printf("[anonymous block box] ");
     }

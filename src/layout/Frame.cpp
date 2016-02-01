@@ -40,13 +40,43 @@ float LayoutContext::parentContentWidth(Frame* currentFrame)
 
 bool LayoutContext::parentHasFixedHeight(Frame* currentFrame)
 {
-    return blockContainer(currentFrame)->style()->height().isFixed();
+    Frame* container = blockContainer(currentFrame);
+    while (container) {
+        if (container->style()->height().isFixed()) {
+            return true;
+        } else if (container->style()->height().isAuto()) {
+            return false;
+        } else {
+            STARFISH_ASSERT(container->style()->height().isPercent());
+            container = blockContainer(container);
+        }
+    }
+    return false;
 }
 
 float LayoutContext::parentFixedHeight(Frame* currentFrame)
 {
-    STARFISH_ASSERT(parentHasFixedHeight(currentFrame));
-    return blockContainer(currentFrame)->style()->height().fixed();
+    Frame* container = blockContainer(currentFrame);
+    std::vector<Length> reverse;
+    while (container) {
+        STARFISH_ASSERT(!container->style()->height().isAuto());
+        if (container->style()->height().isFixed()) {
+            reverse.push_back(container->style()->height());
+            break;
+        } else {
+            STARFISH_ASSERT(container->style()->height().isPercent());
+            reverse.push_back(container->style()->height());
+            container = blockContainer(container);
+        }
+    }
+    float result = reverse.back().fixed();
+    reverse.pop_back();
+    while (reverse.size()) {
+        result = result * reverse.back().percent();
+        reverse.pop_back();
+    }
+
+    return result;
 }
 
 }
