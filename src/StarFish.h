@@ -23,9 +23,12 @@ public:
     QualifiedName m_headLocalName;
     QualifiedName m_styleLocalName;
     QualifiedName m_scriptLocalName;
+    QualifiedName m_metaLocalName;
     QualifiedName m_bodyLocalName;
     QualifiedName m_divLocalName;
+    QualifiedName m_pLocalName;
     QualifiedName m_imageLocalName;
+    QualifiedName m_spanLocalName;
     QualifiedName m_brLocalName;
 
     // Attribute Names

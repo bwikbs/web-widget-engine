@@ -268,6 +268,13 @@ Window::Window(StarFish* starFish)
     }
 
     {
+        CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("meta"), CSSStyleRule::PseudoClass::None, document());
+        bool result;
+        rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "none", result));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
         CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("body"), CSSStyleRule::PseudoClass::None, document());
         bool result;
         rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block", result));
@@ -278,6 +285,20 @@ Window::Window(StarFish* starFish)
         CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("div"), CSSStyleRule::PseudoClass::None, document());
         bool result;
         rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block", result));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("p"), CSSStyleRule::PseudoClass::None, document());
+        bool result;
+        rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "block", result));
+        userAgentStyleSheet->addRule(rule);
+    }
+
+    {
+        CSSStyleRule* rule = new CSSStyleRule(CSSStyleRule::Kind::TypeSelector, String::createASCIIString("span"), CSSStyleRule::PseudoClass::None, document());
+        bool result;
+        rule->styleDeclaration()->addValuePair(CSSStyleValuePair::fromString("display", "inline", result));
         userAgentStyleSheet->addRule(rule);
     }
 

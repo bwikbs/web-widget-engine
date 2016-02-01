@@ -31,10 +31,10 @@ fs.readFile(process.argv[2], 'utf8', function (err,data) {
     		
     		
     		setTimeout(function wait() {
+			page.render('result.png');
     			page.evaluate(function (absPath) {
       				var result = document.getElementById("result");
-      				console.log(result.value)
-      				
+console.log(result.value)
      					return result.value
       			}, function (result) {
       				ph.exit();

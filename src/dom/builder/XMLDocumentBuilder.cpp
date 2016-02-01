@@ -41,12 +41,11 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
             return;
         } else if (type == 1) {
             const char* name = xmlElement->Attribute("localName");
-            if (strcmp(name, "html") == 0) {
-                newNode = new HTMLHtmlElement(document);
-            } else if (strcmp(name, "head") == 0) {
-                newNode = new HTMLHeadElement(document);
-            } else if(strcmp(name, "script") == 0) {
-                newNode = new HTMLScriptElement(document);
+            // TODO use document.createElementMethod
+            QualifiedName qname = QualifiedName::fromString(document->window()->starFish(), name);
+
+            newNode = document->createElement(qname);
+            if(newNode->isElement() && newNode->asElement()->isHTMLElement() && newNode->asElement()->asHTMLElement()->isHTMLScriptElement()) {
                 if (parentNode) {
                     parentNode->appendChild(newNode);
                 }
@@ -60,11 +59,8 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
                 String* script = newNode->asElement()->firstChild()->asCharacterData()->asText()->data();
                 document->window()->starFish()->evaluate(script);
                 return;
-            } else if (strcmp(name, "style") == 0) {
-                newNode = new HTMLStyleElement(document);
-
+            } else if(newNode->isElement() && newNode->asElement()->isHTMLElement() && newNode->asElement()->asHTMLElement()->isHTMLStyleElement()) {
                 //resolve styles.
-
                 tinyxml2::XMLElement* e = xmlElement->FirstChildElement();
                 CSSStyleSheet* sheet = new CSSStyleSheet;
                 while (e) {
@@ -123,17 +119,6 @@ void XMLDocumentBuilder::build(Document* document, String* filePath)
 
                 // TODO add child
                 return ;
-            } else if (strcmp(name, "body") == 0) {
-                newNode = new HTMLBodyElement(document);
-            } else if (strcmp(name, "div") == 0) {
-                newNode = new HTMLDivElement(document);
-            } else if (strcmp(name, "img") == 0) {
-                newNode = new HTMLImageElement(document);
-            } else if (strcmp(name, "br") == 0) {
-                newNode = new HTMLBRElement(document);
-            } else {
-                puts(name);
-                STARFISH_RELEASE_ASSERT_NOT_REACHED();
             }
         } else {
             printf("invalid node type %d\n", type);

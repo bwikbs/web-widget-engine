@@ -10,9 +10,12 @@ namespace StarFish {
         F(Head) \
         F(Script) \
         F(Style) \
+        F(Meta) \
         F(Body) \
         F(Div) \
+        F(Paragraph) \
         F(Image) \
+        F(Span) \
         F(BR)
 
 #define FORWRAD_DECLARE_NAME(kind) class HTML##kind##Element;

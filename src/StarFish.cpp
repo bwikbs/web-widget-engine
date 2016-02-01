@@ -84,9 +84,12 @@ StaticStrings::StaticStrings(StarFish* sf)
     m_headLocalName = QualifiedName::fromString(sf, "head");
     m_styleLocalName = QualifiedName::fromString(sf, "style");
     m_scriptLocalName = QualifiedName::fromString(sf, "script");
+    m_metaLocalName = QualifiedName::fromString(sf, "meta");
     m_bodyLocalName = QualifiedName::fromString(sf, "body");
     m_divLocalName = QualifiedName::fromString(sf, "div");
+    m_pLocalName = QualifiedName::fromString(sf, "p");
     m_imageLocalName = QualifiedName::fromString(sf, "img");
+    m_spanLocalName = QualifiedName::fromString(sf, "span");
     m_brLocalName = QualifiedName::fromString(sf, "br");
 
     m_id = QualifiedName::fromString(sf, "id");
