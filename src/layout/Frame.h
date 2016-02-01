@@ -49,6 +49,7 @@ public:
     ~LayoutContext()
     {
         STARFISH_ASSERT(m_absolutePositionedFrames.size() == 0);
+        STARFISH_ASSERT(m_relativePositionedFrames.size() == 0);
     }
 
     float parentContentWidth(Frame* currentFrame);
@@ -87,21 +88,59 @@ public:
         }
     }
 
-    void propagateAbsolutePositionedFrames(LayoutContext& to)
+    void registerRelativePositionedFrames(Frame* frm)
     {
-        auto iter = m_absolutePositionedFrames.begin();
+        Frame* cb = containingBlock(frm);
+        m_relativePositionedFrames.insert(std::make_pair(cb, std::vector<Frame*>()));
+        std::vector<Frame*>& vec = m_relativePositionedFrames[cb];
+        vec.push_back(frm);
+    }
 
-        while (iter != m_absolutePositionedFrames.end()) {
-            auto iter2 = to.m_absolutePositionedFrames.find(iter->first);
-            if (iter2 == to.m_absolutePositionedFrames.end()) {
-                to.m_absolutePositionedFrames.insert(std::make_pair(iter->first, iter->second));
-            } else {
-                iter2->second.insert(iter2->second.end(), iter->second.begin(), iter->second.end());
-            }
-            iter++;
+    template <typename Fn>
+    void layoutRegisteredRelativePositionedFrames(Frame* containgBlock, Fn f)
+    {
+        auto iter = m_relativePositionedFrames.find(containgBlock);
+        if (iter == m_relativePositionedFrames.end()) {
+            return;
+        } else {
+            f(iter->second);
+            m_relativePositionedFrames.erase(iter);
         }
+    }
 
-        m_absolutePositionedFrames.clear();
+
+    void propagatePositionedFrames(LayoutContext& to)
+    {
+        {
+            auto iter = m_absolutePositionedFrames.begin();
+
+            while (iter != m_absolutePositionedFrames.end()) {
+                auto iter2 = to.m_absolutePositionedFrames.find(iter->first);
+                if (iter2 == to.m_absolutePositionedFrames.end()) {
+                    to.m_absolutePositionedFrames.insert(std::make_pair(iter->first, iter->second));
+                } else {
+                    iter2->second.insert(iter2->second.end(), iter->second.begin(), iter->second.end());
+                }
+                iter++;
+            }
+
+            m_absolutePositionedFrames.clear();
+        }
+        {
+            auto iter = m_relativePositionedFrames.begin();
+
+            while (iter != m_relativePositionedFrames.end()) {
+                auto iter2 = to.m_relativePositionedFrames.find(iter->first);
+                if (iter2 == to.m_relativePositionedFrames.end()) {
+                    to.m_relativePositionedFrames.insert(std::make_pair(iter->first, iter->second));
+                } else {
+                    iter2->second.insert(iter2->second.end(), iter->second.begin(), iter->second.end());
+                }
+                iter++;
+            }
+
+            m_relativePositionedFrames.clear();
+        }
     }
 
 private:
@@ -109,6 +148,7 @@ private:
     LineBox* m_lastLineBox;
     // NOTE. we dont need gc_allocator here. because, FrameTree already has referenece for Frames
     std::map<Frame*, std::vector<Frame*>> m_absolutePositionedFrames;
+    std::map<Frame*, std::vector<Frame*>> m_relativePositionedFrames;
 };
 
 class ComputePreferredWidthContext

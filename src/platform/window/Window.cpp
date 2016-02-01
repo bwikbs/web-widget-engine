@@ -520,12 +520,16 @@ void Window::dispatchTouchEvent(float x, float y,TouchEventKind kind)
    }
 
     if (kind == TouchEventUp) {
+        bool shouldCallOnClick = false;
         if (m_activeNodeWithTouchDown == node) {
-            node->callFunction(m_document->window()->starFish()->staticStrings()->m_onclick);
+            shouldCallOnClick = true;
         }
 
         Node* t = m_activeNodeWithTouchDown;
         while (t) {
+            // TODO read return value of onclick
+            // implmement stop propagation
+            t->callFunction(m_document->window()->starFish()->staticStrings()->m_onclick);
             t->setState(Node::NodeStateNormal);
             t = t->parentNode();
         }

@@ -272,8 +272,49 @@ void FrameBlockBox::layout(LayoutContext& passedCtx)
         }
     });
 
+    // layout relative positioned blocks
+    ctx.layoutRegisteredRelativePositionedFrames(this, [&](const std::vector<Frame*>& frames) {
+        for (size_t i = 0; i < frames.size(); i ++) {
+            Frame* f = frames[i];
+
+            Length left = f->style()->left();
+            Length right = f->style()->right();
+            Length top = f->style()->top();
+            Length bottom = f->style()->bottom();
+            Frame* cb = ctx.containingBlock(f);
+            float parentWidth = cb->asFrameBox()->contentWidth();
+            float parentHeight = cb->asFrameBox()->contentHeight();
+            float mX = 0;
+            float mY = 0;
+
+            // left, right
+            if (!left.isAuto() && !right.isAuto()) {
+                STARFISH_ASSERT(f->style()->direction() == LtrDirectionValue);
+                mX = left.specifiedValue(parentWidth);
+            } else if (!left.isAuto() && right.isAuto()) {
+                mX = left.specifiedValue(parentWidth);
+            } else if (left.isAuto() && !right.isAuto()) {
+                mX = -right.specifiedValue(parentWidth);
+            }
+
+            // top, bottom
+            if (!top.isAuto() && !bottom.isAuto()) {
+                mY = top.specifiedValue(parentHeight);
+            } else if (!top.isAuto() && bottom.isAuto()) {
+                mY = top.specifiedValue(parentHeight);
+            } else if (top.isAuto() && !bottom.isAuto()) {
+                mY = -bottom.specifiedValue(parentHeight);
+            }
+
+            f->asFrameBox()->moveX(mX);
+            f->asFrameBox()->moveY(mY);
+
+
+        }
+    });
+
     if (isEstablishesBlockFormattingContext()) {
-        ctx.propagateAbsolutePositionedFrames(passedCtx);
+        ctx.propagatePositionedFrames(passedCtx);
     }
 }
 
@@ -303,6 +344,9 @@ float FrameBlockBox::layoutBlock(LayoutContext& ctx)
 
         child = child->next();
     }
+
+    if (style()->position() == PositionValue::RelativePositionValue)
+        ctx.registerRelativePositionedFrames(this);
 
     return normalFlowHeight;
 }
@@ -605,6 +649,8 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
+                if (ib->style()->position() == PositionValue::RelativePositionValue)
+                    ctx.registerRelativePositionedFrames(ib);
             } else {
                 // out of flow boxes
             }
