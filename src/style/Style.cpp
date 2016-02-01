@@ -187,8 +187,13 @@ void CSSStyleValuePair::setValueColor(std::vector<String*, gc_allocator<String*>
         m_valueKind = CSSStyleValuePair::ValueKind::Initial;
     } else {
         // TODO check string has right color string
+        // TODO rgba
         m_valueKind = CSSStyleValuePair::ValueKind::StringValueKind;
-        m_value.m_stringValue = String::fromUTF8(value);
+        if (startsWith(value, "rgb(")) {
+            m_value.m_stringValue = tokens->at(0)->concat(tokens->at(1))->concat(tokens->at(2));
+        } else {
+            m_value.m_stringValue = String::fromUTF8(value);
+        }
     }
 }
 
