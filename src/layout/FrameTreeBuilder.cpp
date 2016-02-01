@@ -71,7 +71,7 @@ void buildTree(Node* current, Frame* parent)
         if (!parent->firstChild()) {
             parent->appendChild(currentFrame);
         } else {
-            if (parent->firstChild()->isFrameBlockBox()) {
+            if (parent->asFrameBlockBox()->hasBlockFlow()) {
                 if (isBlockChild) {
                     // Block... + Block case
                     parent->appendChild(currentFrame);
@@ -100,7 +100,6 @@ void buildTree(Node* current, Frame* parent)
 
                     last->appendChild(currentFrame);
                 }
-
             } else {
                 if (isBlockChild) {
                     // Inline... + Block case
@@ -173,6 +172,7 @@ void dump(Frame* frm, unsigned depth)
         printf("  ");
     }
     printf("%s", frm->name());
+    printf("[%p]", frm);
     if (frm->node()) {
         frm->node()->dump();
     } else {

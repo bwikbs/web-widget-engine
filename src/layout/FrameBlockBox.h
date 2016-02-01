@@ -198,7 +198,19 @@ public:
 
     bool hasBlockFlow()
     {
-        return !m_firstChild || m_firstChild->isFrameBlockBox();
+        if (!firstChild())
+            return true;
+
+        Frame* child = firstChild();
+
+        while (child && !child->isNormalFlow()) {
+            child = child->next();
+        }
+
+        if (!child)
+            return true;
+
+        return child->style()->display() == BlockDisplayValue;
     }
 protected:
     float layoutBlock(LayoutContext& ctx);
