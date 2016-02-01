@@ -42,7 +42,11 @@ console.log(result.value)
   							if (err) throw err;
   							console.log('It\'s saved!');
 							var d = path.dirname(absPath);
-  							var child = require('child_process').execFile('./StarFish', ['result.xml' ,'--working-directory='+d + "/"])
+							var args = ['result.xml' ,'--working-directory='+d + "/"];
+							for(var i = 3; i < process.argv.length; i ++) {
+								args.push(process.argv[i])
+							}
+  							var child = require('child_process').execFile('./StarFish', args)
   							child.stdout.on('data', function(buf) {
     							console.log('stdout "%s"', String(buf));
   							});
