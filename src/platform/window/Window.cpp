@@ -466,6 +466,9 @@ Node* Window::hitTest(float x, float y)
 
     if (document() && document()->frame()) {
         Frame* frame = document()->frame()->hitTest(x, y);
+        if (!frame)
+            return nullptr;
+
         while (!frame->node()) {
             frame = frame->parent();
         }

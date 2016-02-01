@@ -444,12 +444,12 @@ public:
         m_needsStyleRecalc = false;
     }
 
-    virtual void setStyle(ComputedStyle* style)
+    void setStyle(ComputedStyle* style)
     {
         m_style = style;
     }
 
-    virtual ComputedStyle* style()
+    ComputedStyle* style()
     {
         return m_style;
     }

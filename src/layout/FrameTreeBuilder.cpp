@@ -141,8 +141,15 @@ void buildTree(Node* current, Frame* parent)
 
 void FrameTreeBuilder::buildFrameTree(Document* document)
 {
-    auto df = new FrameDocument(document, document->style());
-    document->setFrame(df);
+    if (!document->frame()) {
+        auto df = new FrameDocument(document, document->style());
+        document->setFrame(df);
+    } else {
+        // TODO calc dirty
+        while (document->frame()->firstChild()) {
+            document->frame()->removeChild(document->frame()->firstChild());
+        }
+    }
 
     // root element of html document is HTMLHtmlElement
     // https://www.w3.org/TR/html-markup/html.html
@@ -157,7 +164,7 @@ void FrameTreeBuilder::buildFrameTree(Document* document)
 
     // FIXME display of html element always considered as "block"
     ASSERT(n->style()->display() == DisplayValue::BlockDisplayValue);
-    buildTree(n, df);
+    buildTree(n, document->frame());
 }
 
 void dump(Frame* frm, unsigned depth)

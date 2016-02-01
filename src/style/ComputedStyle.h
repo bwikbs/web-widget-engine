@@ -731,7 +731,8 @@ protected:
         m_display = DisplayValue::InlineDisplayValue;
         m_opacity = 1;
         m_zIndex = 0;
-        m_background = NULL;
+        m_background = nullptr;
+        m_surround = nullptr;
         m_overflowX = OverflowValue::VisibleOverflow;
 //        m_overflowY = OverflowValue::VisibleOverflow;
         m_textDecoration = TextDecorationValue::NoneTextDecorationValue;
