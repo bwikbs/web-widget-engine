@@ -6,7 +6,20 @@
 
 namespace StarFish {
 
-class XMLHttpRequest : public ScriptWrappable {
+class XMLHttpRequestEventTarget : public EventTarget<ScriptWrappable>{
+
+private:
+    // std::function<void (ProgressEvent*)>  m_onloadstart;
+    // std::function<void (ProgressEvent*)> m_onprogress;
+    // std::function<void (ProgressEvent*)> m_onabort;
+    // std::function<void (ProgressEvent*)> m_onerror;
+    // std::function<void (ProgressEvent*)> m_onload;
+    // std::function<void (ProgressEvent*)> m_ontimeout;
+    // std::function<void (ProgressEvent*)> m_onloadend;
+};
+
+
+class XMLHttpRequest : public XMLHttpRequestEventTarget{
 public:
     struct Buffer {
         char *memory;

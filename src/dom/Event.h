@@ -23,6 +23,11 @@ public:
     MouseEvent(ScriptBindingInstance* instance);
 };
 
+class ProgressEvent : public Event {
+protected:
+    ProgressEvent(ScriptBindingInstance* instance);
+public:
+};
 
 }
 

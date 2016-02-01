@@ -6,3 +6,4 @@ cscope.files
 cscope.out
 tags
 result.xml
+node_modules
