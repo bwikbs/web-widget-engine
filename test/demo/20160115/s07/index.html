@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+#viewport {
+    width: 360px;
+    height: 360px;
+    color: white;
+    font-size: 20pt;
+    background-color: black;
+    border: 3px solid red;
+    text-align: center;
+}
+#t1 {
+    margin-top: 5%;
+    left: 0%;
+    width: 100%;
+    height: 15%;
+    font-size: 26pt;
+}
+#b1, #b2 {
+    margin-top: 0%;
+    margin-left: 0%;
+}
+#i1 {
+    display: inline-block;
+    position: relative;
+    width: 33%;
+    height: 120px;
+    background-image: url("images/circle.png");
+    background-size: 100%;
+}
+#i2 {
+    display: inline-block;
+    position: relative;
+    width: 33%;
+    height: 120px;
+    background-image: url("images/circle.png");
+    background-size: 100%;
+}
+#i3 {
+    display: inline-block;
+    position: relative;
+    width: 33%;
+    height: 120px;
+    background-image: url("images/circle.png");
+    background-size: 100%;
+}
+#i4 {
+    display: inline-block;
+    position: relative;
+    width: 33%;
+    height: 120px;
+    background-image: url("images/circle.png");
+    background-size: 100%;
+}
+#i1_t1, #i2_t1, #i3_t1, #i4_t1 {
+    position: relative;
+    text-align: center;
+    top: 45px;
+    left: 0px;
+}
+
+</style>
+
+<script>
+function clicked(node) {
+  console.log("clicked");
+  console.log(node);
+}
+</script>
+
+<body>
+
+
+<div id="viewport">
+    <div id="t1">
+        <div>GRAPH</div>
+    </div>
+
+    <div id="b1">
+        <div id="i1" onclick="clicked(this)">
+            <div id="i1_t1">A</div>
+        </div>
+        <div id="i2" onclick="clicked(this)">
+            <div id="i2_t1">B</div>
+        </div>
+    </div>
+
+    <div id="b2">
+        <div id="i3" onclick="clicked(this)">
+            <div id="i3_t1">C</div>
+        </div>
+        <div id="i4" onclick="clicked(this)">
+            <div id="i4_t1">D</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

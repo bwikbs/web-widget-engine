@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+}
+p {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+img {
+    width: 110px;
+}
+#viewport {
+    width: 360px;
+    height: 360px;
+    color: white;
+    font-size: 20pt;
+    border: 3px solid red;
+    background:url('images/face.png');
+    background-size: 100% 100%;
+    background-color: black;
+}
+#t1 {
+    margin-top: 30%;
+    left: 0%;
+    font-size: 60pt;
+}
+#b {
+    margin-top: 2%;
+}
+#a1 {
+    display: inline-block;
+    margin-left: 19%;
+    height: 10%;
+}
+#a2 {
+    display: inline-block;
+    height: 15%;
+    font-weight: bold;
+    font-size: 30pt;
+}
+</style>
+
+<script>
+function clicked(node) {
+  console.log("clicked");
+  console.log(node);
+}
+</script>
+</head>
+<body>
+
+
+<div id="viewport">
+  <div id="t1">
+    <p>00:08</p>
+  </div>
+
+  <div id="b">
+    <div id="a1" onclick="clicked(this)">
+      <img src="images/start.png"/>
+    </div>
+
+    <div id="a2" onclick="clicked(this)">
+      <img src="images/reset.png"/>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
