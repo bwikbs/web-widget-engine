@@ -210,10 +210,10 @@ public:
 
     virtual void paint(Canvas* canvas, PaintingStage stage)
     {
-        if (isNormalFlow() && stage == PaintingNormalFlowInline) {
+        if (isPositionedElement() && stage == PaintingPositionedElements) {
             paintBackgroundAndBorders(canvas);
             paintReplaced(canvas);
-        } else if (!isNormalFlow() && stage == PaintingPositionedElements) {
+        } else if (!isPositionedElement() && isNormalFlow() && stage == PaintingNormalFlowInline) {
             paintBackgroundAndBorders(canvas);
             paintReplaced(canvas);
         }

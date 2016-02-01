@@ -264,6 +264,9 @@ void FrameBlockBox::layout(LayoutContext& passedCtx)
         }
     }
 
+    if (style()->position() == PositionValue::RelativePositionValue)
+        ctx.registerRelativePositionedFrames(this);
+
     // layout absolute positioned blocks
     ctx.layoutRegisteredAbsolutePositionedFrames(this, [&](const std::vector<Frame*>& frames) {
         for (size_t i = 0; i < frames.size(); i ++) {
@@ -308,8 +311,6 @@ void FrameBlockBox::layout(LayoutContext& passedCtx)
 
             f->asFrameBox()->moveX(mX);
             f->asFrameBox()->moveY(mY);
-
-
         }
     });
 
@@ -344,10 +345,6 @@ float FrameBlockBox::layoutBlock(LayoutContext& ctx)
 
         child = child->next();
     }
-
-    if (style()->position() == PositionValue::RelativePositionValue)
-        ctx.registerRelativePositionedFrames(this);
-
     return normalFlowHeight;
 }
 
