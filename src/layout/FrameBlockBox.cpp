@@ -347,6 +347,9 @@ float FrameBlockBox::layoutBlock(LayoutContext& ctx)
                 mX -= child->asFrameBox()->marginRight();
             } else if (!marginLeft.isAuto() && marginRight.isAuto()) {
                 mX = child->asFrameBox()->marginLeft();
+            } else {
+                // auto-auto
+                mX = child->asFrameBox()->marginLeft();
             }
             child->asFrameBox()->moveX(mX);
             // TODO implement margin-collapse
