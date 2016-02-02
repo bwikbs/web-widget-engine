@@ -144,6 +144,46 @@ static const float fontSizeFactors[8] = { 0.60f, 0.75f, 0.89f, 1.0f, 1.2f, 1.5f,
 const int fontSizeTableMax = 16;
 const int fontSizeTableMin = 9;
 
+FontWeightValue lighterWeight(FontWeightValue weight)
+{
+    if (weight == FontWeightValue::OneHundredFontWeightValue
+            || weight == FontWeightValue::TwoHundredsFontWeightValue
+            || weight == FontWeightValue::ThreeHundredsFontWeightValue
+            || weight == FontWeightValue::NormalFontWeightValue
+            || weight == FontWeightValue::FiveHundredsFontWeightValue) {
+        return FontWeightValue::OneHundredFontWeightValue;
+    } else if (weight == FontWeightValue::SixHundredsFontWeightValue
+            || weight == FontWeightValue::BoldFontWeightValue) {
+        return FontWeightValue::NormalFontWeightValue;  // 400
+    } else if (weight == FontWeightValue::EightHundredsFontWeightValue
+            || weight == FontWeightValue::NineHundredsFontWeightValue) {
+        return FontWeightValue::BoldFontWeightValue;    // 700
+    }
+
+    ASSERT_NOT_REACHED();
+    return FontWeightValue::NormalFontWeightValue;
+}
+
+FontWeightValue bolderWeight(FontWeightValue weight)
+{
+    if (weight == FontWeightValue::OneHundredFontWeightValue
+            || weight == FontWeightValue::TwoHundredsFontWeightValue
+            || weight == FontWeightValue::ThreeHundredsFontWeightValue) {
+        return FontWeightValue::NormalFontWeightValue;
+    } else if (weight == FontWeightValue::NormalFontWeightValue
+            || weight == FontWeightValue::FiveHundredsFontWeightValue) {
+        return FontWeightValue::BoldFontWeightValue;    // 700
+    } else if (weight == FontWeightValue::SixHundredsFontWeightValue
+            || weight == FontWeightValue::BoldFontWeightValue
+            || weight == FontWeightValue::EightHundredsFontWeightValue
+            || weight == FontWeightValue::NineHundredsFontWeightValue) {
+        return FontWeightValue::NineHundredsFontWeightValue;
+    }
+
+    ASSERT_NOT_REACHED();
+    return FontWeightValue::NormalFontWeightValue;
+}
+
 Length parseAbsoluteFontSize(int col) {
     int mediumSize = DEFAULT_FONT_SIZE;
     int row = -1;
@@ -283,6 +323,62 @@ void CSSStyleValuePair::setValueFontSize(std::vector<String*, gc_allocator<Strin
     } else {
         setValuePercentageOrLength(value);
     }
+}
+
+void CSSStyleValuePair::setValueFontWeight(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    // TODO: LEESS
+    const char* value = tokens->at(0)->utf8Data();
+
+    // <normal> | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit // initial -> normal
+    m_keyKind = CSSStyleValuePair::KeyKind::FontWeight;
+    if (VALUE_IS_INHERIT()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
+    } else if (VALUE_IS_INITIAL()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Initial;
+    } else if (VALUE_IS_STRING("normal")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::NormalFontWeightValue;
+    } else if (VALUE_IS_STRING("bold")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::BoldFontWeightValue;
+    } else if (VALUE_IS_STRING("bolder")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::BolderFontWeightValue;
+    } else if (VALUE_IS_STRING("lighter")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::LighterFontWeightValue;
+    } else if (VALUE_IS_STRING("100")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::OneHundredFontWeightValue;
+    } else if (VALUE_IS_STRING("200")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::TwoHundredsFontWeightValue;
+    } else if (VALUE_IS_STRING("300")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::ThreeHundredsFontWeightValue;
+    } else if (VALUE_IS_STRING("400")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::FourHundredsFontWeightValue;
+    } else if (VALUE_IS_STRING("500")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::FiveHundredsFontWeightValue;
+    } else if (VALUE_IS_STRING("600")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::SixHundredsFontWeightValue;
+    } else if (VALUE_IS_STRING("700")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::SevenHundredsFontWeightValue;
+    } else if (VALUE_IS_STRING("800")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::EightHundredsFontWeightValue;
+    } else if (VALUE_IS_STRING("900")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+        m_value.m_fontWeight = FontWeightValue::NineHundredsFontWeightValue;
+    } else {
+        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+    }
+
 }
 
 void CSSStyleValuePair::setValueFontStyle(std::vector<String*, gc_allocator<String*>>* tokens)
@@ -1421,6 +1517,8 @@ CSSStyleValuePair CSSStyleValuePair::fromString(const char* key, const char* val
         ret.setValueHeight(&tokens);
     } else if (strcmp(key, "font-size") == 0) {
         ret.setValueFontSize(&tokens);
+    } else if (strcmp(key, "font-weight") == 0) {
+        ret.setValueFontWeight(&tokens);
     } else if (strcmp(key, "color") == 0) {
         // color | inherit // initial value -> depends on user agent
         ret.m_keyKind = CSSStyleValuePair::KeyKind::Color;
@@ -1922,6 +2020,38 @@ String* CSSStyleValuePair::toString()
                     case FontStyleValue::ObliqueFontStyleValue:
                         return String::fromUTF8("oblique");
                     }
+                default:
+                    return lengthOrPercentageOrKeywordToString();
+            }
+        }
+        case FontWeight: {
+            switch(valueKind()) {
+                case FontWeightValue::NormalFontWeightValue:
+                    return String::fromUTF8("normal");
+                case FontWeightValue::BoldFontWeightValue:
+                    return String::fromUTF8("bold");
+                case FontWeightValue::BolderFontWeightValue:
+                    return String::fromUTF8("bolder");
+                case FontWeightValue::LighterFontWeightValue:
+                    return String::fromUTF8("lighter");
+                case FontWeightValue::OneHundredFontWeightValue:
+                    return String::fromUTF8("100");
+                case FontWeightValue::TwoHundredsFontWeightValue:
+                    return String::fromUTF8("200");
+                case FontWeightValue::ThreeHundredsFontWeightValue:
+                    return String::fromUTF8("300");
+                case FontWeightValue::FourHundredsFontWeightValue:
+                    return String::fromUTF8("400");
+                case FontWeightValue::FiveHundredsFontWeightValue:
+                    return String::fromUTF8("500");
+                case FontWeightValue::SixHundredsFontWeightValue:
+                    return String::fromUTF8("600");
+                case FontWeightValue::SevenHundredsFontWeightValue:
+                    return String::fromUTF8("700");
+                case FontWeightValue::EightHundredsFontWeightValue:
+                    return String::fromUTF8("800");
+                case FontWeightValue::NineHundredsFontWeightValue:
+                    return String::fromUTF8("900");
                 default:
                     return lengthOrPercentageOrKeywordToString();
             }
@@ -2801,6 +2931,42 @@ bool CSSStyleDeclaration::checkInputErrorFontStyle(std::vector<String*, gc_alloc
     return false;
 }
 
+bool CSSStyleDeclaration::checkInputErrorFontWeight(std::vector<String*, gc_allocator<String*>>* tokens)
+{
+    if (tokens->size() == 1) {
+        const char* token = (*tokens)[0]->toLower()->utf8Data();
+        if ((strcmp(token, "normal") == 0) ||
+            (strcmp(token, "bold") == 0) ||
+            (strcmp(token, "bolder") == 0) ||
+            (strcmp(token, "lighter") == 0) ||
+            (strcmp(token, "100") == 0) ||
+            (strcmp(token, "200") == 0) ||
+            (strcmp(token, "300") == 0) ||
+            (strcmp(token, "400") == 0) ||
+            (strcmp(token, "500") == 0) ||
+            (strcmp(token, "600") == 0) ||
+            (strcmp(token, "700") == 0) ||
+            (strcmp(token, "800") == 0) ||
+            (strcmp(token, "900") == 0) ||
+            (strcmp(token, "inherit") == 0) ||
+            (strcmp(token, "initial") == 0)) {
+            return true;
+        } else if (CSSPropertyParser::assureInteger(token, false)) {
+            int num = 0;
+            sscanf(token, "%d", &num);
+
+            if(((num % 100) == 0) && (((num/100) >= 1) && ((num/100) <= 9))) {
+                char tmp[4] = {0,};
+                sprintf(tmp, "%d", num);
+                (*tokens)[0] = String::fromUTF8(tmp);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
 bool CSSStyleDeclaration::checkInputErrorDisplay(std::vector<String*, gc_allocator<String*>>* tokens)
 {
     if (tokens->size() == 1) {
@@ -3321,6 +3487,30 @@ ComputedStyle* StyleResolver::resolveStyle(Element* element, ComputedStyle* pare
                     style->m_inheritedStyles.m_fontStyle = parentStyle->m_inheritedStyles.m_fontStyle;
                 } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
                     style->m_inheritedStyles.m_fontStyle = FontStyleValue::NormalFontStyleValue;
+                } else {
+                    STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::FontStyleValueKind);
+                    style->m_inheritedStyles.m_fontStyle = cssValues[k].fontStyleValue();
+                }
+                break;
+            case CSSStyleValuePair::KeyKind::FontWeight:
+                // TODO: LEESS
+                // <normal> | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit // initial -> normal
+                if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Inherit) {
+                    style->m_inheritedStyles.m_fontWeight = parentStyle->m_inheritedStyles.m_fontWeight;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::Initial) {
+                    style->m_inheritedStyles.m_fontWeight = FontWeightValue::NormalFontWeightValue;
+                } else if (cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::FontWeightValueKind) {
+                    if(cssValues[k].fontWeightValue() == FontWeightValue::FourHundredsFontWeightValue) {
+                        style->m_inheritedStyles.m_fontWeight = FontWeightValue::NormalFontWeightValue;
+                    } else if (cssValues[k].fontWeightValue() == FontWeightValue::SevenHundredsFontWeightValue){
+                        style->m_inheritedStyles.m_fontWeight = FontWeightValue::BoldFontWeightValue;
+                    } else if (cssValues[k].fontWeightValue() == FontWeightValue::BolderFontWeightValue) {
+                        style->m_inheritedStyles.m_fontWeight = bolderWeight(parentStyle->m_inheritedStyles.m_fontWeight);
+                    } else if (cssValues[k].fontWeightValue() == FontWeightValue::LighterFontWeightValue) {
+                        style->m_inheritedStyles.m_fontWeight = lighterWeight(parentStyle->m_inheritedStyles.m_fontWeight);
+                    } else {
+                        style->m_inheritedStyles.m_fontWeight = cssValues[k].fontWeightValue();
+                    }
                 } else {
                     STARFISH_ASSERT(cssValues[k].valueKind() == CSSStyleValuePair::ValueKind::FontStyleValueKind);
                     style->m_inheritedStyles.m_fontStyle = cssValues[k].fontStyleValue();

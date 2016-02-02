@@ -203,6 +203,22 @@ enum FontStyleValue {
     ObliqueFontStyleValue,
 };
 
+enum FontWeightValue {
+    NormalFontWeightValue,
+    BoldFontWeightValue,
+    BolderFontWeightValue,
+    LighterFontWeightValue,
+    OneHundredFontWeightValue,
+    TwoHundredsFontWeightValue,
+    ThreeHundredsFontWeightValue,
+    FourHundredsFontWeightValue,
+    FiveHundredsFontWeightValue,
+    SixHundredsFontWeightValue,
+    SevenHundredsFontWeightValue,
+    EightHundredsFontWeightValue,
+    NineHundredsFontWeightValue,
+};
+
 // Widget Engine will support only clip and ellipsis values.
 enum TextOverflowValue {
     ClipTextOverflowValue,
@@ -236,6 +252,8 @@ public:
         FontSize, // absolute-size | relative-size | length | percentage | inherit // initial value -> medium
         // https://www.w3.org/TR/CSS2/fonts.html#propdef-font-style
         FontStyle, // <normal> | italic | oblique | inherit
+        // https://www.w3.org/TR/CSS21/fonts.html#font-boldness
+        FontWeight, // <normal> | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit // initial -> normal
         // https://www.w3.org/TR/CSS21/visudet.html#propdef-vertical-align
         VerticalAlign, // <baseline> | sub | super | top | text-top | middle | bottom | text-bottom | percentage | length | inherit
         // https://www.w3.org/TR/CSS21/text.html#propdef-text-align
@@ -362,6 +380,7 @@ public:
         SmallerFontSizeValueKind,
 
         FontStyleValueKind,
+        FontWeightValueKind,
         TextOverflowValueKind,
 
         // border-style
@@ -447,6 +466,12 @@ public:
     {
         STARFISH_ASSERT(m_valueKind == FontStyleValueKind);
         return m_value.m_fontStyle;
+    }
+
+    FontWeightValue fontWeightValue()
+    {
+        STARFISH_ASSERT(m_valueKind == FontWeightValueKind);
+        return m_value.m_fontWeight;
     }
 
     DirectionValue directionValue()
@@ -545,6 +570,7 @@ public:
         PositionValue m_position;
         VerticalAlignValue m_verticalAlign;
         FontStyleValue m_fontStyle;
+        FontWeightValue m_fontWeight;
         TextOverflowValue m_textOverflow;
         TextAlignValue m_textAlign;
         DirectionValue m_direction;
@@ -698,6 +724,7 @@ public:
     F(VerticalAlign) \
     F(BackgroundRepeatX) \
     F(BackgroundRepeatY) \
+    F(FontWeight) \
 
 #define SET_VALUE(name) \
     void setValue##name(std::vector<String*, gc_allocator<String*>>* tokens);

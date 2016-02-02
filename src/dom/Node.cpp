@@ -425,6 +425,27 @@ void Node::dumpStyle()
     else if (m_style->fontStyle() == FontStyleValue::ObliqueFontStyleValue)
         printf("oblique, ");
 
+    printf("font-weight: ");
+    if (m_style->fontWeight() == FontWeightValue::OneHundredFontWeightValue)
+        printf("100, ");
+    if (m_style->fontWeight() == FontWeightValue::TwoHundredsFontWeightValue)
+        printf("200, ");
+    if (m_style->fontWeight() == FontWeightValue::ThreeHundredsFontWeightValue)
+        printf("300, ");
+    if (m_style->fontWeight() == FontWeightValue::NormalFontWeightValue)
+        printf("normal, ");
+    if (m_style->fontWeight() == FontWeightValue::FiveHundredsFontWeightValue)
+        printf("500, ");
+    if (m_style->fontWeight() == FontWeightValue::SixHundredsFontWeightValue)
+        printf("600, ");
+    if (m_style->fontWeight() == FontWeightValue::BoldFontWeightValue)
+        printf("bold, ");
+    if (m_style->fontWeight() == FontWeightValue::EightHundredsFontWeightValue)
+        printf("800, ");
+    if (m_style->fontWeight() == FontWeightValue::NineHundredsFontWeightValue)
+        printf("900, ");
+
+
     // letter-spacing
     printf("letter-spacing: %f, ", m_style->letterSpacing().fixed());
 

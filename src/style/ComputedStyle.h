@@ -24,6 +24,7 @@ public:
 
         m_inheritedStyles.m_color = Color(0, 0, 0, 255);
         m_inheritedStyles.m_fontSize = Length(Length::Fixed, DEFAULT_FONT_SIZE);
+        m_inheritedStyles.m_fontWeight = FontWeightValue::NormalFontWeightValue;
 
         m_inheritedStyles.m_visibility = VisibilityValue::VisibleVisibilityValue;
         m_inheritedStyles.m_letterSpacing = Length(Length::Fixed, 0);
@@ -710,6 +711,11 @@ public:
         return m_inheritedStyles.m_fontStyle;
     }
 
+    FontWeightValue fontWeight()
+    {
+        return m_inheritedStyles.m_fontWeight;
+    }
+
     Length letterSpacing()
     {
         return m_inheritedStyles.m_letterSpacing;
@@ -809,6 +815,7 @@ protected:
         Color m_color;
         Length m_fontSize;
         FontStyleValue m_fontStyle;
+        FontWeightValue m_fontWeight;
         Length m_letterSpacing;
         Length m_lineHeight;
         TextAlignValue m_textAlign;
