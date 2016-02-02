@@ -173,15 +173,18 @@ public:
 
             } else if (style()->bgSizeType() == BackgroundSizeType::SizeValue) {
                 float w, h;
-                if (style()->bgSizeValue()->width().isAuto()) {
+
+                if (style()->bgSizeValue()->width().isAuto() && style()->bgSizeValue()->height().isAuto()) {
                     w = id->width();
+                    h = id->height();
+                } else if (style()->bgSizeValue()->width().isAuto() && !style()->bgSizeValue()->height().isAuto()) {
+                    h = style()->bgSizeValue()->height().specifiedValue(bh);
+                    w = h * id->width() / id->height();
+                } else if (!style()->bgSizeValue()->width().isAuto() && style()->bgSizeValue()->height().isAuto()) {
+                    w = style()->bgSizeValue()->width().specifiedValue(bw);
+                    h = w * id->height() / id->width();
                 } else {
                     w = style()->bgSizeValue()->width().specifiedValue(bw);
-                }
-
-                if (style()->bgSizeValue()->height().isAuto()) {
-                    h = id->height();
-                } else {
                     h = style()->bgSizeValue()->height().specifiedValue(bh);
                 }
 

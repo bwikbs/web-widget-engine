@@ -47,6 +47,7 @@ console.log(result.value)
 							for(var i = 3; i < process.argv.length; i ++) {
 								args.push(process.argv[i])
 							}
+console.log(args)
   							var child = require('child_process').execFile('./StarFish', args)
   							child.stdout.on('data', function(buf) {
     							console.log('stdout "%s"', String(buf));
