@@ -605,35 +605,55 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             }
         }
 
-        // TODO vertical align(middle, top, bottom)
+        // TODO vertical align(length, text-top.., etc)
+        bool hasSpecialCase = false;
         float maxAscender = 0;
         float maxDecender = 0;
+        float mostBiggestBoxHeight = 0;
+
         for (size_t j = 0; j < b.m_boxes.size(); j ++) {
             if (b.m_boxes[j]->isInlineBox()) {
                 // normal flow
                 InlineBox* ib = b.m_boxes[j]->asInlineBox();
+
                 if (ib->isInlineTextBox()) {
                     maxAscender = std::max(ib->asInlineTextBox()->style()->font()->metrics().m_ascender, maxAscender);
                     maxDecender = std::min(ib->asInlineTextBox()->style()->font()->metrics().m_descender, maxDecender);
-                } else if (ib->isInlineReplacedBox()) {
-                    float asc = ib->marginTop() + ib->asInlineReplacedBox()->replacedBox()->borderTop() + ib->asInlineReplacedBox()->replacedBox()->paddingTop()
-                            + ib->asInlineReplacedBox()->replacedBox()->contentHeight();
-                    float dec = -(ib->asInlineReplacedBox()->replacedBox()->paddingBottom() + ib->asInlineReplacedBox()->replacedBox()->borderBottom()
-                            + ib->marginBottom());
-                    maxAscender = std::max(asc, maxAscender);
-                    maxDecender = std::min(dec, maxDecender);
-                } else if (ib->isInlineBlockBox()) {
-                    if (ib->asInlineBlockBox()->m_ascender == ib->height()) {
-                        maxAscender = std::max(ib->asInlineBlockBox()->m_ascender + ib->marginHeight(), maxAscender);
-                        maxDecender = std::min(0.f, maxDecender);
-                    } else {
-                        float dec = -(ib->height() - ib->asInlineBlockBox()->m_ascender) - ib->marginBottom();
-                        maxAscender = std::max(ib->asInlineBlockBox()->m_ascender + ib->marginTop(), maxAscender);
+                    continue;
+                }
+                VerticalAlignValue va = ib->style()->verticalAlign();
+                if (va == VerticalAlignValue::BaselineVAlignValue) {
+                    if (ib->isInlineReplacedBox()) {
+                        float asc = ib->marginTop() + ib->asInlineReplacedBox()->replacedBox()->borderTop() + ib->asInlineReplacedBox()->replacedBox()->paddingTop()
+                                + ib->asInlineReplacedBox()->replacedBox()->contentHeight();
+                        float dec = -(ib->asInlineReplacedBox()->replacedBox()->paddingBottom() + ib->asInlineReplacedBox()->replacedBox()->borderBottom()
+                                + ib->marginBottom());
+                        maxAscender = std::max(asc, maxAscender);
                         maxDecender = std::min(dec, maxDecender);
+                    } else if (ib->isInlineBlockBox()) {
+                        if (ib->asInlineBlockBox()->m_ascender == ib->height()) {
+                            maxAscender = std::max(ib->asInlineBlockBox()->m_ascender + ib->marginHeight(), maxAscender);
+                            maxDecender = std::min(0.f, maxDecender);
+                        } else {
+                            float dec = -(ib->height() - ib->asInlineBlockBox()->m_ascender) - ib->marginBottom();
+                            maxAscender = std::max(ib->asInlineBlockBox()->m_ascender + ib->marginTop(), maxAscender);
+                            maxDecender = std::min(dec, maxDecender);
+                        }
+                    } else {
+                        STARFISH_RELEASE_ASSERT_NOT_REACHED();
                     }
+                } else if (va == VerticalAlignValue::MiddleVAlignValue) {
+                    float height = ib->height();
+                    maxAscender = std::max(height/2 + ib->marginTop(), maxAscender);
+                    maxDecender = std::min(-height/2 - ib->marginBottom(), maxDecender);
+                } else if (va == VerticalAlignValue::TopVAlignValue || va == VerticalAlignValue::BottomVAlignValue) {
+                    hasSpecialCase = true;
+                    float height = ib->height() + ib->marginHeight();
+                    mostBiggestBoxHeight = std::max(mostBiggestBoxHeight, height);
                 } else {
                     STARFISH_RELEASE_ASSERT_NOT_REACHED();
                 }
+
             } else {
                 // out of flow boxes
                 b.m_boxes[j]->setY(b.m_boxes[j]->marginTop());
@@ -641,6 +661,24 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
             }
         }
 
+        if (hasSpecialCase) {
+            while((maxAscender - maxDecender) != mostBiggestBoxHeight) {
+                for (size_t j = 0; j < b.m_boxes.size(); j ++) {
+                    InlineBox* ib = b.m_boxes[j]->asInlineBox();
+                    VerticalAlignValue va = ib->style()->verticalAlign();
+                    float height = ib->height() + ib->marginHeight();
+                    if (height > maxAscender - maxDecender) {
+                        if (va == VerticalAlignValue::TopVAlignValue) {
+                            float dec = -height + maxAscender;
+                            maxDecender = std::min(maxDecender, dec);
+                        } else if (va == VerticalAlignValue::BottomVAlignValue) {
+                            float asc = height + maxDecender;
+                            maxAscender = std::max(maxAscender, asc);
+                        }
+                    }
+                }
+            }
+        }
         b.m_ascender = maxAscender;
         b.m_decender = maxDecender;
 
@@ -650,21 +688,36 @@ float FrameBlockBox::layoutInline(LayoutContext& ctx)
                 InlineBox* ib = b.m_boxes[j]->asInlineBox();
                 if (ib->isInlineTextBox()) {
                     ib->setY(height + maxDecender - ib->height() - ib->asInlineTextBox()->style()->font()->metrics().m_descender);
-                } else if (ib->isInlineReplacedBox()) {
-                    float asc = ib->marginTop() + ib->asInlineReplacedBox()->replacedBox()->borderTop() + ib->asInlineReplacedBox()->replacedBox()->paddingTop()
-                                + ib->asInlineReplacedBox()->replacedBox()->contentHeight();
-                    ib->setY(height + maxDecender - asc + ib->marginTop());
-                } else if (ib->isInlineBlockBox()) {
-                    if (ib->asInlineBlockBox()->m_ascender == ib->height()) {
-                        float dec = 0;
-                        ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
-                    } else {
-                        float dec = -(ib->height() - ib->asInlineBlockBox()->m_ascender) - ib->marginBottom();
-                        ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
-                    }
                 } else {
-                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                    VerticalAlignValue va = ib->style()->verticalAlign();
+                    if (va == VerticalAlignValue::BaselineVAlignValue) {
+                        if (ib->isInlineReplacedBox()) {
+                            float asc = ib->marginTop() + ib->asInlineReplacedBox()->replacedBox()->borderTop() + ib->asInlineReplacedBox()->replacedBox()->paddingTop()
+                                        + ib->asInlineReplacedBox()->replacedBox()->contentHeight();
+                            ib->setY(height + maxDecender - asc + ib->marginTop());
+                        } else if (ib->isInlineBlockBox()) {
+                            if (ib->asInlineBlockBox()->m_ascender == ib->height()) {
+                                float dec = 0;
+                                ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
+                            } else {
+                                float dec = -(ib->height() - ib->asInlineBlockBox()->m_ascender) - ib->marginBottom();
+                                ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
+                            }
+                        } else {
+                            STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                        }
+                    } else if (va == VerticalAlignValue::MiddleVAlignValue) {
+                        float dec = -(ib->height() / 2);
+                        ib->setY(height + maxDecender - ib->height() - dec - ib->marginTop());
+                    } else if (va == VerticalAlignValue::TopVAlignValue) {
+                        ib->setY(ib->marginTop());
+                    } else if (va == VerticalAlignValue::BottomVAlignValue) {
+                        ib->setY(height - ib->height() - ib->marginBottom());
+                    } else {
+                        STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                    }
                 }
+
                 if (ib->style()->position() == PositionValue::RelativePositionValue)
                     ctx.registerRelativePositionedFrames(ib);
             } else {
