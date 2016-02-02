@@ -332,7 +332,23 @@ float FrameBlockBox::layoutBlock(LayoutContext& ctx)
         // Lay out the child
         if (child->isNormalFlow()) {
             child->layout(ctx);
-            child->asFrameBox()->moveX(child->asFrameBox()->marginLeft());
+            Length marginLeft = child->style()->marginLeft();
+            Length marginRight = child->style()->marginRight();
+            float mX = 0;
+            if (!marginLeft.isAuto() && !marginRight.isAuto()) {
+                // FIXME what "direction value" should we watch? self? child?
+                if (style()->direction() == LtrDirectionValue) {
+                    mX = child->asFrameBox()->marginLeft();
+                } else {
+                    STARFISH_RELEASE_ASSERT_NOT_REACHED();
+                }
+            } else if (marginLeft.isAuto() && !marginRight.isAuto()) {
+                mX = contentWidth() - child->asFrameBox()->width();
+                mX -= child->asFrameBox()->marginRight();
+            } else if (!marginLeft.isAuto() && marginRight.isAuto()) {
+                mX = child->asFrameBox()->marginLeft();
+            }
+            child->asFrameBox()->moveX(mX);
             // TODO implement margin-collapse
             child->asFrameBox()->moveY(child->asFrameBox()->marginTop());
         }
