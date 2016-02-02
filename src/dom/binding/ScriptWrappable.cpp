@@ -43,22 +43,26 @@ void ScriptWrappableGlobalObject::initScriptWrappableWindow(Window* window)
     ((escargot::ESObject *)this->m_object)->set__proto__(data->m_window->protoType());
     ((escargot::ESObject *)this->m_object)->setExtraData(ScriptWrappable::WindowObject);
 
+    // [setTimeout]
+    // https://www.w3.org/TR/html5/webappapis.html
+    // long setTimeout(Function handler, optional long timeout, any... arguments);
+
+    // TODO : Pass "any... arguments" if exist
+    // TODO : First argument can be function or script source (currently allow function only)
     escargot::ESFunctionObject* setTimeoutFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isObject()) {
-            if (v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
-                if (instance->currentExecutionContext()->readArgument(0).isESPointer() &&
-                        instance->currentExecutionContext()->readArgument(0).asESPointer() &&
-                        instance->currentExecutionContext()->readArgument(0).asESPointer()->isESFunctionObject()) {
-                    if (instance->currentExecutionContext()->readArgument(1).isNumber()) {
-                        Window* wnd = (Window*)ScriptWrappableGlobalObject::fetch();
-                        wnd->setTimeout([](Window* wnd, void* data) {
-                            escargot::ESFunctionObject* fn = (escargot::ESFunctionObject*)data;
-                            escargot::ESFunctionObject::call(escargot::ESVMInstance::currentInstance(),
-                                    fn, escargot::ESValue(), NULL, 0, false);
-                        }, instance->currentExecutionContext()->readArgument(1).toUint32(),
-                        instance->currentExecutionContext()->readArgument(0).asESPointer());
-                    }
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+            if (instance->currentExecutionContext()->readArgument(0).isESPointer() &&
+                    instance->currentExecutionContext()->readArgument(0).asESPointer() &&
+                    instance->currentExecutionContext()->readArgument(0).asESPointer()->isESFunctionObject()) {
+                if (instance->currentExecutionContext()->readArgument(1).isNumber()) {
+                    Window* wnd = (Window*)ScriptWrappableGlobalObject::fetch();
+                    wnd->setTimeout([](Window* wnd, void* data) {
+                        escargot::ESFunctionObject* fn = (escargot::ESFunctionObject*)data;
+                        escargot::ESFunctionObject::call(escargot::ESVMInstance::currentInstance(),
+                                fn, escargot::ESValue(), NULL, 0, false);
+                    }, instance->currentExecutionContext()->readArgument(1).toUint32(),
+                    instance->currentExecutionContext()->readArgument(0).asESPointer());
                 }
             }
         }
