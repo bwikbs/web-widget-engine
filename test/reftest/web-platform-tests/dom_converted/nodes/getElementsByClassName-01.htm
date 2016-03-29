@@ -1,20 +1,18 @@
 <!doctype html>
-<html class="a
-b">
+<html class="a">
  <head>
-  <title>document.getElementsByClassName(): also simple</title>
+  <title>document.getElementsByClassName(): simple</title>
   <script src="../../resources/testharness.js"></script>
   <script src="../../resources/testharnessreport.js"></script>
-
-  </head>
- <body class="a
-">
+ </head>
+ <body class="a">
   <div id="log"></div>
-  <script>
 
+  <script>
 // For some reasons, escargot cannot run the following functions defined in testharness.js
 // I copied them here, and it works fine
 function assert(expected_true, function_name, description, error, substitutions) {
+    console.log("asdf? "+ expected_true);
     if (expected_true !== true) {
         var msg = make_message(function_name, description,
                 error, substitutions);
@@ -23,6 +21,8 @@ function assert(expected_true, function_name, description, error, substitutions)
 }
 
 function same_value(x, y) {
+    console.log("x: "+x);
+    console.log("y: "+y);
     if (y !== y) {
         //NaN case
         return x !== x;
@@ -68,14 +68,7 @@ function assert_array_equals(actual, expected, description) {
 }
   </script>
 
-  <script>test(function() {assert_array_equals(document.getElementsByClassName("a\n"), [document.documentElement, document.body])})</script>
-  <script>
-    // My own testing case
-    test(function() {
-        console.log(same_value(document.getElementsByClassName("a\n").item(0), document.documentElement));
-        console.log(same_value(document.getElementsByClassName("a\n").item(1), document.body));
-        assert_array_equals(document.getElementsByClassName("a\n"), [document.documentElement, document.body]);
-    })
-  </script>
+  <script> test(function() {assert_array_equals(document.getElementsByClassName("\ta\n"),
+                                                [document.documentElement, document.body])}) </script>
  </body>
 </html>
