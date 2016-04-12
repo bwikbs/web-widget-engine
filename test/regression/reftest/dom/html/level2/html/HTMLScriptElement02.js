@@ -14,7 +14,7 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
     *  @return uri identifier of test
     */
 function getTargetURI() {
-      return "http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLLinkElement06";
+      return "http://www.w3.org/2001/DOM-Test-Suite/level2/html/HTMLScriptElement02";
    }
 
 var docsLoaded = -1000000;
@@ -43,7 +43,7 @@ function setUpPage() {
       if (typeof(this.doc) != 'undefined') {
         docRef = this.doc;
       }
-      docsLoaded += preload(docRef, "doc", "link");
+      docsLoaded += preload(docRef, "doc", "script");
 
        if (docsLoaded == 1) {
           setUpPageStatus = 'complete';
@@ -69,36 +69,37 @@ function loadComplete() {
 
 /**
 *
-    The rel attribute specifies the forward link type.
+    The charset attribute specifies the character encoding of the linked
+    resource.
 
-    Retrieve the rel attribute and examine its value.
+    Retrieve the charset attribute and examine its value.
 
 * @author NIST
 * @author Mary Brady
-* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-html#ID-41369587
+* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-html#ID-35305677
 */
-function HTMLLinkElement06() {
+function HTMLScriptElement02() {
    var success;
-    if(checkInitialization(builder, "HTMLLinkElement06") != null) return;
+    if(checkInitialization(builder, "HTMLScriptElement02") != null) return;
     var nodeList;
       var testNode;
-      var vrel;
+      var vcharset;
       var doc;
 
       var docRef = null;
       if (typeof(this.doc) != 'undefined') {
         docRef = this.doc;
       }
-      doc = load(docRef, "doc", "link");
-      nodeList = doc.getElementsByTagName("link");
-      assertSize("Asize",2,nodeList);
-      testNode = nodeList.item(0);
-      vrel = testNode.rel;
+      doc = load(docRef, "doc", "script");
+      nodeList = doc.getElementsByTagName("script");
+      assertSize("Asize",4,nodeList);
+testNode = nodeList.item(3);
+      vcharset = testNode.charset;
 
-      assertEquals("relLink","stylesheet",vrel);
+      assertEquals("charsetLink","US-ASCII",vcharset);
 
 }
 
 function runTest() {
-   HTMLLinkElement06();
+   HTMLScriptElement02();
 }
