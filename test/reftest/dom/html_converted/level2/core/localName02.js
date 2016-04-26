@@ -17,7 +17,7 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
     *  @return uri identifier of test
     */
 function getTargetURI() {
-      return "http://www.w3.org/2001/DOM-Test-Suite/level2/core/localName01";
+      return "http://www.w3.org/2001/DOM-Test-Suite/level2/core/localName02";
    }
 
 var docsLoaded = -1000000;
@@ -39,7 +39,6 @@ function setUpPage() {
      //   creates test document builder, may throw exception
      //
      builder = createConfiguredBuilder();
-       //setImplementationAttribute("namespaceAware", true);
 
       docsLoaded = 0;
       
@@ -76,26 +75,24 @@ function loadComplete() {
 
 /**
 * 
-    The "getLocalName()" method for a Node
-    returns the local part of the qualified name of this node,
-    and for nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE
-    and nodes created with a DOM Level 1 method, this is null.
-    
-    Retrieve the first emp:address node and get the attributes of this node."   
-    Then apply the getLocalName() method to the emp:domestic attribute.
-    The method should return "domestic". 
+  The "getLocalName()" method for a Node
+  returns the local part of the qualified name of this node,
+  and for nodes of any type other than ELEMENT_NODE and ATTRIBUTE_NODE
+  and nodes created with a DOM Level 1 method, this is null.
+  
+  Create an new Element with the createElement() method.
+  Invoke the "getLocalName()" method on the newly created element  
+  node will cause "null" to be returned. 
 
 * @author NIST
 * @author Mary Brady
 * @see http://www.w3.org/TR/DOM-Level-2-Core/core#ID-NodeNSLocalN
 */
-function localName01() {
+function localName02() {
    var success;
-    if(checkInitialization(builder, "localName01") != null) return;
+    if(checkInitialization(builder, "localName02") != null) return;
     var doc;
-      var elementList;
-      var testAddr;
-      var addrAttr;
+      var createdNode;
       var localName;
       
       var docRef = null;
@@ -103,19 +100,16 @@ function localName01() {
         docRef = this.doc;
       }
       doc = load(docRef, "doc", "hc_staff");
-      elementList = doc.getElementsByTagName("acronym");
-      testAddr = elementList.item(0);
-      assertNotNull("empAddrNotNull",testAddr);
-addrAttr = testAddr.getAttributeNode("title");
-      localName = addrAttr.localName;
+      createdNode = doc.createElement("test:employee");
+      localName = createdNode.localName;
 
-      assertEquals("localName","title",localName);
-       
+      assertNull("localNameNull",localName);
+    
 }
 
 
 
 
 function runTest() {
-   localName01();
+   localName02();
 }
