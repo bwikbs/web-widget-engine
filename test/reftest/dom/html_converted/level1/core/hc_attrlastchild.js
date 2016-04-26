@@ -1,20 +1,23 @@
+
 /*
-Copyright Â© 2001-2004 World Wide Web Consortium,
-(Massachusetts Institute of Technology, European Research Consortium
-for Informatics and Mathematics, Keio University). All
-Rights Reserved. This work is distributed under the W3CÂ® Software License [1] in the
-hope that it will be useful, but WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+Copyright Â© 2001-2004 World Wide Web Consortium, 
+(Massachusetts Institute of Technology, European Research Consortium 
+for Informatics and Mathematics, Keio University). All 
+Rights Reserved. This work is distributed under the W3CÂ® Software License [1] in the 
+hope that it will be useful, but WITHOUT ANY WARRANTY; without even 
+the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 
 [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 */
+
+
 
    /**
     *  Gets URI that identifies the test.
     *  @return uri identifier of test
     */
 function getTargetURI() {
-      return "http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrremovechild2";
+      return "http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrlastchild";
    }
 
 var docsLoaded = -1000000;
@@ -38,24 +41,26 @@ function setUpPage() {
      builder = createConfiguredBuilder();
 
       docsLoaded = 0;
-
+      
       var docRef = null;
       if (typeof(this.doc) != 'undefined') {
         docRef = this.doc;
       }
       docsLoaded += preload(docRef, "doc", "hc_staff");
-
+        
        if (docsLoaded == 1) {
           setUpPageStatus = 'complete';
        }
     } catch(ex) {
-        catchInitializationError(builder, ex);
+    	catchInitializationError(builder, ex);
         setUpPageStatus = 'complete';
     }
 }
 
+
+
 //
-//   This method is called on the completion of
+//   This method is called on the completion of 
 //      each asychronous load started in setUpTests.
 //
 //   When every synchronous loaded document has completed,
@@ -67,17 +72,19 @@ function loadComplete() {
     }
 }
 
+
 /**
-*
-Attempts to remove a freshly created text node which should result in a NOT_FOUND_ERR exception.
+* 
+Checks that Node.lastChild for an attribute node contains
+the expected text node.
 
 * @author Curt Arnold
 * @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-637646024
-* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-1734834066
+* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-61AD09FB
 */
-function hc_attrremovechild2() {
+function hc_attrlastchild() {
    var success;
-    if(checkInitialization(builder, "hc_attrremovechild2") != null) return;
+    if(checkInitialization(builder, "hc_attrlastchild") != null) return;
     var doc;
       var acronymList;
       var testNode;
@@ -85,8 +92,8 @@ function hc_attrremovechild2() {
       var titleAttr;
       var value;
       var textNode;
-      var retval;
-
+      var otherChild;
+      
       var docRef = null;
       if (typeof(this.doc) != 'undefined') {
         docRef = this.doc;
@@ -97,21 +104,24 @@ function hc_attrremovechild2() {
       attributes = testNode.attributes;
 
       titleAttr = attributes.getNamedItem("title");
-      textNode = doc.createTextNode("Yesterday");
+      textNode = titleAttr.firstChild;
 
-    {
-        success = false;
-        try {
-            retval = titleAttr.removeChild(textNode);
-        }
-        catch(ex) {
-      success = (typeof(ex.code) != 'undefined' && ex.code == 8);
-        }
-        assertTrue("throw_NOT_FOUND_ERR",success);
-    }
+      assertNotNull("textNodeNotNull",textNode);
+value = textNode.nodeValue;
 
+      assertEquals("child1IsYes","Yes",value);
+       otherChild = textNode.nextSibling;
+
+      assertNull("nextSiblingIsNull",otherChild);
+    otherChild = textNode.previousSibling;
+
+      assertNull("previousSiblingIsNull",otherChild);
+    
 }
 
+
+
+
 function runTest() {
-   hc_attrremovechild2();
+   hc_attrlastchild();
 }
