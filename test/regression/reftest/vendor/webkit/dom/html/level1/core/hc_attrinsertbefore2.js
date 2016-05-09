@@ -17,7 +17,7 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
     *  @return uri identifier of test
     */
 function getTargetURI() {
-      return "http://www.w3.org/2001/DOM-Test-Suite/level2/core/documenttypesystemid01";
+      return "http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrinsertbefore2";
    }
 
 var docsLoaded = -1000000;
@@ -75,37 +75,61 @@ function loadComplete() {
 
 /**
 * 
-    The method getInternalSubset() returns the public identifier of the external subset.
-  
-    Create a new DocumentType node with the value "SYS" for its systemId and PUB for
-    its publicId.  Check the value of the systemId and pbulicId attributes.
+Prepends a text node to an attribute and checks if the value of
+the attribute is changed.
 
-* @author IBM
-* @author Neil Delima
-* @see http://www.w3.org/TR/DOM-Level-2-Core/core#ID-Core-DocType-systemId
+* @author Curt Arnold
+* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-637646024
+* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-952280727
 */
-function documenttypesystemid01() {
+function hc_attrinsertbefore2() {
    var success;
-    if(checkInitialization(builder, "documenttypesystemid01") != null) return;
+    if(checkInitialization(builder, "hc_attrinsertbefore2") != null) return;
     var doc;
-      var docType;
-      var domImpl;
-      var publicId;
-      var systemId;
+      var acronymList;
+      var testNode;
+      var attributes;
+      var titleAttr;
+      var value;
+      var textNode;
+      var retval;
+      var lastChild;
+      var firstChild;
+      var refChild;
       
       var docRef = null;
       if (typeof(this.doc) != 'undefined') {
         docRef = this.doc;
       }
       doc = load(docRef, "doc", "hc_staff");
-//      domImpl = doc.implementation;
-//docType = domImpl.createDocumentType("l2:root","PUB","SYS");
-      publicId = doc.doctype.publicId;
+      acronymList = doc.getElementsByTagName("acronym");
+      testNode = acronymList.item(3);
+      attributes = testNode.attributes;
 
-      systemId = doc.doctype.systemId;
+      titleAttr = attributes.getNamedItem("title");
+      textNode = doc.createTextNode("terday");
+      refChild = titleAttr.firstChild;
 
-      assertEquals("documenttypepublicid01",systemId,"http://www.w3.org/TR/html4/strict.dtd");
-       assertEquals("documenttypesystemid01",publicId,"-//W3C//DTD HTML 4.01//EN");
+      retval = titleAttr.insertBefore(textNode,refChild);
+      value = titleAttr.value;
+
+      assertEquals("attrValue","terdayYes",value);
+       value = titleAttr.nodeValue;
+
+      assertEquals("attrNodeValue","terdayYes",value);
+       value = retval.nodeValue;
+
+      assertEquals("retvalValue","terday",value);
+       firstChild = titleAttr.firstChild;
+
+      value = firstChild.nodeValue;
+
+      assertEquals("firstChildValue","terday",value);
+       lastChild = titleAttr.lastChild;
+
+      value = lastChild.nodeValue;
+
+      assertEquals("lastChildValue","Yes",value);
        
 }
 
@@ -113,5 +137,5 @@ function documenttypesystemid01() {
 
 
 function runTest() {
-   documenttypesystemid01();
+   hc_attrinsertbefore2();
 }

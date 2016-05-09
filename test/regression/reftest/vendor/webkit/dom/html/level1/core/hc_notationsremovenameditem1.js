@@ -17,7 +17,7 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
     *  @return uri identifier of test
     */
 function getTargetURI() {
-      return "http://www.w3.org/2001/DOM-Test-Suite/level2/core/documenttypesystemid01";
+      return "http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_notationsremovenameditem1";
    }
 
 var docsLoaded = -1000000;
@@ -39,6 +39,7 @@ function setUpPage() {
      //   creates test document builder, may throw exception
      //
      builder = createConfiguredBuilder();
+     // checkFeature("XML", null);
 
       docsLoaded = 0;
       
@@ -75,43 +76,58 @@ function loadComplete() {
 
 /**
 * 
-    The method getInternalSubset() returns the public identifier of the external subset.
-  
-    Create a new DocumentType node with the value "SYS" for its systemId and PUB for
-    its publicId.  Check the value of the systemId and pbulicId attributes.
+An attempt to add remove an notation should result in a NO_MODIFICATION_ERR.
 
-* @author IBM
-* @author Neil Delima
-* @see http://www.w3.org/TR/DOM-Level-2-Core/core#ID-Core-DocType-systemId
+* @author Curt Arnold
+* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-D46829EF
+* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-D58B193
 */
-function documenttypesystemid01() {
+function hc_notationsremovenameditem1() {
    var success;
-    if(checkInitialization(builder, "documenttypesystemid01") != null) return;
+    if(checkInitialization(builder, "hc_notationsremovenameditem1") != null) return;
     var doc;
+      var notations;
       var docType;
-      var domImpl;
-      var publicId;
-      var systemId;
+      var retval;
       
       var docRef = null;
       if (typeof(this.doc) != 'undefined') {
         docRef = this.doc;
       }
       doc = load(docRef, "doc", "hc_staff");
-//      domImpl = doc.implementation;
-//docType = domImpl.createDocumentType("l2:root","PUB","SYS");
-      publicId = doc.doctype.publicId;
+      docType = doc.doctype;
 
-      systemId = doc.doctype.systemId;
+      
+	if(
+	
+	!(
+	(builder.contentType == "text/html")
+)
 
-      assertEquals("documenttypepublicid01",systemId,"http://www.w3.org/TR/html4/strict.dtd");
-       assertEquals("documenttypesystemid01",publicId,"-//W3C//DTD HTML 4.01//EN");
-       
+	) {
+	assertNotNull("docTypeNotNull",docType);
+notations = docType.notations;
+
+      assertNotNull("notationsNotNull",notations);
+
+	{
+		success = false;
+		try {
+            retval = notations.removeNamedItem("notation1");
+        }
+		catch(ex) {
+      success = (typeof(ex.code) != 'undefined' && ex.code == 7);
+		}
+		assertTrue("throw_NO_MODIFICATION_ALLOWED_ERR",success);
+	}
+
+	}
+	
 }
 
 
 
 
 function runTest() {
-   documenttypesystemid01();
+   hc_notationsremovenameditem1();
 }

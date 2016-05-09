@@ -17,7 +17,7 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
     *  @return uri identifier of test
     */
 function getTargetURI() {
-      return "http://www.w3.org/2001/DOM-Test-Suite/level2/core/documenttypesystemid01";
+      return "http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_nodevalue08";
    }
 
 var docsLoaded = -1000000;
@@ -39,6 +39,7 @@ function setUpPage() {
      //   creates test document builder, may throw exception
      //
      builder = createConfiguredBuilder();
+     // checkFeature("XML", null);
 
       docsLoaded = 0;
       
@@ -75,43 +76,59 @@ function loadComplete() {
 
 /**
 * 
-    The method getInternalSubset() returns the public identifier of the external subset.
-  
-    Create a new DocumentType node with the value "SYS" for its systemId and PUB for
-    its publicId.  Check the value of the systemId and pbulicId attributes.
+An notation is accessed, setNodeValue is called with a non-null argument, but getNodeValue
+should still return null.
 
-* @author IBM
-* @author Neil Delima
-* @see http://www.w3.org/TR/DOM-Level-2-Core/core#ID-Core-DocType-systemId
+* @author Curt Arnold
+* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-F68D080
+* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-5431D1B9
 */
-function documenttypesystemid01() {
+function hc_nodevalue08() {
    var success;
-    if(checkInitialization(builder, "documenttypesystemid01") != null) return;
+    if(checkInitialization(builder, "hc_nodevalue08") != null) return;
     var doc;
       var docType;
-      var domImpl;
-      var publicId;
-      var systemId;
+      var newNode;
+      var newValue;
+      var nodeMap;
       
       var docRef = null;
       if (typeof(this.doc) != 'undefined') {
         docRef = this.doc;
       }
       doc = load(docRef, "doc", "hc_staff");
-//      domImpl = doc.implementation;
-//docType = domImpl.createDocumentType("l2:root","PUB","SYS");
-      publicId = doc.doctype.publicId;
+      docType = doc.doctype;
 
-      systemId = doc.doctype.systemId;
+      
+	if(
+	
+	!(
+	(builder.contentType == "text/html")
+)
 
-      assertEquals("documenttypepublicid01",systemId,"http://www.w3.org/TR/html4/strict.dtd");
-       assertEquals("documenttypesystemid01",publicId,"-//W3C//DTD HTML 4.01//EN");
-       
+	) {
+	assertNotNull("docTypeNotNull",docType);
+nodeMap = docType.notations;
+
+      assertNotNull("notationsNotNull",nodeMap);
+newNode = nodeMap.getNamedItem("notation1");
+      assertNotNull("notationNotNull",newNode);
+newValue = newNode.nodeValue;
+
+      assertNull("initiallyNull",newValue);
+    newNode.nodeValue = "This should have no effect";
+
+      newValue = newNode.nodeValue;
+
+      assertNull("nullAfterAttemptedChange",newValue);
+    
+	}
+	
 }
 
 
 
 
 function runTest() {
-   documenttypesystemid01();
+   hc_nodevalue08();
 }

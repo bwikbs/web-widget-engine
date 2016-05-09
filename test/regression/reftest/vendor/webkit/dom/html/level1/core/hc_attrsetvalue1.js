@@ -17,7 +17,7 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
     *  @return uri identifier of test
     */
 function getTargetURI() {
-      return "http://www.w3.org/2001/DOM-Test-Suite/level2/core/documenttypesystemid01";
+      return "http://www.w3.org/2001/DOM-Test-Suite/level1/core/hc_attrsetvalue1";
    }
 
 var docsLoaded = -1000000;
@@ -75,43 +75,61 @@ function loadComplete() {
 
 /**
 * 
-    The method getInternalSubset() returns the public identifier of the external subset.
-  
-    Create a new DocumentType node with the value "SYS" for its systemId and PUB for
-    its publicId.  Check the value of the systemId and pbulicId attributes.
+Sets Attr.value on an attribute that only has a simple value.
 
-* @author IBM
-* @author Neil Delima
-* @see http://www.w3.org/TR/DOM-Level-2-Core/core#ID-Core-DocType-systemId
+* @author Curt Arnold
+* @see http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-221662474
 */
-function documenttypesystemid01() {
+function hc_attrsetvalue1() {
    var success;
-    if(checkInitialization(builder, "documenttypesystemid01") != null) return;
+    if(checkInitialization(builder, "hc_attrsetvalue1") != null) return;
     var doc;
-      var docType;
-      var domImpl;
-      var publicId;
-      var systemId;
+      var acronymList;
+      var testNode;
+      var attributes;
+      var titleAttr;
+      var value;
+      var retval;
+      var firstChild;
+      var otherChild;
       
       var docRef = null;
       if (typeof(this.doc) != 'undefined') {
         docRef = this.doc;
       }
       doc = load(docRef, "doc", "hc_staff");
-//      domImpl = doc.implementation;
-//docType = domImpl.createDocumentType("l2:root","PUB","SYS");
-      publicId = doc.doctype.publicId;
+      acronymList = doc.getElementsByTagName("acronym");
+      testNode = acronymList.item(3);
+      attributes = testNode.attributes;
 
-      systemId = doc.doctype.systemId;
+      titleAttr = attributes.getNamedItem("title");
+      firstChild = titleAttr.firstChild;
 
-      assertEquals("documenttypepublicid01",systemId,"http://www.w3.org/TR/html4/strict.dtd");
-       assertEquals("documenttypesystemid01",publicId,"-//W3C//DTD HTML 4.01//EN");
-       
+      assertNotNull("attrChildNotNull",firstChild);
+titleAttr.value = "Tomorrow";
+
+      firstChild.nodeValue = "impl reused node";
+
+      value = titleAttr.value;
+
+      assertEquals("attrValue","Tomorrow",value);
+       value = titleAttr.nodeValue;
+
+      assertEquals("attrNodeValue","Tomorrow",value);
+       firstChild = titleAttr.lastChild;
+
+      value = firstChild.nodeValue;
+
+      assertEquals("firstChildValue","Tomorrow",value);
+       otherChild = firstChild.nextSibling;
+
+      assertNull("nextSiblingIsNull",otherChild);
+    
 }
 
 
 
 
 function runTest() {
-   documenttypesystemid01();
+   hc_attrsetvalue1();
 }
