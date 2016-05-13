@@ -11,6 +11,6 @@
 <span><span class="pass">PASS</span> e.HIERARCHY_REQUEST_ERR is 3</span><br />
 <span><span class="pass">PASS</span> e.code is 3</span><br />
 <span><span class="pass">PASS</span> e.name is "HierarchyRequestError"</span><br />
-<span><span class="fail">FAIL</span> e.message should be HierarchyRequestError: DOM Exception 3. Was Node is a host-including inclusive ancestor of parent..</span><br />
+<span><span class="fail">FAIL</span> e.message should be Failed to execute 'appendChild' on 'Node': Nodes of type '#document' may not be inserted inside nodes of type '#document'.. Was Node is a host-including inclusive ancestor of parent..</span><br />
 <span><span class="pass">PASS</span> successfullyParsed is true</span><br />
 <br /><span class="pass">TEST COMPLETE</span><br />
