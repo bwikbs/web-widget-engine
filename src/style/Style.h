@@ -969,6 +969,43 @@ public:
     FOR_EACH_STYLE_ATTRIBUTE(SET_VALUE)
 #undef SET_VALUE
 
+// TODO: This will replace "checkInputError##name" And "setValue##name"
+#define NEW_SET_VALUE_DECL(name, ...) \
+    bool updateValue##name(std::vector<String*, gc_allocator<String*> >* tokens);
+    FOR_EACH_STYLE_ATTRIBUTE(NEW_SET_VALUE_DECL)
+#undef NEW_SET_VALUE_DECL
+    bool updateValueBorderStyle(std::vector<String*, gc_allocator<String*> >* tokens);
+
+    static bool checkEssentialValue(std::vector<String*, gc_allocator<String*> >* tokens);
+
+#define CHECK_INPUT_ERROR(name, ...) \
+    static bool checkInputError##name(std::vector<String*, gc_allocator<String*> >* tokens);
+
+    FOR_EACH_STYLE_ATTRIBUTE(CHECK_INPUT_ERROR)
+#undef CHECK_INPUT_ERROR
+
+#define FOR_EACH_STYLE_ATTRIBUTE_FOURSIDE_SHORTHAND(F)                  \
+    F(Margin, MarginTop, MarginBottom, MarginLeft, MarginRight)         \
+    F(Padding, PaddingTop, PaddingBottom, PaddingLeft, PaddingRight)    \
+    F(BorderStyle, BorderTopStyle, BorderBottomStyle, BorderLeftStyle, BorderRightStyle)    \
+    F(BorderWidth, BorderTopWidth, BorderBottomWidth, BorderLeftWidth, BorderRightWidth)    \
+    F(BorderColor, BorderTopColor, BorderBottomColor, BorderLeftColor, BorderRightColor)
+
+#define CHECK_INPUT_ERROR_FOURSIDE(name, nameTop, nameBottom, nameLeft, nameRight) \
+    static bool checkInputError##name(std::vector<String*, gc_allocator<String*> >* tokens);
+
+    FOR_EACH_STYLE_ATTRIBUTE_FOURSIDE_SHORTHAND(CHECK_INPUT_ERROR_FOURSIDE)
+#undef CHECK_INPUT_ERROR_FOURSIDE
+
+    static bool checkInputErrorBackground(std::vector<String*, gc_allocator<String*> >* tokens);
+    static bool checkInputErrorBackgroundRepeat(std::vector<String*, gc_allocator<String*> >* tokens);
+    static bool checkInputErrorBorder(std::vector<String*, gc_allocator<String*> >* tokens);
+    static bool checkInputErrorBorderTop(std::vector<String*, gc_allocator<String*> >* tokens);
+    static bool checkInputErrorBorderRight(std::vector<String*, gc_allocator<String*> >* tokens);
+    static bool checkInputErrorBorderBottom(std::vector<String*, gc_allocator<String*> >* tokens);
+    static bool checkInputErrorBorderLeft(std::vector<String*, gc_allocator<String*> >* tokens);
+    static bool checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*> >* tokens, bool allowNegative);
+
 protected:
     KeyKind m_keyKind;
     ValueKind m_valueKind;
@@ -1078,35 +1115,6 @@ public:
 
     void tokenizeCSSValue(std::vector<String*, gc_allocator<String*> >* tokens, String* src);
 
-    bool checkEssentialValue(std::vector<String*, gc_allocator<String*> >* tokens);
-
-#define CHECK_INPUT_ERROR(name, ...) \
-    bool checkInputError##name(std::vector<String*, gc_allocator<String*> >* tokens);
-
-    FOR_EACH_STYLE_ATTRIBUTE(CHECK_INPUT_ERROR)
-#undef CHECK_INPUT_ERROR
-
-#define FOR_EACH_STYLE_ATTRIBUTE_FOURSIDE_SHORTHAND(F)                  \
-    F(Margin, MarginTop, MarginBottom, MarginLeft, MarginRight)         \
-    F(Padding, PaddingTop, PaddingBottom, PaddingLeft, PaddingRight)    \
-    F(BorderStyle, BorderTopStyle, BorderBottomStyle, BorderLeftStyle, BorderRightStyle)    \
-    F(BorderWidth, BorderTopWidth, BorderBottomWidth, BorderLeftWidth, BorderRightWidth)    \
-    F(BorderColor, BorderTopColor, BorderBottomColor, BorderLeftColor, BorderRightColor)
-
-#define CHECK_INPUT_ERROR_FOURSIDE(name, nameTop, nameBottom, nameLeft, nameRight) \
-    bool checkInputError##name(std::vector<String*, gc_allocator<String*> >* tokens);
-
-    FOR_EACH_STYLE_ATTRIBUTE_FOURSIDE_SHORTHAND(CHECK_INPUT_ERROR_FOURSIDE)
-#undef CHECK_INPUT_ERROR_FOURSIDE
-
-    bool checkInputErrorBackground(std::vector<String*, gc_allocator<String*> >* tokens);
-    bool checkInputErrorBackgroundRepeat(std::vector<String*, gc_allocator<String*> >* tokens);
-    bool checkInputErrorBorder(std::vector<String*, gc_allocator<String*> >* tokens);
-    bool checkInputErrorBorderTop(std::vector<String*, gc_allocator<String*> >* tokens);
-    bool checkInputErrorBorderRight(std::vector<String*, gc_allocator<String*> >* tokens);
-    bool checkInputErrorBorderBottom(std::vector<String*, gc_allocator<String*> >* tokens);
-    bool checkInputErrorBorderLeft(std::vector<String*, gc_allocator<String*> >* tokens);
-    bool checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*> >* tokens, bool allowNegative);
 #define ATTRIBUTE_GETTER(name, ...)                                              \
     String* name()                                                               \
     {                                                                            \
@@ -1119,6 +1127,38 @@ public:
 
     FOR_EACH_STYLE_ATTRIBUTE(ATTRIBUTE_GETTER)
 #undef ATTRIBUTE_GETTER
+
+    void addCSSValuePair(CSSStyleValuePair::KeyKind name, CSSStyleValuePair* ret)
+    {
+        for (unsigned i = 0; i < m_cssValues.size(); i++) {
+            if (m_cssValues.at(i).keyKind() == name) {
+                m_cssValues.at(i).setValueKind(ret->valueKind());
+                m_cssValues.at(i).setValue(ret->value());
+                return;
+            }
+        }
+        ret->setKeyKind(name);
+        m_cssValues.push_back(*ret);
+    }
+    // FIXME(june0.cho) remove below
+    /*
+       if (checkEssentialValue(&tokens) || checkInputError##name(&tokens)) {                                          \
+       for (unsigned i = 0; i < m_cssValues.size(); i++) {                        \
+       if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) { \
+       if (!m_cssValues.at(i).setValueCommon(&tokens))                    \
+       m_cssValues.at(i).setValue##name(&tokens);                     \
+       notifyNeedsStyleRecalc();                                          \
+       return;                                                            \
+       }                                                                      \
+       }                                                                          \
+       CSSStyleValuePair ret;                                                     \
+       ret.setKeyKind(CSSStyleValuePair::KeyKind::name);                          \
+       if (!ret.setValueCommon(&tokens))                                          \
+       ret.setValue##name(&tokens);                                           \
+       notifyNeedsStyleRecalc();                                                  \
+       m_cssValues.push_back(ret);                                                \
+       }                                                                              \
+       */
 
 #define ATTRIBUTE_SETTER(name, ...)                                                    \
     void set##name(String* value)                                                      \
@@ -1134,21 +1174,10 @@ public:
         }                                                                              \
         std::vector<String*, gc_allocator<String*> > tokens;                           \
         tokenizeCSSValue(&tokens, value);                                              \
-        if (checkEssentialValue(&tokens) || checkInputError##name(&tokens)) {                                          \
-            for (unsigned i = 0; i < m_cssValues.size(); i++) {                        \
-                if (m_cssValues.at(i).keyKind() == CSSStyleValuePair::KeyKind::name) { \
-                    if (!m_cssValues.at(i).setValueCommon(&tokens))                    \
-                        m_cssValues.at(i).setValue##name(&tokens);                     \
-                    notifyNeedsStyleRecalc();                                          \
-                    return;                                                            \
-                }                                                                      \
-            }                                                                          \
-            CSSStyleValuePair ret;                                                     \
-            ret.setKeyKind(CSSStyleValuePair::KeyKind::name);                          \
-            if (!ret.setValueCommon(&tokens))                                          \
-                ret.setValue##name(&tokens);                                           \
+        CSSStyleValuePair ret;                                                         \
+        if (ret.setValueCommon(&tokens) || ret.updateValue##name(&tokens)) {           \
+            addCSSValuePair(CSSStyleValuePair::KeyKind::name, &ret);                   \
             notifyNeedsStyleRecalc();                                                  \
-            m_cssValues.push_back(ret);                                                \
         }                                                                              \
     }
 
@@ -1189,7 +1218,7 @@ public:
         }                                                                              \
         std::vector<String*, gc_allocator<String*> > tokens;                           \
         tokenizeCSSValue(&tokens, value);                                              \
-        if (checkEssentialValue(&tokens) || checkInputError##name(&tokens)) {                                          \
+        if (CSSStyleValuePair::checkEssentialValue(&tokens) || CSSStyleValuePair::checkInputError##name(&tokens)) {                                          \
             size_t len = tokens.size();                                                \
             if (len == 1) {                                                            \
                 set##nameTop(tokens[0]);                                               \

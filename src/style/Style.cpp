@@ -28,6 +28,12 @@
 
 namespace StarFish {
 
+#define GEN_FOURSIDE(F) \
+F(Top, top) \
+F(Right, right) \
+F(Bottom, bottom) \
+F(Left, left)
+
 #define TOKEN_IS_STRING(str) \
     ((memcmp(token, str, strlen(str))) == 0 && strlen(str) == strlen(token))
 
@@ -369,54 +375,6 @@ void CSSStyleValuePair::setValueFontSize(std::vector<String*, gc_allocator<Strin
     }
 }
 
-void CSSStyleValuePair::setValueFontWeight(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    // <normal> | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit // initial -> normal
-    String* value = tokens->at(0);
-    if (STRING_VALUE_IS_STRING("normal")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::NormalFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("bold")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::BoldFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("bolder")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::BolderFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("lighter")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::LighterFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("100")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::OneHundredFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("200")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::TwoHundredsFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("300")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::ThreeHundredsFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("400")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::FourHundredsFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("500")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::FiveHundredsFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("600")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::SixHundredsFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("700")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::SevenHundredsFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("800")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::EightHundredsFontWeightValue;
-    } else if (STRING_VALUE_IS_STRING("900")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
-        m_value.m_fontWeight = FontWeightValue::NineHundredsFontWeightValue;
-    } else {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
 void CSSStyleValuePair::setValueFontStyle(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     String* value = tokens->at(0);
@@ -448,45 +406,6 @@ void CSSStyleValuePair::setValueDisplay(std::vector<String*, gc_allocator<String
         m_value.m_display = DisplayValue::InlineBlockDisplayValue;
     } else if (STRING_VALUE_IS_STRING("none")) {
         m_value.m_display = DisplayValue::NoneDisplayValue;
-    } else {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
-void CSSStyleValuePair::setValuePosition(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    String* value = tokens->at(0);
-    // <static> | relative | absolute | inherit
-    m_valueKind = CSSStyleValuePair::ValueKind::PositionValueKind;
-
-    if (STRING_VALUE_IS_STRING("static")) {
-        m_value.m_position = PositionValue::StaticPositionValue;
-    } else if (STRING_VALUE_IS_STRING("relative")) {
-        m_value.m_position = PositionValue::RelativePositionValue;
-    } else if (STRING_VALUE_IS_STRING("absolute")) {
-        m_value.m_position = PositionValue::AbsolutePositionValue;
-    } else {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
-void CSSStyleValuePair::setValueTextDecoration(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    String* value = tokens->at(0);
-    // none | [ underline || overline || line-through || blink ] | inherit // Initial value -> none
-    m_valueKind = CSSStyleValuePair::ValueKind::TextDecorationValueKind;
-
-    if (STRING_VALUE_IS_NONE()) {
-        m_valueKind = CSSStyleValuePair::ValueKind::None;
-        m_value.m_textDecoration = TextDecorationValue::NoneTextDecorationValue;
-    } else if (STRING_VALUE_IS_STRING("underline")) {
-        m_value.m_textDecoration = TextDecorationValue::UnderLineTextDecorationValue;
-    } else if (STRING_VALUE_IS_STRING("overline")) {
-        m_value.m_textDecoration = TextDecorationValue::OverLineTextDecorationValue;
-    } else if (STRING_VALUE_IS_STRING("line-through")) {
-        m_value.m_textDecoration = TextDecorationValue::LineThroughTextDecorationValue;
-    } else if (STRING_VALUE_IS_STRING("blink")) {
-        m_value.m_textDecoration = TextDecorationValue::BlinkTextDecorationValue;
     } else {
         STARFISH_RELEASE_ASSERT_NOT_REACHED();
     }
@@ -946,7 +865,7 @@ void CSSStyleDeclaration::setBorder(String* value)
     }
     std::vector<String*, gc_allocator<String*> > tokens;
     tokenizeCSSValue(&tokens, value);
-    if (checkInputErrorBorder(&tokens)) {
+    if (CSSStyleValuePair::checkInputErrorBorder(&tokens)) {
         String** result = new(GC) String*[3];
         result[0] = result[1] = result[2] = String::initialString;
         parseBorderWidthStyleColor(&tokens, result);
@@ -966,7 +885,7 @@ void CSSStyleDeclaration::setBorderTop(String* value)
     }
     std::vector<String*, gc_allocator<String*> > tokens;
     tokenizeCSSValue(&tokens, value);
-    if (checkInputErrorBorderTop(&tokens)) {
+    if (CSSStyleValuePair::checkInputErrorBorderTop(&tokens)) {
         String** result = new(GC) String*[3];
         result[0] = result[1] = result[2] = String::initialString;
         parseBorderWidthStyleColor(&tokens, result);
@@ -986,7 +905,7 @@ void CSSStyleDeclaration::setBorderRight(String* value)
     }
     std::vector<String*, gc_allocator<String*> > tokens;
     tokenizeCSSValue(&tokens, value);
-    if (checkInputErrorBorderRight(&tokens)) {
+    if (CSSStyleValuePair::checkInputErrorBorderRight(&tokens)) {
         String** result = new(GC) String*[3];
         result[0] = result[1] = result[2] = String::initialString;
         parseBorderWidthStyleColor(&tokens, result);
@@ -1006,7 +925,7 @@ void CSSStyleDeclaration::setBorderBottom(String* value)
     }
     std::vector<String*, gc_allocator<String*> > tokens;
     tokenizeCSSValue(&tokens, value);
-    if (checkInputErrorBorderBottom(&tokens)) {
+    if (CSSStyleValuePair::checkInputErrorBorderBottom(&tokens)) {
         String** result = new(GC) String*[3];
         result[0] = result[1] = result[2] = String::initialString;
         parseBorderWidthStyleColor(&tokens, result);
@@ -1026,7 +945,7 @@ void CSSStyleDeclaration::setBorderLeft(String* value)
     }
     std::vector<String*, gc_allocator<String*> > tokens;
     tokenizeCSSValue(&tokens, value);
-    if (checkInputErrorBorderLeft(&tokens)) {
+    if (CSSStyleValuePair::checkInputErrorBorderLeft(&tokens)) {
         String** result = new(GC) String*[3];
         result[0] = result[1] = result[2] = String::initialString;
         parseBorderWidthStyleColor(&tokens, result);
@@ -1101,84 +1020,6 @@ void CSSStyleValuePair::setValueBorderBottomWidth(std::vector<String*, gc_alloca
 void CSSStyleValuePair::setValueBorderLeftWidth(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     setValueBorderUnitWidth(tokens);
-}
-
-void CSSStyleValuePair::setValueTextAlign(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-
-    const char* value = tokens->at(0)->utf8Data();
-    m_valueKind = CSSStyleValuePair::ValueKind::Inherit;
-
-    if (VALUE_IS_STRING("left")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::SideValueKind;
-        m_value.m_side = SideValue::LeftSideValue;
-    } else if (VALUE_IS_STRING("center")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::SideValueKind;
-        m_value.m_side = SideValue::CenterSideValue;
-    } else if (VALUE_IS_STRING("right")) {
-        m_valueKind = CSSStyleValuePair::ValueKind::SideValueKind;
-        m_value.m_side = SideValue::RightSideValue;
-    } else {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
-void CSSStyleValuePair::setValueUnicodeBidi(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    const char* value = tokens->at(0)->utf8Data();
-
-    if (VALUE_IS_STRING("normal")) {
-        m_value.m_unicodeBidi = UnicodeBidiValue::NormalUnicodeBidiValue;
-        m_valueKind = CSSStyleValuePair::ValueKind::UnicodeBidiValueKind;
-    } else if (VALUE_IS_STRING("embed")) {
-        m_value.m_unicodeBidi = UnicodeBidiValue::EmbedUnicodeBidiValue;
-        m_valueKind = CSSStyleValuePair::ValueKind::UnicodeBidiValueKind;
-    } else {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
-void CSSStyleValuePair::setValueVisibility(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    const char* value = tokens->at(0)->utf8Data();
-
-    m_valueKind = CSSStyleValuePair::ValueKind::VisibilityValueKind;
-
-    if (VALUE_IS_STRING("visible")) {
-        m_value.m_visibility = VisibilityValue::VisibleVisibilityValue;
-    } else if (VALUE_IS_STRING("hidden")) {
-        m_value.m_visibility = VisibilityValue::HiddenVisibilityValue;
-    } else {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
-void CSSStyleValuePair::setValueOpacity(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    m_valueKind = CSSStyleValuePair::ValueKind::Number;
-    float f = CSSPropertyParser::parseNumber(tokens->at(0)->utf8Data());
-    m_value.m_floatValue = f;
-}
-
-void CSSStyleValuePair::setValueOverflow(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    const char* value = tokens->at(0)->utf8Data();
-
-    m_valueKind = CSSStyleValuePair::ValueKind::OverflowValueKind;
-
-    if (VALUE_IS_STRING("visible")) {
-        m_value.m_overflow = OverflowValue::VisibleOverflow;
-    } else if (VALUE_IS_STRING("hidden")) {
-        m_value.m_overflow = OverflowValue::HiddenOverflow;
-    } else {
-        STARFISH_RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-void CSSStyleValuePair::setValueZIndex(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    const char* value = tokens->at(0)->utf8Data();
-    m_valueKind = CSSStyleValuePair::ValueKind::Int32;
-    m_value.m_int32Value = CSSPropertyParser::parseInt32(value);
 }
 
 void CSSStyleValuePair::setValueVerticalAlign(std::vector<String*, gc_allocator<String*> >* tokens)
@@ -1749,7 +1590,7 @@ void CSSStyleDeclaration::setBackgroundRepeat(String* value)
     std::vector<String*, gc_allocator<String*> > tokens;
     tokenizeCSSValue(&tokens, value);
 
-    if (checkInputErrorBackgroundRepeat(&tokens)) {
+    if (CSSStyleValuePair::checkInputErrorBackgroundRepeat(&tokens)) {
         if (STRING_VALUE_IS_STRING("repeat")) {
             setBackgroundRepeatX(String::createASCIIString("repeat"));
             setBackgroundRepeatY(String::createASCIIString("repeat"));
@@ -1803,7 +1644,7 @@ void CSSStyleDeclaration::setBackground(String* value)
     std::vector<String*, gc_allocator<String*> > tokens;
     tokenizeCSSValue(&tokens, value);
 
-    if (!checkEssentialValue(&tokens) && !checkInputErrorBackground(&tokens))
+    if (!CSSStyleValuePair::checkEssentialValue(&tokens) && !CSSStyleValuePair::checkInputErrorBackground(&tokens))
         return;
 
     size_t len = tokens.size();
@@ -1887,7 +1728,7 @@ void CSSStyleDeclaration::tokenizeCSSValue(std::vector<String*, gc_allocator<Str
     }
 }
 
-bool CSSStyleDeclaration::checkEssentialValue(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkEssentialValue(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // NOTE: check if string is the value which all property can have. (e.g. initial, inherit, "")
     if (tokens->size() != 1)
@@ -1896,7 +1737,7 @@ bool CSSStyleDeclaration::checkEssentialValue(std::vector<String*, gc_allocator<
     return CSSPropertyParser::assureEssential(value);
 }
 
-bool CSSStyleDeclaration::checkInputErrorColor(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorColor(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // <color>
     size_t size = tokens->size();
@@ -1917,32 +1758,32 @@ bool CSSStyleDeclaration::checkInputErrorColor(std::vector<String*, gc_allocator
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBackgroundColor(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBackgroundColor(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorColor(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderTopColor(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderTopColor(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorColor(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderRightColor(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderRightColor(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorColor(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderBottomColor(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderBottomColor(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorColor(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderLeftColor(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderLeftColor(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorColor(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderColor(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderColor(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // <color>{1,4}
     for (unsigned i = 0; i < tokens->size(); i++) {
@@ -1954,7 +1795,7 @@ bool CSSStyleDeclaration::checkInputErrorBorderColor(std::vector<String*, gc_all
 }
 
 // <length> | <percentage>
-bool CSSStyleDeclaration::checkInputErrorPaddingTop(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorPaddingTop(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     if (tokens->size() != 1)
         return false;
@@ -1963,22 +1804,22 @@ bool CSSStyleDeclaration::checkInputErrorPaddingTop(std::vector<String*, gc_allo
     return (CSSPropertyParser::assureLengthOrPercent(value, false));
 }
 
-bool CSSStyleDeclaration::checkInputErrorPaddingRight(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorPaddingRight(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorPaddingTop(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorPaddingBottom(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorPaddingBottom(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorPaddingTop(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorPaddingLeft(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorPaddingLeft(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorPaddingTop(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorPadding(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorPadding(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // {length | percentage} {1,4}
     for (unsigned i = 0; i < tokens->size(); i++) {
@@ -1989,7 +1830,7 @@ bool CSSStyleDeclaration::checkInputErrorPadding(std::vector<String*, gc_allocat
     return true;
 }
 
-bool CSSStyleDeclaration::checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*> >* tokens, bool allowNegative)
+bool CSSStyleValuePair::checkHavingOneTokenAndLengthOrPercentage(std::vector<String*, gc_allocator<String*> >* tokens, bool allowNegative)
 {
     if (tokens->size() == 1) {
         const char* token = (*tokens)[0]->utf8Data();
@@ -1999,57 +1840,57 @@ bool CSSStyleDeclaration::checkHavingOneTokenAndLengthOrPercentage(std::vector<S
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorTop(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorTop(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens, true);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBottom(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBottom(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens, true);
 }
 
-bool CSSStyleDeclaration::checkInputErrorLeft(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorLeft(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens, true);
 }
 
-bool CSSStyleDeclaration::checkInputErrorRight(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorRight(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens, true);
 }
 
-bool CSSStyleDeclaration::checkInputErrorWidth(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorWidth(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens, false);
 }
 
-bool CSSStyleDeclaration::checkInputErrorHeight(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorHeight(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens, false);
 }
 
-bool CSSStyleDeclaration::checkInputErrorMarginTop(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorMarginTop(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens, true);
 }
 
-bool CSSStyleDeclaration::checkInputErrorMarginRight(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorMarginRight(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens, true);
 }
 
-bool CSSStyleDeclaration::checkInputErrorMarginBottom(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorMarginBottom(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens, true);
 }
 
-bool CSSStyleDeclaration::checkInputErrorMarginLeft(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorMarginLeft(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkHavingOneTokenAndLengthOrPercentage(tokens, true);
 }
 
-bool CSSStyleDeclaration::checkInputErrorMargin(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorMargin(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // {length | percentage | <auto>} {1,4}
     for (unsigned i = 0; i < tokens->size(); i++) {
@@ -2060,7 +1901,7 @@ bool CSSStyleDeclaration::checkInputErrorMargin(std::vector<String*, gc_allocato
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderImageSource(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderImageSource(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // none | <image>(=<uri>)
     if (tokens->size() == 1) {
@@ -2073,7 +1914,7 @@ bool CSSStyleDeclaration::checkInputErrorBorderImageSource(std::vector<String*, 
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBackgroundPosition(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBackgroundPosition(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // [ [ <percentage> | <length> | left | center | right ] [ <percentage> | <length> | top | center | bottom ]? ] | [ [ left | center | right ] || [ top | center | bottom ] ] | inherit
     if (tokens->size() == 1 || tokens->size() == 2) {
@@ -2092,7 +1933,7 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundPosition(std::vector<String*,
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBackgroundSize(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBackgroundSize(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // [length | percentage | auto]{1, 2} | cover | contain // initial value -> auto
     if (tokens->size() == 1) {
@@ -2112,7 +1953,7 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundSize(std::vector<String*, gc_
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorLineHeight(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorLineHeight(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     if (tokens->size() != 1)
         return false;
@@ -2123,7 +1964,7 @@ bool CSSStyleDeclaration::checkInputErrorLineHeight(std::vector<String*, gc_allo
         || CSSPropertyParser::assureNumber(value, false));
 }
 
-bool CSSStyleDeclaration::checkInputErrorBackgroundImage(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBackgroundImage(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // none | <image>(=<uri>)
     if (tokens->size() == 1) {
@@ -2135,7 +1976,7 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundImage(std::vector<String*, gc
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBackgroundRepeatX(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBackgroundRepeatX(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     if (tokens->size() != 1)
         return false;
@@ -2143,11 +1984,11 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundRepeatX(std::vector<String*, 
     return VALUE_IS_STRING("repeat")
         || VALUE_IS_STRING("no-repeat");
 }
-bool CSSStyleDeclaration::checkInputErrorBackgroundRepeatY(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBackgroundRepeatY(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBackgroundRepeatX(tokens);
 }
-bool CSSStyleDeclaration::checkInputErrorBackgroundRepeat(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBackgroundRepeat(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     if (tokens->size() != 1)
         return false;
@@ -2159,7 +2000,7 @@ bool CSSStyleDeclaration::checkInputErrorBackgroundRepeat(std::vector<String*, g
         || VALUE_IS_STRING("initial");
 }
 
-bool CSSStyleDeclaration::checkInputErrorBackground(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBackground(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     //  [<'background-color'> || <'background-image'> || <'background-repeat'>] | inherit
     size_t len = tokens->size();
@@ -2210,7 +2051,7 @@ bool CSSStyleDeclaration::checkInputErrorBackground(std::vector<String*, gc_allo
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorDirection(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorDirection(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // <ltr> | rtl | inherit
     if (tokens->size() == 1) {
@@ -2222,7 +2063,7 @@ bool CSSStyleDeclaration::checkInputErrorDirection(std::vector<String*, gc_alloc
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorFontSize(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorFontSize(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     if (tokens->size() == 1) {
         const char* token = (*tokens)[0]->utf8Data();
@@ -2236,7 +2077,7 @@ bool CSSStyleDeclaration::checkInputErrorFontSize(std::vector<String*, gc_alloca
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorFontStyle(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorFontStyle(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     if (tokens->size() == 1) {
         const char* token = (*tokens)[0]->utf8Data();
@@ -2247,30 +2088,7 @@ bool CSSStyleDeclaration::checkInputErrorFontStyle(std::vector<String*, gc_alloc
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorFontWeight(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    if (tokens->size() == 1) {
-        const char* token = (*tokens)[0]->utf8Data();
-        if ((TOKEN_IS_STRING("normal")) || (TOKEN_IS_STRING("bold")) || (TOKEN_IS_STRING("bolder")) || (TOKEN_IS_STRING("lighter")) || (TOKEN_IS_STRING("100")) || (TOKEN_IS_STRING("200")) || (TOKEN_IS_STRING("300")) || (TOKEN_IS_STRING("400")) || (TOKEN_IS_STRING("500")) || (TOKEN_IS_STRING("600")) || (TOKEN_IS_STRING("700")) || (TOKEN_IS_STRING("800")) || (TOKEN_IS_STRING("900"))) {
-            return true;
-        } else if (CSSPropertyParser::assureInteger(token, false)) {
-            int num = 0;
-            num = (int) CSSPropertyParser::parseNumber(token);
-
-            if (((num % 100)) && (((num / 100) >= 1) && ((num / 100) <= 9))) {
-                char tmp[4] = {
-                    0,
-                };
-                snprintf(tmp, 4, "%d", num);
-                (*tokens)[0] = String::fromUTF8(tmp);
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-bool CSSStyleDeclaration::checkInputErrorDisplay(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorDisplay(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     if (tokens->size() == 1) {
         const char* token = (*tokens)[0]->utf8Data();
@@ -2281,29 +2099,7 @@ bool CSSStyleDeclaration::checkInputErrorDisplay(std::vector<String*, gc_allocat
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorPosition(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    if (tokens->size() == 1) {
-        const char* token = (*tokens)[0]->utf8Data();
-        if ((TOKEN_IS_STRING("static")) || (TOKEN_IS_STRING("relative")) || (TOKEN_IS_STRING("absolute"))) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool CSSStyleDeclaration::checkInputErrorTextDecoration(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    if (tokens->size() == 1) {
-        const char* token = (*tokens)[0]->utf8Data();
-        if ((TOKEN_IS_STRING("none")) || (TOKEN_IS_STRING("underline")) || (TOKEN_IS_STRING("overline")) || (TOKEN_IS_STRING("line-through")) || (TOKEN_IS_STRING("blink"))) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool CSSStyleDeclaration::checkInputErrorBorderImageSlice(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderImageSlice(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // number && fill?
     if (tokens->size() != 1 && tokens->size() != 2)
@@ -2332,7 +2128,7 @@ bool CSSStyleDeclaration::checkInputErrorBorderImageSlice(std::vector<String*, g
     }
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderImageWidth(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // [ <length> | <number> ]
     if (tokens->size() != 1)
@@ -2345,7 +2141,7 @@ bool CSSStyleDeclaration::checkInputErrorBorderImageWidth(std::vector<String*, g
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorder(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorder(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     if (checkEssentialValue(tokens))
         return true;
@@ -2379,22 +2175,22 @@ bool CSSStyleDeclaration::checkInputErrorBorder(std::vector<String*, gc_allocato
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderTop(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderTop(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorder(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderRight(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderRight(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorder(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderBottom(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderBottom(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorder(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderLeft(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderLeft(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorder(tokens);
 }
@@ -2409,7 +2205,7 @@ static bool checkInputErrorBorderUnitStyle(std::vector<String*, gc_allocator<Str
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderStyle(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderStyle(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // {none | solid} {1,4}
     for (unsigned i = 0; i < tokens->size(); i++) {
@@ -2420,22 +2216,22 @@ bool CSSStyleDeclaration::checkInputErrorBorderStyle(std::vector<String*, gc_all
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderTopStyle(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderTopStyle(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorderUnitStyle(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderRightStyle(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderRightStyle(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorderUnitStyle(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderBottomStyle(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderBottomStyle(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorderUnitStyle(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderLeftStyle(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderLeftStyle(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorderUnitStyle(tokens);
 }
@@ -2451,27 +2247,27 @@ bool checkInputErrorBorderUnitWidth(std::vector<String*, gc_allocator<String*> >
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderTopWidth(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderTopWidth(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorderUnitWidth(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderRightWidth(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderRightWidth(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorderUnitWidth(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderBottomWidth(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderBottomWidth(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorderUnitWidth(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderLeftWidth(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderLeftWidth(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     return checkInputErrorBorderUnitWidth(tokens);
 }
 
-bool CSSStyleDeclaration::checkInputErrorBorderWidth(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorBorderWidth(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     // <border-width>{1,4}
     for (unsigned i = 0; i < tokens->size(); i++) {
@@ -2482,57 +2278,7 @@ bool CSSStyleDeclaration::checkInputErrorBorderWidth(std::vector<String*, gc_all
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorTextAlign(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    if (tokens->size() == 1) {
-        const char* token = (*tokens)[0]->utf8Data();
-        if ((TOKEN_IS_STRING("left")) || (TOKEN_IS_STRING("right")) || (TOKEN_IS_STRING("center"))) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool CSSStyleDeclaration::checkInputErrorVisibility(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    if (tokens->size() == 1) {
-        const char* token = (*tokens)[0]->utf8Data();
-        if ((TOKEN_IS_STRING("visible")) || (TOKEN_IS_STRING("hidden"))) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool CSSStyleDeclaration::checkInputErrorOpacity(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    if (tokens->size() != 1)
-        return false;
-    return CSSPropertyParser::assureNumber(tokens->at(0)->utf8Data(), true);
-}
-
-bool CSSStyleDeclaration::checkInputErrorOverflow(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    if (tokens->size() == 1) {
-        const char* token = (*tokens)[0]->utf8Data();
-        if ((TOKEN_IS_STRING("visible")) || (TOKEN_IS_STRING("hidden"))) {
-            return true;
-        }
-    }
-    return false;
-}
-bool CSSStyleDeclaration::checkInputErrorZIndex(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    if (tokens->size() == 1) {
-        const char* token = tokens->at(0)->utf8Data();
-        if ((TOKEN_IS_STRING("auto")) || CSSPropertyParser::assureInteger(token, false)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-bool CSSStyleDeclaration::checkInputErrorVerticalAlign(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorVerticalAlign(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     if (tokens->size() == 1) {
         const char* token = (*tokens)[0]->utf8Data();
@@ -2545,7 +2291,7 @@ bool CSSStyleDeclaration::checkInputErrorVerticalAlign(std::vector<String*, gc_a
     return false;
 }
 
-bool CSSStyleDeclaration::checkInputErrorTransform(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorTransform(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     const char* token = tokens->at(0)->utf8Data();
     if (tokens->size() == 1) {
@@ -2604,7 +2350,7 @@ bool CSSStyleDeclaration::checkInputErrorTransform(std::vector<String*, gc_alloc
     return true;
 }
 
-bool CSSStyleDeclaration::checkInputErrorTransformOrigin(std::vector<String*, gc_allocator<String*> >* tokens)
+bool CSSStyleValuePair::checkInputErrorTransformOrigin(std::vector<String*, gc_allocator<String*> >* tokens)
 {
     if (tokens->size() == 1 || tokens->size() == 2) {
         const char* value;
@@ -2617,17 +2363,6 @@ bool CSSStyleDeclaration::checkInputErrorTransformOrigin(std::vector<String*, gc
             } else {
                 return false;
             }
-        }
-    }
-    return false;
-}
-
-bool CSSStyleDeclaration::checkInputErrorUnicodeBidi(std::vector<String*, gc_allocator<String*> >* tokens)
-{
-    if (tokens->size() == 1) {
-        const char* token = (*tokens)[0]->utf8Data();
-        if ((TOKEN_IS_STRING("normal")) || (TOKEN_IS_STRING("embed"))) {
-            return true;
         }
     }
     return false;
@@ -3797,6 +3532,328 @@ void StyleResolver::addSheet(CSSStyleSheet* sheet)
     if (!added)
         m_sheets.push_back(sheet);
 }
+
+bool CSSStyleValuePair::updateValueBorderStyle(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    String* value = (*tokens)[0];
+    m_valueKind = CSSStyleValuePair::ValueKind::BorderStyleValueKind;
+    if (STRING_VALUE_IS_STRING("none")) {
+        m_value.m_borderStyle = BorderStyleValue::NoneBorderStyleValue;
+    } else if (STRING_VALUE_IS_STRING("solid")) {
+        m_value.m_borderStyle = BorderStyleValue::SolidBorderStyleValue;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+#define UPDATE_VALUE_BORDER_STYLE(POS, ...) \
+bool CSSStyleValuePair::updateValueBorder##POS##Style(std::vector<String*, gc_allocator<String*> >* tokens) \
+{ \
+    return updateValueBorderStyle(tokens); \
+}
+GEN_FOURSIDE(UPDATE_VALUE_BORDER_STYLE)
+#undef UPDATE_VALUE_BORDER_STYLE
+
+bool CSSStyleValuePair::updateValueDirection(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    String* value = (*tokens)[0];
+    m_valueKind = CSSStyleValuePair::ValueKind::DirectionValueKind;
+    if (STRING_VALUE_IS_STRING("ltr")) {
+        m_value.m_direction = DirectionValue::LtrDirectionValue;
+    } else if (STRING_VALUE_IS_STRING("rtl")) {
+        m_value.m_direction = DirectionValue::RtlDirectionValue;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool CSSStyleValuePair::updateValueDisplay(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    String* value = (*tokens)[0];
+    m_valueKind = CSSStyleValuePair::ValueKind::DisplayValueKind;
+    if (STRING_VALUE_IS_STRING("block")) {
+        m_value.m_display = DisplayValue::BlockDisplayValue;
+    } else if (STRING_VALUE_IS_STRING("inline")) {
+        m_value.m_display = DisplayValue::InlineDisplayValue;
+    } else if (STRING_VALUE_IS_STRING("inline-block")) {
+        m_value.m_display = DisplayValue::InlineBlockDisplayValue;
+    } else if (STRING_VALUE_IS_STRING("none")) {
+        m_value.m_display = DisplayValue::NoneDisplayValue;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool CSSStyleValuePair::updateValueFontStyle(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    String* value = (*tokens)[0];
+    m_valueKind = CSSStyleValuePair::ValueKind::FontStyleValueKind;
+    if (STRING_VALUE_IS_STRING("normal")) {
+        m_value.m_fontStyle = FontStyleValue::NormalFontStyleValue;
+    } else if (STRING_VALUE_IS_STRING("italic")) {
+        m_value.m_fontStyle = FontStyleValue::ItalicFontStyleValue;
+    } else if (STRING_VALUE_IS_STRING("oblique")) {
+        m_value.m_fontStyle = FontStyleValue::ObliqueFontStyleValue;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+// TODO: This is temp code
+#define NEW_SET_VALUE_DEF(name) \
+bool CSSStyleValuePair::updateValue##name(std::vector<String*, gc_allocator<String*> >* tokens) \
+{ \
+    if (!checkInputError##name(tokens)) \
+        return false; \
+    setValue##name(tokens); \
+    return true; \
+}
+NEW_SET_VALUE_DEF(BackgroundColor);
+NEW_SET_VALUE_DEF(BackgroundImage);
+NEW_SET_VALUE_DEF(BackgroundPosition);
+NEW_SET_VALUE_DEF(BackgroundRepeatX);
+NEW_SET_VALUE_DEF(BackgroundRepeatY);
+NEW_SET_VALUE_DEF(BackgroundSize);
+NEW_SET_VALUE_DEF(BorderBottomColor);
+NEW_SET_VALUE_DEF(BorderBottomWidth);
+NEW_SET_VALUE_DEF(BorderImageSlice);
+NEW_SET_VALUE_DEF(BorderImageSource);
+NEW_SET_VALUE_DEF(BorderImageWidth);
+NEW_SET_VALUE_DEF(BorderLeftColor);
+NEW_SET_VALUE_DEF(BorderLeftWidth);
+NEW_SET_VALUE_DEF(BorderRightColor);
+NEW_SET_VALUE_DEF(BorderRightWidth);
+NEW_SET_VALUE_DEF(BorderTopColor);
+NEW_SET_VALUE_DEF(BorderTopWidth);
+NEW_SET_VALUE_DEF(Bottom);
+NEW_SET_VALUE_DEF(Color);
+NEW_SET_VALUE_DEF(FontSize);
+NEW_SET_VALUE_DEF(Height);
+NEW_SET_VALUE_DEF(Left);
+NEW_SET_VALUE_DEF(LineHeight);
+NEW_SET_VALUE_DEF(MarginBottom);
+NEW_SET_VALUE_DEF(MarginLeft);
+NEW_SET_VALUE_DEF(MarginRight);
+NEW_SET_VALUE_DEF(MarginTop);
+NEW_SET_VALUE_DEF(PaddingBottom);
+NEW_SET_VALUE_DEF(PaddingLeft);
+NEW_SET_VALUE_DEF(PaddingRight);
+NEW_SET_VALUE_DEF(PaddingTop);
+NEW_SET_VALUE_DEF(Right);
+NEW_SET_VALUE_DEF(Top);
+NEW_SET_VALUE_DEF(Transform);
+NEW_SET_VALUE_DEF(TransformOrigin);
+NEW_SET_VALUE_DEF(VerticalAlign);
+NEW_SET_VALUE_DEF(Width);
+#undef NEW_SET_VALUE_DEF
+
+bool CSSStyleValuePair::updateValueOpacity(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    float f;
+    m_valueKind = CSSStyleValuePair::ValueKind::Number;
+    if (CSSPropertyParser::parseNumber(tokens->at(0)->utf8Data(), true, &f)) {
+        m_value.m_floatValue = f;
+        return true;
+    }
+    return false;
+}
+
+bool CSSStyleValuePair::updateValueFontWeight(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    String* value = tokens->at(0);
+    m_valueKind = CSSStyleValuePair::ValueKind::FontWeightValueKind;
+
+    // <normal> | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit // initial -> normal
+    if (STRING_VALUE_IS_STRING("normal")) {
+        m_value.m_fontWeight = FontWeightValue::NormalFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("bold")) {
+        m_value.m_fontWeight = FontWeightValue::BoldFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("bolder")) {
+        m_value.m_fontWeight = FontWeightValue::BolderFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("lighter")) {
+        m_value.m_fontWeight = FontWeightValue::LighterFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("100")) {
+        m_value.m_fontWeight = FontWeightValue::OneHundredFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("200")) {
+        m_value.m_fontWeight = FontWeightValue::TwoHundredsFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("300")) {
+        m_value.m_fontWeight = FontWeightValue::ThreeHundredsFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("400")) {
+        m_value.m_fontWeight = FontWeightValue::FourHundredsFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("500")) {
+        m_value.m_fontWeight = FontWeightValue::FiveHundredsFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("600")) {
+        m_value.m_fontWeight = FontWeightValue::SixHundredsFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("700")) {
+        m_value.m_fontWeight = FontWeightValue::SevenHundredsFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("800")) {
+        m_value.m_fontWeight = FontWeightValue::EightHundredsFontWeightValue;
+    } else if (STRING_VALUE_IS_STRING("900")) {
+        m_value.m_fontWeight = FontWeightValue::NineHundredsFontWeightValue;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool CSSStyleValuePair::updateValueOverflow(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    String* value = tokens->at(0);
+    m_valueKind = CSSStyleValuePair::ValueKind::OverflowValueKind;
+
+    if (STRING_VALUE_IS_STRING("visible")) {
+        m_value.m_overflow = OverflowValue::VisibleOverflow;
+    } else if (STRING_VALUE_IS_STRING("hidden")) {
+        m_value.m_overflow = OverflowValue::HiddenOverflow;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool CSSStyleValuePair::updateValuePosition(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    String* value = tokens->at(0);
+    // <static> | relative | absolute | inherit
+    m_valueKind = CSSStyleValuePair::ValueKind::PositionValueKind;
+
+    if (STRING_VALUE_IS_STRING("static")) {
+        m_value.m_position = PositionValue::StaticPositionValue;
+    } else if (STRING_VALUE_IS_STRING("relative")) {
+        m_value.m_position = PositionValue::RelativePositionValue;
+    } else if (STRING_VALUE_IS_STRING("absolute")) {
+        m_value.m_position = PositionValue::AbsolutePositionValue;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool CSSStyleValuePair::updateValueTextDecoration(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    String* value = tokens->at(0);
+    // none | [ underline || line-through ] | inherit // Initial value -> none
+    m_valueKind = CSSStyleValuePair::ValueKind::TextDecorationValueKind;
+
+    if (STRING_VALUE_IS_NONE()) {
+        m_valueKind = CSSStyleValuePair::ValueKind::None;
+        m_value.m_textDecoration = TextDecorationValue::NoneTextDecorationValue;
+    } else if (STRING_VALUE_IS_STRING("underline")) {
+        m_value.m_textDecoration = TextDecorationValue::UnderLineTextDecorationValue;
+    } else if (STRING_VALUE_IS_STRING("line-through")) {
+        m_value.m_textDecoration = TextDecorationValue::LineThroughTextDecorationValue;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool CSSStyleValuePair::updateValueTextAlign(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    String* value = tokens->at(0);
+    if (STRING_VALUE_IS_STRING("left")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::SideValueKind;
+        m_value.m_side = SideValue::LeftSideValue;
+    } else if (STRING_VALUE_IS_STRING("center")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::SideValueKind;
+        m_value.m_side = SideValue::CenterSideValue;
+    } else if (STRING_VALUE_IS_STRING("right")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::SideValueKind;
+        m_value.m_side = SideValue::RightSideValue;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool CSSStyleValuePair::updateValueUnicodeBidi(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    String* value = (*tokens)[0];
+    if (STRING_VALUE_IS_STRING("normal")) {
+        m_value.m_unicodeBidi = UnicodeBidiValue::NormalUnicodeBidiValue;
+        m_valueKind = CSSStyleValuePair::ValueKind::UnicodeBidiValueKind;
+    } else if (STRING_VALUE_IS_STRING("embed")) {
+        m_value.m_unicodeBidi = UnicodeBidiValue::EmbedUnicodeBidiValue;
+        m_valueKind = CSSStyleValuePair::ValueKind::UnicodeBidiValueKind;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool CSSStyleValuePair::updateValueVisibility(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    m_valueKind = CSSStyleValuePair::ValueKind::VisibilityValueKind;
+    String* value = (*tokens)[0];
+    if (STRING_VALUE_IS_STRING("visible")) {
+        m_value.m_visibility = VisibilityValue::VisibleVisibilityValue;
+    } else if (STRING_VALUE_IS_STRING("hidden")) {
+        m_value.m_visibility = VisibilityValue::HiddenVisibilityValue;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+bool CSSStyleValuePair::updateValueZIndex(std::vector<String*, gc_allocator<String*> >* tokens)
+{
+    if (tokens->size() != 1)
+        return false;
+
+    const char* token = tokens->at(0)->utf8Data();
+    int32_t val = 0;
+    if (TOKEN_IS_STRING("auto")) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Auto;
+    } else if (CSSPropertyParser::parseInt32(token, true, &val)) {
+        m_valueKind = CSSStyleValuePair::ValueKind::Int32;
+        m_value.m_int32Value = val;
+    } else {
+        return false;
+    }
+    return true;
+}
+
+
 #ifdef STARFISH_ENABLE_TEST
 void dump(Node* node, unsigned depth)
 {
@@ -3826,4 +3883,6 @@ void StyleResolver::dumpDOMStyle(Document* document)
     printf("\n");
 }
 #endif
+
+#undef GEN_FOURSIDE
 }
