@@ -253,11 +253,6 @@ void ScriptBindingInstance::initBinding(StarFish* sf)
     });
 #endif
 
-    escargot::ESObject* location = escargot::ESObject::create();
-    location->set__proto__(locationFunction->protoType());
-    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("location"), true, true, true, location);
-    fetchData(this)->m_instance->globalObject()->defineDataProperty(escargot::ESString::create("Location"), true, true, true, locationFunction);
-
     escargot::ESFunctionObject* toStringFunction = escargot::ESFunctionObject::create(nullptr, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue thisValue = instance->currentExecutionContext()->resolveThisBinding();
         if (thisValue.isESPointer() && thisValue.asESPointer()->isESObject()) {
