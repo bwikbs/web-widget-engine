@@ -46,6 +46,9 @@
 #include "dom/HTMLVideoElement.h"
 #include "dom/HTMLAudioElement.h"
 #endif
+#ifdef STARFISH_ENABLE_MULTI_PAGE
+#include "dom/HTMLAnchorElement.h"
+#endif
 #include "dom/HTMLCollection.h"
 #include "dom/HTMLUnknownElement.h"
 #include "dom/DOMTokenList.h"

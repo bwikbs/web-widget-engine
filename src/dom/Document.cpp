@@ -341,7 +341,11 @@ Element* Document::createElement(QualifiedName localName, bool shouldCheckName)
         return new HTMLAudioElement(this);
     }
 #endif
-
+#ifdef STARFISH_ENABLE_MULTI_PAGE
+    else if (localName == window()->starFish()->staticStrings()->m_aTagName) {
+        return new HTMLAnchorElement(this);
+    }
+#endif
     STARFISH_LOG_INFO("got unknown element - %s\n", localName.localName()->utf8Data());
     return new HTMLUnknownElement(this, localName);
 }

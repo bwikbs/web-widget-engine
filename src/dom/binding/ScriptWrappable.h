@@ -45,6 +45,9 @@ class HTMLBRElement;
 class HTMLMetaElement;
 class HTMLParagraphElement;
 class HTMLSpanElement;
+#ifdef STARFISH_ENABLE_MULTI_PAGE
+class HTMLAnchorElement;
+#endif
 #ifdef STARFISH_ENABLE_MULTIMEDIA
 class HTMLMediaElement;
 class HTMLVideoElement;
@@ -150,14 +153,17 @@ public:
     void initScriptWrappable(HTMLParagraphElement* ptr);
     void initScriptWrappable(HTMLSpanElement* ptr);
     void initScriptWrappable(HTMLUnknownElement* ptr);
+#ifdef STARFISH_ENABLE_MULTI_PAGE
+    void initScriptWrappable(HTMLAnchorElement* ptr);
+#endif
 #ifdef STARFISH_ENABLE_MULTIMEDIA
     void initScriptWrappable(HTMLMediaElement* ptr);
     void initScriptWrappable(HTMLVideoElement* ptr);
     void initScriptWrappable(HTMLAudioElement* ptr);
 #endif
     void initScriptWrappable(Event* event);
-    void initScriptWrappable(UIEvent* ptr, ScriptBindingInstance*);
-    void initScriptWrappable(MouseEvent* ptr, ScriptBindingInstance*);
+    void initScriptWrappable(UIEvent* ptr);
+    void initScriptWrappable(MouseEvent* ptr);
     void initScriptWrappable(ProgressEvent* ptr);
     void initScriptWrappable(HTMLCollection* ptr, ScriptBindingInstance*);
     void initScriptWrappable(NodeList* ptr, ScriptBindingInstance*);
