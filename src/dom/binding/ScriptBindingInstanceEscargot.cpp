@@ -196,7 +196,6 @@ escargot::ESValue toJSString(String* v)
 
 void ScriptBindingInstance::initBinding(StarFish* sf)
 {
-    ScriptBindingInstanceEnterer enter(this);
     fetchData(this)->m_instance->setlocale(sf->locale());
     fetchData(this)->m_instance->setTimezoneID(icu::UnicodeString::fromUTF8(icu::StringPiece(sf->timezoneID()->utf8Data())));
 
@@ -3979,7 +3978,6 @@ escargot::ESFunctionObject* bindingDOMException(ScriptBindingInstance* scriptBin
 
 void ScriptBindingInstance::evaluate(String* str)
 {
-    ScriptBindingInstanceEnterer enter(*this);
     std::jmp_buf tryPosition;
     if (setjmp(fetchData(this)->m_instance->registerTryPos(&tryPosition)) == 0) {
         auto result = fetchData(this)->m_instance->evaluate(toJSString(str).asESString());
