@@ -693,17 +693,20 @@ void Window::rendering()
         // painting
         Canvas* canvas = preparePainting(eflWindow, true);
 
-        paintWindowBackground(canvas);
+        if (m_document->frame()->firstChild())
+            m_needsComposite = m_document->frame()->firstChild()->asFrameBox()->stackingContext()->needsOwnBuffer();
+        else
+            m_needsComposite = false;
+
+        if (!m_needsComposite)
+            paintWindowBackground(canvas);
+
         {
             PaintingContext ctx(canvas);
             ctx.m_paintingStage = PaintingStageEnd;
             m_document->frame()->paint(ctx);
         }
         m_needsPainting = false;
-        if (m_document->frame()->firstChild())
-            m_needsComposite = m_document->frame()->firstChild()->asFrameBox()->stackingContext()->needsOwnBuffer();
-        else
-            m_needsComposite = false;
 
         delete canvas;
 #ifdef STARFISH_TIZEN_WEARABLE
@@ -762,6 +765,7 @@ void Window::rendering()
 #endif
     }
 
+
     if (m_needsComposite) {
         Timer t("composite");
         if (m_document->frame()->firstChild() && m_document->frame()->firstChild()->asFrameBox()->stackingContext()->needsOwnBuffer()) {
@@ -776,6 +780,7 @@ void Window::rendering()
         }
         m_needsComposite = false;
     }
+
 
     m_needsRendering = false;
     m_inRendering = false;
