@@ -604,19 +604,8 @@ void Window::paintWindowBackground(Canvas* canvas)
     }
 }
 
-
-void Window::rendering()
+void Window::layoutIfNeeded()
 {
-    if (!m_needsRendering)
-        return;
-
-    WindowImplEFL* eflWindow = (WindowImplEFL*)this;
-
-    m_inRendering = true;
-    STARFISH_RELEASE_ASSERT(eflWindow->m_isActive);
-
-    Timer renderingTimer("Window::rendering");
-
     if (m_needsStyleRecalc || m_needsStyleRecalcForWholeDocument) {
         if (m_needsStyleRecalcForWholeDocument) {
             for (size_t i = 0; i < document()->styleResolver()->sheets().size(); i ++) {
@@ -682,6 +671,21 @@ void Window::rendering()
         }
 #endif
     }
+}
+
+void Window::rendering()
+{
+    if (!m_needsRendering)
+        return;
+
+    WindowImplEFL* eflWindow = (WindowImplEFL*)this;
+
+    m_inRendering = true;
+    STARFISH_RELEASE_ASSERT(eflWindow->m_isActive);
+
+    Timer renderingTimer("Window::rendering");
+
+    layoutIfNeeded();
 
     if (m_needsPainting) {
         Timer t("painting");
@@ -1173,6 +1177,7 @@ void Window::pause()
 void Window::resume()
 {
     STARFISH_LOG_INFO("Window::resume\n");
+
     WindowImplEFL* eflWindow = (WindowImplEFL*)this;
     eflWindow->clearEFLResources();
 
@@ -1180,8 +1185,6 @@ void Window::resume()
     m_needsRendering = true;
     m_needsPainting = true;
     rendering();
-
-    evas_render(evas_object_evas_get(eflWindow->m_window));
 
     document()->setVisibleState(PageVisibilityState::PageVisibilityStateVisible);
     document()->visibilityStateChanged();

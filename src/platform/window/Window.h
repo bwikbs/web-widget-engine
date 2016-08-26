@@ -171,7 +171,7 @@ public:
     virtual int width() = 0;
     virtual int height() = 0;
     virtual void resizeTo(int w, int h) = 0;
-    virtual void* unwrap() = 0 ;
+    virtual void* unwrap() = 0;
 
     // The viewport width and height are same as the window size for wearable widget.
     double innerWidth()
@@ -185,6 +185,8 @@ public:
 
     // https://html.spec.whatwg.org/multipage/browsers.html#named-access-on-the-window-object
     HTMLCollection* namedAccess(String* name);
+
+    void layoutIfNeeded();
 
 #ifdef STARFISH_ENABLE_TEST
     void setNetworkState(bool state);
