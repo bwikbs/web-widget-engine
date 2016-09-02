@@ -140,7 +140,6 @@ function pushTestSuite {
     $SDB push test.tgz $WEB_WIDGET_TEST_HOME &> /dev/null 2>&1
     echo -e "${BOLD}\tExtracting files...${RESET}"
     $SDB_SHELL "tar zxf $WEB_WIDGET_TEST_HOME/test.tgz -C $WEB_WIDGET_TEST_HOME" &> /dev/null 2>&1
-    $SDB_SHELL "mv test $WEB_WIDGET_TEST_HOME/test" &> /dev/null 2>&1
     cd - &> /dev/null 2>&1
 }
 
@@ -174,6 +173,12 @@ function setEnv {
         $SDB_SHELL "ln -s $WEB_WIDGET_TEST_HOME/lib/libicudata.so /usr/lib/libicudata.so.51"
         $SDB_SHELL "ln -s $WEB_WIDGET_TEST_HOME/lib/libicuio.so /usr/lib/libicuio.so.51"
         $SDB_SHELL "ln -s $WEB_WIDGET_TEST_HOME/lib/libicuuc.so /usr/lib/libicuuc.so.51"
+    fi
+
+    # imgdiff
+    if [ $DEVICE = "target" ]; then
+        $SDB_SHELL "mkdir -p $WEB_WIDGET_TEST_HOME/tool/imgdiff" &> /dev/null 2>&1
+        $SDB push test/regression/tool/imgdiffEvas $WEB_WIDGET_TEST_HOME/tool/imgdiff/imgdiff
     fi
 }
 

@@ -198,7 +198,7 @@ public:
     {
         if (!image)
             return;
-        CanvasSurfaceEFL* s = (CanvasSurfaceEFL*)this;
+        // CanvasSurfaceEFL* s = (CanvasSurfaceEFL*)this;
         // STARFISH_LOG_INFO("detach CanvasSurfaceEFL NativeBuffer %p\n", image);
         // evas_object_image_size_set(image, 0, 0);
         evas_object_hide(image);
@@ -824,6 +824,7 @@ void Window::rendering()
             if (getenv("EXIT_AFTER_SCREEN_SHOT") && strlen(getenv("EXIT_AFTER_SCREEN_SHOT")))
                 exit(0);
 
+            g_surfaceForScreehShot->detachNativeBuffer();
             delete g_surfaceForScreehShot;
             g_surfaceForScreehShot = nullptr;
         }
