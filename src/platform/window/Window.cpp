@@ -51,19 +51,6 @@ bool g_fireOnloadEvent = false;
 
 namespace StarFish {
 
-namespace {
-    class __GET_TICK_COUNT {
-    public:
-        __GET_TICK_COUNT()
-        {
-            if (gettimeofday(&tv_, NULL) != 0)
-                throw 0;
-        }
-        timeval tv_;
-    };
-    __GET_TICK_COUNT timeStart;
-}
-
 struct IdlerData {
     void (*m_fn)(void*);
     void* m_data;
@@ -124,29 +111,14 @@ public:
     void clearEFLResources()
     {
         clearStackingContext(false);
-
-        WindowImplEFL* eflWindow = (WindowImplEFL*)this;
-        auto a = eflWindow->m_drawnImageList.begin();
-        while (a != eflWindow->m_drawnImageList.end()) {
-            std::vector<std::pair<Evas_Object*, bool> > & vec = a->second;
-
-            for (size_t i = 0; i < vec.size(); i ++) {
-                Evas_Object* obj = vec[i].first;
-                evas_object_del(obj);
-            }
-            a++;
-        }
-        eflWindow->m_drawnImageList.clear();
     }
 
     bool m_isActive;
     uintptr_t m_handle;
     Evas_Object* m_window;
-    Evas_Object* m_background;
     Evas_Object* m_canvasAdpater;
     std::vector<Evas_Object*> m_objectList;
     std::vector<Evas_Object*> m_surfaceList;
-    std::unordered_map<ImageData*, std::vector<std::pair<Evas_Object*, bool> > > m_drawnImageList;
     Evas_Object* m_mainBox;
     Evas_Object* m_dummyBox;
     Evas_Object* m_dummyBoxClipper;
@@ -496,31 +468,20 @@ void Window::navigateAsync(URL* url)
 
 // #define STARFISH_ENABLE_TIMER
 
-#ifdef STARFISH_ENABLE_TIMER
-static unsigned long getLongTickCount()
-{
-    static time_t secStart = timeStart.tv_.tv_sec;
-    static time_t usecStart = timeStart.tv_.tv_usec;
-    timeval tv;
-    gettimeofday(&tv, NULL);
-    return (tv.tv_sec - secStart) * 1000 + (tv.tv_usec - usecStart);
-}
-#endif
-
 class Timer {
 public:
     Timer(const char* msg)
     {
 #ifdef STARFISH_ENABLE_TIMER
-        m_start = getLongTickCount();
+        m_start = tickCount();
         m_msg = msg;
 #endif
     }
     ~Timer()
     {
 #ifdef STARFISH_ENABLE_TIMER
-        unsigned long end = getLongTickCount();
-        STARFISH_LOG_INFO("did %s in %f ms\n", m_msg, (end - m_start) / 1000.f);
+        unsigned long end = tickCount();
+        STARFISH_LOG_INFO("did %s in %f ms\n", m_msg, (end - m_start));
         fflush(stdout);
 #endif
     }
@@ -562,7 +523,7 @@ Canvas* preparePainting(WindowImplEFL* eflWindow, bool forPainting)
     };
     dummy* d = new dummy;
     d->a = evas;
-    d->b = &eflWindow->m_drawnImageList;
+    d->b = nullptr;
     if (!forPainting) {
         d->b = nullptr;
     }
@@ -829,7 +790,6 @@ void Window::rendering()
             g_surfaceForScreehShot = nullptr;
         }
     }
-
 #endif
 }
 
@@ -1283,7 +1243,6 @@ void Window::close()
     eflWindow->m_objectList.shrink_to_fit();
     eflWindow->m_surfaceList.clear();
     eflWindow->m_surfaceList.shrink_to_fit();
-    eflWindow->m_drawnImageList.clear();
 
     m_starFish->messageLoop()->clearPendingIdlers();
 }
