@@ -195,7 +195,7 @@ endif
 # flags for tizen
 ifneq (,$(findstring tizen,$(HOST)))
   CXXFLAGS += -Os -finline-limit=64
-  CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE
+  CXXFLAGS += -DSTARFISH_TIZEN
 
   #CXXFLAGS_DEBUG += -Wno-literal-suffix
 
@@ -205,12 +205,27 @@ ifneq (,$(findstring tizen,$(HOST)))
 
   ifeq ($(TIZEN_VERSION), 3.0)
     CXXFLAGS += -DSTARFISH_TIZEN_3_0
+  else ifeq ($(TIZEN_VERSION), 2.4)
+    CXXFLAGS += -DSTARFISH_TIZEN_2_4
   endif
 
   ifeq ($(HOST),tizen_obs)
     CXXFLAGS_DEBUG += -O1 # _FORTIFY_SOURCE requires compiling with optimization
     CXXFLAGS += -DSTARFISH_TIZEN_OBS
   endif
+  ifneq (,$(findstring tizen_wearable,$(HOST)))
+    CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE
+  endif
+  ifneq (,$(findstring tizen3_wearable,$(HOST)))
+    CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE
+  endif
+  ifeq ($(TIZEN_PROFILE),tv)
+    CXXFLAGS += -DSTARFISH_TIZEN_TV
+  endif
+  ifeq ($(TIZEN_PROFILE),mobile)
+    CXXFLAGS += -DSTARFISH_TIZEN_MOBILE
+  endif
+
 endif
 
 # for printing TC coverage log
