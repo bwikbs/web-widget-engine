@@ -28,6 +28,8 @@
 #include "platform/window/Window.h"
 #include "platform/canvas/image/ImageData.h"
 #include "dom/binding/ScriptBindingInstance.h"
+#include "extra/Console.h"
+
 #include <malloc.h>
 #include <Elementary.h>
 #if defined(STARFISH_TIZEN_3_0) || defined(STARFISH_TIZEN_OBS)
@@ -90,6 +92,7 @@ StarFish::StarFish(StarFishStartUpFlag flag, const char* locale, const char* tim
     , m_lineBreaker(nullptr)
     , m_timezoneID(String::fromUTF8(timezoneID))
     , m_defaultFontSizeMultiplier(defaultFontSizeMultiplier)
+    , m_console(new Console(this))
     , m_enterCount(0)
 {
     if (!g_starFishGlobalInit) {
@@ -247,9 +250,9 @@ void StarFish::close()
     m_window->close();
 }
 
-void StarFish::evaluate(String* s)
+String* StarFish::evaluate(String* s)
 {
-    m_window->scriptBindingInstance()->evaluate(s);
+    return m_window->scriptBindingInstance()->evaluate(s);
 }
 
 void StarFish::addPointerInRootSet(void *ptr)

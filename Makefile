@@ -234,6 +234,7 @@ ifeq ($(TC), 1)
   CXXFLAGS += -DSTARFISH_TC_COVERAGE
 endif
 
+
 ################################################################################
 ################################################################################
 # Third-party build flags
@@ -306,6 +307,7 @@ SRC += $(foreach dir, src/dom/builder/html , $(wildcard $(dir)/*.cpp))
 SRC += $(foreach dir, src/dom/binding , $(wildcard $(dir)/*.cpp))
 SRC += $(foreach dir, src/layout , $(wildcard $(dir)/*.cpp))
 SRC += $(foreach dir, src/loader , $(wildcard $(dir)/*.cpp))
+SRC += $(foreach dir, src/inspector , $(wildcard $(dir)/*.cpp))
 SRC += $(foreach dir, src/style , $(wildcard $(dir)/*.cpp))
 SRC += $(foreach dir, src/util , $(wildcard $(dir)/*.cpp))
 SRC += $(foreach dir, src/platform/threading , $(wildcard $(dir)/*.cpp))
@@ -361,7 +363,8 @@ SRC += third_party/clipper/cpp/clipper.cpp
 # OBJS
 OBJS := $(SRC:%.cpp= $(OUTDIR)/%.o)
 OBJS += $(SRC_C:%.c= $(OUTDIR)/%.o)
-THIRD_PARTY_OBJS := $(JSLIBS) $(GCLIBS)
+OBJS += $(SRC_CC:%.cc= $(OUTDIR)/%.o)
+THIRD_PARTY_OBJS := $(JSLIBS) $(GCLIBS) $(ZMQLIBS)
 
 ################################################################################
 ################################################################################
@@ -579,6 +582,12 @@ install_pixel_test_dep:
 	fc-cache -fv
 	./set_nodewebkit_env.sh
 	fc-match SamsungOne
+
+install_inspector_nwjs:
+	cd inspector ; ./setup_nwjs.sh
+	
+run_inspector:
+	./inspector/nwjs-v0.17.0-linux-x64/nw ./inspector/ > /dev/null &
 
 pixel_test:
 	./tool/pixel_test/pixel_test.sh $(tc) $(screen)

@@ -13,33 +13,27 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+#include "StarFishConfig.h"
 
-#ifndef __StarFishScriptBindingInstance__
-#define __StarFishScriptBindingInstance__
+#include "Console.h"
+#include "StarFish.h"
 
 namespace StarFish {
 
-class ScriptBindingInstance : public gc {
-public:
-    ScriptBindingInstance();
-    ~ScriptBindingInstance();
-    void enter();
-    void exit();
-    void close();
-    void initBinding(StarFish* window);
-    void* data()
-    {
-        return m_data;
-    }
-    String* evaluate(String* str);
-protected:
-    void* m_data;
-#ifdef USE_ES6_FEATURE
-    void* m_promiseJobQueue;
-#endif
-    size_t m_enterCount;
-};
+Console::Console(StarFish* starFish)
+    : m_starFish(starFish)
+{
 
 }
 
-#endif
+void Console::log(String* m)
+{
+    STARFISH_LOG_INFO("console.log: %s\n", m->utf8Data());
+}
+
+void Console::error(String* m)
+{
+    STARFISH_LOG_ERROR("console.error: %s\n", m->utf8Data());
+}
+
+}

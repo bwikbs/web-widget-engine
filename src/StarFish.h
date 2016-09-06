@@ -29,6 +29,7 @@ class ScriptBindingInstance;
 class ImageData;
 class ThreadPool;
 class Blob;
+class Console;
 
 #define STARFISH_ENUM_HTML_TAG_NAMES(F) \
 F(abbr) \
@@ -290,7 +291,7 @@ public:
     void resume();
     void pause();
     void close();
-    void evaluate(String* s);
+    String* evaluate(String* s);
 
     Font* fetchFont(String* familyName, float size, char style = FontStyle::FontStyleNormal, char weight = FontWeight::FontWeightNormal)
     {
@@ -353,6 +354,11 @@ public:
     bool isValidBlobURL(Blob* ptr);
     BlobURLStore findBlobURL(Blob* ptr);
 
+    Console* console()
+    {
+        return m_console;
+    }
+
 protected:
     void enter();
     void exit();
@@ -374,6 +380,7 @@ protected:
     Window* m_window;
     FontSelector m_fontSelector;
     ThreadPool* m_threadPool;
+    Console* m_console;
     size_t m_enterCount;
     std::unordered_map<void*, size_t, std::hash<void*>, std::equal_to<void*>,
         gc_allocator<std::pair<void*, size_t>>> m_rootMap;

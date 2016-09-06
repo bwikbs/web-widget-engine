@@ -14,30 +14,20 @@
  *    limitations under the License.
  */
 
-#ifndef __StarFishScriptBindingInstance__
-#define __StarFishScriptBindingInstance__
+#ifndef __StarFishConsole__
+#define __StarFishConsole__
 
 namespace StarFish {
 
-class ScriptBindingInstance : public gc {
+class StarFish;
+
+class Console : public gc {
 public:
-    ScriptBindingInstance();
-    ~ScriptBindingInstance();
-    void enter();
-    void exit();
-    void close();
-    void initBinding(StarFish* window);
-    void* data()
-    {
-        return m_data;
-    }
-    String* evaluate(String* str);
+    Console(StarFish* starFish);
+    void log(String* m);
+    void error(String* m);
 protected:
-    void* m_data;
-#ifdef USE_ES6_FEATURE
-    void* m_promiseJobQueue;
-#endif
-    size_t m_enterCount;
+    StarFish* m_starFish;
 };
 
 }
