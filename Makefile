@@ -212,6 +212,7 @@ ifneq (,$(findstring tizen,$(HOST)))
   ifeq ($(HOST),tizen_obs)
     CXXFLAGS_DEBUG += -O1 # _FORTIFY_SOURCE requires compiling with optimization
     CXXFLAGS += -DSTARFISH_TIZEN_OBS
+    CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE # FIXME temporary fix
   endif
   ifneq (,$(findstring tizen_wearable,$(HOST)))
     CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE
