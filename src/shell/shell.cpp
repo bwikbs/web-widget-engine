@@ -145,7 +145,8 @@ int main(int argc, char *argv[])
                 }
 
                 StarFishEnterer enter(p->sf);
-                p->sf->evaluate(String::fromUTF8(p->buf));
+                String* str = p->sf->evaluate(String::fromUTF8(p->buf));
+                puts(str->utf8Data());
 
                 delete [] p->buf;
                 delete p;
