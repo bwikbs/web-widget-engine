@@ -21,13 +21,13 @@ import os
 #   IdentityFile /home/myuserId/yichoi_ssh/id_rsa
 #   IdentitiesOnly yes
 
-def run():
+def sync_web_engine():
     # 0. start at solis
     execute("git checkout solis")
     execute("make x64.exe.release -j")
 
     # 1. Pushing solis to spin
-    #execute("git remote add spin ssh://{}@165.213.149.170:29418/framework/web/wearable/web-widget-engine".format(ID))
+    # git remote add spin ssh://{}@165.213.149.170:29418/framework/web/wearable/web-widget-engine"
     execute("git branch -D tizen_2.3")
     execute("git checkout -b tizen_2.3")
 
@@ -44,9 +44,22 @@ def run():
     execute("git stash")
     execute("git checkout solis")
 
+def sync_js():
+    os.chdir("third_party/escargot")
+    execute("git checkout master")
+    execute("git branch -D tizen_2.3")
+    execute("git checkout -b tizen_2.3")
+
+    execute("git push spin:framework/web/wearable/web-widget-js HEAD:refs/heads/tizen_2.3")
+    execute("git push slp:magnolia/framework/web/web-widget-js HEAD:refs/heads/upstream/tmp")
+    execute("git push review:profile/wearable/platform/framework/web/web-widget-js HEAD:refs/heads/tizen")
+
+    execute("git checkout master")
+
 def execute(cmd):
     print(cmd)
     os.system(cmd)
 
 if __name__ == "__main__":
-    run()
+    sync_web_engine()
+    sync_js()
