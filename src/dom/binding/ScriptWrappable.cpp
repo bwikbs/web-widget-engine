@@ -54,6 +54,7 @@ ScriptObject ScriptWrappable::scriptObjectSlowCase()
     m_object = escargot::ESObject::create(0);
     STARFISH_ASSERT(!((size_t)m_object & (size_t)1));
     m_object->setExtraPointerData(extraPointerData);
+    m_object->setExtraData(kEscargotObjectCheckMagic);
 
     Window* window = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
     initScriptObject(window->scriptBindingInstance());
@@ -66,13 +67,13 @@ void ScriptWrappable::initScriptWrappable(Window* window)
     m_object = escargot::ESVMInstance::currentInstance()->globalObject();
     auto data = fetchData(window->scriptBindingInstance());
     scriptObject()->set__proto__(data->m_window->protoType());
-    scriptObject()->setExtraData(ScriptWrappable::WindowObject);
+    scriptObject()->setExtraData(kEscargotObjectCheckMagic);
     scriptObject()->setExtraPointerData(window);
 
 #ifdef STARFISH_ENABLE_TEST
     escargot::ESFunctionObject* debugPauseFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             ecore_idler_add([](void* user_data) -> Eina_Bool {
                 StarFish* sf = (StarFish*)user_data;
@@ -86,7 +87,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
 
     escargot::ESFunctionObject* debugResumeFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             ecore_idler_add([](void* user_data) -> Eina_Bool {
                 StarFish* sf = (StarFish*)user_data;
@@ -101,7 +102,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
 
     escargot::ESFunctionObject* networkEnableFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             wnd->setNetworkState(true);
         }
@@ -111,7 +112,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
 
     escargot::ESFunctionObject* networkDisableFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             wnd->setNetworkState(false);
         }
@@ -121,7 +122,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
 
     escargot::ESFunctionObject* isPixelTestFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             if (getenv("PIXEL_TEST") && strlen(getenv("PIXEL_TEST")))
                 return escargot::ESValue(escargot::ESValue::ESTrue);
             else
@@ -133,7 +134,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
 
     escargot::ESFunctionObject* screenShotFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             std::string path = wnd->document()->documentURI()->baseURI()->utf8Data();
             path = path.substr(strlen("file://"));
@@ -150,7 +151,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
 
     escargot::ESFunctionObject* screenShotRelativePathFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             char buff[1024];
             getcwd(buff, 1024);
@@ -164,7 +165,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
 
     escargot::ESFunctionObject* forceDisableOnloadCaptureFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             wnd->forceDisableOnloadCapture();
         }
@@ -174,7 +175,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
 
     escargot::ESFunctionObject* getXYWHFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             wnd->renderingIfNeeds();
             Node* node = (Node*)instance->currentExecutionContext()->readArgument(0).asESPointer()->asESObject()->extraPointerData();
@@ -199,7 +200,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
 
     escargot::ESFunctionObject* simulateClickFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             wnd->simulateClick(escargot::ESVMInstance::currentInstance()->currentExecutionContext()->readArgument(0).toNumber(), escargot::ESVMInstance::currentInstance()->currentExecutionContext()->readArgument(1).toNumber());
         }
@@ -209,7 +210,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
 
     escargot::ESFunctionObject* simulateVisibilitychangeFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             wnd->simulateVisibilitychange(escargot::ESVMInstance::currentInstance()->currentExecutionContext()->readArgument(0).toBoolean());
         }
@@ -361,7 +362,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
             }
         };
 
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             if (instance->currentExecutionContext()->readArgument(0).isESPointer()
                 && instance->currentExecutionContext()->readArgument(0).asESPointer()
                 && instance->currentExecutionContext()->readArgument(0).asESPointer()->isESFunctionObject()) {
@@ -397,7 +398,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
     // https://www.w3.org/TR/html5/webappapis.html#dom-windowtimers-cleartimeout
     escargot::ESFunctionObject* clearTimeoutFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             if (instance->currentExecutionContext()->readArgument(0).isNumber()) {
                 Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
                 wnd->clearTimeout(instance->currentExecutionContext()->readArgument(0).toUint32());
@@ -423,7 +424,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
             }
         };
 
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             if (instance->currentExecutionContext()->readArgument(0).isESPointer()
                 && instance->currentExecutionContext()->readArgument(0).asESPointer()
                 && instance->currentExecutionContext()->readArgument(0).asESPointer()->isESFunctionObject()) {
@@ -454,7 +455,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
     // https://www.w3.org/TR/html5/webappapis.html#dom-windowtimers-clearinterval
     escargot::ESFunctionObject* clearIntervalFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             if (instance->currentExecutionContext()->readArgument(0).isNumber()) {
                 Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
                 wnd->clearInterval(instance->currentExecutionContext()->readArgument(0).toUint32());
@@ -468,7 +469,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
     // TODO : First argument can be function or script source (currently allow function only)
     escargot::ESFunctionObject* requestAnimationFrameFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             if (instance->currentExecutionContext()->readArgument(0).isESPointer()
                 && instance->currentExecutionContext()->readArgument(0).asESPointer()
                 && instance->currentExecutionContext()->readArgument(0).asESPointer()->isESFunctionObject()) {
@@ -499,7 +500,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
     // https://www.w3.org/TR/html5/webappapis.html
     escargot::ESFunctionObject* cancelAnimationFrameFunction = escargot::ESFunctionObject::create(NULL, [](escargot::ESVMInstance* instance) -> escargot::ESValue {
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
-        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             if (instance->currentExecutionContext()->readArgument(0).isNumber()) {
                 Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
                 wnd->cancelAnimationFrame(instance->currentExecutionContext()->readArgument(0).toUint32());
@@ -513,7 +514,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
     ((escargot::ESObject*)this->m_object)->defineAccessorProperty(escargot::ESString::create("innerWidth"),
         [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         escargot::ESValue v = originalObj;
-        if (v.isObject() && v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == escargot::ESVMInstance::currentInstance()->globalObject()) {
             double innerWidth = ((Window*)originalObj->extraPointerData())->innerWidth();
             return escargot::ESValue(innerWidth);
         }
@@ -525,7 +526,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
     ((escargot::ESObject*)this->m_object)->defineAccessorProperty(escargot::ESString::create("innerHeight"),
         [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         escargot::ESValue v = originalObj;
-        if (v.isObject() && v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == escargot::ESVMInstance::currentInstance()->globalObject()) {
             double innerHeight = ((Window*)originalObj->extraPointerData())->innerHeight();
             return escargot::ESValue(innerHeight);
         }
@@ -536,7 +537,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
     ((escargot::ESObject*)this->m_object)->defineAccessorProperty(escargot::ESString::create("onclick"),
         [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         escargot::ESValue v = originalObj;
-        if (v.isObject() && v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == escargot::ESVMInstance::currentInstance()->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             auto eventType = wnd->starFish()->staticStrings()->m_click;
             return wnd->attributeEventListener(eventType);
@@ -546,7 +547,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
         [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, ::escargot::ESString* propertyName, const escargot::ESValue& value)
         {
         escargot::ESValue v = originalObj;
-        if (v.isObject() && v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == escargot::ESVMInstance::currentInstance()->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             auto eventType = wnd->starFish()->staticStrings()->m_click;
             if (value.isObject() || (value.isESPointer() && value.asESPointer()->isESFunctionObject())) {
@@ -561,7 +562,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
     ((escargot::ESObject*)this->m_object)->defineAccessorProperty(escargot::ESString::create("onload"),
         [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         escargot::ESValue v = originalObj;
-        if (v.isObject() && v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == escargot::ESVMInstance::currentInstance()->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             auto eventType = wnd->starFish()->staticStrings()->m_load;
             return wnd->attributeEventListener(eventType);
@@ -571,7 +572,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
         [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, ::escargot::ESString* propertyName, const escargot::ESValue& value)
         {
         escargot::ESValue v = originalObj;
-        if (v.isObject() && v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isObject() && v.asESPointer() == escargot::ESVMInstance::currentInstance()->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             auto eventType = wnd->starFish()->staticStrings()->m_load;
             if (value.isObject() || (value.isESPointer() && value.asESPointer()->isESFunctionObject())) {
@@ -586,7 +587,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
     ((escargot::ESObject*)this->m_object)->defineAccessorProperty(escargot::ESString::create("onunload"),
         [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, escargot::ESString* name) -> escargot::ESValue {
         escargot::ESValue v = originalObj;
-        if (v.isObject() && v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isObject() && v.asESPointer() == escargot::ESVMInstance::currentInstance()->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             auto eventType = wnd->starFish()->staticStrings()->m_unload;
             return wnd->attributeEventListener(eventType);
@@ -596,7 +597,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
         [](::escargot::ESObject* obj, ::escargot::ESObject* originalObj, ::escargot::ESString* propertyName, const escargot::ESValue& value)
         {
         escargot::ESValue v = originalObj;
-        if (v.isObject() && v.asESPointer()->asESObject()->extraData() == ScriptWrappable::WindowObject) {
+        if (v.isObject() && v.asESPointer() == escargot::ESVMInstance::currentInstance()->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
             auto eventType = wnd->starFish()->staticStrings()->m_unload;
             if (value.isObject() || (value.isESPointer() && value.asESPointer()->isESFunctionObject())) {
@@ -609,7 +610,7 @@ void ScriptWrappable::initScriptWrappable(Window* window)
         true, true, true);
 
     scriptObject()->setPropertyInterceptor([](const escargot::ESValue& key, escargot::ESObject* obj) -> escargot::ESValue {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::WindowObject);
+        STARFISH_ASSERT(obj == escargot::ESVMInstance::currentInstance()->globalObject());
         Window* self = (Window*)obj->extraPointerData();
 
         if (self->document()->elementExecutionStackForAttributeStringEventFunctionObject().size()) {
@@ -633,10 +634,10 @@ void ScriptWrappable::initScriptWrappable(Window* window)
         }
         return escargot::ESValue(escargot::ESValue::ESDeletedValue);
     }, [](const escargot::ESValue& key, const escargot::ESValue& val, escargot::ESObject* obj) -> bool {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::WindowObject);
+        STARFISH_ASSERT(obj == escargot::ESVMInstance::currentInstance()->globalObject());
         return false;
     }, [](escargot::ESObject* obj) -> escargot::ESValueVector {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::WindowObject);
+        STARFISH_ASSERT(obj == escargot::ESVMInstance::currentInstance()->globalObject());
         size_t len = 0;
         escargot::ESValueVector v(len);
         return v;
@@ -654,28 +655,24 @@ void ScriptWrappable::initScriptWrappable(Node* ptr, ScriptBindingInstance* inst
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->node()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(Element* element)
 {
     Node* node = (Node*)this;
     initScriptWrappable(element, node->document()->scriptBindingInstance());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(DocumentType* element)
 {
     auto data = fetchData(element->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->documentType()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(Element* element, ScriptBindingInstance* instance)
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->element()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(Document*)
@@ -683,7 +680,6 @@ void ScriptWrappable::initScriptWrappable(Document*)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->document()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(DocumentFragment* ptr)
@@ -691,7 +687,6 @@ void ScriptWrappable::initScriptWrappable(DocumentFragment* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->documentFragment()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 #ifdef STARFISH_EXP
@@ -699,7 +694,6 @@ void ScriptWrappable::initScriptWrappable(DOMImplementation* ptr, ScriptBindingI
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->m_domImplementation()->protoType());
-    scriptObject()->setExtraData(DOMImplementationObject);
 }
 #endif
 
@@ -708,7 +702,6 @@ void ScriptWrappable::initScriptWrappable(HTMLDocument*)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlDocument()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(CharacterData* ptr)
@@ -716,7 +709,6 @@ void ScriptWrappable::initScriptWrappable(CharacterData* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->characterData()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(Text* ptr)
@@ -724,7 +716,6 @@ void ScriptWrappable::initScriptWrappable(Text* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->text()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(Comment* ptr)
@@ -732,7 +723,6 @@ void ScriptWrappable::initScriptWrappable(Comment* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->comment()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 #ifdef STARFISH_ENABLE_MULTI_PAGE
@@ -741,7 +731,6 @@ void ScriptWrappable::initScriptWrappable(HTMLAnchorElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlAnchorElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 #endif
 
@@ -751,7 +740,6 @@ void ScriptWrappable::initScriptWrappable(HTMLMediaElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlMediaElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLVideoElement* ptr)
@@ -759,7 +747,6 @@ void ScriptWrappable::initScriptWrappable(HTMLVideoElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlVideoElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLAudioElement* ptr)
@@ -767,7 +754,6 @@ void ScriptWrappable::initScriptWrappable(HTMLAudioElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlAudioElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 #endif
 
@@ -776,7 +762,6 @@ void ScriptWrappable::initScriptWrappable(HTMLElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLHtmlElement* ptr)
@@ -784,7 +769,6 @@ void ScriptWrappable::initScriptWrappable(HTMLHtmlElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlHtmlElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLHeadElement* ptr)
@@ -792,7 +776,6 @@ void ScriptWrappable::initScriptWrappable(HTMLHeadElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlHeadElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLBodyElement* ptr)
@@ -800,7 +783,6 @@ void ScriptWrappable::initScriptWrappable(HTMLBodyElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlBodyElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLStyleElement* ptr)
@@ -808,7 +790,6 @@ void ScriptWrappable::initScriptWrappable(HTMLStyleElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlStyleElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLLinkElement* ptr)
@@ -816,7 +797,6 @@ void ScriptWrappable::initScriptWrappable(HTMLLinkElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlLinkElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLScriptElement* ptr)
@@ -824,7 +804,6 @@ void ScriptWrappable::initScriptWrappable(HTMLScriptElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlScriptElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLImageElement* ptr)
@@ -832,7 +811,6 @@ void ScriptWrappable::initScriptWrappable(HTMLImageElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlImageElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLDivElement* ptr)
@@ -840,7 +818,6 @@ void ScriptWrappable::initScriptWrappable(HTMLDivElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlDivElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLBRElement* ptr)
@@ -848,7 +825,6 @@ void ScriptWrappable::initScriptWrappable(HTMLBRElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlBrElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLMetaElement* ptr)
@@ -856,7 +832,6 @@ void ScriptWrappable::initScriptWrappable(HTMLMetaElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlMetaElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLParagraphElement* ptr)
@@ -864,7 +839,6 @@ void ScriptWrappable::initScriptWrappable(HTMLParagraphElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlParagraphElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLSpanElement* ptr)
@@ -872,7 +846,6 @@ void ScriptWrappable::initScriptWrappable(HTMLSpanElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlSpanElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLUnknownElement* ptr)
@@ -880,7 +853,6 @@ void ScriptWrappable::initScriptWrappable(HTMLUnknownElement* ptr)
     Node* node = (Node*)this;
     auto data = fetchData(node->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->htmlUnknownElement()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(XMLHttpRequest* xhr)
@@ -888,7 +860,6 @@ void ScriptWrappable::initScriptWrappable(XMLHttpRequest* xhr)
     ScriptBindingInstance* instance = xhr->networkRequest().document()->window()->scriptBindingInstance();
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->xhrElement()->protoType());
-    scriptObject()->setExtraData(XMLHttpRequestObject);
 }
 
 void ScriptWrappable::initScriptWrappable(Blob* blob)
@@ -897,21 +868,18 @@ void ScriptWrappable::initScriptWrappable(Blob* blob)
     ScriptBindingInstance* instance = window->scriptBindingInstance();
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->blobElement()->protoType());
-    scriptObject()->setExtraData(BlobObject);
 }
 
 void ScriptWrappable::initScriptWrappable(URL* url, ScriptBindingInstance* instance)
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->url()->protoType());
-    scriptObject()->setExtraData(URLObject);
 }
 
 void ScriptWrappable::initScriptWrappable(DOMException* exception, ScriptBindingInstance* instance)
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->domException()->protoType());
-    scriptObject()->setExtraData(DOMExceptionObject);
 
     scriptObject()->defineDataProperty(escargot::ESString::create("code"), false, false, false, escargot::ESValue(exception->code()));
 }
@@ -927,7 +895,6 @@ void ScriptWrappable::initScriptWrappable(Event* event)
     ScriptBindingInstance* instance = window->scriptBindingInstance();
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->event()->protoType());
-    scriptObject()->setExtraData(EventObject);
 }
 
 void ScriptWrappable::initScriptWrappable(UIEvent* ptr)
@@ -936,7 +903,6 @@ void ScriptWrappable::initScriptWrappable(UIEvent* ptr)
     ScriptBindingInstance* instance = window->scriptBindingInstance();
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->uiEvent()->protoType());
-    scriptObject()->setExtraData(EventObject);
 }
 
 void ScriptWrappable::initScriptWrappable(MouseEvent* ptr)
@@ -945,7 +911,6 @@ void ScriptWrappable::initScriptWrappable(MouseEvent* ptr)
     ScriptBindingInstance* instance = window->scriptBindingInstance();
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->mouseEvent()->protoType());
-    scriptObject()->setExtraData(EventObject);
 }
 
 void ScriptWrappable::initScriptWrappable(ProgressEvent* ptr)
@@ -954,18 +919,17 @@ void ScriptWrappable::initScriptWrappable(ProgressEvent* ptr)
     ScriptBindingInstance* instance = window->scriptBindingInstance();
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->progressEvent()->protoType());
-    scriptObject()->setExtraData(EventObject);
 }
 
 void ScriptWrappable::initScriptWrappable(HTMLCollection* ptr, ScriptBindingInstance* instance)
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->htmlCollection()->protoType());
-    scriptObject()->setExtraData(HTMLCollectionObject);
 
     scriptObject()->setPropertyInterceptor([](const escargot::ESValue& key, escargot::ESObject* obj) -> escargot::ESValue {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::HTMLCollectionObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         HTMLCollection* self = (HTMLCollection*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::HTMLCollectionObject);
         uint32_t idx = key.toIndex();
         if (idx == escargot::ESValue::ESInvalidIndexValue) {
             Element* e = self->namedItem(toBrowserString(key));
@@ -976,11 +940,12 @@ void ScriptWrappable::initScriptWrappable(HTMLCollection* ptr, ScriptBindingInst
         }
         return escargot::ESValue(escargot::ESValue::ESDeletedValue);
     }, [](const escargot::ESValue& key, const escargot::ESValue& val, escargot::ESObject* obj) -> bool {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::HTMLCollectionObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         return false;
     }, [](escargot::ESObject* obj) -> escargot::ESValueVector {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::HTMLCollectionObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         HTMLCollection* self = (HTMLCollection*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::HTMLCollectionObject);
         size_t len = self->length();
         escargot::ESValueVector v(len);
         for (size_t i = 0; i < len; i ++) {
@@ -994,21 +959,22 @@ void ScriptWrappable::initScriptWrappable(NodeList* ptr, ScriptBindingInstance* 
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->nodeList()->protoType());
-    scriptObject()->setExtraData(NodeListObject);
 
     scriptObject()->setPropertyInterceptor([](const escargot::ESValue& key, escargot::ESObject* obj) -> escargot::ESValue {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::NodeListObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         NodeList* self = (NodeList*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::NodeListObject);
         uint32_t idx = key.toIndex();
         if (idx < self->length())
             return self->item(idx)->scriptValue();
         return escargot::ESValue(escargot::ESValue::ESDeletedValue);
     }, [](const escargot::ESValue& key, const escargot::ESValue& val, escargot::ESObject* obj) -> bool {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::NodeListObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         return false;
     }, [](escargot::ESObject* obj) -> escargot::ESValueVector {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::NodeListObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         NodeList* self = (NodeList*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::NodeListObject);
         size_t len = self->length();
         escargot::ESValueVector v(len);
         for (size_t i = 0; i < len; i ++) {
@@ -1022,21 +988,22 @@ void ScriptWrappable::initScriptWrappable(DOMTokenList* ptr, ScriptBindingInstan
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->domTokenList()->protoType());
-    scriptObject()->setExtraData(DOMTokenListObject);
 
     scriptObject()->setPropertyInterceptor([](const escargot::ESValue& key, escargot::ESObject* obj) -> escargot::ESValue {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::DOMTokenListObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         DOMTokenList* self = (DOMTokenList*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::DOMTokenListObject);
         uint32_t idx = key.toIndex();
         if (idx < self->length())
             return createScriptString(self->item(idx));
         return escargot::ESValue(escargot::ESValue::ESDeletedValue);
     }, [](const escargot::ESValue& key, const escargot::ESValue& val, escargot::ESObject* obj) -> bool {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::DOMTokenListObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         return false;
     }, [](escargot::ESObject* obj) -> escargot::ESValueVector {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::DOMTokenListObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         DOMTokenList* self = (DOMTokenList*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::DOMTokenListObject);
         size_t len = self->length();
         escargot::ESValueVector v(len);
         for (size_t i = 0; i < len; i ++) {
@@ -1050,18 +1017,17 @@ void ScriptWrappable::initScriptWrappable(DOMSettableTokenList* ptr, ScriptBindi
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->domSettableTokenList()->protoType());
-    scriptObject()->setExtraData(DOMSettableTokenListObject);
 }
 
 void ScriptWrappable::initScriptWrappable(NamedNodeMap* ptr, ScriptBindingInstance* instance)
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->namedNodeMap()->protoType());
-    scriptObject()->setExtraData(NamedNodeMapObject);
 
     scriptObject()->setPropertyInterceptor([](const escargot::ESValue& key, escargot::ESObject* obj) -> escargot::ESValue {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::NamedNodeMapObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         NamedNodeMap* self = (NamedNodeMap*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::NamedNodeMapObject);
         uint32_t idx = key.toIndex();
         if (idx == escargot::ESValue::ESInvalidIndexValue) {
             Attr* e = self->getNamedItem(QualifiedName(AtomicString::emptyAtomicString(), AtomicString::createAttrAtomicString(((Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData())->starFish(), key.asESString()->utf8Data())));
@@ -1072,11 +1038,12 @@ void ScriptWrappable::initScriptWrappable(NamedNodeMap* ptr, ScriptBindingInstan
         }
         return escargot::ESValue(escargot::ESValue::ESDeletedValue);
     }, [](const escargot::ESValue& key, const escargot::ESValue& val, escargot::ESObject* obj) -> bool {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::NamedNodeMapObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         return false;
     }, [](escargot::ESObject* obj) -> escargot::ESValueVector {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::NamedNodeMapObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         NamedNodeMap* self = (NamedNodeMap*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::NamedNodeMapObject);
         size_t len = self->length();
         escargot::ESValueVector v(len);
         for (size_t i = 0; i < len; i ++) {
@@ -1090,18 +1057,17 @@ void ScriptWrappable::initScriptWrappable(Attr* ptr, ScriptBindingInstance* inst
 {
     auto data = fetchData(instance);
     scriptObject()->set__proto__(data->attr()->protoType());
-    scriptObject()->setExtraData(NodeObject);
 }
 
 void ScriptWrappable::initScriptWrappable(CSSStyleDeclaration* ptr)
 {
     auto data = fetchData(ptr->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->cssStyleDeclaration()->protoType());
-    scriptObject()->setExtraData(CSSStyleDeclarationObject);
 
     scriptObject()->setPropertyInterceptor([](const escargot::ESValue& key, escargot::ESObject* obj) -> escargot::ESValue {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::CSSStyleDeclarationObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         CSSStyleDeclaration* self = (CSSStyleDeclaration*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::CSSStyleDeclarationObject);
         uint32_t idx = key.toIndex();
         if (idx < self->length()) {
             return escargot::ESString::create(self->item(idx)->utf8Data());
@@ -1131,8 +1097,9 @@ void ScriptWrappable::initScriptWrappable(CSSStyleDeclaration* ptr)
 
         return escargot::ESString::create("");
     }, [](const escargot::ESValue& key, const escargot::ESValue& val, escargot::ESObject* obj) -> bool {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::CSSStyleDeclarationObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         CSSStyleDeclaration* self = (CSSStyleDeclaration*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::CSSStyleDeclarationObject);
         const char* str = toBrowserString(key)->utf8Data();
         CSSStyleKind kind = lookupCSSStyleCamelCase(str, strlen(str));
 
@@ -1155,8 +1122,9 @@ void ScriptWrappable::initScriptWrappable(CSSStyleDeclaration* ptr)
 
         return false;
     }, [](escargot::ESObject* obj) -> escargot::ESValueVector {
-        STARFISH_ASSERT(obj->extraData() == ScriptWrappable::Type::CSSStyleDeclarationObject);
+        STARFISH_ASSERT(obj->extraData() == kEscargotObjectCheckMagic);
         CSSStyleDeclaration* self = (CSSStyleDeclaration*)obj->extraPointerData();
+        STARFISH_ASSERT(self->type() == ScriptWrappable::Type::CSSStyleDeclarationObject);
         size_t len = self->length();
         escargot::ESValueVector v(len);
         for (size_t i = 0; i < len; i ++) {
@@ -1175,7 +1143,6 @@ void ScriptWrappable::initScriptWrappable(CSSStyleRule* ptr)
 {
     auto data = fetchData(ptr->document()->scriptBindingInstance());
     scriptObject()->set__proto__(data->cssStyleRule()->protoType());
-    scriptObject()->setExtraData(CSSStyleRuleObject);
 }
 #ifdef STARFISH_ENABLE_TEST
 void Window::testStart()
