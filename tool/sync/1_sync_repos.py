@@ -1,26 +1,6 @@
 #!/usr/bin/python
 import os
 
-# vi .ssh/config
-# Host spin
-#  HostName 165.213.149.170
-#  User duddlf.choi
-#  Port 29418
-#  IdentityFile /home/ryanc/yichoi_ssh/id_rsa
-#  IdentitiesOnly yes
-# Host slp
-#   HostName slp-info.sec.samsung.net
-#   User duddlf.choi
-#   Port 29418
-#   IdentityFile /home/myuserId/yichoi_ssh/id_rsa
-#   IdentitiesOnly yes
-# Host review
-#   HostName review.tizen.org
-#   User yichoi
-#   Port 29418
-#   IdentityFile /home/myuserId/yichoi_ssh/id_rsa
-#   IdentitiesOnly yes
-
 def sync_web_engine():
     # 0. start at solis
     execute("git checkout solis")
