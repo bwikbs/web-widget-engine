@@ -32,8 +32,10 @@
 #include "layout/Frame.h"
 #include "layout/FrameBox.h"
 
+#include "extra/Navigator.h"
+#include "platform/location/Geolocation.h"
+
 #include "StarFish.h"
-#include <Elementary.h>
 
 namespace StarFish {
 
@@ -75,11 +77,10 @@ void ScriptWrappable::initScriptWrappable(Window* window)
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
         if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
-            ecore_idler_add([](void* user_data) -> Eina_Bool {
-                StarFish* sf = (StarFish*)user_data;
+            wnd->starFish()->messageLoop()->addIdlerWithNoScriptInstanceEntering([](size_t, void* data, void*) {
+                StarFish* sf = (StarFish*)data;
                 sf->pause();
-                return ECORE_CALLBACK_CANCEL;
-            }, wnd->starFish());
+            }, wnd->starFish(), nullptr);
         }
         return escargot::ESValue(escargot::ESValue::ESUndefined);
     }, escargot::ESString::create("debugPause"), 0, false);
@@ -89,11 +90,10 @@ void ScriptWrappable::initScriptWrappable(Window* window)
         escargot::ESValue v = instance->currentExecutionContext()->resolveThisBinding();
         if (v.isUndefinedOrNull() || v.asESPointer()->asESObject() == instance->globalObject()) {
             Window* wnd = (Window*)escargot::ESVMInstance::currentInstance()->globalObject()->extraPointerData();
-            ecore_idler_add([](void* user_data) -> Eina_Bool {
-                StarFish* sf = (StarFish*)user_data;
+            wnd->starFish()->messageLoop()->addIdlerWithNoScriptInstanceEntering([](size_t, void* data, void*) {
+                StarFish* sf = (StarFish*)data;
                 sf->resume();
-                return ECORE_CALLBACK_CANCEL;
-            }, wnd->starFish());
+            }, wnd->starFish(), nullptr);
         }
         return escargot::ESValue(escargot::ESValue::ESUndefined);
     }, escargot::ESString::create("debugResume"), 0, false);
@@ -696,6 +696,38 @@ void ScriptWrappable::initScriptWrappable(DOMImplementation* ptr, ScriptBindingI
     scriptObject()->set__proto__(data->m_domImplementation()->protoType());
 }
 #endif
+
+void ScriptWrappable::initScriptWrappable(Navigator* ptr)
+{
+    Navigator* nav = (Navigator*)this;
+    auto data = fetchData(nav->starFish()->window()->scriptBindingInstance());
+    scriptObject()->set__proto__(data->navigator()->protoType());
+}
+
+void ScriptWrappable::initScriptWrappable(Geolocation* ptr)
+{
+    Geolocation* nav = (Geolocation*)this;
+    auto data = fetchData(nav->starFish()->window()->scriptBindingInstance());
+    scriptObject()->set__proto__(data->geolocation()->protoType());
+}
+
+void ScriptWrappable::initScriptWrappable(Geoposition* ptr)
+{
+    auto data = fetchData(ptr->starFish()->window()->scriptBindingInstance());
+    scriptObject()->set__proto__(data->geoposition()->protoType());
+}
+
+void ScriptWrappable::initScriptWrappable(Coordinates* ptr)
+{
+    auto data = fetchData(ptr->starFish()->window()->scriptBindingInstance());
+    scriptObject()->set__proto__(data->coordinates()->protoType());
+}
+
+void ScriptWrappable::initScriptWrappable(PositionError* ptr)
+{
+    auto data = fetchData(ptr->starFish()->window()->scriptBindingInstance());
+    scriptObject()->set__proto__(data->positionError()->protoType());
+}
 
 void ScriptWrappable::initScriptWrappable(HTMLDocument*)
 {
