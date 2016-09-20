@@ -14,21 +14,27 @@
  *    limitations under the License.
  */
 
-#ifndef __StarFishConsole__
-#define __StarFishConsole__
+#if defined(STARFISH_ENABLE_INSPECTOR) && !defined (__StarFishInspector__)
+#define __StarFishInspector__
+
+#include <zmq.hpp>
+#include "platform/threading/Thread.h"
 
 namespace StarFish {
 
-class StarFish;
-
-class Console : public gc {
+class Inspector : public gc {
 public:
-    Console(StarFish* starFish);
-    void log(String* m);
-    void error(String* m);
-    void warn(String* m);
+    Inspector(StarFish* starFish, uint32_t portNumber);
+    ~Inspector();
+
+    void sendInfoMessage(String* m);
+    void sendErrorMessage(String* m);
+    void sendWarnMessage(String* m);
 protected:
     StarFish* m_starFish;
+    zmq::context_t m_zmqContext;
+    zmq::socket_t m_zmqSocket;
+    Thread* m_ioThread;
 };
 
 }
