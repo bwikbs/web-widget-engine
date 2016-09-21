@@ -30,6 +30,7 @@ BuildRequires: pkgconfig(libcurl)
 BuildRequires: pkgconfig(libxml-2.0)
 BuildRequires: pkgconfig(capi-network-connection)
 BuildRequires: pkgconfig(capi-media-player)
+BuildRequires: pkgconfig(capi-location-manager)
 
 %description
 Implementation of Web Widget Engine
