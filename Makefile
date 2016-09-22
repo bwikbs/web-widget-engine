@@ -159,6 +159,9 @@ ifeq ($(ARCH), x64)
   CXXFLAGS += -DSTARFISH_ENABLE_MULTI_PAGE
 else ifeq ($(ARCH), x86)
   CXXFLAGS += -m32 -mfpmath=sse -msse2
+  ifeq ($(MODE), debug)
+    CXXFLAGS += -DSTARFISH_ENABLE_TEST
+  endif
   LDFLAGS += -m32
 else ifeq ($(ARCH), x64)
   ifeq ($(MEDIA_SUPPORT), true)
