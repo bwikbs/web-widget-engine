@@ -40,6 +40,9 @@ function main {
     echo -e "\n${BOLD}5. Running the tests...${RESET}\n"
     runTest
 
+    # Send the result
+    sendResult "$@"
+
     # Remove unnecessary files
     cleanup
 }
@@ -152,8 +155,7 @@ function runTest {
     ./test/tool/runner.sh $DEVICE $TC $VERSION
 
     # Print the result
-    echo -e "${BOLD}You can find the result in result_* file.${RESET}\n"
-    cp result_* ../
+    echo -e "${BOLD}You can find the result in test/result_* file.${RESET}\n"
     cd - &> /dev/null 2>&1
 
     restoreEnv
@@ -206,6 +208,27 @@ function restoreEnv {
         $SDB_SHELL "rm /usr/lib/libicuio.so.51"
         $SDB_SHELL "rm /usr/lib/libicuuc.so.51"
     done
+}
+
+function sendResult {
+    cd test
+
+    DATE=`date +"%y.%m.%d"`
+    PASS=`cat result_* | grep PASS | wc -l`
+    FAIL=`cat result_* | grep FAIL | wc -l`
+    CHECK=`cat result_* | grep CHECK | wc -l`
+    RESULT="summary.csv"
+    echo -e "DEVICE\t"$DEVICE >> $RESULT
+    echo -e "VERSION\t"$VERSION >> $RESULT
+    echo -e "DATE\t"$DATE >> $RESULT
+    echo -e "PASS\t"$PASS >> $RESULT
+    echo -e "FAIL\t"$FAIL >> $RESULT
+    echo -e "CEHCK\t"$CHECK >> $RESULT
+
+    ssh webtf@10.113.64.195 "mkdir -p share/Test_Result/$DATE/$2"_"$DEVICE" &> /dev/null 2>&1
+    scp $RESULT result_* webtf@10.113.64.195:share/Test_Result/$DATE/$2"_"$DEVICE &> /dev/null 2>&1
+
+    cd - &> /dev/null 2>&1
 }
 
 function cleanup {
