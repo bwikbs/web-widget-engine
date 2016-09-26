@@ -32,6 +32,12 @@ endif
 MEDIA_SUPPORT=true
 MEDIA_SUPPORT_KEY=STARFISH_ENABLE_MULTIMEDIA
 
+# multipage
+MULTIPAGE_SUPPORT=false
+
+# dom parser
+DOMPARSER_SUPPORT=false
+
 $(info goal... $(MAKECMDGOALS))
 
 ifneq (,$(findstring x86,$(MAKECMDGOALS)))
@@ -155,8 +161,9 @@ LDFLAGS += -lpthread -lcurl
 # LDFLAGS += -Wl,--gc-sections
 
 ifeq ($(ARCH), x64)
+  DOMPARSER_SUPPORT=true
+  MULTIPAGE_SUPPORT=true
   CXXFLAGS += -DSTARFISH_ENABLE_TEST
-  CXXFLAGS += -DSTARFISH_ENABLE_MULTI_PAGE
 else ifeq ($(ARCH), x86)
   CXXFLAGS += -m32 -mfpmath=sse -msse2
   ifeq ($(MODE), debug)
@@ -215,7 +222,6 @@ ifneq (,$(findstring tizen,$(HOST)))
   ifeq ($(HOST),tizen_obs)
     CXXFLAGS_DEBUG += -O1 # _FORTIFY_SOURCE requires compiling with optimization
     CXXFLAGS += -DSTARFISH_TIZEN_OBS
-    CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE # FIXME temporary fix
   endif
   ifneq (,$(findstring tizen_wearable,$(HOST)))
     CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE
@@ -229,7 +235,9 @@ ifneq (,$(findstring tizen,$(HOST)))
   ifeq ($(TIZEN_PROFILE),mobile)
     CXXFLAGS += -DSTARFISH_TIZEN_MOBILE
   endif
-
+  ifeq ($(TIZEN_PROFILE),wearable)
+    CXXFLAGS += -DSTARFISH_TIZEN_WEARABLE
+  endif
 endif
 
 # for printing TC coverage log
@@ -237,6 +245,14 @@ ifeq ($(TC), 1)
   CXXFLAGS += -DSTARFISH_TC_COVERAGE
 endif
 
+
+ifeq ($(MULTIPAGE_SUPPORT), true)
+  CXXFLAGS += -DSTARFISH_ENABLE_MULTI_PAGE
+endif
+
+ifeq ($(DOMPARSER_SUPPORT), true)
+  CXXFLAGS += -DSTARFISH_ENABLE_DOMPARSER
+endif
 
 ################################################################################
 ################################################################################

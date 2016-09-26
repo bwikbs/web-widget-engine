@@ -4316,6 +4316,7 @@ escargot::ESFunctionObject* bindingPositionError(ScriptBindingInstance* scriptBi
     return PositionErrorFunction;
 }
 
+#ifdef STARFISH_ENABLE_DOMPARSER
 escargot::ESFunctionObject* bindingDOMParser(ScriptBindingInstance* scriptBindingInstance)
 {
     /* XMLHttpRequest */
@@ -4349,8 +4350,8 @@ escargot::ESFunctionObject* bindingDOMParser(ScriptBindingInstance* scriptBindin
     DOMParserFunction->protoType().asESPointer()->asESObject()->defineDataProperty(escargot::ESString::create("parseFromString"), true, true, true, parseFromStringFunction);
 
     return DOMParserFunction;
-
 }
+#endif
 
 String* ScriptBindingInstance::evaluate(String* str)
 {
