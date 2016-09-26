@@ -79,6 +79,7 @@ class Geolocation;
 class Geoposition;
 class PositionError;
 class Coordinates;
+class DOMParser;
 
 typedef escargot::ESValue ScriptValue;
 typedef escargot::ESObject* ScriptObject;
@@ -114,6 +115,7 @@ public:
         GeopositionObject = 1 << 27,
         PositionErrorObject = 1 << 28,
         CoordinatesObject = 1 << 29,
+        DOMParserObject = 1 << 30,
     };
     ScriptWrappable(void* extraPointerData);
 
@@ -193,6 +195,7 @@ public:
     void initScriptWrappable(Geoposition* ptr);
     void initScriptWrappable(Coordinates* ptr);
     void initScriptWrappable(PositionError* ptr);
+    void initScriptWrappable(DOMParser* ptr);
 
     bool hasProperty(String* name);
 
