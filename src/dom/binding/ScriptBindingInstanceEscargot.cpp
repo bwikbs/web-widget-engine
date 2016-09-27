@@ -1629,7 +1629,9 @@ escargot::ESFunctionObject* bindingDocument(ScriptBindingInstance* scriptBinding
         GENERATE_THIS_AND_CHECK_TYPE(ScriptWrappable::Type::NodeObject, Node);
         Node* nd = originalObj;
         if (nd->isDocument()) {
-            return toJSString(nd->asDocument()->compatMode());
+            // FIXME
+            // return toJSString(nd->asDocument()->compatMode());
+            return toJSString(String::fromUTF8("CSS1Compat"));
         }
         THROW_ILLEGAL_INVOCATION();
     }, nullptr);
