@@ -9,6 +9,8 @@ if [ ! -f /proc/cpuinfo ]; then
 fi
 NUMPROC=$(grep 'processor' /proc/cpuinfo | wc -l)
 
+cd third_party/escargot
+
 ./build_third_party.sh
 make clean
 make x64.interpreter.release.static -j8
@@ -27,3 +29,5 @@ make tizen3_wearable_emulator.interpreter.debug.static -j8
 make tizen3_wearable_emulator.interpreter.release.static -j8
 fi
 
+
+cd -
