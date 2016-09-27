@@ -95,9 +95,15 @@ else ifneq (,$(findstring tizen3_wearable_emulator,$(MAKECMDGOALS)))
   TIZEN_DEVICE=emulator
 else ifneq (,$(findstring tizen_obs_arm,$(MAKECMDGOALS)))
   HOST=tizen_obs
+  # for spin
+  TIZEN_PROFILE=wearable
+  TIZEN_DEVICE=device
 else ifneq (,$(findstring tizen_obs_emulator,$(MAKECMDGOALS)))
   HOST=tizen_obs
   ARCH=x86
+  # for spin
+  TIZEN_PROFILE=wearable
+  TIZEN_DEVICE=emulator
 endif
 
 ifneq (,$(findstring exe,$(MAKECMDGOALS)))
