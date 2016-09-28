@@ -94,7 +94,7 @@ StarFish::StarFish(StarFishStartUpFlag flag, const char* locale, const char* tim
     , m_defaultFontSizeMultiplier(defaultFontSizeMultiplier)
     , m_console(new Console(this))
     , m_enterCount(0)
-    , m_seed(0)
+    , m_seed((unsigned int)time(NULL))
 {
     if (!g_starFishGlobalInit) {
         g_starFishGlobalInit = true;
