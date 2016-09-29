@@ -26,6 +26,12 @@ public:
     FrameReplacedVideo(Node* node)
         : FrameReplaced(node, nullptr)
     {
+        computeStyleFlags();
+    }
+
+    virtual void computeStyleFlags()
+    {
+        FrameReplaced::computeStyleFlags();
     }
 
     virtual bool isFrameReplacedVideo()

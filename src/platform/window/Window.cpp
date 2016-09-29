@@ -159,13 +159,11 @@ public:
         // STARFISH_LOG_INFO("create CanvasSurfaceEFL %p %p\n", this, m_image);
 
         STARFISH_ASSERT(evas_object_visible_get(m_image) == EINA_FALSE);
-        /*
         GC_REGISTER_FINALIZER_NO_ORDER(this, [] (void* obj, void* cd) {
             CanvasSurfaceEFL* s = (CanvasSurfaceEFL*)obj;
-            STARFISH_LOG_INFO("release CanvasSurfaceEFL %p\n", s);
-            s->detachNative((Evas_Object*)cd);
-        }, m_image, NULL, NULL);
-        */
+            // STARFISH_LOG_INFO("release CanvasSurfaceEFL %p\n", s);
+            s->detachNativeBuffer();
+        }, NULL, NULL, NULL);
     }
 
     void detachNative(Evas_Object* image)
@@ -649,14 +647,12 @@ void Window::layoutIfNeeds()
             m_document->frame()->asFrameBox()->iterateChildBoxes([](FrameBox* box) -> bool
             {
                 box->establishesStackingContextIfNeeds();
-                if (box->node() && box->isRootElement()) {
-                    box->node()->document()->window()->m_rootStackingContext = box->stackingContext();
-                    STARFISH_ASSERT(box->node()->document()->window()->m_rootStackingContext);
-                }
                 return true;
             }, nullptr, nullptr);
-            if (m_document->frame()->firstChild())
-                m_document->frame()->firstChild()->asFrameBox()->stackingContext()->computeStackingContextProperties();
+            if (m_document->frame()->firstChild()) {
+                m_rootStackingContext = m_document->frame()->firstChild()->asFrameBox()->stackingContext();
+                m_rootStackingContext->computeStackingContextProperties();
+            }
         }
         m_needsLayout = false;
 #ifdef STARFISH_ENABLE_TEST
@@ -798,7 +794,7 @@ void Window::rendering()
 
     if (m_needsComposite) {
         Timer t("composite");
-        if (m_document->frame()->firstChild() && m_document->frame()->firstChild()->asFrameBox()->stackingContext()->needsOwnBuffer()) {
+        if (m_document->frame()->firstChild() && m_rootStackingContext->needsOwnBuffer()) {
             Canvas* canvas = preparePainting(eflWindow, false);
             paintWindowBackground(canvas);
             m_document->frame()->firstChild()->asFrameBox()->stackingContext()->compositeStackingContext(canvas);
@@ -826,7 +822,7 @@ void Window::rendering()
                 exit(0);
 
             g_surfaceForScreehShot->detachNativeBuffer();
-            delete g_surfaceForScreehShot;
+            // delete g_surfaceForScreehShot;
             g_surfaceForScreehShot = nullptr;
         }
     }
