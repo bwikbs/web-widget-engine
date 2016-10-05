@@ -84,7 +84,7 @@ public:
     virtual void drawRect(const Rect& rt) = 0;
     virtual void drawRect(const LayoutRect& rt) = 0;
     virtual void drawRect(LayoutLocation p1, LayoutLocation p2, LayoutLocation p3, LayoutLocation p4) = 0; // left, top, right, bottom
-    virtual void drawText(LayoutUnit x, LayoutUnit y, const StringView& text) = 0;
+    virtual void drawText(LayoutUnit x, LayoutUnit y, LayoutUnit stringWidth, const StringView& text) = 0;
 
     virtual void drawImage(ImageData* data, const Rect& dst) = 0;
     virtual void drawImage(CanvasSurface* data, const Rect& dst) = 0;
