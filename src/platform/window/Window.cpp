@@ -471,7 +471,7 @@ void Window::navigateAsync(URL* url)
     }, url, this);
 }
 
-// #define STARFISH_ENABLE_TIMER
+#define STARFISH_ENABLE_TIMER
 
 class Timer {
 public:
@@ -486,7 +486,7 @@ public:
     {
 #ifdef STARFISH_ENABLE_TIMER
         unsigned long end = tickCount();
-        STARFISH_LOG_INFO("did %s in %f ms\n", m_msg, (end - m_start));
+        STARFISH_LOG_INFO("did %s in %f ms\n", m_msg, (float)(end - m_start));
         fflush(stdout);
 #endif
     }
